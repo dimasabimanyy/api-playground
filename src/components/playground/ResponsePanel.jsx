@@ -6,8 +6,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { Copy, Download } from 'lucide-react'
 import { useState } from 'react'
+import CodeGenerationPanel from './CodeGenerationPanel'
 
-export default function ResponsePanel({ response, loading }) {
+export default function ResponsePanel({ response, loading, request }) {
   const [copied, setCopied] = useState(false)
 
   const copyToClipboard = async (text) => {
@@ -55,6 +56,66 @@ export default function ResponsePanel({ response, loading }) {
   const formatResponseData = (data) => {
     if (typeof data === 'string') return data
     return JSON.stringify(data, null, 2)
+  }
+
+  const getContentType = () => {
+    if (!response?.headers) return 'text'
+    const contentType = response.headers['content-type'] || ''
+    
+    if (contentType.includes('application/json')) return 'json'
+    if (contentType.includes('text/html')) return 'html'
+    if (contentType.includes('application/xml') || contentType.includes('text/xml')) return 'xml'
+    if (contentType.includes('text/css')) return 'css'
+    if (contentType.includes('application/javascript') || contentType.includes('text/javascript')) return 'javascript'
+    return 'text'
+  }
+
+  const formatContent = (data, type) => {
+    if (typeof data === 'object') {
+      return JSON.stringify(data, null, 2)
+    }
+    
+    if (type === 'json') {
+      try {
+        const parsed = JSON.parse(data)
+        return JSON.stringify(parsed, null, 2)
+      } catch {
+        return data
+      }
+    }
+    
+    return data
+  }
+
+  const renderFormattedContent = (data, type) => {
+    const formattedData = formatContent(data, type)
+    
+    if (type === 'html') {
+      return (
+        <div className="space-y-4">
+          <div className="border rounded p-4 bg-background">
+            <h4 className="text-sm font-medium mb-2">Rendered HTML:</h4>
+            <iframe
+              srcDoc={formattedData}
+              className="w-full h-64 border rounded"
+              title="HTML Preview"
+            />
+          </div>
+          <div>
+            <h4 className="text-sm font-medium mb-2">HTML Source:</h4>
+            <pre className="text-sm bg-muted p-4 rounded-lg overflow-auto max-h-64 whitespace-pre-wrap">
+              {formattedData}
+            </pre>
+          </div>
+        </div>
+      )
+    }
+    
+    return (
+      <pre className="text-sm bg-muted p-4 rounded-lg overflow-auto max-h-96 whitespace-pre-wrap">
+        {formattedData}
+      </pre>
+    )
   }
 
   if (loading) {
@@ -110,6 +171,7 @@ export default function ResponsePanel({ response, loading }) {
         <div className="flex items-center justify-between">
           <CardTitle>Response</CardTitle>
           <div className="flex items-center gap-2">
+            {request && <CodeGenerationPanel request={request} />}
             <Button
               variant="ghost"
               size="sm"
@@ -129,6 +191,9 @@ export default function ResponsePanel({ response, loading }) {
         <div className="flex items-center gap-4 text-sm">
           <Badge className={getStatusColor(response.status)}>
             {response.status} {response.statusText}
+          </Badge>
+          <Badge variant="outline">
+            {getContentType().toUpperCase()}
           </Badge>
           <span className="text-muted-foreground">
             {response.time}ms
@@ -153,9 +218,7 @@ export default function ResponsePanel({ response, loading }) {
           
           <TabsContent value="body">
             <div className="space-y-2">
-              <pre className="text-sm bg-muted p-4 rounded-lg overflow-auto max-h-96 whitespace-pre-wrap">
-                {formatResponseData(response.data)}
-              </pre>
+              {renderFormattedContent(response.data, getContentType())}
             </div>
           </TabsContent>
           

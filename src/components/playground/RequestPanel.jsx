@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Send, Plus, X, Share2, Copy } from 'lucide-react'
+import TemplatesPanel from './TemplatesPanel'
 
 const HTTP_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS']
 
@@ -65,6 +66,7 @@ export default function RequestPanel({
         <CardTitle className="flex items-center justify-between">
           Request
           <div className="flex items-center gap-2">
+            <TemplatesPanel onLoadTemplate={setRequest} />
             <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
               <DialogTrigger asChild>
                 <Button variant="outline" size="sm" onClick={onShare}>

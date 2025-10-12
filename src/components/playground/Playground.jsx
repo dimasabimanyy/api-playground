@@ -9,9 +9,11 @@ import { Share2, History, BookOpen, Check, Copy } from 'lucide-react'
 import RequestPanel from './RequestPanel'
 import ResponsePanel from './ResponsePanel'
 import HistoryPanel from './HistoryPanel'
+import EnvironmentSelector from './EnvironmentSelector'
 import ThemeToggle from '@/components/layout/ThemeToggle'
 import { generateShareableUrl, getSharedRequest } from '@/lib/share-encoding'
 import { saveToHistory } from '@/lib/storage'
+import { processRequestWithVariables } from '@/lib/environments'
 
 export default function Playground() {
   const [request, setRequest] = useState({
@@ -43,20 +45,23 @@ export default function Playground() {
   const executeRequest = async () => {
     setLoading(true)
     try {
+      // Process request with environment variables
+      const processedRequest = processRequestWithVariables(request)
+      
       const options = {
-        method: request.method,
+        method: processedRequest.method,
         headers: {
           'Content-Type': 'application/json',
-          ...request.headers
+          ...processedRequest.headers
         }
       }
       
-      if (request.method !== 'GET' && request.body) {
-        options.body = request.body
+      if (processedRequest.method !== 'GET' && processedRequest.body) {
+        options.body = processedRequest.body
       }
       
       const startTime = Date.now()
-      const res = await fetch(request.url, options)
+      const res = await fetch(processedRequest.url, options)
       const endTime = Date.now()
       
       const data = await res.text()
@@ -131,22 +136,26 @@ export default function Playground() {
               <span className="font-bold">API Playground</span>
             </a>
           </div>
-          <div className="flex flex-1 items-center justify-end space-x-2">
-            {showShared && (
-              <div className="flex items-center text-sm text-green-600 mr-4">
-                <Check className="h-4 w-4 mr-1" />
-                Shared request loaded
-              </div>
-            )}
-            <Button variant="ghost" size="sm" onClick={() => setShowHistory(!showHistory)}>
-              <History className="h-4 w-4 mr-2" />
-              History
-            </Button>
-            <Button variant="ghost" size="sm">
-              <BookOpen className="h-4 w-4 mr-2" />
-              Docs
-            </Button>
-            <ThemeToggle />
+          <div className="flex flex-1 items-center justify-between">
+            <EnvironmentSelector />
+            
+            <div className="flex items-center space-x-2">
+              {showShared && (
+                <div className="flex items-center text-sm text-green-600 mr-4">
+                  <Check className="h-4 w-4 mr-1" />
+                  Shared request loaded
+                </div>
+              )}
+              <Button variant="ghost" size="sm" onClick={() => setShowHistory(!showHistory)}>
+                <History className="h-4 w-4 mr-2" />
+                History
+              </Button>
+              <Button variant="ghost" size="sm">
+                <BookOpen className="h-4 w-4 mr-2" />
+                Docs
+              </Button>
+              <ThemeToggle />
+            </div>
           </div>
         </div>
       </header>
@@ -175,7 +184,7 @@ export default function Playground() {
                     copyShareUrl={copyShareUrl}
                     copySuccess={copySuccess}
                   />
-                  <ResponsePanel response={response} loading={loading} />
+                  <ResponsePanel response={response} loading={loading} request={request} />
                 </div>
               </TabsContent>
               
