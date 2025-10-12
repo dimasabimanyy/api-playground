@@ -142,31 +142,6 @@ export default function Playground() {
               <History className="h-4 w-4 mr-2" />
               History
             </Button>
-            <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
-              <DialogTrigger asChild>
-                <Button variant="ghost" size="sm" onClick={handleShare}>
-                  <Share2 className="h-4 w-4 mr-2" />
-                  Share
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Share this request</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <p className="text-sm text-muted-foreground">
-                    Copy this URL to share your API request configuration with others.
-                  </p>
-                  <div className="flex gap-2">
-                    <Input value={shareUrl} readOnly className="font-mono text-sm" />
-                    <Button onClick={copyShareUrl} variant="outline">
-                      <Copy className="h-4 w-4 mr-2" />
-                      {copySuccess ? 'Copied!' : 'Copy'}
-                    </Button>
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
             <Button variant="ghost" size="sm">
               <BookOpen className="h-4 w-4 mr-2" />
               Docs
@@ -193,6 +168,12 @@ export default function Playground() {
                     setRequest={setRequest}
                     onExecute={executeRequest}
                     loading={loading}
+                    onShare={handleShare}
+                    shareUrl={shareUrl}
+                    shareDialogOpen={shareDialogOpen}
+                    setShareDialogOpen={setShareDialogOpen}
+                    copyShareUrl={copyShareUrl}
+                    copySuccess={copySuccess}
                   />
                   <ResponsePanel response={response} loading={loading} />
                 </div>

@@ -8,11 +8,23 @@ import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
-import { Send, Plus, X } from 'lucide-react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Send, Plus, X, Share2, Copy } from 'lucide-react'
 
 const HTTP_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS']
 
-export default function RequestPanel({ request, setRequest, onExecute, loading }) {
+export default function RequestPanel({ 
+  request, 
+  setRequest, 
+  onExecute, 
+  loading, 
+  onShare, 
+  shareUrl, 
+  shareDialogOpen, 
+  setShareDialogOpen, 
+  copyShareUrl, 
+  copySuccess 
+}) {
   const [newHeaderKey, setNewHeaderKey] = useState('')
   const [newHeaderValue, setNewHeaderValue] = useState('')
 
@@ -52,10 +64,37 @@ export default function RequestPanel({ request, setRequest, onExecute, loading }
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           Request
-          <Button onClick={onExecute} disabled={loading || !request.url}>
-            <Send className="h-4 w-4 mr-2" />
-            {loading ? 'Sending...' : 'Send'}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm" onClick={onShare}>
+                  <Share2 className="h-4 w-4 mr-2" />
+                  Share
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Share this request</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    Copy this URL to share your API request configuration with others.
+                  </p>
+                  <div className="flex gap-2">
+                    <Input value={shareUrl} readOnly className="font-mono text-sm" />
+                    <Button onClick={copyShareUrl} variant="outline">
+                      <Copy className="h-4 w-4 mr-2" />
+                      {copySuccess ? 'Copied!' : 'Copy'}
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+            <Button onClick={onExecute} disabled={loading || !request.url}>
+              <Send className="h-4 w-4 mr-2" />
+              {loading ? 'Sending...' : 'Send'}
+            </Button>
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
