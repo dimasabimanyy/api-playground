@@ -24,7 +24,9 @@ export default function RequestPanel({
   shareDialogOpen, 
   setShareDialogOpen, 
   copyShareUrl, 
-  copySuccess 
+  copySuccess,
+  currentRequestName,
+  setCurrentRequestName
 }) {
   const [newHeaderKey, setNewHeaderKey] = useState('')
   const [newHeaderValue, setNewHeaderValue] = useState('')
@@ -115,7 +117,25 @@ export default function RequestPanel({
           </div>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-6">
+        {/* Request Name */}
+        {currentRequestName !== undefined && (
+          <div className="space-y-3">
+            <div className="flex items-center space-x-2">
+              <div className="h-2 w-2 bg-purple-500 rounded-full" />
+              <label className="text-sm font-medium text-foreground">
+                Request Name
+              </label>
+            </div>
+            <Input
+              placeholder="e.g., Get User Profile, Create Post..."
+              value={currentRequestName}
+              onChange={(e) => setCurrentRequestName?.(e.target.value)}
+              className="border-border/50 hover:border-border focus:border-purple-500 transition-colors"
+            />
+          </div>
+        )}
+
         {/* Method and URL */}
         <div className="space-y-3">
           <div className="flex items-center space-x-2">
