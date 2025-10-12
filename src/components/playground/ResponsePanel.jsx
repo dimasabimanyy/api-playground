@@ -120,14 +120,30 @@ export default function ResponsePanel({ response, loading, request }) {
 
   if (loading) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Response</CardTitle>
+      <Card className="bg-gradient-to-br from-background to-muted/20 border-border/50 shadow-md">
+        <CardHeader className="pb-4">
+          <div className="flex items-center space-x-3">
+            <div className="h-8 w-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+              <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+            </div>
+            <div>
+              <CardTitle className="text-lg">Sending Request</CardTitle>
+              <p className="text-xs text-muted-foreground mt-1">Please wait...</p>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-center h-32">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-            <span className="ml-2">Sending request...</span>
+          <div className="flex flex-col items-center justify-center py-12 space-y-4">
+            <div className="relative">
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-200 border-t-blue-500"></div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="h-4 w-4 bg-blue-500 rounded-full animate-pulse"></div>
+              </div>
+            </div>
+            <div className="text-center space-y-2">
+              <p className="text-sm font-medium">Sending your request...</p>
+              <p className="text-xs text-muted-foreground">This usually takes just a moment</p>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -136,14 +152,33 @@ export default function ResponsePanel({ response, loading, request }) {
 
   if (!response) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Response</CardTitle>
+      <Card className="bg-gradient-to-br from-background to-muted/20 border-border/50 shadow-md">
+        <CardHeader className="pb-4">
+          <div className="flex items-center space-x-3">
+            <div className="h-8 w-8 bg-gradient-to-br from-gray-400 to-gray-500 rounded-lg flex items-center justify-center">
+              <div className="h-4 w-4 rounded-sm bg-white/80" />
+            </div>
+            <div>
+              <CardTitle className="text-lg">Response</CardTitle>
+              <p className="text-xs text-muted-foreground mt-1">Waiting for request</p>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
-          <div className="text-center text-muted-foreground py-12">
-            <div className="text-lg mb-2">Ready to send</div>
-            <div className="text-sm">Configure your request and click Send</div>
+          <div className="text-center py-16 space-y-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 rounded-full">
+              <div className="w-8 h-8 border-2 border-dashed border-gray-400 rounded" />
+            </div>
+            <div className="space-y-2">
+              <p className="text-lg font-medium text-muted-foreground">Ready to send</p>
+              <p className="text-sm text-muted-foreground max-w-sm mx-auto">
+                Configure your request and click the <strong>Send Request</strong> button to see the response here
+              </p>
+            </div>
+            <div className="flex items-center justify-center space-x-2 text-xs text-muted-foreground">
+              <div className="h-1.5 w-1.5 bg-blue-500 rounded-full" />
+              <span>Tip: Try one of our templates to get started quickly</span>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -152,13 +187,33 @@ export default function ResponsePanel({ response, loading, request }) {
 
   if (response.error) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-red-600">Request Failed</CardTitle>
+      <Card className="bg-gradient-to-br from-background to-red-50/20 dark:to-red-950/20 border-red-200 dark:border-red-800 shadow-md">
+        <CardHeader className="pb-4">
+          <div className="flex items-center space-x-3">
+            <div className="h-8 w-8 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center">
+              <X className="h-4 w-4 text-white" />
+            </div>
+            <div>
+              <CardTitle className="text-lg text-red-600 dark:text-red-400">Request Failed</CardTitle>
+              <p className="text-xs text-muted-foreground mt-1">Something went wrong</p>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
-          <div className="p-4 border rounded bg-red-50 dark:bg-red-950 text-red-800 dark:text-red-200">
-            {response.error}
+          <div className="space-y-4">
+            <div className="p-4 border border-red-200 dark:border-red-800 rounded-lg bg-red-50 dark:bg-red-950/30">
+              <p className="text-sm font-medium text-red-800 dark:text-red-200 mb-2">Error Details:</p>
+              <p className="text-sm text-red-700 dark:text-red-300 font-mono">{response.error}</p>
+            </div>
+            <div className="text-xs text-muted-foreground space-y-1">
+              <p><strong>Common solutions:</strong></p>
+              <ul className="list-disc list-inside space-y-1 ml-2">
+                <li>Check if the URL is correct and accessible</li>
+                <li>Verify your internet connection</li>
+                <li>Check for CORS issues (try with a CORS proxy)</li>
+                <li>Ensure the API server is running</li>
+              </ul>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -166,21 +221,36 @@ export default function ResponsePanel({ response, loading, request }) {
   }
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="bg-gradient-to-br from-background to-green-50/20 dark:to-green-950/20 border-border/50 shadow-md hover:shadow-lg transition-shadow">
+      <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
-          <CardTitle>Response</CardTitle>
+          <div className="flex items-center space-x-3">
+            <div className="h-8 w-8 bg-gradient-to-br from-green-500 to-blue-500 rounded-lg flex items-center justify-center">
+              <Check className="h-4 w-4 text-white" />
+            </div>
+            <div>
+              <CardTitle className="text-lg">Response Received</CardTitle>
+              <p className="text-xs text-muted-foreground mt-1">Request completed successfully</p>
+            </div>
+          </div>
+          
           <div className="flex items-center gap-2">
             {request && <CodeGenerationPanel request={request} />}
             <Button
               variant="ghost"
               size="sm"
               onClick={() => copyToClipboard(formatResponseData(response.data))}
+              className="hover:bg-blue-50 dark:hover:bg-blue-950/30"
             >
               <Copy className="h-4 w-4 mr-2" />
               {copied ? 'Copied!' : 'Copy'}
             </Button>
-            <Button variant="ghost" size="sm" onClick={downloadResponse}>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={downloadResponse}
+              className="hover:bg-green-50 dark:hover:bg-green-950/30"
+            >
               <Download className="h-4 w-4 mr-2" />
               Download
             </Button>
@@ -188,19 +258,23 @@ export default function ResponsePanel({ response, loading, request }) {
         </div>
         
         {/* Status and Stats */}
-        <div className="flex items-center gap-4 text-sm">
-          <Badge className={getStatusColor(response.status)}>
+        <div className="flex items-center gap-3 mt-4">
+          <Badge className={`${getStatusColor(response.status)} shadow-sm`}>
             {response.status} {response.statusText}
           </Badge>
-          <Badge variant="outline">
+          <Badge variant="outline" className="bg-muted/50">
             {getContentType().toUpperCase()}
           </Badge>
-          <span className="text-muted-foreground">
-            {response.time}ms
-          </span>
-          <span className="text-muted-foreground">
-            {formatBytes(response.size || 0)}
-          </span>
+          <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+            <div className="flex items-center space-x-1">
+              <div className="h-2 w-2 bg-blue-500 rounded-full" />
+              <span>{response.time}ms</span>
+            </div>
+            <div className="flex items-center space-x-1">
+              <div className="h-2 w-2 bg-purple-500 rounded-full" />
+              <span>{formatBytes(response.size || 0)}</span>
+            </div>
+          </div>
         </div>
       </CardHeader>
       
