@@ -64,16 +64,13 @@ export default function RequestPanel({
 
   return (
     <Card className="bg-gradient-to-br from-background to-muted/20 border-border/50 shadow-md hover:shadow-lg transition-shadow">
-      <CardHeader className="pb-4">
+      <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="h-8 w-8 bg-gradient-to-br from-green-500 to-blue-500 rounded-lg flex items-center justify-center">
-              <Send className="h-4 w-4 text-white" />
+          <div className="flex items-center space-x-2">
+            <div className="h-6 w-6 bg-blue-500 rounded flex items-center justify-center">
+              <Send className="h-3 w-3 text-white" />
             </div>
-            <div>
-              <CardTitle className="text-lg">Configure Request</CardTitle>
-              <p className="text-xs text-muted-foreground mt-1">Set up your API call</p>
-            </div>
+            <CardTitle className="text-base">Request</CardTitle>
           </div>
           
           <div className="flex items-center gap-2">
@@ -117,33 +114,22 @@ export default function RequestPanel({
           </div>
         </div>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-4">
         {/* Request Name */}
         {currentRequestName !== undefined && (
-          <div className="space-y-3">
-            <div className="flex items-center space-x-2">
-              <div className="h-2 w-2 bg-purple-500 rounded-full" />
-              <label className="text-sm font-medium text-foreground">
-                Request Name
-              </label>
-            </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Name</label>
             <Input
               placeholder="e.g., Get User Profile, Create Post..."
               value={currentRequestName}
               onChange={(e) => setCurrentRequestName?.(e.target.value)}
-              className="border-border/50 hover:border-border focus:border-purple-500 transition-colors"
+              className="h-8"
             />
           </div>
         )}
 
         {/* Method and URL */}
-        <div className="space-y-3">
-          <div className="flex items-center space-x-2">
-            <div className="h-2 w-2 bg-blue-500 rounded-full" />
-            <label className="text-sm font-medium text-foreground">
-              Endpoint Configuration
-            </label>
-          </div>
+        <div className="space-y-2">
           <div className="flex gap-3">
             <Select value={request.method} onValueChange={(value) => updateRequest('method', value)}>
               <SelectTrigger className="w-32 border-border/50 hover:border-border focus:border-blue-500 transition-colors">
@@ -187,122 +173,110 @@ export default function RequestPanel({
         </div>
 
         {/* Tabs for Headers and Body */}
-        <div className="space-y-3">
-          <div className="flex items-center space-x-2">
-            <div className="h-2 w-2 bg-purple-500 rounded-full" />
-            <label className="text-sm font-medium text-foreground">
-              Request Details
-            </label>
-          </div>
+        <div className="space-y-2">
           <Tabs defaultValue="headers" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 bg-muted/50 p-1">
-              <TabsTrigger value="headers" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                <div className="flex items-center space-x-2">
-                  <span>Headers</span>
-                  {Object.keys(request.headers).length > 0 && (
-                    <Badge variant="secondary" className="bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">
-                      {Object.keys(request.headers).length}
-                    </Badge>
-                  )}
-                </div>
+            <TabsList className="grid w-full grid-cols-2 h-8">
+              <TabsTrigger value="headers" className="text-xs">
+                Headers
+                {Object.keys(request.headers).length > 0 && (
+                  <Badge variant="secondary" className="ml-1 text-xs px-1">
+                    {Object.keys(request.headers).length}
+                  </Badge>
+                )}
               </TabsTrigger>
-              <TabsTrigger value="body" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                <div className="flex items-center space-x-2">
-                  <span>Body</span>
-                  {request.body && (
-                    <div className="h-2 w-2 bg-green-500 rounded-full" />
-                  )}
-                </div>
+              <TabsTrigger value="body" className="text-xs">
+                Body
+                {request.body && (
+                  <div className="ml-1 h-1.5 w-1.5 bg-green-500 rounded-full" />
+                )}
               </TabsTrigger>
             </TabsList>
           
-          <TabsContent value="headers" className="space-y-4">
-            {/* Existing Headers */}
-            {Object.keys(request.headers).length > 0 ? (
-              <div className="space-y-3">
-                {Object.entries(request.headers).map(([key, value]) => (
-                  <div key={key} className="flex items-center gap-3 p-3 border border-border/50 rounded-lg bg-muted/20">
-                    <div className="flex-1 grid grid-cols-2 gap-3">
-                      <Input value={key} disabled className="bg-muted/50 border-0" />
-                      <Input value={value} disabled className="bg-muted/50 border-0" />
+            <TabsContent value="headers" className="space-y-4">
+              {/* Existing Headers */}
+              {Object.keys(request.headers).length > 0 ? (
+                <div className="space-y-2">
+                  {Object.entries(request.headers).map(([key, value]) => (
+                    <div key={key} className="flex items-center gap-2 p-2 border rounded bg-muted/20">
+                      <div className="flex-1 grid grid-cols-2 gap-2">
+                        <Input value={key} disabled className="h-7 bg-muted/50 border-0 text-xs" />
+                        <Input value={value} disabled className="h-7 bg-muted/50 border-0 text-xs" />
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeHeader(key)}
+                        className="h-6 w-6 p-0 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/30"
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeHeader(key)}
-                      className="hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/30"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-6 text-muted-foreground">
+                  <div className="inline-flex items-center justify-center w-8 h-8 bg-muted/30 rounded-full mb-2">
+                    <Plus className="h-4 w-4" />
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8 text-muted-foreground">
-                <div className="inline-flex items-center justify-center w-12 h-12 bg-muted/30 rounded-full mb-3">
-                  <Plus className="h-6 w-6" />
+                  <p className="text-xs">No headers added yet</p>
                 </div>
-                <p className="text-sm">No headers added yet</p>
-                <p className="text-xs">Headers are optional but useful for authentication and content type</p>
+              )}
+              
+              {/* Add New Header */}
+              <div className="flex items-center gap-2 p-2 border-2 border-dashed border-border/50 rounded hover:border-border/80 transition-colors bg-muted/10">
+                <Input
+                  placeholder="Header name"
+                  value={newHeaderKey}
+                  onChange={(e) => setNewHeaderKey(e.target.value)}
+                  className="h-7 text-xs"
+                />
+                <Input
+                  placeholder="Header value"
+                  value={newHeaderValue}
+                  onChange={(e) => setNewHeaderValue(e.target.value)}
+                  className="h-7 text-xs"
+                />
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={addHeader}
+                  className="h-6 w-6 p-0 hover:bg-green-50 hover:text-green-600 dark:hover:bg-green-950/30"
+                  disabled={!newHeaderKey || !newHeaderValue}
+                >
+                  <Plus className="h-3 w-3" />
+                </Button>
               </div>
-            )}
+            </TabsContent>
             
-            {/* Add New Header */}
-            <div className="flex items-center gap-3 p-3 border-2 border-dashed border-border/50 rounded-lg hover:border-border/80 transition-colors bg-muted/10">
-              <Input
-                placeholder="Header name (e.g., Authorization)"
-                value={newHeaderKey}
-                onChange={(e) => setNewHeaderKey(e.target.value)}
-                className="border-border/50 focus:border-blue-500"
-              />
-              <Input
-                placeholder="Header value (e.g., Bearer token123)"
-                value={newHeaderValue}
-                onChange={(e) => setNewHeaderValue(e.target.value)}
-                className="border-border/50 focus:border-blue-500"
-              />
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={addHeader}
-                className="hover:bg-green-50 hover:text-green-600 dark:hover:bg-green-950/30"
-                disabled={!newHeaderKey || !newHeaderValue}
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="body" className="space-y-4">
-            {!request.body ? (
-              <div className="text-center py-8 text-muted-foreground">
-                <div className="inline-flex items-center justify-center w-12 h-12 bg-muted/30 rounded-full mb-3">
-                  <div className="h-6 w-6 border border-current rounded" />
+            <TabsContent value="body" className="space-y-4">
+              {!request.body ? (
+                <div className="text-center py-6 text-muted-foreground">
+                  <div className="inline-flex items-center justify-center w-8 h-8 bg-muted/30 rounded-full mb-2">
+                    <div className="h-4 w-4 border border-current rounded" />
+                  </div>
+                  <p className="text-xs">No request body</p>
                 </div>
-                <p className="text-sm">No request body</p>
-                <p className="text-xs">Add a body for POST, PUT, or PATCH requests</p>
-              </div>
-            ) : null}
-            
-            <div className="space-y-3">
-              <Textarea
-                placeholder={`{
+              ) : null}
+              
+              <div className="space-y-3">
+                <Textarea
+                  placeholder={`{
   "name": "Example",
   "email": "user@example.com"
 }`}
-                value={request.body}
-                onChange={(e) => updateRequest('body', e.target.value)}
-                className="min-h-32 font-mono text-sm border-border/50 focus:border-blue-500 transition-colors"
-              />
-              {request.body && (
-                <div className="flex items-center justify-between text-xs text-muted-foreground bg-muted/30 px-3 py-2 rounded-md">
-                  <span>Body size: {new Blob([request.body]).size} bytes</span>
-                  <span>Content will be sent as-is</span>
-                </div>
-              )}
-            </div>
-          </TabsContent>
-        </Tabs>
+                  value={request.body}
+                  onChange={(e) => updateRequest('body', e.target.value)}
+                  className="min-h-24 font-mono text-xs"
+                />
+                {request.body && (
+                  <div className="flex items-center justify-between text-xs text-muted-foreground bg-muted/30 px-3 py-2 rounded-md">
+                    <span>Body size: {new Blob([request.body]).size} bytes</span>
+                    <span>Content will be sent as-is</span>
+                  </div>
+                )}
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
       </CardContent>
     </Card>

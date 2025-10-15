@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
-import { Copy, Download } from 'lucide-react'
+import { Copy, Download, X, Check } from 'lucide-react'
 import { useState } from 'react'
 import CodeGenerationPanel from './CodeGenerationPanel'
 
@@ -121,15 +121,12 @@ export default function ResponsePanel({ response, loading, request }) {
   if (loading) {
     return (
       <Card className="bg-gradient-to-br from-background to-muted/20 border-border/50 shadow-md">
-        <CardHeader className="pb-4">
-          <div className="flex items-center space-x-3">
-            <div className="h-8 w-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
-              <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+        <CardHeader className="pb-3">
+          <div className="flex items-center space-x-2">
+            <div className="h-6 w-6 bg-blue-500 rounded flex items-center justify-center">
+              <div className="animate-spin rounded-full h-3 w-3 border-2 border-white border-t-transparent"></div>
             </div>
-            <div>
-              <CardTitle className="text-lg">Sending Request</CardTitle>
-              <p className="text-xs text-muted-foreground mt-1">Please wait...</p>
-            </div>
+            <CardTitle className="text-base">Sending...</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
@@ -153,15 +150,12 @@ export default function ResponsePanel({ response, loading, request }) {
   if (!response) {
     return (
       <Card className="bg-gradient-to-br from-background to-muted/20 border-border/50 shadow-md">
-        <CardHeader className="pb-4">
-          <div className="flex items-center space-x-3">
-            <div className="h-8 w-8 bg-gradient-to-br from-gray-400 to-gray-500 rounded-lg flex items-center justify-center">
-              <div className="h-4 w-4 rounded-sm bg-white/80" />
+        <CardHeader className="pb-3">
+          <div className="flex items-center space-x-2">
+            <div className="h-6 w-6 bg-gray-400 rounded flex items-center justify-center">
+              <div className="h-3 w-3 rounded-sm bg-white/80" />
             </div>
-            <div>
-              <CardTitle className="text-lg">Response</CardTitle>
-              <p className="text-xs text-muted-foreground mt-1">Waiting for request</p>
-            </div>
+            <CardTitle className="text-base">Response</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
@@ -188,15 +182,12 @@ export default function ResponsePanel({ response, loading, request }) {
   if (response.error) {
     return (
       <Card className="bg-gradient-to-br from-background to-red-50/20 dark:to-red-950/20 border-red-200 dark:border-red-800 shadow-md">
-        <CardHeader className="pb-4">
-          <div className="flex items-center space-x-3">
-            <div className="h-8 w-8 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center">
-              <X className="h-4 w-4 text-white" />
+        <CardHeader className="pb-3">
+          <div className="flex items-center space-x-2">
+            <div className="h-6 w-6 bg-red-500 rounded flex items-center justify-center">
+              <X className="h-3 w-3 text-white" />
             </div>
-            <div>
-              <CardTitle className="text-lg text-red-600 dark:text-red-400">Request Failed</CardTitle>
-              <p className="text-xs text-muted-foreground mt-1">Something went wrong</p>
-            </div>
+            <CardTitle className="text-base text-red-600 dark:text-red-400">Failed</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
@@ -222,16 +213,13 @@ export default function ResponsePanel({ response, loading, request }) {
 
   return (
     <Card className="bg-gradient-to-br from-background to-green-50/20 dark:to-green-950/20 border-border/50 shadow-md hover:shadow-lg transition-shadow">
-      <CardHeader className="pb-4">
+      <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="h-8 w-8 bg-gradient-to-br from-green-500 to-blue-500 rounded-lg flex items-center justify-center">
-              <Check className="h-4 w-4 text-white" />
+          <div className="flex items-center space-x-2">
+            <div className="h-6 w-6 bg-green-500 rounded flex items-center justify-center">
+              <Check className="h-3 w-3 text-white" />
             </div>
-            <div>
-              <CardTitle className="text-lg">Response Received</CardTitle>
-              <p className="text-xs text-muted-foreground mt-1">Request completed successfully</p>
-            </div>
+            <CardTitle className="text-base">Response</CardTitle>
           </div>
           
           <div className="flex items-center gap-2">

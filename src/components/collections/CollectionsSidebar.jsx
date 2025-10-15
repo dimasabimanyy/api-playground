@@ -101,38 +101,27 @@ export default function CollectionsSidebar({
   )
 
   return (
-    <div className="w-80 border-r border-border/50 bg-muted/20 h-full flex flex-col">
+    <div className="w-64 border-r bg-muted/30 h-full flex flex-col">
       {/* Header */}
-      <div className="p-4 border-b border-border/50">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="font-semibold text-lg">Collections</h2>
+      <div className="p-3 border-b">
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="font-medium">Collections</h2>
           <Dialog open={newCollectionDialog} onOpenChange={setNewCollectionDialog}>
             <DialogTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                <FolderPlus className="h-4 w-4" />
+              <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                <FolderPlus className="h-3 w-3" />
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Create New Collection</DialogTitle>
+                <DialogTitle>Create Collection</DialogTitle>
               </DialogHeader>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <div>
-                  <label className="text-sm font-medium">Collection Name</label>
                   <Input
-                    placeholder="e.g., User Management API"
+                    placeholder="Collection name"
                     value={newCollectionName}
                     onChange={(e) => setNewCollectionName(e.target.value)}
-                    className="mt-1"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium">Description (optional)</label>
-                  <Input
-                    placeholder="Brief description of this API collection"
-                    value={newCollectionDescription}
-                    onChange={(e) => setNewCollectionDescription(e.target.value)}
-                    className="mt-1"
                   />
                 </div>
                 <div className="flex justify-end gap-2">
@@ -140,7 +129,7 @@ export default function CollectionsSidebar({
                     Cancel
                   </Button>
                   <Button onClick={handleCreateCollection} disabled={!newCollectionName.trim()}>
-                    Create Collection
+                    Create
                   </Button>
                 </div>
               </div>
@@ -148,48 +137,42 @@ export default function CollectionsSidebar({
           </Dialog>
         </div>
         
-        {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-muted-foreground" />
           <Input
-            placeholder="Search collections and requests..."
+            placeholder="Search..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
+            className="pl-7 h-8 text-sm"
           />
         </div>
       </div>
 
       {/* Collections List */}
       <div className="flex-1 overflow-y-auto">
-        <div className="p-2 space-y-1">
+        <div className="p-1 space-y-1">
           {filteredCollections.map(collection => (
             <div key={collection.id} className="group">
               {/* Collection Header */}
               <div
-                className={`flex items-center justify-between p-3 rounded-lg cursor-pointer transition-colors ${
+                className={`flex items-center justify-between p-2 rounded cursor-pointer transition-colors ${
                   activeCollectionId === collection.id
                     ? 'bg-primary/10 border border-primary/20'
                     : 'hover:bg-muted/50'
                 }`}
                 onClick={() => handleCollectionSelect(collection.id)}
               >
-                <div className="flex items-center space-x-3 flex-1 min-w-0">
-                  <div className={`p-1.5 rounded-md ${getCollectionColor(collection.color)}`}>
+                <div className="flex items-center space-x-2 flex-1 min-w-0">
+                  <div className={`p-1 rounded ${getCollectionColor(collection.color)}`}>
                     {getCollectionIcon(collection)}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-1.5">
                       <h3 className="font-medium text-sm truncate">{collection.name}</h3>
-                      <Badge variant="secondary" className="text-xs">
+                      <Badge variant="secondary" className="text-xs px-1.5 py-0">
                         {collection.requests.length}
                       </Badge>
                     </div>
-                    {collection.description && (
-                      <p className="text-xs text-muted-foreground truncate">
-                        {collection.description}
-                      </p>
-                    )}
                   </div>
                 </div>
                 
@@ -197,7 +180,7 @@ export default function CollectionsSidebar({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="h-5 w-5 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
                     onClick={(e) => {
                       e.stopPropagation()
                       handleDeleteCollection(collection.id)
@@ -210,22 +193,22 @@ export default function CollectionsSidebar({
 
               {/* Requests List (when collection is active) */}
               {activeCollectionId === collection.id && collection.requests.length > 0 && (
-                <div className="ml-6 mt-2 space-y-1">
+                <div className="ml-5 mt-1 space-y-0.5">
                   {collection.requests.map(request => (
                     <div
                       key={request.id}
-                      className={`flex items-center justify-between p-2 rounded-md cursor-pointer transition-colors ${
+                      className={`flex items-center justify-between p-1.5 rounded cursor-pointer transition-colors ${
                         activeRequestId === request.id
                           ? 'bg-primary/5 border border-primary/10'
                           : 'hover:bg-muted/30'
                       }`}
                       onClick={() => onRequestSelect?.(request)}
                     >
-                      <div className="flex items-center space-x-2 flex-1 min-w-0">
-                        <Badge variant="outline" className="text-xs px-1.5 py-0.5">
+                      <div className="flex items-center space-x-1.5 flex-1 min-w-0">
+                        <Badge variant="outline" className="text-xs px-1 py-0 font-medium">
                           {request.method}
                         </Badge>
-                        <span className="text-sm truncate">{request.name}</span>
+                        <span className="text-xs truncate">{request.name}</span>
                       </div>
                     </div>
                   ))}
@@ -234,10 +217,9 @@ export default function CollectionsSidebar({
 
               {/* Empty state for active collection */}
               {activeCollectionId === collection.id && collection.requests.length === 0 && (
-                <div className="ml-6 mt-2 text-center py-4 text-muted-foreground">
-                  <FolderOpen className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                <div className="ml-5 mt-1 text-center py-3 text-muted-foreground">
+                  <FolderOpen className="h-6 w-6 mx-auto mb-1 opacity-50" />
                   <p className="text-xs">No requests yet</p>
-                  <p className="text-xs">Create your first API request</p>
                 </div>
               )}
             </div>
