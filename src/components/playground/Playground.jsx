@@ -187,28 +187,34 @@ export default function Playground() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
+    <div className="min-h-screen bg-white dark:bg-gray-950">
       {/* Header */}
-      <header className="border-b bg-background h-14 flex items-center px-4">
-        <div className="flex items-center space-x-2 min-w-0 flex-shrink-0">
-          <div className="h-6 w-6 rounded bg-blue-500 flex items-center justify-center">
-            <div className="h-3 w-3 rounded-sm bg-white" />
+      <header className="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 h-16 flex items-center px-6">
+        <div className="flex items-center space-x-3 min-w-0 flex-shrink-0">
+          <div className="h-8 w-8 rounded-lg bg-black dark:bg-white flex items-center justify-center">
+            <div className="h-4 w-4 rounded bg-white dark:bg-black" />
           </div>
-          <h1 className="font-semibold">API Playground</h1>
+          <h1 className="text-lg font-semibold text-gray-900 dark:text-white">API Playground</h1>
         </div>
         
-        <div className="flex-1 flex justify-center px-4">
+        <div className="flex-1 flex justify-center px-6">
           <EnvironmentSelector />
           {showShared && (
-            <div className="ml-2 text-xs text-green-600 bg-green-50 dark:bg-green-950 px-2 py-1 rounded">
+            <div className="ml-3 text-sm text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 dark:text-emerald-400 px-3 py-1.5 rounded-md border border-emerald-200 dark:border-emerald-800">
               Shared request loaded
             </div>
           )}
         </div>
         
-        <div className="flex items-center space-x-2">
-          <Button variant="ghost" size="sm" onClick={() => setShowHistory(!showHistory)}>
-            <History className="h-4 w-4" />
+        <div className="flex items-center space-x-1">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => setShowHistory(!showHistory)}
+            className="h-9 px-3 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800"
+          >
+            <History className="h-4 w-4 mr-2" />
+            History
           </Button>
           <ThemeToggle />
         </div>
@@ -225,8 +231,8 @@ export default function Playground() {
         />
         
         {/* Main Testing Area */}
-        <div className="flex-1 flex flex-col">
-          <div className="flex-1 flex p-4 gap-4">
+        <div className="flex-1 flex flex-col bg-gray-50 dark:bg-gray-900">
+          <div className="flex-1 flex p-6 gap-6">
             <div className={`${showHistory ? 'flex-1' : 'w-full'}`}>
               <Tabs value={activeTab} onValueChange={setActiveTab}>
                 <div className="flex items-center justify-between mb-3">

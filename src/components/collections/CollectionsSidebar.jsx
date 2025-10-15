@@ -101,11 +101,11 @@ export default function CollectionsSidebar({
   )
 
   return (
-    <div className="w-64 border-r bg-muted/30 h-full flex flex-col">
+    <div className="w-72 border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 h-full flex flex-col">
       {/* Header */}
-      <div className="p-3 border-b">
-        <div className="flex items-center justify-between mb-2">
-          <h2 className="font-medium">Collections</h2>
+      <div className="p-4 border-b border-gray-200 dark:border-gray-800">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-sm font-semibold text-gray-900 dark:text-white">Collections</h2>
           <Dialog open={newCollectionDialog} onOpenChange={setNewCollectionDialog}>
             <DialogTrigger asChild>
               <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
@@ -138,38 +138,38 @@ export default function CollectionsSidebar({
         </div>
         
         <div className="relative">
-          <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
-            placeholder="Search..."
+            placeholder="Search collections..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-7 h-8 text-sm"
+            className="pl-9 h-9 text-sm border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-900 focus:border-gray-300 dark:focus:border-gray-600"
           />
         </div>
       </div>
 
       {/* Collections List */}
       <div className="flex-1 overflow-y-auto">
-        <div className="p-1 space-y-1">
+        <div className="p-2 space-y-1">
           {filteredCollections.map(collection => (
             <div key={collection.id} className="group">
               {/* Collection Header */}
               <div
-                className={`flex items-center justify-between p-2 rounded cursor-pointer transition-colors ${
+                className={`flex items-center justify-between px-3 py-2.5 rounded-md cursor-pointer transition-all duration-150 ${
                   activeCollectionId === collection.id
-                    ? 'bg-primary/10 border border-primary/20'
-                    : 'hover:bg-muted/50'
+                    ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-white'
                 }`}
                 onClick={() => handleCollectionSelect(collection.id)}
               >
-                <div className="flex items-center space-x-2 flex-1 min-w-0">
-                  <div className={`p-1 rounded ${getCollectionColor(collection.color)}`}>
+                <div className="flex items-center space-x-3 flex-1 min-w-0">
+                  <div className={`p-1.5 rounded-md ${getCollectionColor(collection.color)}`}>
                     {getCollectionIcon(collection)}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center space-x-1.5">
+                    <div className="flex items-center space-x-2">
                       <h3 className="font-medium text-sm truncate">{collection.name}</h3>
-                      <Badge variant="secondary" className="text-xs px-1.5 py-0">
+                      <Badge variant="outline" className="text-xs px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
                         {collection.requests.length}
                       </Badge>
                     </div>
@@ -193,22 +193,22 @@ export default function CollectionsSidebar({
 
               {/* Requests List (when collection is active) */}
               {activeCollectionId === collection.id && collection.requests.length > 0 && (
-                <div className="ml-5 mt-1 space-y-0.5">
+                <div className="ml-6 mt-2 space-y-1">
                   {collection.requests.map(request => (
                     <div
                       key={request.id}
-                      className={`flex items-center justify-between p-1.5 rounded cursor-pointer transition-colors ${
+                      className={`flex items-center justify-between px-3 py-2 rounded-md cursor-pointer transition-all duration-150 ${
                         activeRequestId === request.id
-                          ? 'bg-primary/5 border border-primary/10'
-                          : 'hover:bg-muted/30'
+                          ? 'bg-blue-50 dark:bg-blue-950/30 text-blue-900 dark:text-blue-100 border border-blue-200 dark:border-blue-800'
+                          : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-white'
                       }`}
                       onClick={() => onRequestSelect?.(request)}
                     >
-                      <div className="flex items-center space-x-1.5 flex-1 min-w-0">
-                        <Badge variant="outline" className="text-xs px-1 py-0 font-medium">
+                      <div className="flex items-center space-x-2 flex-1 min-w-0">
+                        <Badge variant="outline" className="text-xs px-2 py-0.5 font-mono font-medium">
                           {request.method}
                         </Badge>
-                        <span className="text-xs truncate">{request.name}</span>
+                        <span className="text-sm truncate">{request.name}</span>
                       </div>
                     </div>
                   ))}
@@ -217,9 +217,10 @@ export default function CollectionsSidebar({
 
               {/* Empty state for active collection */}
               {activeCollectionId === collection.id && collection.requests.length === 0 && (
-                <div className="ml-5 mt-1 text-center py-3 text-muted-foreground">
-                  <FolderOpen className="h-6 w-6 mx-auto mb-1 opacity-50" />
+                <div className="ml-6 mt-2 text-center py-4 text-gray-500 dark:text-gray-400">
+                  <FolderOpen className="h-6 w-6 mx-auto mb-2 opacity-50" />
                   <p className="text-xs">No requests yet</p>
+                  <p className="text-xs mt-1 opacity-75">Create your first API request</p>
                 </div>
               )}
             </div>
