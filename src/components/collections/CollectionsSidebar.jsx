@@ -14,7 +14,10 @@ import {
   Edit3,
   Globe,
   Lock,
-  Star
+  Star,
+  ChevronDown,
+  ChevronRight,
+  Folder
 } from 'lucide-react'
 import { 
   getCollections, 
@@ -35,6 +38,7 @@ export default function CollectionsSidebar({
   const [newCollectionDialog, setNewCollectionDialog] = useState(false)
   const [newCollectionName, setNewCollectionName] = useState('')
   const [newCollectionDescription, setNewCollectionDescription] = useState('')
+  const [expandedCollections, setExpandedCollections] = useState(new Set())
 
   useEffect(() => {
     loadCollections()
@@ -43,6 +47,10 @@ export default function CollectionsSidebar({
   const loadCollections = () => {
     const cols = getCollections()
     setCollections(cols)
+    // Auto-expand active collection
+    if (activeCollectionId) {
+      setExpandedCollections(prev => new Set(prev).add(activeCollectionId))
+    }
   }
 
   const handleCollectionSelect = (collectionId) => {
@@ -75,9 +83,21 @@ export default function CollectionsSidebar({
     }
   }
 
-  const getCollectionIcon = (collection) => {
+  const toggleCollectionExpansion = (collectionId) => {
+    setExpandedCollections(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(collectionId)) {
+        newSet.delete(collectionId)
+      } else {
+        newSet.add(collectionId)
+      }
+      return newSet
+    })
+  }
+
+  const getCollectionIcon = (collection, isExpanded) => {
     if (collection.id === 'examples') return <Star className="h-4 w-4" />
-    return <FolderOpen className="h-4 w-4" />
+    return isExpanded ? <FolderOpen className="h-4 w-4" /> : <Folder className="h-4 w-4" />
   }
 
   const getCollectionColor = (color) => {
@@ -101,14 +121,14 @@ export default function CollectionsSidebar({
   )
 
   return (
-    <div className="w-56 border-r border-gray-200 bg-white h-full flex flex-col">
+    <div className="w-64 border-r border-gray-200 bg-gray-50 h-full flex flex-col">
       {/* Header */}
-      <div className="p-4 border-b border-gray-200">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-medium text-gray-900">Collections</h2>
+      <div className="px-4 py-3 border-b border-gray-200 bg-white">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-gray-900">Collections</h2>
           <Dialog open={newCollectionDialog} onOpenChange={setNewCollectionDialog}>
             <DialogTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-500 hover:text-gray-700 hover:bg-gray-100">
+              <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-gray-500 hover:text-gray-700">
                 <FolderPlus className="h-4 w-4" />
               </Button>
             </DialogTrigger>
@@ -136,100 +156,116 @@ export default function CollectionsSidebar({
             </DialogContent>
           </Dialog>
         </div>
-        
+      </div>
+
+      {/* Search */}
+      <div className="px-4 py-3 bg-white border-b border-gray-200">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
-            placeholder="Search collections..."
+            placeholder="Search..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 h-8 text-sm border-gray-300 focus:border-gray-400 focus:ring-0"
+            className="pl-9 h-8 text-sm border-gray-300 bg-gray-50 focus:bg-white focus:border-gray-400 focus:ring-0"
           />
         </div>
       </div>
 
       {/* Collections List */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="p-2 space-y-1">
-          {filteredCollections.map(collection => (
-            <div key={collection.id} className="group">
-              {/* Collection Header */}
-              <div
-                className={`flex items-center justify-between px-3 py-2 rounded-md cursor-pointer transition-colors ${
-                  activeCollectionId === collection.id
-                    ? 'bg-blue-50 text-blue-700'
-                    : 'text-gray-700 hover:bg-gray-50'
-                }`}
-                onClick={() => handleCollectionSelect(collection.id)}
-              >
-                <div className="flex items-center space-x-2 flex-1 min-w-0">
-                  <div className={activeCollectionId === collection.id ? 'text-blue-600' : 'text-gray-400'}>
-                    {getCollectionIcon(collection)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center space-x-2">
-                      <h3 className="text-sm font-medium truncate">{collection.name}</h3>
-                      <Badge variant="secondary" className="text-xs px-1.5 py-0 bg-gray-100 text-gray-600 border-none">
-                        {collection.requests.length}
-                      </Badge>
-                    </div>
-                  </div>
-                </div>
-                
-                {collection.id !== 'examples' && (
+      <div className="flex-1 overflow-y-auto bg-gray-50">
+        <div className="py-2">
+          {filteredCollections.map(collection => {
+            const isExpanded = expandedCollections.has(collection.id)
+            return (
+              <div key={collection.id}>
+                {/* Collection Header */}
+                <div className="group flex items-center px-3 py-1 mx-2 rounded hover:bg-white/50 transition-colors">
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-500 hover:bg-red-50"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      handleDeleteCollection(collection.id)
-                    }}
+                    className="h-6 w-6 p-0 mr-1 hover:bg-gray-200"
+                    onClick={() => toggleCollectionExpansion(collection.id)}
                   >
-                    <Trash2 className="h-3 w-3" />
+                    {isExpanded ? (
+                      <ChevronDown className="h-3 w-3 text-gray-500" />
+                    ) : (
+                      <ChevronRight className="h-3 w-3 text-gray-500" />
+                    )}
                   </Button>
+                  
+                  <div
+                    className="flex items-center justify-between flex-1 min-w-0 cursor-pointer py-1"
+                    onClick={() => handleCollectionSelect(collection.id)}
+                  >
+                    <div className="flex items-center space-x-2 flex-1 min-w-0">
+                      <div className="text-gray-500">
+                        {getCollectionIcon(collection, isExpanded)}
+                      </div>
+                      <span className={`text-sm truncate ${
+                        activeCollectionId === collection.id ? 'text-gray-900 font-medium' : 'text-gray-700'
+                      }`}>
+                        {collection.name}
+                      </span>
+                      <span className="text-xs text-gray-400">
+                        {collection.requests.length}
+                      </span>
+                    </div>
+                    
+                    {collection.id !== 'examples' && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-5 w-5 p-0 opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-500"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleDeleteCollection(collection.id)
+                        }}
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Requests List */}
+                {isExpanded && collection.requests.length > 0 && (
+                  <div className="ml-8 mr-2 space-y-px">
+                    {collection.requests.map(request => (
+                      <div
+                        key={request.id}
+                        className={`flex items-center px-2 py-1.5 rounded cursor-pointer transition-colors ${
+                          activeRequestId === request.id
+                            ? 'bg-blue-100 text-blue-900'
+                            : 'text-gray-600 hover:bg-white/50'
+                        }`}
+                        onClick={() => onRequestSelect?.(request)}
+                      >
+                        <div className="flex items-center space-x-2 flex-1 min-w-0">
+                          <span className={`text-xs font-mono px-1.5 py-0.5 rounded ${
+                            request.method === 'GET' ? 'text-green-600 bg-green-100' :
+                            request.method === 'POST' ? 'text-blue-600 bg-blue-100' :
+                            request.method === 'PUT' ? 'text-orange-600 bg-orange-100' :
+                            request.method === 'DELETE' ? 'text-red-600 bg-red-100' :
+                            'text-gray-600 bg-gray-100'
+                          }`}>
+                            {request.method}
+                          </span>
+                          <span className="text-sm truncate">{request.name}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Empty state */}
+                {isExpanded && collection.requests.length === 0 && (
+                  <div className="ml-8 mr-2 py-2 text-center">
+                    <p className="text-xs text-gray-400">No requests</p>
+                  </div>
                 )}
               </div>
-
-              {/* Requests List (when collection is active) */}
-              {activeCollectionId === collection.id && collection.requests.length > 0 && (
-                <div className="ml-6 mt-1 space-y-1">
-                  {collection.requests.map(request => (
-                    <div
-                      key={request.id}
-                      className={`flex items-center px-3 py-1.5 rounded-md cursor-pointer transition-colors ${
-                        activeRequestId === request.id
-                          ? 'bg-blue-100 text-blue-700'
-                          : 'text-gray-600 hover:bg-gray-50'
-                      }`}
-                      onClick={() => onRequestSelect?.(request)}
-                    >
-                      <div className="flex items-center space-x-2 flex-1 min-w-0">
-                        <Badge variant="outline" className={`text-xs px-1.5 py-0.5 font-mono border ${
-                          request.method === 'GET' ? 'bg-green-50 text-green-700 border-green-200' :
-                          request.method === 'POST' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                          request.method === 'PUT' ? 'bg-orange-50 text-orange-700 border-orange-200' :
-                          request.method === 'DELETE' ? 'bg-red-50 text-red-700 border-red-200' :
-                          'bg-gray-50 text-gray-700 border-gray-200'
-                        }`}>
-                          {request.method}
-                        </Badge>
-                        <span className="text-sm truncate">{request.name}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Empty state for active collection */}
-              {activeCollectionId === collection.id && collection.requests.length === 0 && (
-                <div className="ml-6 mt-1 text-center py-4 text-gray-400">
-                  <FolderOpen className="h-5 w-5 mx-auto mb-2 opacity-50" />
-                  <p className="text-sm">No requests yet</p>
-                </div>
-              )}
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </div>
