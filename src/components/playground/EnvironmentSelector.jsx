@@ -122,19 +122,19 @@ export default function EnvironmentSelector({ onEnvironmentChange }) {
   }
 
   return (
-    <div className="flex items-center gap-3">
-      <Globe className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+    <div className="flex items-center gap-2">
+      <Globe className="h-3 w-3 text-gray-500" />
       <Select value={activeEnv} onValueChange={handleEnvironmentChange}>
-        <SelectTrigger className="w-44 h-9 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:border-gray-300 dark:hover:border-gray-600">
+        <SelectTrigger className="w-36 h-7 text-xs border-gray-300 hover:border-gray-400">
           <SelectValue />
         </SelectTrigger>
-        <SelectContent className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
+        <SelectContent className="bg-white border border-gray-300">
           {Object.entries(environments).map(([id, env]) => (
-            <SelectItem key={id} value={id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
-              <div className="flex items-center gap-2">
-                <span className="font-medium">{env.name}</span>
-                <Badge variant="secondary" className="text-xs px-1.5 py-0.5 bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">
-                  {Object.keys(env.variables).length} vars
+            <SelectItem key={id} value={id} className="text-xs hover:bg-gray-50">
+              <div className="flex items-center gap-1.5">
+                <span>{env.name}</span>
+                <Badge variant="secondary" className="text-xs px-1 py-0 bg-orange-100 text-orange-700">
+                  {Object.keys(env.variables).length}
                 </Badge>
               </div>
             </SelectItem>

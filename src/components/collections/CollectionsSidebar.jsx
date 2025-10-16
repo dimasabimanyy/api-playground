@@ -101,15 +101,15 @@ export default function CollectionsSidebar({
   )
 
   return (
-    <div className="w-72 border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 h-full flex flex-col">
+    <div className="w-56 border-r border-gray-200 bg-white h-full flex flex-col">
       {/* Header */}
-      <div className="p-4 border-b border-gray-200 dark:border-gray-800">
+      <div className="p-4 border-b border-gray-200">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-semibold text-gray-900 dark:text-white">Collections</h2>
+          <h2 className="text-sm font-medium text-gray-900">Collections</h2>
           <Dialog open={newCollectionDialog} onOpenChange={setNewCollectionDialog}>
             <DialogTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                <FolderPlus className="h-3 w-3" />
+              <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-500 hover:text-gray-700 hover:bg-gray-100">
+                <FolderPlus className="h-4 w-4" />
               </Button>
             </DialogTrigger>
             <DialogContent>
@@ -143,7 +143,7 @@ export default function CollectionsSidebar({
             placeholder="Search collections..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 h-9 text-sm border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-900 focus:border-gray-300 dark:focus:border-gray-600"
+            className="pl-9 h-8 text-sm border-gray-300 focus:border-gray-400 focus:ring-0"
           />
         </div>
       </div>
@@ -155,21 +155,21 @@ export default function CollectionsSidebar({
             <div key={collection.id} className="group">
               {/* Collection Header */}
               <div
-                className={`flex items-center justify-between px-3 py-2.5 rounded-md cursor-pointer transition-all duration-150 ${
+                className={`flex items-center justify-between px-3 py-2 rounded-md cursor-pointer transition-colors ${
                   activeCollectionId === collection.id
-                    ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-white'
+                    ? 'bg-blue-50 text-blue-700'
+                    : 'text-gray-700 hover:bg-gray-50'
                 }`}
                 onClick={() => handleCollectionSelect(collection.id)}
               >
-                <div className="flex items-center space-x-3 flex-1 min-w-0">
-                  <div className={`p-1.5 rounded-md ${getCollectionColor(collection.color)}`}>
+                <div className="flex items-center space-x-2 flex-1 min-w-0">
+                  <div className={activeCollectionId === collection.id ? 'text-blue-600' : 'text-gray-400'}>
                     {getCollectionIcon(collection)}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center space-x-2">
-                      <h3 className="font-medium text-sm truncate">{collection.name}</h3>
-                      <Badge variant="outline" className="text-xs px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+                      <h3 className="text-sm font-medium truncate">{collection.name}</h3>
+                      <Badge variant="secondary" className="text-xs px-1.5 py-0 bg-gray-100 text-gray-600 border-none">
                         {collection.requests.length}
                       </Badge>
                     </div>
@@ -180,7 +180,7 @@ export default function CollectionsSidebar({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-5 w-5 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-500 hover:bg-red-50"
                     onClick={(e) => {
                       e.stopPropagation()
                       handleDeleteCollection(collection.id)
@@ -193,19 +193,25 @@ export default function CollectionsSidebar({
 
               {/* Requests List (when collection is active) */}
               {activeCollectionId === collection.id && collection.requests.length > 0 && (
-                <div className="ml-6 mt-2 space-y-1">
+                <div className="ml-6 mt-1 space-y-1">
                   {collection.requests.map(request => (
                     <div
                       key={request.id}
-                      className={`flex items-center justify-between px-3 py-2 rounded-md cursor-pointer transition-all duration-150 ${
+                      className={`flex items-center px-3 py-1.5 rounded-md cursor-pointer transition-colors ${
                         activeRequestId === request.id
-                          ? 'bg-blue-50 dark:bg-blue-950/30 text-blue-900 dark:text-blue-100 border border-blue-200 dark:border-blue-800'
-                          : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-white'
+                          ? 'bg-blue-100 text-blue-700'
+                          : 'text-gray-600 hover:bg-gray-50'
                       }`}
                       onClick={() => onRequestSelect?.(request)}
                     >
                       <div className="flex items-center space-x-2 flex-1 min-w-0">
-                        <Badge variant="outline" className="text-xs px-2 py-0.5 font-mono font-medium">
+                        <Badge variant="outline" className={`text-xs px-1.5 py-0.5 font-mono border ${
+                          request.method === 'GET' ? 'bg-green-50 text-green-700 border-green-200' :
+                          request.method === 'POST' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                          request.method === 'PUT' ? 'bg-orange-50 text-orange-700 border-orange-200' :
+                          request.method === 'DELETE' ? 'bg-red-50 text-red-700 border-red-200' :
+                          'bg-gray-50 text-gray-700 border-gray-200'
+                        }`}>
                           {request.method}
                         </Badge>
                         <span className="text-sm truncate">{request.name}</span>
@@ -217,10 +223,9 @@ export default function CollectionsSidebar({
 
               {/* Empty state for active collection */}
               {activeCollectionId === collection.id && collection.requests.length === 0 && (
-                <div className="ml-6 mt-2 text-center py-4 text-gray-500 dark:text-gray-400">
-                  <FolderOpen className="h-6 w-6 mx-auto mb-2 opacity-50" />
-                  <p className="text-xs">No requests yet</p>
-                  <p className="text-xs mt-1 opacity-75">Create your first API request</p>
+                <div className="ml-6 mt-1 text-center py-4 text-gray-400">
+                  <FolderOpen className="h-5 w-5 mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">No requests yet</p>
                 </div>
               )}
             </div>

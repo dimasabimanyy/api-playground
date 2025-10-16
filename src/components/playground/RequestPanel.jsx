@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+// Removed Card components - using plain divs for seamless integration
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -63,21 +63,16 @@ export default function RequestPanel({
   }
 
   return (
-    <Card className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm">
-      <CardHeader className="pb-4 border-b border-gray-100 dark:border-gray-800">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <Send className="h-4 w-4 text-white" />
-            </div>
-            <CardTitle className="text-lg font-semibold text-gray-900 dark:text-white">Request</CardTitle>
-          </div>
+    <div className="flex-1 border-r border-gray-200 bg-white h-full flex flex-col">
+      <div className="p-4 border-b border-gray-200">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-medium text-gray-900">Request</h3>
           
           <div className="flex items-center gap-2">
             <TemplatesPanel onLoadTemplate={setRequest} />
             <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
               <DialogTrigger asChild>
-                <Button variant="outline" size="sm" onClick={onShare} className="border-blue-200 hover:bg-blue-50 dark:border-blue-800 dark:hover:bg-blue-950/30">
+                <Button variant="outline" size="sm" onClick={onShare} className="h-8 text-sm">
                   <Share2 className="h-4 w-4 mr-2" />
                   Share
                 </Button>
@@ -87,7 +82,7 @@ export default function RequestPanel({
                   <DialogTitle>Share this request</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-gray-600">
                     Copy this URL to share your API request configuration with others.
                   </p>
                   <div className="flex gap-2">
@@ -103,37 +98,38 @@ export default function RequestPanel({
             <Button 
               onClick={onExecute} 
               disabled={loading || !request.url}
-              className={`${loading || !request.url 
-                ? 'bg-muted text-muted-foreground' 
-                : 'bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white shadow-md hover:shadow-lg'
-              } transition-all duration-200`}
+              className={`h-8 text-sm px-4 ${
+                loading || !request.url 
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                : 'bg-blue-600 hover:bg-blue-700 text-white'
+              } transition-colors`}
             >
               <Send className="h-4 w-4 mr-2" />
-              {loading ? 'Sending...' : 'Send Request'}
+              {loading ? 'Sending...' : 'Send'}
             </Button>
           </div>
         </div>
-      </CardHeader>
-      <CardContent className="space-y-6 p-6">
+      </div>
+      <div className="flex-1 p-4 space-y-4 overflow-y-auto">
         {/* Request Name */}
         {currentRequestName !== undefined && (
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Request Name</label>
+            <label className="text-sm font-medium text-gray-700">Request Name</label>
             <Input
-              placeholder="e.g., Get User Profile, Create Post..."
+              placeholder="Enter request name"
               value={currentRequestName}
               onChange={(e) => setCurrentRequestName?.(e.target.value)}
-              className="h-10 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400"
+              className="h-9 text-sm border-gray-300 focus:border-gray-400 focus:ring-0"
             />
           </div>
         )}
 
         {/* Method and URL */}
-        <div className="space-y-3">
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Endpoint</label>
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-700">URL</label>
           <div className="flex gap-3">
             <Select value={request.method} onValueChange={(value) => updateRequest('method', value)}>
-              <SelectTrigger className="w-32 h-10 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:border-gray-300 dark:hover:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400">
+              <SelectTrigger className="w-28 h-9 text-sm border-gray-300 focus:border-gray-400 focus:ring-0">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -148,44 +144,39 @@ export default function RequestPanel({
             </Select>
             <div className="flex-1 relative">
               <Input
-                placeholder="https://api.example.com/endpoint"
+                placeholder="Enter request URL"
                 value={request.url}
                 onChange={(e) => updateRequest('url', e.target.value)}
-                className="h-10 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:border-gray-300 dark:hover:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400 pr-16"
+                className="h-9 text-sm border-gray-300 focus:border-gray-400 focus:ring-0 pr-12"
               />
-              {request.url && (
-                <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                  <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse" />
-                </div>
-              )}
               {!request.url && (
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">
                   Required
                 </div>
               )}
             </div>
           </div>
           {request.url.includes('{{') && (
-            <div className="flex items-center space-x-2 text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 px-3 py-2 rounded-md">
-              <div className="h-1.5 w-1.5 bg-amber-500 rounded-full" />
-              <span>Using environment variables - they'll be replaced when sending</span>
+            <div className="flex items-center space-x-2 text-sm text-blue-600 bg-blue-50 px-3 py-2 rounded-md">
+              <div className="h-2 w-2 bg-blue-500 rounded-full" />
+              <span>Using variables</span>
             </div>
           )}
         </div>
 
         {/* Tabs for Headers and Body */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           <Tabs defaultValue="headers" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 h-10 bg-gray-100 dark:bg-gray-800 p-1">
-              <TabsTrigger value="headers" className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm dark:data-[state=active]:bg-gray-900">
+            <TabsList className="grid w-full grid-cols-2 h-9 bg-gray-50 p-1">
+              <TabsTrigger value="headers" className="text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm">
                 Headers
                 {Object.keys(request.headers).length > 0 && (
-                  <Badge variant="secondary" className="ml-2 text-xs px-1.5 py-0.5 bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">
+                  <Badge variant="secondary" className="ml-2 text-xs px-1.5 py-0.5 bg-blue-100 text-blue-700">
                     {Object.keys(request.headers).length}
                   </Badge>
                 )}
               </TabsTrigger>
-              <TabsTrigger value="body" className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm dark:data-[state=active]:bg-gray-900">
+              <TabsTrigger value="body" className="text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm">
                 Body
                 {request.body && (
                   <div className="ml-2 h-2 w-2 bg-green-500 rounded-full" />
@@ -193,22 +184,21 @@ export default function RequestPanel({
               </TabsTrigger>
             </TabsList>
           
-            <TabsContent value="headers" className="space-y-4 mt-4">
+            <TabsContent value="headers" className="space-y-3 mt-3">
               {/* Existing Headers */}
               {Object.keys(request.headers).length > 0 ? (
-                <div className="space-y-3">
-                  <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Request Headers</h4>
+                <div className="space-y-2">
                   {Object.entries(request.headers).map(([key, value]) => (
-                    <div key={key} className="flex items-center gap-3 p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800/50">
+                    <div key={key} className="flex items-center gap-3 p-3 border border-gray-200 rounded-md bg-gray-50">
                       <div className="flex-1 grid grid-cols-2 gap-3">
-                        <Input value={key} disabled className="h-9 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-sm font-mono" />
-                        <Input value={value} disabled className="h-9 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-sm font-mono" />
+                        <Input value={key} disabled className="h-9 bg-white border-gray-200 text-sm font-mono" />
+                        <Input value={value} disabled className="h-9 bg-white border-gray-200 text-sm font-mono" />
                       </div>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => removeHeader(key)}
-                        className="h-8 w-8 p-0 text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 dark:hover:text-red-400"
+                        className="h-8 w-8 p-0 text-gray-400 hover:text-red-500 hover:bg-red-50"
                       >
                         <X className="h-4 w-4" />
                       </Button>
@@ -216,81 +206,56 @@ export default function RequestPanel({
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-                  <div className="inline-flex items-center justify-center w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-full mb-4">
-                    <Plus className="h-6 w-6" />
-                  </div>
-                  <h4 className="text-sm font-medium mb-1">No headers added yet</h4>
-                  <p className="text-sm text-gray-400 dark:text-gray-500">Headers are useful for authentication and content type</p>
+                <div className="text-center py-8 text-gray-400">
+                  <Plus className="h-6 w-6 mx-auto mb-3 opacity-50" />
+                  <p className="text-sm">No headers added</p>
                 </div>
               )}
               
               {/* Add New Header */}
-              <div className="space-y-3">
-                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Add Header</h4>
-                <div className="flex items-center gap-3 p-4 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg hover:border-gray-300 dark:hover:border-gray-600 transition-colors bg-gray-50/50 dark:bg-gray-800/30">
-                  <Input
-                    placeholder="Header name (e.g., Authorization)"
-                    value={newHeaderKey}
-                    onChange={(e) => setNewHeaderKey(e.target.value)}
-                    className="h-9 text-sm font-mono border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900"
-                  />
-                  <Input
-                    placeholder="Header value (e.g., Bearer token123)"
-                    value={newHeaderValue}
-                    onChange={(e) => setNewHeaderValue(e.target.value)}
-                    className="h-9 text-sm font-mono border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900"
-                  />
-                  <Button 
-                    variant="default" 
-                    size="sm" 
-                    onClick={addHeader}
-                    className="h-9 px-4 bg-blue-600 hover:bg-blue-700 text-white"
-                    disabled={!newHeaderKey || !newHeaderValue}
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add
-                  </Button>
-                </div>
+              <div className="flex items-center gap-3 p-3 border border-dashed border-gray-300 rounded-md">
+                <Input
+                  placeholder="Header name"
+                  value={newHeaderKey}
+                  onChange={(e) => setNewHeaderKey(e.target.value)}
+                  className="h-9 text-sm font-mono border-gray-300 focus:border-gray-400 focus:ring-0"
+                />
+                <Input
+                  placeholder="Header value"
+                  value={newHeaderValue}
+                  onChange={(e) => setNewHeaderValue(e.target.value)}
+                  className="h-9 text-sm font-mono border-gray-300 focus:border-gray-400 focus:ring-0"
+                />
+                <Button 
+                  variant="default" 
+                  size="sm" 
+                  onClick={addHeader}
+                  className="h-9 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm"
+                  disabled={!newHeaderKey || !newHeaderValue}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
               </div>
             </TabsContent>
             
-            <TabsContent value="body" className="space-y-4 mt-4">
+            <TabsContent value="body" className="space-y-3 mt-3">
               <div className="space-y-3">
-                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Request Body</h4>
-                {!request.body && (
-                  <div className="text-center py-8 text-gray-500 dark:text-gray-400 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg">
-                    <div className="inline-flex items-center justify-center w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-full mb-4">
-                      <div className="h-6 w-6 border-2 border-current rounded" />
-                    </div>
-                    <h4 className="text-sm font-medium mb-1">No request body</h4>
-                    <p className="text-sm text-gray-400 dark:text-gray-500">Add JSON, XML, or plain text for POST/PUT requests</p>
+                <Textarea
+                  placeholder={`{\n  "name": "value"\n}`}
+                  value={request.body}
+                  onChange={(e) => updateRequest('body', e.target.value)}
+                  className="min-h-32 font-mono text-sm border-gray-300 focus:border-gray-400 focus:ring-0"
+                />
+                {request.body && (
+                  <div className="text-sm text-gray-500 bg-gray-50 px-3 py-2 rounded-md">
+                    Size: {new Blob([request.body]).size} bytes
                   </div>
                 )}
-                
-                <div className="space-y-3">
-                  <Textarea
-                    placeholder={`{
-  "name": "Example User",
-  "email": "user@example.com",
-  "role": "developer"
-}`}
-                    value={request.body}
-                    onChange={(e) => updateRequest('body', e.target.value)}
-                    className="min-h-32 font-mono text-sm border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400"
-                  />
-                  {request.body && (
-                    <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700">
-                      <span className="font-medium">Body size: {new Blob([request.body]).size} bytes</span>
-                      <span className="text-xs">Content will be sent as-is</span>
-                    </div>
-                  )}
-                </div>
               </div>
             </TabsContent>
           </Tabs>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }

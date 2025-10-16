@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+// Removed Card components - using plain divs for seamless integration
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
@@ -38,11 +38,11 @@ export default function ResponsePanel({ response, loading, request }) {
   }
 
   const getStatusColor = (status) => {
-    if (status >= 200 && status < 300) return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
-    if (status >= 300 && status < 400) return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300'
-    if (status >= 400 && status < 500) return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300'
-    if (status >= 500) return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
-    return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300'
+    if (status >= 200 && status < 300) return 'bg-green-100 text-green-800'
+    if (status >= 300 && status < 400) return 'bg-yellow-100 text-yellow-800'
+    if (status >= 400 && status < 500) return 'bg-orange-100 text-orange-800'
+    if (status >= 500) return 'bg-red-100 text-red-800'
+    return 'bg-gray-100 text-gray-800'
   }
 
   const formatBytes = (bytes) => {
@@ -103,7 +103,7 @@ export default function ResponsePanel({ response, loading, request }) {
           </div>
           <div>
             <h4 className="text-sm font-medium mb-2">HTML Source:</h4>
-            <pre className="text-sm bg-muted p-4 rounded-lg overflow-auto max-h-64 whitespace-pre-wrap">
+            <pre className="text-xs bg-gray-50 text-gray-800 p-3 overflow-auto max-h-64 whitespace-pre-wrap font-mono">
               {formattedData}
             </pre>
           </div>
@@ -112,7 +112,7 @@ export default function ResponsePanel({ response, loading, request }) {
     }
     
     return (
-      <pre className="text-sm bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-6 overflow-auto max-h-96 whitespace-pre-wrap font-mono leading-relaxed">
+      <pre className="text-xs bg-gray-50 text-gray-800 p-3 overflow-auto max-h-64 whitespace-pre-wrap font-mono">
         {formattedData}
       </pre>
     )
@@ -120,119 +120,101 @@ export default function ResponsePanel({ response, loading, request }) {
 
   if (loading) {
     return (
-      <Card className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm">
-        <CardHeader className="pb-4 border-b border-gray-100 dark:border-gray-800">
-          <div className="flex items-center space-x-3">
-            <div className="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center">
+      <div className="flex-1 border-l border-gray-200 bg-white h-full flex flex-col">
+        <div className="p-4 border-b border-gray-200">
+          <div className="flex items-center space-x-2">
+            <div className="h-6 w-6 bg-blue-500 rounded flex items-center justify-center">
               <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
             </div>
-            <CardTitle className="text-lg font-semibold text-gray-900 dark:text-white">Sending Request</CardTitle>
+            <h3 className="text-lg font-medium text-gray-900">Sending request</h3>
           </div>
-        </CardHeader>
-        <CardContent className="p-6">
+        </div>
+        <div className="flex-1 p-4">
           <div className="flex flex-col items-center justify-center py-16 space-y-6">
             <div className="relative">
-              <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-200 border-t-blue-500 dark:border-gray-700 dark:border-t-blue-400"></div>
+              <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-200 border-t-blue-500"></div>
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="h-6 w-6 bg-blue-500 rounded-full animate-pulse"></div>
               </div>
             </div>
             <div className="text-center space-y-2">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Sending your request</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">This usually takes just a moment</p>
+              <h3 className="text-lg font-medium text-gray-700">Sending request</h3>
+              <p className="text-sm text-gray-500">Please wait...</p>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     )
   }
 
   if (!response) {
     return (
-      <Card className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm">
-        <CardHeader className="pb-4 border-b border-gray-100 dark:border-gray-800">
-          <div className="flex items-center space-x-3">
-            <div className="h-8 w-8 bg-gray-400 rounded-lg flex items-center justify-center">
+      <div className="flex-1 border-l border-gray-200 bg-white h-full flex flex-col">
+        <div className="p-4 border-b border-gray-200">
+          <div className="flex items-center space-x-2">
+            <div className="h-6 w-6 bg-gray-400 rounded flex items-center justify-center">
               <div className="h-4 w-4 rounded bg-white/80" />
             </div>
-            <CardTitle className="text-lg font-semibold text-gray-900 dark:text-white">Response</CardTitle>
+            <h3 className="text-lg font-medium text-gray-900">Response</h3>
           </div>
-        </CardHeader>
-        <CardContent className="p-6">
+        </div>
+        <div className="flex-1 p-4">
           <div className="text-center py-20 space-y-6">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-full">
-              <div className="w-10 h-10 border-2 border-dashed border-gray-400 dark:border-gray-500 rounded" />
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full">
+              <div className="w-10 h-10 border-2 border-dashed border-gray-400 rounded" />
             </div>
             <div className="space-y-3">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Ready to send</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 max-w-md mx-auto leading-relaxed">
-                Configure your request and click the <strong className="text-gray-900 dark:text-white">Send Request</strong> button to see the response here
+              <h3 className="text-lg font-medium text-gray-700">Ready to send</h3>
+              <p className="text-sm text-gray-500 max-w-md mx-auto">
+                Configure your request and click <strong>Send</strong> to see the response
               </p>
             </div>
-            <div className="flex items-center justify-center space-x-2 text-sm text-gray-500 dark:text-gray-400 bg-blue-50 dark:bg-blue-950/30 px-4 py-2 rounded-lg">
-              <div className="h-2 w-2 bg-blue-500 rounded-full" />
-              <span>💡 Try one of our templates to get started quickly</span>
+            <div className="text-sm text-gray-500 bg-blue-50 px-4 py-2 rounded-md inline-block">
+              💡 Try templates to get started
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     )
   }
 
   if (response.error) {
     return (
-      <Card className="bg-white dark:bg-gray-950 border border-red-200 dark:border-red-800 shadow-sm">
-        <CardHeader className="pb-4 border-b border-red-100 dark:border-red-900">
-          <div className="flex items-center space-x-3">
-            <div className="h-8 w-8 bg-red-500 rounded-lg flex items-center justify-center">
+      <div className="flex-1 border-l border-gray-200 bg-white h-full flex flex-col">
+        <div className="p-4 border-b border-gray-200">
+          <div className="flex items-center space-x-2">
+            <div className="h-6 w-6 bg-red-500 rounded flex items-center justify-center">
               <X className="h-4 w-4 text-white" />
             </div>
-            <CardTitle className="text-lg font-semibold text-red-600 dark:text-red-400">Request Failed</CardTitle>
+            <h3 className="text-lg font-medium text-gray-900">Failed</h3>
           </div>
-        </CardHeader>
-        <CardContent className="p-6">
+        </div>
+        <div className="flex-1 p-4">
           <div className="space-y-6">
-            <div className="p-6 border border-red-200 dark:border-red-800 rounded-lg bg-red-50 dark:bg-red-950/20">
-              <h4 className="text-sm font-semibold text-red-800 dark:text-red-200 mb-3">Error Details</h4>
-              <p className="text-sm text-red-700 dark:text-red-300 font-mono bg-red-100 dark:bg-red-950/40 p-3 rounded border">{response.error}</p>
+            <div className="p-4 border border-red-200 rounded-md bg-red-50">
+              <h4 className="text-sm font-medium text-red-800 mb-3">Error Details</h4>
+              <p className="text-sm text-red-700 font-mono bg-red-100 p-3 rounded-md">{response.error}</p>
             </div>
             <div className="space-y-3">
-              <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Common Solutions</h4>
-              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-                <li className="flex items-start space-x-2">
-                  <div className="h-1.5 w-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0" />
-                  <span>Check if the URL is correct and accessible</span>
-                </li>
-                <li className="flex items-start space-x-2">
-                  <div className="h-1.5 w-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0" />
-                  <span>Verify your internet connection</span>
-                </li>
-                <li className="flex items-start space-x-2">
-                  <div className="h-1.5 w-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0" />
-                  <span>Check for CORS issues (try with a CORS proxy)</span>
-                </li>
-                <li className="flex items-start space-x-2">
-                  <div className="h-1.5 w-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0" />
-                  <span>Ensure the API server is running</span>
-                </li>
+              <h4 className="text-sm font-medium text-gray-700">Common Solutions</h4>
+              <ul className="space-y-2 text-sm text-gray-600">
+                <li>• Check if the URL is correct and accessible</li>
+                <li>• Verify your internet connection</li>
+                <li>• Check for CORS issues</li>
+                <li>• Ensure the API server is running</li>
               </ul>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     )
   }
 
   return (
-    <Card className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm">
-      <CardHeader className="pb-4 border-b border-gray-100 dark:border-gray-800">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="h-8 w-8 bg-green-500 rounded-lg flex items-center justify-center">
-              <Check className="h-4 w-4 text-white" />
-            </div>
-            <CardTitle className="text-lg font-semibold text-gray-900 dark:text-white">Response</CardTitle>
-          </div>
+    <div className="flex-1 border-l border-gray-200 bg-white h-full flex flex-col">
+      <div className="p-4 border-b border-gray-200">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-medium text-gray-900">Response</h3>
           
           <div className="flex items-center gap-2">
             {request && <CodeGenerationPanel request={request} />}
@@ -240,7 +222,7 @@ export default function ResponsePanel({ response, loading, request }) {
               variant="ghost"
               size="sm"
               onClick={() => copyToClipboard(formatResponseData(response.data))}
-              className="hover:bg-blue-50 dark:hover:bg-blue-950/30"
+              className="h-8 text-sm px-3 hover:bg-gray-50"
             >
               <Copy className="h-4 w-4 mr-2" />
               {copied ? 'Copied!' : 'Copy'}
@@ -249,7 +231,7 @@ export default function ResponsePanel({ response, loading, request }) {
               variant="ghost" 
               size="sm" 
               onClick={downloadResponse}
-              className="hover:bg-green-50 dark:hover:bg-green-950/30"
+              className="h-8 text-sm px-3 hover:bg-gray-50"
             >
               <Download className="h-4 w-4 mr-2" />
               Download
@@ -258,64 +240,52 @@ export default function ResponsePanel({ response, loading, request }) {
         </div>
         
         {/* Status and Stats */}
-        <div className="flex items-center gap-4 mt-4">
-          <Badge className={`${getStatusColor(response.status)} shadow-sm font-medium`}>
+        <div className="flex items-center gap-3">
+          <Badge className={`${getStatusColor(response.status)} text-sm font-medium px-2 py-1`}>
             {response.status} {response.statusText}
           </Badge>
-          <Badge variant="outline" className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 font-mono">
+          <Badge variant="outline" className="text-sm bg-gray-50 border-gray-200 font-mono px-2 py-1">
             {getContentType().toUpperCase()}
           </Badge>
-          <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
-            <div className="flex items-center space-x-2">
-              <div className="h-2 w-2 bg-blue-500 rounded-full" />
-              <span className="font-medium">{response.time}ms</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="h-2 w-2 bg-purple-500 rounded-full" />
-              <span className="font-medium">{formatBytes(response.size || 0)}</span>
-            </div>
+          <div className="flex items-center space-x-4 text-sm text-gray-500">
+            <span>{response.time}ms</span>
+            <span>{formatBytes(response.size || 0)}</span>
           </div>
         </div>
-      </CardHeader>
+      </div>
       
-      <CardContent className="p-6">
-        <Tabs defaultValue="body" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 h-10 bg-gray-100 dark:bg-gray-800 p-1">
-            <TabsTrigger value="body" className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm dark:data-[state=active]:bg-gray-900">Body</TabsTrigger>
-            <TabsTrigger value="headers" className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm dark:data-[state=active]:bg-gray-900">
+      <div className="flex-1 p-4 overflow-y-auto">
+        <Tabs defaultValue="body" className="w-full h-full flex flex-col">
+          <TabsList className="grid w-full grid-cols-2 h-9 bg-gray-50 p-1">
+            <TabsTrigger value="body" className="text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm">Body</TabsTrigger>
+            <TabsTrigger value="headers" className="text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm">
               Headers
-              <Badge variant="secondary" className="ml-2 text-xs px-1.5 py-0.5 bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">
+              <Badge variant="secondary" className="ml-2 text-xs px-1.5 py-0.5 bg-blue-100 text-blue-700">
                 {Object.keys(response.headers || {}).length}
               </Badge>
             </TabsTrigger>
           </TabsList>
           
-          <TabsContent value="body" className="mt-4">
-            <div className="space-y-4">
-              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Response Body</h4>
-              <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-                {renderFormattedContent(response.data, getContentType())}
-              </div>
+          <TabsContent value="body" className="mt-3 flex-1">
+            <div className="border border-gray-200 rounded-md overflow-hidden h-full">
+              {renderFormattedContent(response.data, getContentType())}
             </div>
           </TabsContent>
           
-          <TabsContent value="headers" className="mt-4">
-            <div className="space-y-4">
-              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Response Headers</h4>
-              <div className="space-y-2">
-                {Object.entries(response.headers || {}).map(([key, value]) => (
-                  <div key={key} className="grid grid-cols-1 md:grid-cols-3 gap-3 p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800/50">
-                    <div className="font-mono text-sm font-semibold text-gray-900 dark:text-white">{key}</div>
-                    <div className="md:col-span-2 font-mono text-sm text-gray-600 dark:text-gray-300 break-all">
-                      {value}
-                    </div>
+          <TabsContent value="headers" className="mt-3 flex-1 overflow-y-auto">
+            <div className="space-y-2">
+              {Object.entries(response.headers || {}).map(([key, value]) => (
+                <div key={key} className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 border border-gray-200 rounded-md bg-gray-50">
+                  <div className="font-mono text-sm font-medium text-gray-700">{key}</div>
+                  <div className="md:col-span-2 font-mono text-sm text-gray-600 break-all">
+                    {value}
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
           </TabsContent>
         </Tabs>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }
