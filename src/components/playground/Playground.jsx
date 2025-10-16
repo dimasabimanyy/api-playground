@@ -10,7 +10,6 @@ import RequestPanel from './RequestPanel'
 import ResponsePanel from './ResponsePanel'
 import HistoryPanel from './HistoryPanel'
 import EnvironmentSelector from './EnvironmentSelector'
-import ThemeToggle from '@/components/layout/ThemeToggle'
 import { generateShareableUrl, getSharedRequest } from '@/lib/share-encoding'
 import { saveToHistory } from '@/lib/storage'
 import { processRequestWithVariables } from '@/lib/environments'
@@ -189,39 +188,46 @@ export default function Playground() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="border-b border-gray-300 bg-white h-12 flex items-center px-4 shadow-sm">
-        <div className="flex items-center space-x-2 min-w-0 flex-shrink-0">
-          <div className="h-6 w-6 rounded bg-orange-500 flex items-center justify-center">
-            <div className="h-3 w-3 rounded-sm bg-white" />
+      <header className="border-b border-gray-200 bg-white h-14 flex items-center px-6">
+        <div className="flex items-center space-x-3 min-w-0 flex-shrink-0">
+          <div className="h-7 w-7 rounded bg-green-600 flex items-center justify-center">
+            <div className="h-4 w-4 rounded-sm bg-white" />
           </div>
-          <h1 className="text-base font-medium text-gray-800">API Playground</h1>
+          <h1 className="text-lg font-semibold text-gray-900">API Playground</h1>
         </div>
         
-        <div className="flex-1 flex justify-center px-4">
+        <div className="flex-1 flex justify-center px-8">
           <EnvironmentSelector />
           {showShared && (
-            <div className="ml-2 text-xs text-orange-700 bg-orange-100 px-2 py-1 rounded border border-orange-200">
+            <div className="ml-3 text-sm text-blue-700 bg-blue-50 px-3 py-1 rounded-md border border-blue-200">
               Shared request loaded
             </div>
           )}
         </div>
         
-        <div className="flex items-center space-x-1">
+        <div className="flex items-center space-x-3">
           <Button 
             variant="ghost" 
             size="sm" 
             onClick={() => setShowHistory(!showHistory)}
-            className="h-8 px-2 text-xs text-gray-600 hover:text-gray-800 hover:bg-gray-100"
+            className="h-8 px-3 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100"
           >
-            <History className="h-3 w-3 mr-1" />
+            <History className="h-4 w-4 mr-2" />
             History
           </Button>
-          <ThemeToggle />
+          <div className="h-6 w-px bg-gray-200" />
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="h-8 px-4 text-sm border-gray-300 hover:bg-gray-50"
+          >
+            Sign in
+          </Button>
         </div>
       </header>
 
       {/* Main Content Layout */}
-      <div className="flex h-[calc(100vh-3rem)]">
+      <div className="flex h-[calc(100vh-3.5rem)]">
         {/* Collections Sidebar */}
         <CollectionsSidebar
           onCollectionSelect={handleCollectionSelect}
