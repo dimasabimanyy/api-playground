@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { Share2, History, BookOpen, Check, Copy } from 'lucide-react'
+import { Share2, History, BookOpen, Check, Copy, PanelLeftOpen, PanelLeftClose } from 'lucide-react'
 import RequestPanel from './RequestPanel'
 import ResponsePanel from './ResponsePanel'
 import HistoryPanel from './HistoryPanel'
@@ -35,6 +35,7 @@ export default function Playground() {
   const [activeCollectionId, setActiveCollectionId] = useState('my-apis')
   const [activeRequestId, setActiveRequestId] = useState(null)
   const [currentRequestName, setCurrentRequestName] = useState('')
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
 
   // Load shared request and active collection on mount
   useEffect(() => {
@@ -190,6 +191,14 @@ export default function Playground() {
       {/* Header */}
       <header className="border-b border-gray-200 bg-white h-14 flex items-center px-6">
         <div className="flex items-center space-x-3 min-w-0 flex-shrink-0">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            className="h-8 w-8 p-0 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+          >
+            {sidebarCollapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+          </Button>
           <div className="h-7 w-7 rounded bg-green-600 flex items-center justify-center">
             <div className="h-4 w-4 rounded-sm bg-white" />
           </div>
@@ -197,12 +206,20 @@ export default function Playground() {
         </div>
         
         <div className="flex-1 flex justify-center px-8">
-          <EnvironmentSelector />
-          {showShared && (
-            <div className="ml-3 text-sm text-blue-700 bg-blue-50 px-3 py-1 rounded-md border border-blue-200">
-              Shared request loaded
-            </div>
-          )}
+          <div className="flex items-center gap-6">
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              <TabsList className="h-8 bg-gray-100">
+                <TabsTrigger value="rest" className="text-sm px-4 data-[state=active]:bg-white">REST</TabsTrigger>
+                <TabsTrigger value="graphql" disabled className="text-sm px-4 text-gray-400">GraphQL</TabsTrigger>
+              </TabsList>
+            </Tabs>
+            <EnvironmentSelector />
+            {showShared && (
+              <div className="text-sm text-blue-700 bg-blue-50 px-3 py-1 rounded-md border border-blue-200">
+                Shared request loaded
+              </div>
+            )}
+          </div>
         </div>
         
         <div className="flex items-center space-x-3">
@@ -229,67 +246,62 @@ export default function Playground() {
       {/* Main Content Layout */}
       <div className="flex h-[calc(100vh-3.5rem)]">
         {/* Collections Sidebar */}
-        <CollectionsSidebar
-          onCollectionSelect={handleCollectionSelect}
-          onRequestSelect={handleRequestSelect}
-          activeCollectionId={activeCollectionId}
-          activeRequestId={activeRequestId}
-        />
+        {!sidebarCollapsed && (
+          <CollectionsSidebar
+            onCollectionSelect={handleCollectionSelect}
+            onRequestSelect={handleRequestSelect}
+            activeCollectionId={activeCollectionId}
+            activeRequestId={activeRequestId}
+          />
+        )}
         
         {/* Main Testing Area */}
         <div className="flex-1 flex flex-col">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-            <div className="border-b border-gray-200 px-4 py-2 bg-white">
-              <div className="flex items-center justify-between">
-                <TabsList className="h-8 bg-gray-50">
-                  <TabsTrigger value="rest" className="text-sm px-4 data-[state=active]:bg-white">REST</TabsTrigger>
-                  <TabsTrigger value="graphql" disabled className="text-sm px-4 text-gray-400">GraphQL</TabsTrigger>
-                </TabsList>
-                
-                {request.url && (
-                  <Button size="sm" onClick={handleSaveRequest} className="h-8 text-sm px-4 bg-blue-600 hover:bg-blue-700 text-white">
-                    {activeRequestId ? 'Update' : 'Save'}
-                  </Button>
-                )}
-              </div>
+          <div className="border-b border-gray-200 px-6 py-3 bg-white">
+            <div className="flex items-center justify-end">
+              {request.url && (
+                <Button size="sm" onClick={handleSaveRequest} className="h-8 text-sm px-4 bg-green-600 hover:bg-green-700 text-white">
+                  {activeRequestId ? 'Update' : 'Save'}
+                </Button>
+              )}
             </div>
-            
-            <div className="flex-1 flex">
-              <div className={`${showHistory ? 'flex-1' : 'w-full'} flex`}>
-                <TabsContent value="rest" className="mt-0 flex-1 flex">
-                  <div className="flex-1 flex">
-                    <RequestPanel 
-                      request={request}
-                      setRequest={setRequest}
-                      onExecute={executeRequest}
-                      loading={loading}
-                      onShare={handleShare}
-                      shareUrl={shareUrl}
-                      shareDialogOpen={shareDialogOpen}
-                      setShareDialogOpen={setShareDialogOpen}
-                      copyShareUrl={copyShareUrl}
-                      copySuccess={copySuccess}
-                      currentRequestName={currentRequestName}
-                      setCurrentRequestName={setCurrentRequestName}
-                    />
-                    <ResponsePanel response={response} loading={loading} request={request} />
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="graphql" className="mt-0 flex-1">
-                  <div className="text-center py-8 text-gray-500">
-                    <p className="text-sm">GraphQL support coming soon</p>
-                  </div>
-                </TabsContent>
-              </div>
+          </div>
+          
+          <div className="flex-1 flex">
+            <div className={`${showHistory ? 'flex-1' : 'w-full'} flex`}>
+              {activeTab === 'rest' && (
+                <div className="flex-1 flex">
+                  <RequestPanel 
+                    request={request}
+                    setRequest={setRequest}
+                    onExecute={executeRequest}
+                    loading={loading}
+                    onShare={handleShare}
+                    shareUrl={shareUrl}
+                    shareDialogOpen={shareDialogOpen}
+                    setShareDialogOpen={setShareDialogOpen}
+                    copyShareUrl={copyShareUrl}
+                    copySuccess={copySuccess}
+                    currentRequestName={currentRequestName}
+                    setCurrentRequestName={setCurrentRequestName}
+                  />
+                  <ResponsePanel response={response} loading={loading} request={request} />
+                </div>
+              )}
               
-              {showHistory && (
-                <div className="w-80 border-l border-gray-200">
-                  <HistoryPanel onLoadRequest={handleLoadFromHistory} />
+              {activeTab === 'graphql' && (
+                <div className="flex-1 text-center py-8 text-gray-500">
+                  <p className="text-sm">GraphQL support coming soon</p>
                 </div>
               )}
             </div>
-          </Tabs>
+            
+            {showHistory && (
+              <div className="w-80 border-l border-gray-200">
+                <HistoryPanel onLoadRequest={handleLoadFromHistory} />
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
