@@ -103,7 +103,7 @@ export default function ResponsePanel({ response, loading, request }) {
           </div>
           <div>
             <h4 className="text-sm font-medium mb-2">HTML Source:</h4>
-            <pre className="text-xs bg-gray-50 text-gray-800 p-3 overflow-auto max-h-64 whitespace-pre-wrap font-mono">
+            <pre className="text-xs bg-gray-900/50 text-gray-200 p-4 overflow-auto max-h-64 whitespace-pre-wrap font-mono rounded-lg border border-gray-700/50">
               {formattedData}
             </pre>
           </div>
@@ -112,7 +112,7 @@ export default function ResponsePanel({ response, loading, request }) {
     }
     
     return (
-      <pre className="text-xs bg-gray-50 text-gray-800 p-3 overflow-auto max-h-64 whitespace-pre-wrap font-mono">
+      <pre className="text-xs bg-gray-900/50 text-gray-200 p-4 overflow-auto max-h-64 whitespace-pre-wrap font-mono rounded-lg border border-gray-700/50">
         {formattedData}
       </pre>
     )
@@ -120,18 +120,21 @@ export default function ResponsePanel({ response, loading, request }) {
 
   if (loading) {
     return (
-      <div className="flex-1 bg-white h-full flex flex-col">
-        <div className="px-4 py-3 border-b border-gray-200">
+      <div className="flex-1 bg-[#1a1a1a]/50 h-full flex flex-col backdrop-blur-xl">
+        <div className="px-6 py-4 border-b border-gray-800/50">
           <div className="flex items-center space-x-3">
-            <div className="animate-spin rounded-full h-4 w-4 border-2 border-orange-200 border-t-orange-500"></div>
-            <h3 className="text-sm font-medium text-gray-900">Response</h3>
-            <span className="text-xs text-gray-500">Sending request...</span>
+            <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-400/30 border-t-blue-500"></div>
+            <h3 className="text-sm font-medium text-white">Response</h3>
+            <span className="text-xs text-gray-400">Sending request...</span>
           </div>
         </div>
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center space-y-4">
-            <div className="animate-spin rounded-full h-8 w-8 border-2 border-orange-200 border-t-orange-500 mx-auto"></div>
-            <p className="text-sm text-gray-600">Waiting for response...</p>
+        <div className="flex-1 flex items-center justify-center bg-[#111]">
+          <div className="text-center space-y-6">
+            <div className="animate-spin rounded-full h-12 w-12 border-2 border-blue-400/30 border-t-blue-500 mx-auto"></div>
+            <div>
+              <p className="text-base font-medium text-white mb-2">Sending request...</p>
+              <p className="text-sm text-gray-400">Waiting for response</p>
+            </div>
           </div>
         </div>
       </div>
@@ -140,19 +143,19 @@ export default function ResponsePanel({ response, loading, request }) {
 
   if (!response) {
     return (
-      <div className="flex-1 bg-white h-full flex flex-col">
-        <div className="px-4 py-3 border-b border-gray-200">
-          <h3 className="text-sm font-medium text-gray-900">Response</h3>
+      <div className="flex-1 bg-[#1a1a1a]/50 h-full flex flex-col backdrop-blur-xl">
+        <div className="px-6 py-4 border-b border-gray-800/50">
+          <h3 className="text-sm font-medium text-white">Response</h3>
         </div>
-        <div className="flex-1 flex items-center justify-center bg-gray-50">
-          <div className="text-center space-y-4">
-            <div className="w-16 h-16 bg-white border border-gray-200 rounded-lg flex items-center justify-center mx-auto">
-              <div className="w-8 h-8 border-2 border-dashed border-gray-300 rounded" />
+        <div className="flex-1 flex items-center justify-center bg-[#111]">
+          <div className="text-center space-y-6">
+            <div className="w-20 h-20 bg-gray-800/50 border border-gray-700/50 rounded-xl flex items-center justify-center mx-auto">
+              <div className="w-10 h-10 border-2 border-dashed border-gray-600 rounded-lg" />
             </div>
-            <div className="space-y-2">
-              <h3 className="text-base font-medium text-gray-700">Enter the URL and click Send</h3>
-              <p className="text-sm text-gray-500">
-                The response will appear here
+            <div className="space-y-3">
+              <h3 className="text-lg font-medium text-white">Ready to send</h3>
+              <p className="text-sm text-gray-400 max-w-sm">
+                Enter a URL and click Send to see the response here
               </p>
             </div>
           </div>
@@ -163,32 +166,46 @@ export default function ResponsePanel({ response, loading, request }) {
 
   if (response.error) {
     return (
-      <div className="flex-1 bg-white h-full flex flex-col">
-        <div className="px-4 py-3 border-b border-gray-200">
+      <div className="flex-1 bg-[#1a1a1a]/50 h-full flex flex-col backdrop-blur-xl">
+        <div className="px-6 py-4 border-b border-gray-800/50">
           <div className="flex items-center space-x-3">
-            <h3 className="text-sm font-medium text-gray-900">Response</h3>
-            <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded font-mono">Error</span>
+            <h3 className="text-sm font-medium text-white">Response</h3>
+            <span className="text-xs bg-red-500/20 text-red-400 px-2 py-1 rounded border border-red-500/30 font-mono">Error</span>
           </div>
         </div>
-        <div className="flex-1 p-4">
-          <div className="space-y-4">
-            <div className="p-4 border border-red-200 rounded-lg bg-red-50">
-              <div className="flex items-start space-x-3">
-                <X className="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0" />
+        <div className="flex-1 p-6 bg-[#111]">
+          <div className="space-y-6">
+            <div className="p-6 border border-red-500/20 rounded-xl bg-red-500/5 backdrop-blur-sm">
+              <div className="flex items-start space-x-4">
+                <div className="p-2 bg-red-500/20 rounded-lg">
+                  <X className="h-5 w-5 text-red-400 flex-shrink-0" />
+                </div>
                 <div>
-                  <h4 className="text-sm font-medium text-red-800 mb-1">Could not send request</h4>
-                  <p className="text-sm text-red-700 font-mono">{response.error}</p>
+                  <h4 className="text-sm font-medium text-red-400 mb-2">Request failed</h4>
+                  <p className="text-sm text-red-300 font-mono bg-red-500/10 p-3 rounded-lg border border-red-500/20">{response.error}</p>
                 </div>
               </div>
             </div>
             
-            <div className="space-y-3">
-              <h4 className="text-sm font-medium text-gray-900">Possible causes:</h4>
-              <ul className="space-y-1 text-sm text-gray-600 ml-4">
-                <li>• Invalid URL or network connectivity issues</li>
-                <li>• CORS policy blocking the request</li>
-                <li>• Server is down or not responding</li>
-                <li>• SSL/TLS certificate issues</li>
+            <div className="space-y-4">
+              <h4 className="text-sm font-medium text-white">Common solutions:</h4>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li className="flex items-start gap-2">
+                  <div className="h-1.5 w-1.5 bg-gray-500 rounded-full mt-2 flex-shrink-0"></div>
+                  Check if the URL is correct and accessible
+                </li>
+                <li className="flex items-start gap-2">
+                  <div className="h-1.5 w-1.5 bg-gray-500 rounded-full mt-2 flex-shrink-0"></div>
+                  Verify CORS policy allows your request
+                </li>
+                <li className="flex items-start gap-2">
+                  <div className="h-1.5 w-1.5 bg-gray-500 rounded-full mt-2 flex-shrink-0"></div>
+                  Ensure the target server is running
+                </li>
+                <li className="flex items-start gap-2">
+                  <div className="h-1.5 w-1.5 bg-gray-500 rounded-full mt-2 flex-shrink-0"></div>
+                  Check your internet connection
+                </li>
               </ul>
             </div>
           </div>
@@ -198,115 +215,121 @@ export default function ResponsePanel({ response, loading, request }) {
   }
 
   return (
-    <div className="flex-1 bg-white h-full flex flex-col">
-      {/* Response Header - Postman Style */}
-      <div className="px-4 py-3 border-b border-gray-200">
+    <div className="flex-1 bg-[#1a1a1a]/50 h-full flex flex-col backdrop-blur-xl">
+      {/* Response Header - Dark Premium */}
+      <div className="px-6 py-4 border-b border-gray-800/50">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center gap-2">
-              <h3 className="text-sm font-medium text-gray-900">Response</h3>
-              <span className={`text-xs font-mono px-2 py-1 rounded font-medium ${getStatusColor(response.status)}`}>
+          <div className="flex items-center space-x-6">
+            <div className="flex items-center gap-3">
+              <h3 className="text-sm font-medium text-white">Response</h3>
+              <span className={`text-xs font-mono px-3 py-1.5 rounded-lg font-medium border ${getStatusColor(response.status).replace('bg-', 'bg-').replace('text-', 'text-').replace('100', '500/20').replace('800', '400')} border-current/30`}>
                 {response.status} {response.statusText}
               </span>
             </div>
-            <div className="flex items-center gap-4 text-xs text-gray-500">
-              <div className="flex items-center gap-1">
-                <span className="font-medium">Time:</span>
+            <div className="flex items-center gap-6 text-xs text-gray-400">
+              <div className="flex items-center gap-2">
+                <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
                 <span className="font-mono">{response.time}ms</span>
               </div>
-              <div className="flex items-center gap-1">
-                <span className="font-medium">Size:</span>
+              <div className="flex items-center gap-2">
+                <div className="h-2 w-2 bg-purple-500 rounded-full"></div>
                 <span className="font-mono">{formatBytes(response.size || 0)}</span>
               </div>
             </div>
           </div>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             {request && <CodeGenerationPanel request={request} />}
             <button
               onClick={() => copyToClipboard(formatResponseData(response.data))}
-              className="h-8 text-xs px-3 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded border border-gray-300 transition-colors"
+              className="h-9 text-xs px-4 text-gray-300 hover:text-white hover:bg-gray-800/50 rounded-lg border border-gray-700/50 transition-all duration-200"
             >
-              <Copy className="h-3 w-3 mr-1" />
+              <Copy className="h-3 w-3 mr-2" />
               {copied ? 'Copied!' : 'Copy'}
             </button>
             <button 
               onClick={downloadResponse}
-              className="h-8 text-xs px-3 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded border border-gray-300 transition-colors"
+              className="h-9 text-xs px-4 text-gray-300 hover:text-white hover:bg-gray-800/50 rounded-lg border border-gray-700/50 transition-all duration-200"
             >
-              <Download className="h-3 w-3 mr-1" />
+              <Download className="h-3 w-3 mr-2" />
               Save
             </button>
           </div>
         </div>
       </div>
       
-      {/* Response Content - Postman Style */}
-      <div className="flex-1 overflow-hidden">
+      {/* Response Content - Dark Premium */}
+      <div className="flex-1 overflow-hidden bg-[#111]">
         <Tabs defaultValue="body" className="w-full h-full flex flex-col">
-          <div className="border-b border-gray-200">
-            <TabsList className="grid w-full grid-cols-3 h-10 bg-transparent p-0 border-b-0">
-              <TabsTrigger value="body" className="text-sm data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-orange-500 data-[state=active]:text-orange-600 border-b-2 border-transparent rounded-none transition-all">
+          <div className="border-b border-gray-800/50 bg-[#1a1a1a]/30">
+            <TabsList className="grid w-full grid-cols-3 h-12 bg-transparent p-0 border-b-0">
+              <TabsTrigger value="body" className="text-sm data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-blue-500 data-[state=active]:text-blue-400 border-b-2 border-transparent rounded-none transition-all text-gray-400 hover:text-white">
                 Body
               </TabsTrigger>
-              <TabsTrigger value="headers" className="text-sm data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-orange-500 data-[state=active]:text-orange-600 border-b-2 border-transparent rounded-none transition-all">
+              <TabsTrigger value="headers" className="text-sm data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-blue-500 data-[state=active]:text-blue-400 border-b-2 border-transparent rounded-none transition-all text-gray-400 hover:text-white">
                 Headers
-                <span className="ml-1 text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
+                <span className="ml-2 text-xs bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded border border-blue-500/30">
                   {Object.keys(response.headers || {}).length}
                 </span>
               </TabsTrigger>
-              <TabsTrigger value="test" className="text-sm data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-orange-500 data-[state=active]:text-orange-600 border-b-2 border-transparent rounded-none transition-all">
+              <TabsTrigger value="test" className="text-sm data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-blue-500 data-[state=active]:text-blue-400 border-b-2 border-transparent rounded-none transition-all text-gray-400 hover:text-white">
                 Test Results
               </TabsTrigger>
             </TabsList>
           </div>
           
-          <TabsContent value="body" className="flex-1 p-4 overflow-y-auto">
-            <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50">
-              <div className="px-3 py-2 bg-gray-100 border-b border-gray-200 flex items-center justify-between">
-                <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">
+          <TabsContent value="body" className="flex-1 p-6 overflow-y-auto">
+            <div className="border border-gray-700/50 rounded-xl overflow-hidden bg-gray-800/30 backdrop-blur-sm">
+              <div className="px-4 py-3 bg-gray-800/50 border-b border-gray-700/50 flex items-center justify-between">
+                <span className="text-xs font-medium text-gray-300 uppercase tracking-wide flex items-center gap-2">
+                  <div className="h-2 w-2 bg-emerald-500 rounded-full"></div>
                   {getContentType()}
                 </span>
-                <div className="flex items-center gap-2">
-                  <button className="text-xs text-gray-500 hover:text-gray-700">Pretty</button>
-                  <button className="text-xs text-gray-500 hover:text-gray-700">Raw</button>
-                  <button className="text-xs text-gray-500 hover:text-gray-700">Preview</button>
+                <div className="flex items-center gap-3">
+                  <button className="text-xs text-gray-400 hover:text-white bg-gray-700/50 px-2 py-1 rounded transition-all duration-200">Pretty</button>
+                  <button className="text-xs text-gray-400 hover:text-white hover:bg-gray-700/50 px-2 py-1 rounded transition-all duration-200">Raw</button>
+                  <button className="text-xs text-gray-400 hover:text-white hover:bg-gray-700/50 px-2 py-1 rounded transition-all duration-200">Preview</button>
                 </div>
               </div>
-              <div className="p-4 bg-white max-h-96 overflow-auto">
-                {renderFormattedContent(response.data, getContentType())}
+              <div className="p-6 bg-gray-900/50 max-h-96 overflow-auto">
+                <div className="text-xs text-gray-300 font-mono leading-relaxed">
+                  {renderFormattedContent(response.data, getContentType())}
+                </div>
               </div>
             </div>
           </TabsContent>
           
-          <TabsContent value="headers" className="flex-1 p-4 overflow-y-auto">
-            <div className="space-y-0 border border-gray-200 rounded-lg overflow-hidden">
-              <div className="bg-gray-50 px-4 py-2 border-b border-gray-200">
-                <div className="grid grid-cols-2 gap-4 text-xs font-medium text-gray-600 uppercase tracking-wide">
+          <TabsContent value="headers" className="flex-1 p-6 overflow-y-auto">
+            <div className="space-y-0 border border-gray-700/50 rounded-xl overflow-hidden">
+              <div className="bg-gray-800/50 px-6 py-3 border-b border-gray-700/50">
+                <div className="grid grid-cols-2 gap-6 text-xs font-medium text-gray-300 uppercase tracking-wide">
                   <div>Key</div>
                   <div>Value</div>
                 </div>
               </div>
-              <div className="divide-y divide-gray-200">
+              <div className="divide-y divide-gray-700/50">
                 {Object.entries(response.headers || {}).map(([key, value]) => (
-                  <div key={key} className="grid grid-cols-2 gap-4 px-4 py-3 bg-white hover:bg-gray-50">
-                    <div className="text-sm font-medium text-gray-900 font-mono break-all">{key}</div>
-                    <div className="text-sm text-gray-600 font-mono break-all">{value}</div>
+                  <div key={key} className="grid grid-cols-2 gap-6 px-6 py-4 bg-gray-800/20 hover:bg-gray-800/40 transition-all duration-200">
+                    <div className="text-sm font-medium text-blue-400 font-mono break-all">{key}</div>
+                    <div className="text-sm text-gray-300 font-mono break-all">{value}</div>
                   </div>
                 ))}
               </div>
             </div>
           </TabsContent>
           
-          <TabsContent value="test" className="flex-1 p-4">
-            <div className="text-center py-12 text-gray-500">
-              <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Check className="h-6 w-6 text-gray-400" />
+          <TabsContent value="test" className="flex-1 p-6">
+            <div className="text-center py-16 text-gray-500">
+              <div className="w-16 h-16 bg-gray-800/50 rounded-xl flex items-center justify-center mx-auto mb-6 border border-gray-700/50">
+                <Check className="h-8 w-8 text-gray-400" />
               </div>
-              <h3 className="text-sm font-medium text-gray-700 mb-2">No tests defined</h3>
-              <p className="text-sm text-gray-500">
-                You can write tests for this request in the Tests tab
+              <h3 className="text-base font-medium text-white mb-3">No tests configured</h3>
+              <p className="text-sm text-gray-400 max-w-sm mx-auto">
+                Write test scripts to validate your API responses automatically
               </p>
+              <button className="mt-6 h-9 text-sm px-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white rounded-lg transition-all duration-200 shadow-lg hover:shadow-blue-500/25">
+                Add Test
+              </button>
             </div>
           </TabsContent>
         </Tabs>
