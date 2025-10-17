@@ -121,10 +121,10 @@ export default function CollectionsSidebar({
   )
 
   return (
-    <div className="w-64 border-r border-gray-200 bg-gray-50 h-full flex flex-col">
+    <div className="w-64 border-r border-gray-200 bg-white h-full flex flex-col">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-gray-200 bg-white">
-        <div className="flex items-center justify-between">
+      <div className="px-4 py-4">
+        <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-semibold text-gray-900">Collections</h2>
           <Dialog open={newCollectionDialog} onOpenChange={setNewCollectionDialog}>
             <DialogTrigger asChild>
@@ -156,23 +156,21 @@ export default function CollectionsSidebar({
             </DialogContent>
           </Dialog>
         </div>
-      </div>
 
-      {/* Search */}
-      <div className="px-4 py-3 bg-white border-b border-gray-200">
+        {/* Search */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
             placeholder="Search..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 h-8 text-sm border-gray-300 bg-gray-50 focus:bg-white focus:border-gray-400 focus:ring-0"
+            className="pl-9 h-8 text-sm border-gray-300 bg-white focus:border-gray-400 focus:ring-0"
           />
         </div>
       </div>
 
       {/* Collections List */}
-      <div className="flex-1 overflow-y-auto bg-gray-50">
+      <div className="flex-1 overflow-y-auto bg-white">
         <div className="py-2">
           {filteredCollections.map(collection => {
             const isExpanded = expandedCollections.has(collection.id)
