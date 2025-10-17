@@ -529,20 +529,20 @@ export default function Playground() {
 
           {/* Collapsed Sidebar Icons */}
           {sidebarCollapsed && (
-            <div className="p-2 flex flex-col items-center gap-2 mt-16">
+            <div className="p-3 flex flex-col items-center gap-3 mt-16">
               <button
                 onClick={() => setSidebarCollapsed(false)}
-                className={`w-10 h-10 rounded transition-all duration-200 flex items-center justify-center ${themeClasses.button.ghost}`}
+                className={`w-12 h-12 rounded transition-all duration-200 flex items-center justify-center ${themeClasses.button.ghost}`}
                 title="Collections"
               >
-                <FolderOpen className="h-4 w-4" />
+                <FolderOpen className="h-5 w-5" />
               </button>
               <button
                 onClick={() => setSidebarCollapsed(false)}
-                className={`w-10 h-10 rounded transition-all duration-200 flex items-center justify-center ${themeClasses.button.ghost}`}
+                className={`w-12 h-12 rounded transition-all duration-200 flex items-center justify-center ${themeClasses.button.ghost}`}
                 title="History"
               >
-                <History className="h-4 w-4" />
+                <History className="h-5 w-5" />
               </button>
             </div>
           )}

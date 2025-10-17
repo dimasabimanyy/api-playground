@@ -81,10 +81,10 @@ export default function RequestPanel({
     <div className={`flex-1 h-full flex flex-col border-r transition-all duration-300 ${themeClasses.border.primary} ${themeClasses.bg.glass}`}>
       {/* URL Bar Section - Theme Aware */}
       <div className={`p-6 border-b ${themeClasses.border.primary}`}>
-        <div className="flex items-center gap-3 mb-4">
+        <div className="flex items-stretch gap-3 mb-4">
           <div className="w-24">
             <Select value={request.method} onValueChange={(value) => updateRequest('method', value)}>
-              <SelectTrigger className={`h-10 text-sm rounded-lg transition-all backdrop-blur-sm ${themeClasses.input.base}`}>
+              <SelectTrigger className={`h-10 text-sm rounded transition-all backdrop-blur-sm ${themeClasses.input.base} flex items-center justify-between px-3`}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className={`${isDark ? 'border-gray-700 bg-gray-800 text-white' : 'border-gray-200 bg-white text-gray-900'}`}>
@@ -99,7 +99,7 @@ export default function RequestPanel({
               </SelectContent>
             </Select>
           </div>
-          <div className="flex-1 relative">
+          <div className="flex-1">
             <Input
               placeholder="https://api.example.com/endpoint"
               value={request.url}
@@ -194,8 +194,8 @@ export default function RequestPanel({
         {/* Request Configuration Tabs - Theme Aware */}
         <div>
           <Tabs defaultValue="headers" className="w-full">
-            <div className={`border-b ${themeClasses.border.primary} ${themeClasses.bg.secondary}`}>
-              <TabsList className="grid w-full grid-cols-4 h-9 bg-transparent p-0 border-b-0">
+            <div className={`border-b ${themeClasses.border.primary}`}>
+              <TabsList className="grid w-full grid-cols-4 h-8 bg-transparent p-0 border-b-0">
                 <TabsTrigger value="params" className={`text-xs data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:${themeClasses.border.accent.replace('border-', 'border-b-')} data-[state=active]:${themeClasses.text.accent} border-b-2 border-transparent rounded-none transition-all ${themeClasses.tab.inactive}`}>
                   Params
                 </TabsTrigger>
@@ -247,13 +247,13 @@ export default function RequestPanel({
                     placeholder="Content-Type"
                     value={newHeaderKey}
                     onChange={(e) => setNewHeaderKey(e.target.value)}
-                    className={`col-span-5 h-9 text-sm rounded-lg transition-all backdrop-blur-sm ${themeClasses.input.base}`}
+                    className={`col-span-5 h-9 text-sm rounded transition-all backdrop-blur-sm ${themeClasses.input.base}`}
                   />
                   <Input
                     placeholder="application/json"
                     value={newHeaderValue}
                     onChange={(e) => setNewHeaderValue(e.target.value)}
-                    className={`col-span-6 h-9 text-sm rounded-lg transition-all backdrop-blur-sm ${themeClasses.input.base}`}
+                    className={`col-span-6 h-9 text-sm rounded transition-all backdrop-blur-sm ${themeClasses.input.base}`}
                   />
                   <Button 
                     variant="ghost" 

@@ -196,7 +196,7 @@ export default function ResponsePanel({ response, loading, request }) {
   if (!response) {
     return (
       <div className={`flex-1 h-full flex flex-col transition-all duration-300 ${themeClasses.bg.glass}`}>
-        <div className={`px-6 py-4 border-b ${themeClasses.border.primary}`}>
+        <div className={`px-6 py-4`}>
           <h3 className={`text-sm font-medium ${themeClasses.text.primary}`}>Response</h3>
         </div>
         <div className={`flex-1 flex items-center justify-center transition-colors duration-300 ${themeClasses.bg.primary}`}>

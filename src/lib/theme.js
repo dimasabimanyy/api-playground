@@ -30,10 +30,10 @@ export const getThemeClasses = (isDark) => ({
   // Input/form styles
   input: {
     base: isDark 
-      ? 'border-0 bg-gray-800/50 text-white placeholder-gray-400 focus:bg-gray-800/80 focus:ring-1 focus:ring-blue-500/50' 
-      : 'border border-gray-200/80 bg-white/80 text-gray-800 placeholder-gray-500 focus:border-blue-400/60 focus:ring-1 focus:ring-blue-400/30',
+      ? 'border border-gray-700/50 bg-gray-800/50 text-white placeholder-gray-400 focus:bg-gray-800/80 focus:border-blue-500/80 focus:ring-0 transition-all duration-200' 
+      : 'border border-gray-300/60 bg-white/90 text-gray-800 placeholder-gray-500 focus:border-blue-500/80 focus:ring-0 transition-all duration-200',
     disabled: isDark 
-      ? 'bg-gray-700/50 border-0 text-gray-300' 
+      ? 'bg-gray-700/50 border-gray-700/50 text-gray-300' 
       : 'bg-gray-100/60 border-gray-200/60 text-gray-600',
   },
   
