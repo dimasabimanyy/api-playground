@@ -258,12 +258,15 @@ export default function Playground() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="border-b border-gray-200 bg-white h-14 flex items-center px-6 relative">
-        <div className="flex items-center space-x-3 min-w-0 flex-shrink-0">
-          <div className="h-8 w-8 rounded bg-green-600 flex items-center justify-center">
-            <Zap className="h-4 w-4 text-white" />
+      <header className="border-b border-gray-200 bg-white h-16 flex items-center px-6 relative shadow-sm">
+        <div className="flex items-center space-x-4 min-w-0 flex-shrink-0">
+          <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-green-600 to-green-700 flex items-center justify-center shadow-sm">
+            <Zap className="h-5 w-5 text-white" />
+          </div>
+          <div className="hidden sm:block">
+            <h1 className="text-lg font-semibold text-gray-900">API Playground</h1>
           </div>
         </div>
         
@@ -275,30 +278,30 @@ export default function Playground() {
               placeholder="Search requests and collections..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 h-8 w-80 text-sm border-gray-300 bg-white focus:border-green-500 focus:ring-0"
+              className="pl-9 h-9 w-96 text-sm border-gray-200 bg-gray-50 focus:border-green-500 focus:ring-2 focus:ring-green-100 focus:bg-white rounded-lg transition-all duration-200"
             />
           </div>
         </div>
         
         {showShared && (
-          <div className="absolute top-1/2 transform -translate-y-1/2 left-1/2 translate-x-48 text-sm text-blue-700 bg-blue-50 px-3 py-1 rounded-md border border-blue-200">
+          <div className="absolute top-1/2 transform -translate-y-1/2 left-1/2 translate-x-52 text-sm text-blue-700 bg-blue-50 px-3 py-2 rounded-lg border border-blue-200 shadow-sm">
             Shared request loaded
           </div>
         )}
         
-        <div className="flex items-center space-x-3 ml-auto">
+        <div className="flex items-center space-x-4 ml-auto">
           {/* REST/GraphQL Toggle */}
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="h-8 bg-gray-100">
-              <TabsTrigger value="rest" className="text-sm px-4 data-[state=active]:bg-white">REST</TabsTrigger>
-              <TabsTrigger value="graphql" disabled className="text-sm px-4 text-gray-400">GraphQL</TabsTrigger>
+            <TabsList className="h-9 bg-gray-100 p-1 rounded-lg">
+              <TabsTrigger value="rest" className="text-sm px-4 py-1 font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-md">REST</TabsTrigger>
+              <TabsTrigger value="graphql" disabled className="text-sm px-4 py-1 text-gray-400 rounded-md">GraphQL</TabsTrigger>
             </TabsList>
           </Tabs>
           <div className="h-6 w-px bg-gray-200" />
           <Button 
             variant="outline" 
             size="sm"
-            className="h-8 px-4 text-sm border-gray-300 hover:bg-gray-50"
+            className="h-9 px-6 text-sm font-medium border-gray-200 hover:bg-gray-50 rounded-lg transition-all duration-200"
           >
             Sign in
           </Button>
@@ -306,9 +309,9 @@ export default function Playground() {
       </header>
 
       {/* Main Content Layout */}
-      <div className="flex h-[calc(100vh-3.5rem)]">
+      <div className="flex h-[calc(100vh-4rem)]">
         {/* Menu Sidebar */}
-        <div className="group w-14 hover:w-48 border-r border-gray-200 bg-white flex flex-col transition-all duration-200 ease-in-out">
+        <div className="group w-14 hover:w-48 border-r border-gray-800/20 bg-gray-900 flex flex-col transition-all duration-300 ease-out">
           <div className="flex-1 py-3">
             <div className="space-y-1">
               <Button
@@ -323,15 +326,15 @@ export default function Playground() {
                     setShowHistory(false)
                   }
                 }}
-                className={`w-full h-10 mx-2 px-2 justify-start rounded-md transition-colors cursor-pointer ${
+                className={`w-full h-10 mx-2 px-2 justify-start rounded-lg transition-all duration-200 cursor-pointer ${
                   activeMenuTab === 'collections' && !sidebarCollapsed
-                    ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                    ? 'bg-green-600 text-white hover:bg-green-700 shadow-sm'
+                    : 'text-gray-400 hover:text-white hover:bg-gray-800'
                 }`}
                 style={{ width: 'calc(100% - 1rem)' }}
               >
                 <FolderOpen className="h-4 w-4 flex-shrink-0" />
-                <span className="ml-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap text-sm font-medium">
+                <span className="ml-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap text-sm font-medium">
                   Collections
                 </span>
               </Button>
@@ -347,15 +350,15 @@ export default function Playground() {
                     setShowHistory(false)
                   }
                 }}
-                className={`w-full h-10 mx-2 px-2 justify-start rounded-md transition-colors cursor-pointer ${
+                className={`w-full h-10 mx-2 px-2 justify-start rounded-lg transition-all duration-200 cursor-pointer ${
                   activeMenuTab === 'history' && !sidebarCollapsed
-                    ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                    ? 'bg-green-600 text-white hover:bg-green-700 shadow-sm'
+                    : 'text-gray-400 hover:text-white hover:bg-gray-800'
                 }`}
                 style={{ width: 'calc(100% - 1rem)' }}
               >
                 <History className="h-4 w-4 flex-shrink-0" />
-                <span className="ml-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap text-sm font-medium">
+                <span className="ml-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap text-sm font-medium">
                   History
                 </span>
               </Button>
@@ -371,15 +374,15 @@ export default function Playground() {
                     setShowHistory(false)
                   }
                 }}
-                className={`w-full h-10 mx-2 px-2 justify-start rounded-md transition-colors cursor-pointer ${
+                className={`w-full h-10 mx-2 px-2 justify-start rounded-lg transition-all duration-200 cursor-pointer ${
                   activeMenuTab === 'environments' && !sidebarCollapsed
-                    ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                    ? 'bg-green-600 text-white hover:bg-green-700 shadow-sm'
+                    : 'text-gray-400 hover:text-white hover:bg-gray-800'
                 }`}
                 style={{ width: 'calc(100% - 1rem)' }}
               >
                 <Globe className="h-4 w-4 flex-shrink-0" />
-                <span className="ml-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap text-sm font-medium">
+                <span className="ml-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap text-sm font-medium">
                   Environments
                 </span>
               </Button>
@@ -395,15 +398,15 @@ export default function Playground() {
                     setShowHistory(false)
                   }
                 }}
-                className={`w-full h-10 mx-2 px-2 justify-start rounded-md transition-colors cursor-pointer ${
+                className={`w-full h-10 mx-2 px-2 justify-start rounded-lg transition-all duration-200 cursor-pointer ${
                   activeMenuTab === 'settings' && !sidebarCollapsed
-                    ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                    ? 'bg-green-600 text-white hover:bg-green-700 shadow-sm'
+                    : 'text-gray-400 hover:text-white hover:bg-gray-800'
                 }`}
                 style={{ width: 'calc(100% - 1rem)' }}
               >
                 <Settings className="h-4 w-4 flex-shrink-0" />
-                <span className="ml-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap text-sm font-medium">
+                <span className="ml-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap text-sm font-medium">
                   Settings
                 </span>
               </Button>
@@ -524,31 +527,31 @@ export default function Playground() {
         {/* Main Testing Area */}
         <div className="flex-1 flex flex-col">
           {/* Request Tabs */}
-          <div className="border-b border-gray-200 bg-white">
-            <div className="flex items-start">
-              <div className="flex-1 flex items-center overflow-x-auto scrollbar-hide">
+          <div className="bg-gray-50 border-b border-gray-200">
+            <div className="flex items-center justify-between px-6">
+              <div className="flex items-center overflow-x-auto scrollbar-hide">
                 {requestTabs.map((tab) => (
                   <div
                     key={tab.id}
-                    className={`flex items-center gap-2 px-4 py-3 border-r border-gray-200 cursor-pointer min-w-0 group ${
+                    className={`flex items-center gap-3 px-4 py-3 cursor-pointer min-w-0 group relative ${
                       tab.id === activeTabId
-                        ? 'bg-white border-b-2 border-b-green-500'
-                        : 'bg-gray-50 hover:bg-gray-100'
+                        ? 'bg-white text-gray-900 shadow-sm border-t-2 border-t-green-500'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
                     }`}
                     onClick={() => setActiveTabId(tab.id)}
                   >
-                    <span className={`text-xs font-mono px-1.5 py-0.5 rounded flex-shrink-0 ${
-                      tab.request.method === 'GET' ? 'text-green-600 bg-green-100' :
-                      tab.request.method === 'POST' ? 'text-blue-600 bg-blue-100' :
-                      tab.request.method === 'PUT' ? 'text-orange-600 bg-orange-100' :
-                      tab.request.method === 'DELETE' ? 'text-red-600 bg-red-100' :
-                      'text-gray-600 bg-gray-100'
+                    <span className={`text-xs font-semibold px-2 py-1 rounded-md flex-shrink-0 ${
+                      tab.request.method === 'GET' ? 'text-emerald-700 bg-emerald-50 border border-emerald-200' :
+                      tab.request.method === 'POST' ? 'text-blue-700 bg-blue-50 border border-blue-200' :
+                      tab.request.method === 'PUT' ? 'text-amber-700 bg-amber-50 border border-amber-200' :
+                      tab.request.method === 'DELETE' ? 'text-red-700 bg-red-50 border border-red-200' :
+                      'text-gray-700 bg-gray-50 border border-gray-200'
                     }`}>
                       {tab.request.method}
                     </span>
-                    <span className={`text-sm truncate min-w-0 ${tab.isModified ? 'italic' : ''}`}>
+                    <span className={`text-sm font-medium truncate min-w-0 ${tab.isModified ? 'text-orange-600' : ''}`}>
                       {tab.name}
-                      {tab.isModified && ' *'}
+                      {tab.isModified && <span className="text-orange-500 ml-1">•</span>}
                     </span>
                     {requestTabs.length > 1 && (
                       <Button
@@ -558,7 +561,7 @@ export default function Playground() {
                           e.stopPropagation()
                           closeTab(tab.id)
                         }}
-                        className="h-4 w-4 p-0 opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-gray-600 flex-shrink-0"
+                        className="h-5 w-5 p-0 opacity-0 group-hover:opacity-100 transition-all duration-200 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md flex-shrink-0"
                       >
                         <X className="h-3 w-3" />
                       </Button>
@@ -569,14 +572,14 @@ export default function Playground() {
                   variant="ghost"
                   size="sm"
                   onClick={createNewTab}
-                  className="h-8 w-8 p-0 m-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 flex-shrink-0"
+                  className="h-8 w-8 p-0 mx-2 text-gray-400 hover:text-gray-700 hover:bg-white rounded-lg transition-all duration-200 flex-shrink-0"
                 >
                   <Plus className="h-4 w-4" />
                 </Button>
               </div>
-              <div className="flex items-center px-4 py-3">
+              <div className="flex items-center py-3">
                 {request.url && (
-                  <Button size="sm" onClick={handleSaveRequest} className="h-8 text-sm px-4 bg-green-600 hover:bg-green-700 text-white">
+                  <Button size="sm" onClick={handleSaveRequest} className="h-9 text-sm px-6 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg shadow-sm transition-all duration-200">
                     {currentTab?.collectionRequestId ? 'Update' : 'Save'}
                   </Button>
                 )}

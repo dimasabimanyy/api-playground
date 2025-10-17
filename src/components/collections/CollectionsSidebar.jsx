@@ -121,34 +121,35 @@ export default function CollectionsSidebar({
   )
 
   return (
-    <div className="w-64 border-r border-gray-200 bg-white h-full flex flex-col">
+    <div className="w-80 border-r border-gray-200 bg-gray-50 h-full flex flex-col">
       {/* Header */}
-      <div className="px-4 py-4">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-sm font-semibold text-gray-900">Collections</h2>
+      <div className="px-6 py-6 bg-white border-b border-gray-200">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-lg font-semibold text-gray-900">Collections</h2>
           <Dialog open={newCollectionDialog} onOpenChange={setNewCollectionDialog}>
             <DialogTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-gray-500 hover:text-gray-700">
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-all duration-200">
                 <FolderPlus className="h-4 w-4" />
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="sm:max-w-md">
               <DialogHeader>
-                <DialogTitle>Create Collection</DialogTitle>
+                <DialogTitle className="text-lg font-semibold">Create Collection</DialogTitle>
               </DialogHeader>
-              <div className="space-y-3">
+              <div className="space-y-4 pt-4">
                 <div>
                   <Input
                     placeholder="Collection name"
                     value={newCollectionName}
                     onChange={(e) => setNewCollectionName(e.target.value)}
+                    className="h-10 text-sm border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-100 rounded-lg"
                   />
                 </div>
-                <div className="flex justify-end gap-2">
-                  <Button variant="outline" onClick={() => setNewCollectionDialog(false)}>
+                <div className="flex justify-end gap-3 pt-2">
+                  <Button variant="outline" onClick={() => setNewCollectionDialog(false)} className="px-4 py-2 rounded-lg border-gray-200">
                     Cancel
                   </Button>
-                  <Button onClick={handleCreateCollection} disabled={!newCollectionName.trim()}>
+                  <Button onClick={handleCreateCollection} disabled={!newCollectionName.trim()} className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg">
                     Create
                   </Button>
                 </div>
@@ -161,59 +162,64 @@ export default function CollectionsSidebar({
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
-            placeholder="Search..."
+            placeholder="Search collections..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 h-8 text-sm border-gray-300 bg-white focus:border-gray-400 focus:ring-0"
+            className="pl-9 h-10 text-sm border-gray-200 bg-gray-50 focus:border-green-500 focus:ring-2 focus:ring-green-100 focus:bg-white rounded-lg transition-all duration-200"
           />
         </div>
       </div>
 
       {/* Collections List */}
-      <div className="flex-1 overflow-y-auto bg-white">
-        <div className="py-2">
+      <div className="flex-1 overflow-y-auto">
+        <div className="p-3 space-y-2">
           {filteredCollections.map(collection => {
             const isExpanded = expandedCollections.has(collection.id)
             return (
-              <div key={collection.id}>
+              <div key={collection.id} className="bg-white rounded-lg border border-gray-200 shadow-sm">
                 {/* Collection Header */}
-                <div className="group flex items-center px-3 py-1 mx-2 rounded hover:bg-white/50 transition-colors">
+                <div className="group flex items-center px-4 py-3 cursor-pointer hover:bg-gray-50 transition-all duration-200">
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-6 w-6 p-0 mr-1 hover:bg-gray-200"
-                    onClick={() => toggleCollectionExpansion(collection.id)}
+                    className="h-6 w-6 p-0 mr-3 hover:bg-gray-200 rounded-md transition-all duration-200"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      toggleCollectionExpansion(collection.id)
+                    }}
                   >
                     {isExpanded ? (
-                      <ChevronDown className="h-3 w-3 text-gray-500" />
+                      <ChevronDown className="h-4 w-4 text-gray-600" />
                     ) : (
-                      <ChevronRight className="h-3 w-3 text-gray-500" />
+                      <ChevronRight className="h-4 w-4 text-gray-600" />
                     )}
                   </Button>
                   
                   <div
-                    className="flex items-center justify-between flex-1 min-w-0 cursor-pointer py-1"
+                    className="flex items-center justify-between flex-1 min-w-0"
                     onClick={() => handleCollectionSelect(collection.id)}
                   >
-                    <div className="flex items-center space-x-2 flex-1 min-w-0">
-                      <div className="text-gray-500">
+                    <div className="flex items-center space-x-3 flex-1 min-w-0">
+                      <div className="text-gray-600">
                         {getCollectionIcon(collection, isExpanded)}
                       </div>
-                      <span className={`text-sm truncate ${
-                        activeCollectionId === collection.id ? 'text-gray-900 font-medium' : 'text-gray-700'
-                      }`}>
-                        {collection.name}
-                      </span>
-                      <span className="text-xs text-gray-400">
-                        {collection.requests.length}
-                      </span>
+                      <div className="flex-1 min-w-0">
+                        <span className={`text-sm font-medium truncate block ${ 
+                          activeCollectionId === collection.id ? 'text-green-700' : 'text-gray-900'
+                        }`}>
+                          {collection.name}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          {collection.requests.length} {collection.requests.length === 1 ? 'request' : 'requests'}
+                        </span>
+                      </div>
                     </div>
                     
                     {collection.id !== 'examples' && (
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-5 w-5 p-0 opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-500"
+                        className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 transition-all duration-200 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md"
                         onClick={(e) => {
                           e.stopPropagation()
                           handleDeleteCollection(collection.id)
@@ -227,38 +233,47 @@ export default function CollectionsSidebar({
 
                 {/* Requests List */}
                 {isExpanded && collection.requests.length > 0 && (
-                  <div className="ml-8 mr-2 space-y-px">
-                    {collection.requests.map(request => (
-                      <div
-                        key={request.id}
-                        className={`flex items-center px-2 py-1.5 rounded cursor-pointer transition-colors ${
-                          activeRequestId === request.id
-                            ? 'bg-blue-100 text-blue-900'
-                            : 'text-gray-600 hover:bg-white/50'
-                        }`}
-                        onClick={() => onRequestSelect?.(request)}
-                      >
-                        <div className="flex items-center space-x-2 flex-1 min-w-0">
-                          <span className={`text-xs font-mono px-1.5 py-0.5 rounded ${
-                            request.method === 'GET' ? 'text-green-600 bg-green-100' :
-                            request.method === 'POST' ? 'text-blue-600 bg-blue-100' :
-                            request.method === 'PUT' ? 'text-orange-600 bg-orange-100' :
-                            request.method === 'DELETE' ? 'text-red-600 bg-red-100' :
-                            'text-gray-600 bg-gray-100'
-                          }`}>
-                            {request.method}
-                          </span>
-                          <span className="text-sm truncate">{request.name}</span>
+                  <div className="px-4 pb-3 border-t border-gray-100">
+                    <div className="space-y-1 pt-2">
+                      {collection.requests.map(request => (
+                        <div
+                          key={request.id}
+                          className={`flex items-center px-3 py-2 rounded-lg cursor-pointer transition-all duration-200 group ${
+                            activeRequestId === request.id
+                              ? 'bg-green-50 border border-green-200'
+                              : 'hover:bg-gray-50 border border-transparent'
+                          }`}
+                          onClick={() => onRequestSelect?.(request)}
+                        >
+                          <div className="flex items-center space-x-3 flex-1 min-w-0">
+                            <span className={`text-xs font-semibold px-2 py-1 rounded-md ${
+                              request.method === 'GET' ? 'text-emerald-700 bg-emerald-50 border border-emerald-200' :
+                              request.method === 'POST' ? 'text-blue-700 bg-blue-50 border border-blue-200' :
+                              request.method === 'PUT' ? 'text-amber-700 bg-amber-50 border border-amber-200' :
+                              request.method === 'DELETE' ? 'text-red-700 bg-red-50 border border-red-200' :
+                              'text-gray-700 bg-gray-50 border border-gray-200'
+                            }`}>
+                              {request.method}
+                            </span>
+                            <span className={`text-sm font-medium truncate ${
+                              activeRequestId === request.id ? 'text-green-900' : 'text-gray-700'
+                            }`}>
+                              {request.name}
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 )}
 
                 {/* Empty state */}
                 {isExpanded && collection.requests.length === 0 && (
-                  <div className="ml-8 mr-2 py-2 text-center">
-                    <p className="text-xs text-gray-400">No requests</p>
+                  <div className="px-4 pb-3 border-t border-gray-100">
+                    <div className="py-4 text-center">
+                      <p className="text-sm text-gray-500">No requests yet</p>
+                      <p className="text-xs text-gray-400 mt-1">Create your first API request</p>
+                    </div>
                   </div>
                 )}
               </div>
