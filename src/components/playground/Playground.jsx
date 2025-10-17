@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { Share2, History, BookOpen, Check, Copy, PanelLeftOpen, PanelLeftClose, Zap, FolderOpen, User, Settings, Globe, Search } from 'lucide-react'
+import { Share2, History, BookOpen, Check, Copy, PanelLeftOpen, PanelLeftClose, Zap, FolderOpen, User, Settings, Globe, Search, Plus, X } from 'lucide-react'
 import RequestPanel from './RequestPanel'
 import ResponsePanel from './ResponsePanel'
 import HistoryPanel from './HistoryPanel'
@@ -17,15 +17,25 @@ import { getActiveCollectionId, getCollection, addRequestToCollection, updateReq
 import CollectionsSidebar from '@/components/collections/CollectionsSidebar'
 
 export default function Playground() {
-  const [request, setRequest] = useState({
-    method: 'GET',
-    url: 'https://jsonplaceholder.typicode.com/posts/1',
-    headers: {},
-    body: ''
-  })
+  // Request tabs state
+  const [requestTabs, setRequestTabs] = useState([
+    {
+      id: '1',
+      name: 'Untitled',
+      request: {
+        method: 'GET',
+        url: 'https://jsonplaceholder.typicode.com/posts/1',
+        headers: {},
+        body: ''
+      },
+      response: null,
+      loading: false,
+      collectionRequestId: null,
+      isModified: false
+    }
+  ])
+  const [activeTabId, setActiveTabId] = useState('1')
   
-  const [response, setResponse] = useState(null)
-  const [loading, setLoading] = useState(false)
   const [activeTab, setActiveTab] = useState('rest')
   const [shareUrl, setShareUrl] = useState('')
   const [showShared, setShowShared] = useState(false)
@@ -33,17 +43,61 @@ export default function Playground() {
   const [shareDialogOpen, setShareDialogOpen] = useState(false)
   const [copySuccess, setCopySuccess] = useState(false)
   const [activeCollectionId, setActiveCollectionId] = useState('my-apis')
-  const [activeRequestId, setActiveRequestId] = useState(null)
-  const [currentRequestName, setCurrentRequestName] = useState('')
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [activeMenuTab, setActiveMenuTab] = useState('collections')
   const [searchQuery, setSearchQuery] = useState('')
+
+  // Helper functions for tab management
+  const getCurrentTab = () => requestTabs.find(tab => tab.id === activeTabId)
+  
+  const updateCurrentTab = (updates) => {
+    setRequestTabs(tabs => tabs.map(tab => 
+      tab.id === activeTabId 
+        ? { ...tab, ...updates, isModified: true }
+        : tab
+    ))
+  }
+
+  const createNewTab = () => {
+    const newTabId = Date.now().toString()
+    const newTab = {
+      id: newTabId,
+      name: 'Untitled',
+      request: {
+        method: 'GET',
+        url: '',
+        headers: {},
+        body: ''
+      },
+      response: null,
+      loading: false,
+      collectionRequestId: null,
+      isModified: false
+    }
+    setRequestTabs(tabs => [...tabs, newTab])
+    setActiveTabId(newTabId)
+  }
+
+  const closeTab = (tabId) => {
+    if (requestTabs.length === 1) return // Don't close the last tab
+    
+    setRequestTabs(tabs => {
+      const newTabs = tabs.filter(tab => tab.id !== tabId)
+      // If we're closing the active tab, switch to the previous one
+      if (tabId === activeTabId) {
+        const activeIndex = tabs.findIndex(tab => tab.id === tabId)
+        const newActiveIndex = activeIndex > 0 ? activeIndex - 1 : 0
+        setActiveTabId(newTabs[newActiveIndex].id)
+      }
+      return newTabs
+    })
+  }
 
   // Load shared request and active collection on mount
   useEffect(() => {
     const sharedRequest = getSharedRequest()
     if (sharedRequest) {
-      setRequest(sharedRequest)
+      updateCurrentTab({ request: sharedRequest })
       setShowShared(true)
       setTimeout(() => setShowShared(false), 3000)
     }
@@ -53,37 +107,36 @@ export default function Playground() {
     setActiveCollectionId(activeColId)
   }, [])
 
+  // Get current tab data
+  const currentTab = getCurrentTab()
+  const request = currentTab?.request || { method: 'GET', url: '', headers: {}, body: '' }
+  const response = currentTab?.response || null
+  const loading = currentTab?.loading || false
+
   const handleCollectionSelect = (collectionId) => {
     setActiveCollectionId(collectionId)
-    setActiveRequestId(null)
-    // Reset to empty request when switching collections
-    setRequest({
-      method: 'GET',
-      url: '',
-      headers: {},
-      body: ''
-    })
-    setCurrentRequestName('')
-    setResponse(null)
   }
 
   const handleRequestSelect = (selectedRequest) => {
-    setRequest({
-      method: selectedRequest.method,
-      url: selectedRequest.url,
-      headers: selectedRequest.headers,
-      body: selectedRequest.body
+    updateCurrentTab({
+      name: selectedRequest.name,
+      request: {
+        method: selectedRequest.method,
+        url: selectedRequest.url,
+        headers: selectedRequest.headers,
+        body: selectedRequest.body
+      },
+      response: null,
+      collectionRequestId: selectedRequest.id,
+      isModified: false
     })
-    setActiveRequestId(selectedRequest.id)
-    setCurrentRequestName(selectedRequest.name)
-    setResponse(null)
   }
 
   const handleSaveRequest = () => {
     if (!request.url) return
     
     const requestData = {
-      name: currentRequestName || `${request.method} ${new URL(request.url).pathname}`,
+      name: currentTab?.name || `${request.method} ${new URL(request.url).pathname}`,
       description: '',
       method: request.method,
       url: request.url,
@@ -92,21 +145,24 @@ export default function Playground() {
       tags: []
     }
 
-    if (activeRequestId) {
+    if (currentTab?.collectionRequestId) {
       // Update existing request
-      updateRequestInCollection(activeCollectionId, activeRequestId, requestData)
+      updateRequestInCollection(activeCollectionId, currentTab.collectionRequestId, requestData)
     } else {
       // Create new request
       const newRequest = addRequestToCollection(activeCollectionId, requestData)
       if (newRequest) {
-        setActiveRequestId(newRequest.id)
-        setCurrentRequestName(newRequest.name)
+        updateCurrentTab({
+          collectionRequestId: newRequest.id,
+          name: newRequest.name,
+          isModified: false
+        })
       }
     }
   }
 
   const executeRequest = async () => {
-    setLoading(true)
+    updateCurrentTab({ loading: true })
     try {
       // Process request with environment variables
       const processedRequest = processRequestWithVariables(request)
@@ -145,7 +201,7 @@ export default function Playground() {
         size: new Blob([data]).size
       }
       
-      setResponse(responseData)
+      updateCurrentTab({ response: responseData, loading: false })
       
       // Save to history
       saveToHistory(request, responseData)
@@ -156,12 +212,10 @@ export default function Playground() {
         time: 0
       }
       
-      setResponse(errorResponse)
+      updateCurrentTab({ response: errorResponse, loading: false })
       
       // Save failed requests to history too
       saveToHistory(request, errorResponse)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -184,8 +238,23 @@ export default function Playground() {
   }
 
   const handleLoadFromHistory = (historicalRequest) => {
-    setRequest(historicalRequest)
+    updateCurrentTab({ 
+      request: historicalRequest,
+      name: `${historicalRequest.method} ${historicalRequest.url}`,
+      response: null,
+      collectionRequestId: null,
+      isModified: false
+    })
     setShowHistory(false)
+  }
+
+  // Request modification handlers
+  const setRequest = (newRequest) => {
+    updateCurrentTab({ request: newRequest })
+  }
+
+  const setCurrentRequestName = (name) => {
+    updateCurrentTab({ name })
   }
 
   return (
