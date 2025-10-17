@@ -81,10 +81,10 @@ export default function RequestPanel({
     <div className={`flex-1 h-full flex flex-col border-r transition-all duration-300 ${themeClasses.border.primary} ${themeClasses.bg.glass}`}>
       {/* URL Bar Section - Theme Aware */}
       <div className={`p-6 border-b ${themeClasses.border.primary}`}>
-        <div className="flex items-stretch gap-3 mb-4">
+        <div className="flex items-center gap-3 mb-4">
           <div className="w-24">
             <Select value={request.method} onValueChange={(value) => updateRequest('method', value)}>
-              <SelectTrigger className={`h-10 text-sm rounded transition-all backdrop-blur-sm ${themeClasses.input.base} flex items-center justify-between px-3`}>
+              <SelectTrigger className={`h-10 text-sm rounded backdrop-blur-sm ${themeClasses.input.base} py-2 px-3 flex items-center justify-between`}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className={`${isDark ? 'border-gray-700 bg-gray-800 text-white' : 'border-gray-200 bg-white text-gray-900'}`}>
@@ -104,7 +104,7 @@ export default function RequestPanel({
               placeholder="https://api.example.com/endpoint"
               value={request.url}
               onChange={(e) => updateRequest('url', e.target.value)}
-              className={`h-10 text-sm rounded transition-all backdrop-blur-sm ${themeClasses.input.base}`}
+              className={`h-10 text-sm rounded backdrop-blur-sm ${themeClasses.input.base}`}
             />
           </div>
           <button 
@@ -196,10 +196,10 @@ export default function RequestPanel({
           <Tabs defaultValue="headers" className="w-full">
             <div className={`border-b ${themeClasses.border.primary}`}>
               <TabsList className="grid w-full grid-cols-4 h-8 bg-transparent p-0 border-b-0">
-                <TabsTrigger value="params" className={`text-xs data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:${themeClasses.border.accent.replace('border-', 'border-b-')} data-[state=active]:${themeClasses.text.accent} border-b-2 border-transparent rounded-none transition-all ${themeClasses.tab.inactive}`}>
+                <TabsTrigger value="params" className={`text-xs py-2 data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-b-blue-500 data-[state=active]:${themeClasses.text.accent} border-b border-transparent hover:border-gray-300 rounded-none transition-all ${themeClasses.tab.inactive}`}>
                   Params
                 </TabsTrigger>
-                <TabsTrigger value="headers" className={`text-xs data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:${themeClasses.border.accent.replace('border-', 'border-b-')} data-[state=active]:${themeClasses.text.accent} border-b-2 border-transparent rounded-none transition-all ${themeClasses.tab.inactive}`}>
+                <TabsTrigger value="headers" className={`text-xs py-2 data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-b-blue-500 data-[state=active]:${themeClasses.text.accent} border-b border-transparent hover:border-gray-300 rounded-none transition-all ${themeClasses.tab.inactive}`}>
                   Headers
                   {Object.keys(request.headers).length > 0 && (
                     <span className={`ml-1.5 text-xs px-1.5 py-0.5 rounded border ${themeClasses.status.info}`}>
@@ -207,13 +207,13 @@ export default function RequestPanel({
                     </span>
                   )}
                 </TabsTrigger>
-                <TabsTrigger value="body" className={`text-xs data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:${themeClasses.border.accent.replace('border-', 'border-b-')} data-[state=active]:${themeClasses.text.accent} border-b-2 border-transparent rounded-none transition-all ${themeClasses.tab.inactive}`}>
+                <TabsTrigger value="body" className={`text-xs py-2 data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-b-blue-500 data-[state=active]:${themeClasses.text.accent} border-b border-transparent hover:border-gray-300 rounded-none transition-all ${themeClasses.tab.inactive}`}>
                   Body
                   {request.body && (
                     <div className={`ml-1.5 h-2 w-2 rounded-full ${isDark ? 'bg-blue-500' : 'bg-blue-600'}`} />
                   )}
                 </TabsTrigger>
-                <TabsTrigger value="auth" className={`text-xs data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:${themeClasses.border.accent.replace('border-', 'border-b-')} data-[state=active]:${themeClasses.text.accent} border-b-2 border-transparent rounded-none transition-all ${themeClasses.tab.inactive}`}>
+                <TabsTrigger value="auth" className={`text-xs py-2 data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-b-blue-500 data-[state=active]:${themeClasses.text.accent} border-b border-transparent hover:border-gray-300 rounded-none transition-all ${themeClasses.tab.inactive}`}>
                   Authorization
                 </TabsTrigger>
               </TabsList>
@@ -247,13 +247,13 @@ export default function RequestPanel({
                     placeholder="Content-Type"
                     value={newHeaderKey}
                     onChange={(e) => setNewHeaderKey(e.target.value)}
-                    className={`col-span-5 h-9 text-sm rounded transition-all backdrop-blur-sm ${themeClasses.input.base}`}
+                    className={`col-span-5 h-9 text-sm rounded backdrop-blur-sm ${themeClasses.input.base}`}
                   />
                   <Input
                     placeholder="application/json"
                     value={newHeaderValue}
                     onChange={(e) => setNewHeaderValue(e.target.value)}
-                    className={`col-span-6 h-9 text-sm rounded transition-all backdrop-blur-sm ${themeClasses.input.base}`}
+                    className={`col-span-6 h-9 text-sm rounded backdrop-blur-sm ${themeClasses.input.base}`}
                   />
                   <Button 
                     variant="ghost" 
@@ -300,13 +300,13 @@ export default function RequestPanel({
               <div className="space-y-6">
                 <div className="flex items-center gap-4">
                   <label className={`text-sm font-medium ${themeClasses.text.secondary}`}>Body type:</label>
-                  <select className={`rounded-lg px-3 py-2 text-sm transition-all backdrop-blur-sm ${themeClasses.input.base}`}>
+                  <select className={`rounded px-3 py-2 text-sm backdrop-blur-sm ${themeClasses.input.base}`}>
                     <option value="raw">raw</option>
                     <option value="form-data">form-data</option>
                     <option value="x-www-form-urlencoded">x-www-form-urlencoded</option>
                     <option value="binary">binary</option>
                   </select>
-                  <select className={`rounded-lg px-3 py-2 text-sm transition-all backdrop-blur-sm ${themeClasses.input.base}`}>
+                  <select className={`rounded px-3 py-2 text-sm backdrop-blur-sm ${themeClasses.input.base}`}>
                     <option value="json">JSON</option>
                     <option value="text">Text</option>
                     <option value="xml">XML</option>
@@ -318,7 +318,7 @@ export default function RequestPanel({
                     placeholder={`{\n  "name": "John Doe",\n  "email": "john@example.com"\n}`}
                     value={request.body}
                     onChange={(e) => updateRequest('body', e.target.value)}
-                    className={`min-h-64 font-mono text-sm rounded-lg resize-none transition-all backdrop-blur-sm ${themeClasses.input.base}`}
+                    className={`min-h-64 font-mono text-sm rounded resize-none backdrop-blur-sm ${themeClasses.input.base}`}
                   />
                   {request.body && (
                     <div className={`absolute bottom-3 right-3 text-xs px-2 py-1 rounded backdrop-blur-sm ${isDark ? 'text-gray-400 bg-gray-900/80' : 'text-gray-600 bg-white/80'}`}>

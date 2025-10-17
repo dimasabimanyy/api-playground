@@ -350,18 +350,18 @@ export default function ResponsePanel({ response, loading, request }) {
       {/* Response Content - Theme Aware */}
       <div className={`flex-1 overflow-hidden transition-colors duration-300 ${themeClasses.bg.primary}`}>
         <Tabs defaultValue="body" className="w-full h-full flex flex-col">
-          <div className={`border-b ${themeClasses.border.primary} ${themeClasses.bg.secondary}`}>
-            <TabsList className="grid w-full grid-cols-3 h-9 bg-transparent p-0 border-b-0">
-              <TabsTrigger value="body" className={`text-xs data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:${themeClasses.border.accent.replace('border-', 'border-b-')} data-[state=active]:${themeClasses.text.accent} border-b-2 border-transparent rounded-none transition-all ${themeClasses.tab.inactive}`}>
+          <div className={`border-b ${themeClasses.border.primary}`}>
+            <TabsList className="grid w-full grid-cols-3 h-8 bg-transparent p-0 border-b-0">
+              <TabsTrigger value="body" className={`text-xs py-2 data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-b-blue-500 data-[state=active]:${themeClasses.text.accent} border-b border-transparent hover:border-gray-300 rounded-none transition-all ${themeClasses.tab.inactive}`}>
                 Body
               </TabsTrigger>
-              <TabsTrigger value="headers" className={`text-xs data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:${themeClasses.border.accent.replace('border-', 'border-b-')} data-[state=active]:${themeClasses.text.accent} border-b-2 border-transparent rounded-none transition-all ${themeClasses.tab.inactive}`}>
+              <TabsTrigger value="headers" className={`text-xs py-2 data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-b-blue-500 data-[state=active]:${themeClasses.text.accent} border-b border-transparent hover:border-gray-300 rounded-none transition-all ${themeClasses.tab.inactive}`}>
                 Headers
                 <span className={`ml-1.5 text-xs px-1.5 py-0.5 rounded border ${themeClasses.status.info}`}>
                   {Object.keys(response.headers || {}).length}
                 </span>
               </TabsTrigger>
-              <TabsTrigger value="test" className={`text-xs data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:${themeClasses.border.accent.replace('border-', 'border-b-')} data-[state=active]:${themeClasses.text.accent} border-b-2 border-transparent rounded-none transition-all ${themeClasses.tab.inactive}`}>
+              <TabsTrigger value="test" className={`text-xs py-2 data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-b-blue-500 data-[state=active]:${themeClasses.text.accent} border-b border-transparent hover:border-gray-300 rounded-none transition-all ${themeClasses.tab.inactive}`}>
                 Test Results
               </TabsTrigger>
             </TabsList>

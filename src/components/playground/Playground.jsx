@@ -339,7 +339,7 @@ export default function Playground() {
               placeholder="Search requests, collections..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className={`pl-10 h-9 text-sm rounded transition-all backdrop-blur-sm ${themeClasses.input.base}`}
+              className={`pl-10 h-9 text-sm rounded backdrop-blur-sm ${themeClasses.input.base}`}
             />
           </div>
         </div>
@@ -415,10 +415,10 @@ export default function Playground() {
                 </div>
 
                 <button
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded transition-all duration-200 mb-4 ${themeClasses.button.primary}`}
+                  className={`w-full flex items-center gap-2 px-3 py-2 rounded transition-all duration-200 mb-4 ${themeClasses.button.primary}`}
                 >
-                  <Plus className="h-4 w-4 text-white" />
-                  <span className="text-sm font-medium text-white">
+                  <Plus className="h-3 w-3 text-white" />
+                  <span className="text-xs font-medium text-white">
                     New Request
                   </span>
                 </button>
@@ -429,7 +429,7 @@ export default function Playground() {
                   />
                   <Input
                     placeholder="Filter collections..."
-                    className={`pl-10 h-9 text-sm rounded transition-all backdrop-blur-sm ${themeClasses.input.base}`}
+                    className={`pl-10 h-9 text-sm rounded backdrop-blur-sm ${themeClasses.input.base}`}
                   />
                 </div>
               </div>
@@ -636,7 +636,7 @@ export default function Playground() {
                         }
                       }}
                       placeholder="Untitled Request"
-                      className={`text-sm font-medium bg-transparent border border-gray-300 rounded px-2 py-1 outline-none focus:border-blue-500 ${themeClasses.text.primary}`}
+                      className={`text-sm font-medium bg-transparent border border-gray-300 rounded px-2 py-1 outline-none focus:border-blue-500 focus:ring-0 transition-colors duration-200 ${themeClasses.text.primary}`}
                       autoFocus
                     />
                   ) : (

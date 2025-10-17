@@ -147,6 +147,27 @@
     display: none;
   }
   
+  /* Clean input focus states - override all default focus styling */
+  input:focus,
+  input:focus-visible,
+  textarea:focus,
+  textarea:focus-visible,
+  select:focus,
+  select:focus-visible,
+  [role="combobox"]:focus,
+  [role="combobox"]:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+    ring: none !important;
+  }
+  
+  /* Remove focus rings from all interactive elements */
+  *:focus,
+  *:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  
   /* Loading shimmer animation */
   .shimmer {
     background: linear-gradient(
