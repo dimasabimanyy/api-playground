@@ -120,17 +120,18 @@ export default function ResponsePanel({ response, loading, request }) {
 
   if (loading) {
     return (
-      <div className="flex-1 border-l border-gray-100 bg-white h-full flex flex-col">
-        <div className="px-6 py-3 border-b border-gray-100">
+      <div className="flex-1 bg-white h-full flex flex-col">
+        <div className="px-4 py-3 border-b border-gray-200">
           <div className="flex items-center space-x-3">
-            <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-200 border-t-gray-600"></div>
-            <h3 className="text-sm font-medium text-gray-900">Sending...</h3>
+            <div className="animate-spin rounded-full h-4 w-4 border-2 border-orange-200 border-t-orange-500"></div>
+            <h3 className="text-sm font-medium text-gray-900">Response</h3>
+            <span className="text-xs text-gray-500">Sending request...</span>
           </div>
         </div>
-        <div className="flex-1 px-6 py-12">
-          <div className="flex flex-col items-center justify-center py-16 space-y-4">
-            <div className="animate-spin rounded-full h-8 w-8 border-2 border-gray-200 border-t-gray-600"></div>
-            <p className="text-sm text-gray-600">Executing request...</p>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center space-y-4">
+            <div className="animate-spin rounded-full h-8 w-8 border-2 border-orange-200 border-t-orange-500 mx-auto"></div>
+            <p className="text-sm text-gray-600">Waiting for response...</p>
           </div>
         </div>
       </div>
@@ -139,19 +140,19 @@ export default function ResponsePanel({ response, loading, request }) {
 
   if (!response) {
     return (
-      <div className="flex-1 border-l border-gray-100 bg-white h-full flex flex-col">
-        <div className="px-6 py-3 border-b border-gray-100">
+      <div className="flex-1 bg-white h-full flex flex-col">
+        <div className="px-4 py-3 border-b border-gray-200">
           <h3 className="text-sm font-medium text-gray-900">Response</h3>
         </div>
-        <div className="flex-1 px-6 py-12">
-          <div className="text-center py-16 space-y-4">
-            <div className="w-12 h-12 bg-gray-100 rounded flex items-center justify-center mx-auto">
-              <div className="w-6 h-6 border-2 border-dashed border-gray-400 rounded" />
+        <div className="flex-1 flex items-center justify-center bg-gray-50">
+          <div className="text-center space-y-4">
+            <div className="w-16 h-16 bg-white border border-gray-200 rounded-lg flex items-center justify-center mx-auto">
+              <div className="w-8 h-8 border-2 border-dashed border-gray-300 rounded" />
             </div>
             <div className="space-y-2">
-              <h3 className="text-sm font-medium text-gray-700">No response yet</h3>
+              <h3 className="text-base font-medium text-gray-700">Enter the URL and click Send</h3>
               <p className="text-sm text-gray-500">
-                Send a request to see the response
+                The response will appear here
               </p>
             </div>
           </div>
@@ -162,26 +163,32 @@ export default function ResponsePanel({ response, loading, request }) {
 
   if (response.error) {
     return (
-      <div className="flex-1 border-l border-gray-100 bg-white h-full flex flex-col">
-        <div className="px-6 py-3 border-b border-gray-100">
+      <div className="flex-1 bg-white h-full flex flex-col">
+        <div className="px-4 py-3 border-b border-gray-200">
           <div className="flex items-center space-x-3">
-            <X className="h-4 w-4 text-red-600" />
-            <h3 className="text-sm font-medium text-gray-900">Request Failed</h3>
+            <h3 className="text-sm font-medium text-gray-900">Response</h3>
+            <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded font-mono">Error</span>
           </div>
         </div>
-        <div className="flex-1 px-6 py-6">
-          <div className="space-y-6">
-            <div className="p-4 border border-red-200 rounded bg-red-50">
-              <p className="text-sm text-red-800 font-mono">{response.error}</p>
+        <div className="flex-1 p-4">
+          <div className="space-y-4">
+            <div className="p-4 border border-red-200 rounded-lg bg-red-50">
+              <div className="flex items-start space-x-3">
+                <X className="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0" />
+                <div>
+                  <h4 className="text-sm font-medium text-red-800 mb-1">Could not send request</h4>
+                  <p className="text-sm text-red-700 font-mono">{response.error}</p>
+                </div>
+              </div>
             </div>
             
             <div className="space-y-3">
-              <h4 className="text-sm font-medium text-gray-900">Troubleshooting</h4>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li>• Check if the URL is correct and accessible</li>
-                <li>• Verify your internet connection</li>
-                <li>• Check for CORS issues</li>
-                <li>• Ensure the API server is running</li>
+              <h4 className="text-sm font-medium text-gray-900">Possible causes:</h4>
+              <ul className="space-y-1 text-sm text-gray-600 ml-4">
+                <li>• Invalid URL or network connectivity issues</li>
+                <li>• CORS policy blocking the request</li>
+                <li>• Server is down or not responding</li>
+                <li>• SSL/TLS certificate issues</li>
               </ul>
             </div>
           </div>
@@ -191,20 +198,26 @@ export default function ResponsePanel({ response, loading, request }) {
   }
 
   return (
-    <div className="flex-1 border-l border-gray-100 bg-white h-full flex flex-col">
-      <div className="px-6 py-3 border-b border-gray-100">
+    <div className="flex-1 bg-white h-full flex flex-col">
+      {/* Response Header - Postman Style */}
+      <div className="px-4 py-3 border-b border-gray-200">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-4">
             <div className="flex items-center gap-2">
               <h3 className="text-sm font-medium text-gray-900">Response</h3>
-              <span className={`text-xs font-mono px-2 py-1 rounded ${getStatusColor(response.status)}`}>
-                {response.status}
+              <span className={`text-xs font-mono px-2 py-1 rounded font-medium ${getStatusColor(response.status)}`}>
+                {response.status} {response.statusText}
               </span>
             </div>
-            <div className="flex items-center gap-3 text-xs text-gray-500">
-              <span>{response.time}ms</span>
-              <span>{formatBytes(response.size || 0)}</span>
-              <span className="font-mono">{getContentType().toUpperCase()}</span>
+            <div className="flex items-center gap-4 text-xs text-gray-500">
+              <div className="flex items-center gap-1">
+                <span className="font-medium">Time:</span>
+                <span className="font-mono">{response.time}ms</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="font-medium">Size:</span>
+                <span className="font-mono">{formatBytes(response.size || 0)}</span>
+              </div>
             </div>
           </div>
           
@@ -212,52 +225,88 @@ export default function ResponsePanel({ response, loading, request }) {
             {request && <CodeGenerationPanel request={request} />}
             <button
               onClick={() => copyToClipboard(formatResponseData(response.data))}
-              className="h-7 text-sm px-3 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded transition-colors"
+              className="h-8 text-xs px-3 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded border border-gray-300 transition-colors"
             >
-              <Copy className="h-3 w-3 mr-1.5" />
+              <Copy className="h-3 w-3 mr-1" />
               {copied ? 'Copied!' : 'Copy'}
             </button>
             <button 
               onClick={downloadResponse}
-              className="h-7 text-sm px-3 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded transition-colors"
+              className="h-8 text-xs px-3 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded border border-gray-300 transition-colors"
             >
-              <Download className="h-3 w-3 mr-1.5" />
-              Download
+              <Download className="h-3 w-3 mr-1" />
+              Save
             </button>
           </div>
         </div>
       </div>
       
-      <div className="flex-1 px-6 py-4 overflow-y-auto">
+      {/* Response Content - Postman Style */}
+      <div className="flex-1 overflow-hidden">
         <Tabs defaultValue="body" className="w-full h-full flex flex-col">
-          <TabsList className="grid w-full grid-cols-2 h-8 bg-gray-50 p-0.5 mb-4">
-            <TabsTrigger value="body" className="text-sm data-[state=active]:bg-white data-[state=active]:shadow-xs transition-all">
-              Body
-            </TabsTrigger>
-            <TabsTrigger value="headers" className="text-sm data-[state=active]:bg-white data-[state=active]:shadow-xs transition-all">
-              Headers
-              <span className="ml-1.5 text-xs text-gray-500">
-                {Object.keys(response.headers || {}).length}
-              </span>
-            </TabsTrigger>
-          </TabsList>
+          <div className="border-b border-gray-200">
+            <TabsList className="grid w-full grid-cols-3 h-10 bg-transparent p-0 border-b-0">
+              <TabsTrigger value="body" className="text-sm data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-orange-500 data-[state=active]:text-orange-600 border-b-2 border-transparent rounded-none transition-all">
+                Body
+              </TabsTrigger>
+              <TabsTrigger value="headers" className="text-sm data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-orange-500 data-[state=active]:text-orange-600 border-b-2 border-transparent rounded-none transition-all">
+                Headers
+                <span className="ml-1 text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
+                  {Object.keys(response.headers || {}).length}
+                </span>
+              </TabsTrigger>
+              <TabsTrigger value="test" className="text-sm data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-orange-500 data-[state=active]:text-orange-600 border-b-2 border-transparent rounded-none transition-all">
+                Test Results
+              </TabsTrigger>
+            </TabsList>
+          </div>
           
-          <TabsContent value="body" className="flex-1">
-            <div className="border border-gray-200 rounded overflow-hidden h-full bg-white">
-              <div className="p-4">
+          <TabsContent value="body" className="flex-1 p-4 overflow-y-auto">
+            <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50">
+              <div className="px-3 py-2 bg-gray-100 border-b border-gray-200 flex items-center justify-between">
+                <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">
+                  {getContentType()}
+                </span>
+                <div className="flex items-center gap-2">
+                  <button className="text-xs text-gray-500 hover:text-gray-700">Pretty</button>
+                  <button className="text-xs text-gray-500 hover:text-gray-700">Raw</button>
+                  <button className="text-xs text-gray-500 hover:text-gray-700">Preview</button>
+                </div>
+              </div>
+              <div className="p-4 bg-white max-h-96 overflow-auto">
                 {renderFormattedContent(response.data, getContentType())}
               </div>
             </div>
           </TabsContent>
           
-          <TabsContent value="headers" className="flex-1 overflow-y-auto">
-            <div className="space-y-2">
-              {Object.entries(response.headers || {}).map(([key, value]) => (
-                <div key={key} className="py-2 border-b border-gray-100 last:border-b-0">
-                  <div className="text-sm font-medium text-gray-900 font-mono">{key}</div>
-                  <div className="text-sm text-gray-600 font-mono break-all mt-1">{value}</div>
+          <TabsContent value="headers" className="flex-1 p-4 overflow-y-auto">
+            <div className="space-y-0 border border-gray-200 rounded-lg overflow-hidden">
+              <div className="bg-gray-50 px-4 py-2 border-b border-gray-200">
+                <div className="grid grid-cols-2 gap-4 text-xs font-medium text-gray-600 uppercase tracking-wide">
+                  <div>Key</div>
+                  <div>Value</div>
                 </div>
-              ))}
+              </div>
+              <div className="divide-y divide-gray-200">
+                {Object.entries(response.headers || {}).map(([key, value]) => (
+                  <div key={key} className="grid grid-cols-2 gap-4 px-4 py-3 bg-white hover:bg-gray-50">
+                    <div className="text-sm font-medium text-gray-900 font-mono break-all">{key}</div>
+                    <div className="text-sm text-gray-600 font-mono break-all">{value}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="test" className="flex-1 p-4">
+            <div className="text-center py-12 text-gray-500">
+              <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <Check className="h-6 w-6 text-gray-400" />
+              </div>
+              <h3 className="text-sm font-medium text-gray-700 mb-2">No tests defined</h3>
+              <p className="text-sm text-gray-500">
+                You can write tests for this request in the Tests tab
+              </p>
             </div>
           </TabsContent>
         </Tabs>

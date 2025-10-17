@@ -258,234 +258,134 @@ export default function Playground() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="border-b border-gray-100 bg-white h-14 flex items-center px-8">
-        <div className="flex items-center space-x-3 min-w-0 flex-shrink-0">
-          <div className="h-6 w-6 rounded bg-black flex items-center justify-center">
-            <Zap className="h-3 w-3 text-white" />
+    <div className="min-h-screen bg-gray-50">
+      {/* Header - Postman Style */}
+      <header className="border-b border-gray-200 bg-white h-12 flex items-center px-4">
+        <div className="flex items-center space-x-4 min-w-0 flex-shrink-0">
+          <div className="h-7 w-7 rounded bg-orange-500 flex items-center justify-center">
+            <Zap className="h-4 w-4 text-white" />
           </div>
-          <h1 className="text-sm font-medium text-gray-900">API Playground</h1>
+          <div className="flex items-center space-x-6">
+            <span className="text-sm font-medium text-gray-900">Home</span>
+            <span className="text-sm text-gray-600">Workspaces</span>
+            <span className="text-sm text-gray-600">API Network</span>
+          </div>
         </div>
         
-        <div className="flex-1 flex justify-center">
-          <div className="relative max-w-md w-full">
+        <div className="flex-1 flex justify-center max-w-md mx-auto">
+          <div className="relative w-full">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
-              placeholder="Search..."
+              placeholder="Search Postman"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 h-8 text-sm border-0 bg-gray-50 focus:bg-white focus:ring-1 focus:ring-gray-200 rounded-md transition-all"
+              className="pl-9 h-8 text-sm border border-gray-300 bg-white focus:border-orange-400 focus:ring-1 focus:ring-orange-100 rounded transition-all"
             />
           </div>
         </div>
         
         <div className="flex items-center space-x-3 ml-auto">
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="h-7 bg-gray-50 p-0.5">
-              <TabsTrigger value="rest" className="text-xs px-3 data-[state=active]:bg-white data-[state=active]:shadow-xs">REST</TabsTrigger>
-              <TabsTrigger value="graphql" disabled className="text-xs px-3 text-gray-400">GraphQL</TabsTrigger>
-            </TabsList>
-          </Tabs>
+          <button className="p-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded">
+            <Settings className="h-4 w-4" />
+          </button>
+          <button className="p-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded">
+            <User className="h-4 w-4" />
+          </button>
         </div>
       </header>
 
-      {/* Main Content Layout */}
-      <div className="flex h-[calc(100vh-3.5rem)]">
-        {/* Menu Sidebar */}
-        <div className="w-12 border-r border-gray-100 bg-white flex flex-col">
-          <div className="flex-1 py-2">
-            <div className="space-y-1">
-              <button
-                onClick={() => {
-                  if (activeMenuTab === 'collections' && !sidebarCollapsed) {
-                    setSidebarCollapsed(true)
-                  } else {
+      {/* Main Content Layout - Postman Style */}
+      <div className="flex h-[calc(100vh-3rem)]">
+        {/* Left Sidebar - Postman Style */}
+        <div className="w-64 border-r border-gray-200 bg-white flex flex-col">
+          <div className="p-4 border-b border-gray-200">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm font-semibold text-gray-900">Collections</h2>
+              <button className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded">
+                <Plus className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="relative">
+              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
+              <Input
+                placeholder="Filter"
+                className="pl-7 h-7 text-xs border-gray-300 bg-white focus:border-orange-400 focus:ring-1 focus:ring-orange-100"
+              />
+            </div>
+          </div>
+          
+          <div className="flex-1 overflow-y-auto">
+            <div className="p-2">
+              <div className="space-y-1">
+                <button
+                  onClick={() => {
                     setActiveMenuTab('collections')
                     setSidebarCollapsed(false)
                     setShowHistory(false)
-                  }
-                }}
-                className={`w-8 h-8 mx-2 flex items-center justify-center rounded transition-colors ${
-                  activeMenuTab === 'collections' && !sidebarCollapsed
-                    ? 'bg-gray-100 text-gray-900'
-                    : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
-                }`}
-              >
-                <FolderOpen className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => {
-                  if (activeMenuTab === 'history' && !sidebarCollapsed) {
-                    setSidebarCollapsed(true)
-                  } else {
+                  }}
+                  className={`w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded hover:bg-gray-100 ${
+                    activeMenuTab === 'collections'
+                      ? 'bg-orange-50 text-orange-700 font-medium'
+                      : 'text-gray-700'
+                  }`}
+                >
+                  <FolderOpen className="h-4 w-4" />
+                  My Workspace
+                </button>
+                <button
+                  onClick={() => {
                     setActiveMenuTab('history')
                     setSidebarCollapsed(false)
                     setShowHistory(false)
-                  }
-                }}
-                className={`w-8 h-8 mx-2 flex items-center justify-center rounded transition-colors ${
-                  activeMenuTab === 'history' && !sidebarCollapsed
-                    ? 'bg-gray-100 text-gray-900'
-                    : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
-                }`}
-              >
-                <History className="h-4 w-4" />
-              </button>
+                  }}
+                  className={`w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded hover:bg-gray-100 ${
+                    activeMenuTab === 'history'
+                      ? 'bg-orange-50 text-orange-700 font-medium'
+                      : 'text-gray-700'
+                  }`}
+                >
+                  <History className="h-4 w-4" />
+                  History
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Dynamic Sidebar */}
-        {!sidebarCollapsed && activeMenuTab === 'collections' && (
-          <CollectionsSidebar
-            onCollectionSelect={handleCollectionSelect}
-            onRequestSelect={handleRequestSelect}
-            activeCollectionId={activeCollectionId}
-            activeRequestId={currentTab?.collectionRequestId}
-          />
-        )}
         
-        {!sidebarCollapsed && activeMenuTab === 'history' && (
-          <div className="w-64 border-r border-gray-200 bg-white h-full">
-            <HistoryPanel onLoadRequest={handleLoadFromHistory} />
-          </div>
-        )}
-        
-        {!sidebarCollapsed && activeMenuTab === 'environments' && (
-          <div className="w-64 border-r border-gray-200 bg-white h-full flex flex-col">
-            {/* Environments Header */}
-            <div className="px-4 py-4">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-sm font-semibold text-gray-900">Environments</h2>
-              </div>
-              
-              {/* Current Environment Selector */}
-              <div className="space-y-2">
-                <label className="text-xs font-medium text-gray-700">Active Environment</label>
-                <EnvironmentSelector />
-              </div>
-            </div>
-
-            {/* Environment Management */}
-            <div className="flex-1 overflow-y-auto bg-white">
-              <div className="px-4 pb-4">
-                <div className="text-sm text-gray-600 bg-blue-50 p-3 rounded-lg">
-                  <p className="font-medium mb-1">Environment Variables</p>
-                  <p className="text-xs">Use the settings button in the environment selector above to manage your environment variables and create new environments.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {!sidebarCollapsed && activeMenuTab === 'settings' && (
-          <div className="w-64 border-r border-gray-200 bg-white h-full flex flex-col">
-            {/* Settings Header */}
-            <div className="px-4 py-4">
-              <h2 className="text-sm font-semibold text-gray-900">Settings</h2>
-            </div>
-
-            {/* Settings Content */}
-            <div className="flex-1 overflow-y-auto bg-white">
-              <div className="px-4 pb-4 space-y-6">
-                {/* Theme Settings */}
-                <div className="space-y-3">
-                  <h3 className="text-sm font-medium text-gray-900">Appearance</h3>
-                  <div className="space-y-2">
-                    <label className="flex items-center space-x-2">
-                      <input type="radio" name="theme" value="light" defaultChecked className="w-4 h-4 text-green-600" />
-                      <span className="text-sm text-gray-700">Light theme</span>
-                    </label>
-                    <label className="flex items-center space-x-2">
-                      <input type="radio" name="theme" value="dark" className="w-4 h-4 text-green-600" />
-                      <span className="text-sm text-gray-700">Dark theme</span>
-                    </label>
-                    <label className="flex items-center space-x-2">
-                      <input type="radio" name="theme" value="system" className="w-4 h-4 text-green-600" />
-                      <span className="text-sm text-gray-700">System preference</span>
-                    </label>
-                  </div>
-                </div>
-
-                {/* Request Settings */}
-                <div className="space-y-3">
-                  <h3 className="text-sm font-medium text-gray-900">Requests</h3>
-                  <div className="space-y-2">
-                    <label className="flex items-center space-x-2">
-                      <input type="checkbox" defaultChecked className="w-4 h-4 text-green-600 rounded" />
-                      <span className="text-sm text-gray-700">Save request history</span>
-                    </label>
-                    <label className="flex items-center space-x-2">
-                      <input type="checkbox" defaultChecked className="w-4 h-4 text-green-600 rounded" />
-                      <span className="text-sm text-gray-700">Auto-format JSON responses</span>
-                    </label>
-                    <label className="flex items-center space-x-2">
-                      <input type="checkbox" className="w-4 h-4 text-green-600 rounded" />
-                      <span className="text-sm text-gray-700">Follow redirects</span>
-                    </label>
-                  </div>
-                </div>
-
-                {/* Editor Settings */}
-                <div className="space-y-3">
-                  <h3 className="text-sm font-medium text-gray-900">Editor</h3>
-                  <div className="space-y-2">
-                    <label className="flex items-center space-x-2">
-                      <input type="checkbox" defaultChecked className="w-4 h-4 text-green-600 rounded" />
-                      <span className="text-sm text-gray-700">Word wrap</span>
-                    </label>
-                    <label className="flex items-center space-x-2">
-                      <input type="checkbox" className="w-4 h-4 text-green-600 rounded" />
-                      <span className="text-sm text-gray-700">Show line numbers</span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-        
-        {/* Main Testing Area */}
-        <div className="flex-1 flex flex-col">
-          {/* Request Tabs */}
-          <div className="bg-white">
-            <div className="flex items-center justify-between px-4 py-2">
+        {/* Main Workbench - Postman Style */}
+        <div className="flex-1 flex flex-col bg-gray-50">
+          {/* Request Tabs - Postman Style */}
+          <div className="bg-white border-b border-gray-200">
+            <div className="flex items-center px-4 py-2">
               <div className="flex items-center overflow-x-auto scrollbar-hide">
-                {requestTabs.map((tab) => {
-                  const getMethodBorderColor = (method) => {
+                {requestTabs.map((tab, index) => {
+                  const getMethodColor = (method) => {
                     const colors = {
-                      GET: 'border-b-green-500',
-                      POST: 'border-b-blue-500', 
-                      PUT: 'border-b-orange-500',
-                      PATCH: 'border-b-yellow-500',
-                      DELETE: 'border-b-red-500',
+                      GET: 'text-green-600',
+                      POST: 'text-orange-600', 
+                      PUT: 'text-blue-600',
+                      PATCH: 'text-yellow-600',
+                      DELETE: 'text-red-600',
                     }
-                    return colors[method] || 'border-b-gray-300'
+                    return colors[method] || 'text-gray-600'
                   }
                   
                   return (
                     <div
                       key={tab.id}
-                      className={`flex items-center gap-2 px-3 py-2 cursor-pointer min-w-0 group bg-white border-b-2 transition-colors ${
+                      className={`flex items-center gap-2 px-3 py-2 cursor-pointer min-w-0 group border-r border-gray-200 transition-colors ${
                         tab.id === activeTabId
-                          ? `${getMethodBorderColor(tab.request.method)} text-gray-900`
-                          : 'border-b-transparent text-gray-600 hover:text-gray-900 hover:border-b-gray-200'
+                          ? 'bg-white text-gray-900'
+                          : 'bg-gray-50 text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                       }`}
                       onClick={() => setActiveTabId(tab.id)}
                     >
-                      <span className={`text-xs font-mono px-1.5 py-0.5 rounded flex-shrink-0 ${
-                        tab.request.method === 'GET' ? 'text-green-600 bg-green-50' :
-                        tab.request.method === 'POST' ? 'text-blue-600 bg-blue-50' :
-                        tab.request.method === 'PUT' ? 'text-orange-600 bg-orange-50' :
-                        tab.request.method === 'PATCH' ? 'text-yellow-600 bg-yellow-50' :
-                        tab.request.method === 'DELETE' ? 'text-red-600 bg-red-50' :
-                        'text-gray-600 bg-gray-50'
-                      }`}>
+                      <span className={`text-xs font-bold ${getMethodColor(tab.request.method)} flex-shrink-0`}>
                         {tab.request.method}
                       </span>
                       <span className={`text-sm truncate min-w-0 ${tab.isModified ? 'italic' : ''}`}>
-                        {tab.name}
+                        {tab.name || 'Untitled Request'}
                         {tab.isModified && <span className="text-orange-500 ml-1">•</span>}
                       </span>
                       {requestTabs.length > 1 && (
@@ -504,14 +404,14 @@ export default function Playground() {
                 })}
                 <button
                   onClick={createNewTab}
-                  className="h-6 w-6 ml-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded transition-colors flex-shrink-0 flex items-center justify-center"
+                  className="h-8 w-8 text-gray-400 hover:text-gray-600 hover:bg-gray-100 border-r border-gray-200 bg-gray-50 transition-colors flex-shrink-0 flex items-center justify-center"
                 >
-                  <Plus className="h-3 w-3" />
+                  <Plus className="h-4 w-4" />
                 </button>
               </div>
-              <div className="flex items-center">
+              <div className="flex items-center ml-auto">
                 {request.url && (
-                  <button onClick={handleSaveRequest} className="h-7 text-sm px-3 bg-black hover:bg-gray-800 text-white rounded transition-colors">
+                  <button onClick={handleSaveRequest} className="h-7 text-sm px-3 bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors">
                     {currentTab?.collectionRequestId ? 'Update' : 'Save'}
                   </button>
                 )}
@@ -519,32 +419,23 @@ export default function Playground() {
             </div>
           </div>
           
+          {/* Main Content Area - Postman Style */}
           <div className="flex-1 flex">
-            {activeTab === 'rest' && (
-              <div className="flex-1 flex">
-                <RequestPanel 
-                  request={request}
-                  setRequest={setRequest}
-                  onExecute={executeRequest}
-                  loading={loading}
-                  onShare={handleShare}
-                  shareUrl={shareUrl}
-                  shareDialogOpen={shareDialogOpen}
-                  setShareDialogOpen={setShareDialogOpen}
-                  copyShareUrl={copyShareUrl}
-                  copySuccess={copySuccess}
-                  currentRequestName={currentTab?.name}
-                  setCurrentRequestName={setCurrentRequestName}
-                />
-                <ResponsePanel response={response} loading={loading} request={request} />
-              </div>
-            )}
-            
-            {activeTab === 'graphql' && (
-              <div className="flex-1 text-center py-8 text-gray-500">
-                <p className="text-sm">GraphQL support coming soon</p>
-              </div>
-            )}
+            <RequestPanel 
+              request={request}
+              setRequest={setRequest}
+              onExecute={executeRequest}
+              loading={loading}
+              onShare={handleShare}
+              shareUrl={shareUrl}
+              shareDialogOpen={shareDialogOpen}
+              setShareDialogOpen={setShareDialogOpen}
+              copyShareUrl={copyShareUrl}
+              copySuccess={copySuccess}
+              currentRequestName={currentTab?.name}
+              setCurrentRequestName={setCurrentRequestName}
+            />
+            <ResponsePanel response={response} loading={loading} request={request} />
           </div>
         </div>
       </div>
