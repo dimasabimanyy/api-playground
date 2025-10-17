@@ -6,9 +6,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { Copy, Download, X, Check } from 'lucide-react'
 import { useState } from 'react'
+import { useTheme } from '@/contexts/ThemeContext'
+import { getThemeClasses, getStatusColors } from '@/lib/theme'
 import CodeGenerationPanel from './CodeGenerationPanel'
 
 export default function ResponsePanel({ response, loading, request }) {
+  const { theme, isDark } = useTheme()
+  const themeClasses = getThemeClasses(isDark)
   const [copied, setCopied] = useState(false)
 
   const copyToClipboard = async (text) => {
@@ -38,11 +42,7 @@ export default function ResponsePanel({ response, loading, request }) {
   }
 
   const getStatusColor = (status) => {
-    if (status >= 200 && status < 300) return 'bg-green-100 text-green-800'
-    if (status >= 300 && status < 400) return 'bg-yellow-100 text-yellow-800'
-    if (status >= 400 && status < 500) return 'bg-orange-100 text-orange-800'
-    if (status >= 500) return 'bg-red-100 text-red-800'
-    return 'bg-gray-100 text-gray-800'
+    return getStatusColors(status, isDark)
   }
 
   const formatBytes = (bytes) => {
@@ -103,7 +103,7 @@ export default function ResponsePanel({ response, loading, request }) {
           </div>
           <div>
             <h4 className="text-sm font-medium mb-2">HTML Source:</h4>
-            <pre className="text-xs bg-gray-900/50 text-gray-200 p-4 overflow-auto max-h-64 whitespace-pre-wrap font-mono rounded-lg border border-gray-700/50">
+            <pre className={`text-xs p-4 overflow-auto max-h-64 whitespace-pre-wrap font-mono rounded-lg border ${isDark ? 'bg-gray-900/50 text-gray-200 border-gray-700/50' : 'bg-gray-100 text-gray-800 border-gray-300'}`}>
               {formattedData}
             </pre>
           </div>
@@ -112,7 +112,7 @@ export default function ResponsePanel({ response, loading, request }) {
     }
     
     return (
-      <pre className="text-xs bg-gray-900/50 text-gray-200 p-4 overflow-auto max-h-64 whitespace-pre-wrap font-mono rounded-lg border border-gray-700/50">
+      <pre className={`text-xs p-4 overflow-auto max-h-64 whitespace-pre-wrap font-mono rounded-lg border ${isDark ? 'bg-gray-900/50 text-gray-200 border-gray-700/50' : 'bg-gray-100 text-gray-800 border-gray-300'}`}>
         {formattedData}
       </pre>
     )
@@ -120,20 +120,20 @@ export default function ResponsePanel({ response, loading, request }) {
 
   if (loading) {
     return (
-      <div className="flex-1 bg-[#1a1a1a]/50 h-full flex flex-col backdrop-blur-xl">
-        <div className="px-6 py-4 border-b border-gray-800/50">
+      <div className={`flex-1 h-full flex flex-col transition-all duration-300 ${themeClasses.bg.glass}`}>
+        <div className={`px-6 py-4 border-b ${themeClasses.border.primary}`}>
           <div className="flex items-center space-x-3">
-            <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-400/30 border-t-blue-500"></div>
-            <h3 className="text-sm font-medium text-white">Response</h3>
-            <span className="text-xs text-gray-400">Sending request...</span>
+            <div className={`animate-spin rounded-full h-4 w-4 border-2 ${isDark ? 'border-blue-400/30 border-t-blue-500' : 'border-blue-300/30 border-t-blue-600'}`}></div>
+            <h3 className={`text-sm font-medium ${themeClasses.text.primary}`}>Response</h3>
+            <span className={`text-xs ${themeClasses.text.tertiary}`}>Sending request...</span>
           </div>
         </div>
-        <div className="flex-1 flex items-center justify-center bg-[#111]">
+        <div className={`flex-1 flex items-center justify-center transition-colors duration-300 ${themeClasses.bg.primary}`}>
           <div className="text-center space-y-6">
-            <div className="animate-spin rounded-full h-12 w-12 border-2 border-blue-400/30 border-t-blue-500 mx-auto"></div>
+            <div className={`animate-spin rounded-full h-12 w-12 border-2 mx-auto ${isDark ? 'border-blue-400/30 border-t-blue-500' : 'border-blue-300/30 border-t-blue-600'}`}></div>
             <div>
-              <p className="text-base font-medium text-white mb-2">Sending request...</p>
-              <p className="text-sm text-gray-400">Waiting for response</p>
+              <p className={`text-base font-medium mb-2 ${themeClasses.text.primary}`}>Sending request...</p>
+              <p className={`text-sm ${themeClasses.text.tertiary}`}>Waiting for response</p>
             </div>
           </div>
         </div>
@@ -143,18 +143,18 @@ export default function ResponsePanel({ response, loading, request }) {
 
   if (!response) {
     return (
-      <div className="flex-1 bg-[#1a1a1a]/50 h-full flex flex-col backdrop-blur-xl">
-        <div className="px-6 py-4 border-b border-gray-800/50">
-          <h3 className="text-sm font-medium text-white">Response</h3>
+      <div className={`flex-1 h-full flex flex-col transition-all duration-300 ${themeClasses.bg.glass}`}>
+        <div className={`px-6 py-4 border-b ${themeClasses.border.primary}`}>
+          <h3 className={`text-sm font-medium ${themeClasses.text.primary}`}>Response</h3>
         </div>
-        <div className="flex-1 flex items-center justify-center bg-[#111]">
+        <div className={`flex-1 flex items-center justify-center transition-colors duration-300 ${themeClasses.bg.primary}`}>
           <div className="text-center space-y-6">
-            <div className="w-20 h-20 bg-gray-800/50 border border-gray-700/50 rounded-xl flex items-center justify-center mx-auto">
-              <div className="w-10 h-10 border-2 border-dashed border-gray-600 rounded-lg" />
+            <div className={`w-20 h-20 rounded-xl flex items-center justify-center mx-auto ${themeClasses.card.base}`}>
+              <div className={`w-10 h-10 border-2 border-dashed rounded-lg ${isDark ? 'border-gray-600' : 'border-gray-400'}`} />
             </div>
             <div className="space-y-3">
-              <h3 className="text-lg font-medium text-white">Ready to send</h3>
-              <p className="text-sm text-gray-400 max-w-sm">
+              <h3 className={`text-lg font-medium ${themeClasses.text.primary}`}>Ready to send</h3>
+              <p className={`text-sm max-w-sm ${themeClasses.text.tertiary}`}>
                 Enter a URL and click Send to see the response here
               </p>
             </div>
@@ -166,44 +166,44 @@ export default function ResponsePanel({ response, loading, request }) {
 
   if (response.error) {
     return (
-      <div className="flex-1 bg-[#1a1a1a]/50 h-full flex flex-col backdrop-blur-xl">
-        <div className="px-6 py-4 border-b border-gray-800/50">
+      <div className={`flex-1 h-full flex flex-col transition-all duration-300 ${themeClasses.bg.glass}`}>
+        <div className={`px-6 py-4 border-b ${themeClasses.border.primary}`}>
           <div className="flex items-center space-x-3">
-            <h3 className="text-sm font-medium text-white">Response</h3>
-            <span className="text-xs bg-red-500/20 text-red-400 px-2 py-1 rounded border border-red-500/30 font-mono">Error</span>
+            <h3 className={`text-sm font-medium ${themeClasses.text.primary}`}>Response</h3>
+            <span className={`text-xs px-2 py-1 rounded border font-mono ${themeClasses.status.error}`}>Error</span>
           </div>
         </div>
-        <div className="flex-1 p-6 bg-[#111]">
+        <div className={`flex-1 p-6 transition-colors duration-300 ${themeClasses.bg.primary}`}>
           <div className="space-y-6">
-            <div className="p-6 border border-red-500/20 rounded-xl bg-red-500/5 backdrop-blur-sm">
+            <div className={`p-6 border rounded-xl backdrop-blur-sm ${isDark ? 'border-red-500/20 bg-red-500/5' : 'border-red-300 bg-red-50'}`}>
               <div className="flex items-start space-x-4">
-                <div className="p-2 bg-red-500/20 rounded-lg">
-                  <X className="h-5 w-5 text-red-400 flex-shrink-0" />
+                <div className={`p-2 rounded-lg ${isDark ? 'bg-red-500/20' : 'bg-red-200'}`}>
+                  <X className={`h-5 w-5 flex-shrink-0 ${isDark ? 'text-red-400' : 'text-red-600'}`} />
                 </div>
                 <div>
-                  <h4 className="text-sm font-medium text-red-400 mb-2">Request failed</h4>
-                  <p className="text-sm text-red-300 font-mono bg-red-500/10 p-3 rounded-lg border border-red-500/20">{response.error}</p>
+                  <h4 className={`text-sm font-medium mb-2 ${isDark ? 'text-red-400' : 'text-red-700'}`}>Request failed</h4>
+                  <p className={`text-sm font-mono p-3 rounded-lg border ${isDark ? 'text-red-300 bg-red-500/10 border-red-500/20' : 'text-red-700 bg-red-100 border-red-200'}`}>{response.error}</p>
                 </div>
               </div>
             </div>
             
             <div className="space-y-4">
-              <h4 className="text-sm font-medium text-white">Common solutions:</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
+              <h4 className={`text-sm font-medium ${themeClasses.text.primary}`}>Common solutions:</h4>
+              <ul className={`space-y-2 text-sm ${themeClasses.text.secondary}`}>
                 <li className="flex items-start gap-2">
-                  <div className="h-1.5 w-1.5 bg-gray-500 rounded-full mt-2 flex-shrink-0"></div>
+                  <div className={`h-1.5 w-1.5 rounded-full mt-2 flex-shrink-0 ${isDark ? 'bg-gray-500' : 'bg-gray-400'}`}></div>
                   Check if the URL is correct and accessible
                 </li>
                 <li className="flex items-start gap-2">
-                  <div className="h-1.5 w-1.5 bg-gray-500 rounded-full mt-2 flex-shrink-0"></div>
+                  <div className={`h-1.5 w-1.5 rounded-full mt-2 flex-shrink-0 ${isDark ? 'bg-gray-500' : 'bg-gray-400'}`}></div>
                   Verify CORS policy allows your request
                 </li>
                 <li className="flex items-start gap-2">
-                  <div className="h-1.5 w-1.5 bg-gray-500 rounded-full mt-2 flex-shrink-0"></div>
+                  <div className={`h-1.5 w-1.5 rounded-full mt-2 flex-shrink-0 ${isDark ? 'bg-gray-500' : 'bg-gray-400'}`}></div>
                   Ensure the target server is running
                 </li>
                 <li className="flex items-start gap-2">
-                  <div className="h-1.5 w-1.5 bg-gray-500 rounded-full mt-2 flex-shrink-0"></div>
+                  <div className={`h-1.5 w-1.5 rounded-full mt-2 flex-shrink-0 ${isDark ? 'bg-gray-500' : 'bg-gray-400'}`}></div>
                   Check your internet connection
                 </li>
               </ul>
@@ -215,18 +215,18 @@ export default function ResponsePanel({ response, loading, request }) {
   }
 
   return (
-    <div className="flex-1 bg-[#1a1a1a]/50 h-full flex flex-col backdrop-blur-xl">
-      {/* Response Header - Dark Premium */}
-      <div className="px-6 py-4 border-b border-gray-800/50">
+    <div className={`flex-1 h-full flex flex-col transition-all duration-300 ${themeClasses.bg.glass}`}>
+      {/* Response Header - Theme Aware */}
+      <div className={`px-6 py-4 border-b ${themeClasses.border.primary}`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-6">
             <div className="flex items-center gap-3">
-              <h3 className="text-sm font-medium text-white">Response</h3>
-              <span className={`text-xs font-mono px-3 py-1.5 rounded-lg font-medium border ${getStatusColor(response.status).replace('bg-', 'bg-').replace('text-', 'text-').replace('100', '500/20').replace('800', '400')} border-current/30`}>
+              <h3 className={`text-sm font-medium ${themeClasses.text.primary}`}>Response</h3>
+              <span className={`text-xs font-mono px-3 py-1.5 rounded-lg font-medium border ${getStatusColor(response.status)}`}>
                 {response.status} {response.statusText}
               </span>
             </div>
-            <div className="flex items-center gap-6 text-xs text-gray-400">
+            <div className={`flex items-center gap-6 text-xs ${themeClasses.text.tertiary}`}>
               <div className="flex items-center gap-2">
                 <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
                 <span className="font-mono">{response.time}ms</span>
@@ -242,14 +242,14 @@ export default function ResponsePanel({ response, loading, request }) {
             {request && <CodeGenerationPanel request={request} />}
             <button
               onClick={() => copyToClipboard(formatResponseData(response.data))}
-              className="h-9 text-xs px-4 text-gray-300 hover:text-white hover:bg-gray-800/50 rounded-lg border border-gray-700/50 transition-all duration-200"
+              className={`h-9 text-xs px-4 rounded-lg transition-all duration-200 ${themeClasses.button.secondary}`}
             >
               <Copy className="h-3 w-3 mr-2" />
               {copied ? 'Copied!' : 'Copy'}
             </button>
             <button 
               onClick={downloadResponse}
-              className="h-9 text-xs px-4 text-gray-300 hover:text-white hover:bg-gray-800/50 rounded-lg border border-gray-700/50 transition-all duration-200"
+              className={`h-9 text-xs px-4 rounded-lg transition-all duration-200 ${themeClasses.button.secondary}`}
             >
               <Download className="h-3 w-3 mr-2" />
               Save
@@ -258,41 +258,41 @@ export default function ResponsePanel({ response, loading, request }) {
         </div>
       </div>
       
-      {/* Response Content - Dark Premium */}
-      <div className="flex-1 overflow-hidden bg-[#111]">
+      {/* Response Content - Theme Aware */}
+      <div className={`flex-1 overflow-hidden transition-colors duration-300 ${themeClasses.bg.primary}`}>
         <Tabs defaultValue="body" className="w-full h-full flex flex-col">
-          <div className="border-b border-gray-800/50 bg-[#1a1a1a]/30">
+          <div className={`border-b ${themeClasses.border.primary} ${themeClasses.bg.secondary}`}>
             <TabsList className="grid w-full grid-cols-3 h-12 bg-transparent p-0 border-b-0">
-              <TabsTrigger value="body" className="text-sm data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-blue-500 data-[state=active]:text-blue-400 border-b-2 border-transparent rounded-none transition-all text-gray-400 hover:text-white">
+              <TabsTrigger value="body" className={`text-sm data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:${themeClasses.border.accent.replace('border-', 'border-b-')} data-[state=active]:${themeClasses.text.accent} border-b-2 border-transparent rounded-none transition-all ${themeClasses.tab.inactive}`}>
                 Body
               </TabsTrigger>
-              <TabsTrigger value="headers" className="text-sm data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-blue-500 data-[state=active]:text-blue-400 border-b-2 border-transparent rounded-none transition-all text-gray-400 hover:text-white">
+              <TabsTrigger value="headers" className={`text-sm data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:${themeClasses.border.accent.replace('border-', 'border-b-')} data-[state=active]:${themeClasses.text.accent} border-b-2 border-transparent rounded-none transition-all ${themeClasses.tab.inactive}`}>
                 Headers
-                <span className="ml-2 text-xs bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded border border-blue-500/30">
+                <span className={`ml-2 text-xs px-1.5 py-0.5 rounded border ${themeClasses.status.info}`}>
                   {Object.keys(response.headers || {}).length}
                 </span>
               </TabsTrigger>
-              <TabsTrigger value="test" className="text-sm data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-blue-500 data-[state=active]:text-blue-400 border-b-2 border-transparent rounded-none transition-all text-gray-400 hover:text-white">
+              <TabsTrigger value="test" className={`text-sm data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:${themeClasses.border.accent.replace('border-', 'border-b-')} data-[state=active]:${themeClasses.text.accent} border-b-2 border-transparent rounded-none transition-all ${themeClasses.tab.inactive}`}>
                 Test Results
               </TabsTrigger>
             </TabsList>
           </div>
           
           <TabsContent value="body" className="flex-1 p-6 overflow-y-auto">
-            <div className="border border-gray-700/50 rounded-xl overflow-hidden bg-gray-800/30 backdrop-blur-sm">
-              <div className="px-4 py-3 bg-gray-800/50 border-b border-gray-700/50 flex items-center justify-between">
-                <span className="text-xs font-medium text-gray-300 uppercase tracking-wide flex items-center gap-2">
+            <div className={`border rounded-xl overflow-hidden backdrop-blur-sm ${themeClasses.card.base}`}>
+              <div className={`px-4 py-3 border-b flex items-center justify-between ${themeClasses.border.secondary} ${themeClasses.bg.secondary}`}>
+                <span className={`text-xs font-medium uppercase tracking-wide flex items-center gap-2 ${themeClasses.text.secondary}`}>
                   <div className="h-2 w-2 bg-emerald-500 rounded-full"></div>
                   {getContentType()}
                 </span>
                 <div className="flex items-center gap-3">
-                  <button className="text-xs text-gray-400 hover:text-white bg-gray-700/50 px-2 py-1 rounded transition-all duration-200">Pretty</button>
-                  <button className="text-xs text-gray-400 hover:text-white hover:bg-gray-700/50 px-2 py-1 rounded transition-all duration-200">Raw</button>
-                  <button className="text-xs text-gray-400 hover:text-white hover:bg-gray-700/50 px-2 py-1 rounded transition-all duration-200">Preview</button>
+                  <button className={`text-xs px-2 py-1 rounded transition-all duration-200 ${isDark ? 'text-gray-400 hover:text-white bg-gray-700/50' : 'text-gray-600 hover:text-gray-900 bg-gray-200'}`}>Pretty</button>
+                  <button className={`text-xs px-2 py-1 rounded transition-all duration-200 ${themeClasses.button.ghost}`}>Raw</button>
+                  <button className={`text-xs px-2 py-1 rounded transition-all duration-200 ${themeClasses.button.ghost}`}>Preview</button>
                 </div>
               </div>
-              <div className="p-6 bg-gray-900/50 max-h-96 overflow-auto">
-                <div className="text-xs text-gray-300 font-mono leading-relaxed">
+              <div className={`p-6 max-h-96 overflow-auto ${isDark ? 'bg-gray-900/50' : 'bg-gray-50'}`}>
+                <div className={`text-xs font-mono leading-relaxed ${themeClasses.text.primary}`}>
                   {renderFormattedContent(response.data, getContentType())}
                 </div>
               </div>
@@ -300,18 +300,18 @@ export default function ResponsePanel({ response, loading, request }) {
           </TabsContent>
           
           <TabsContent value="headers" className="flex-1 p-6 overflow-y-auto">
-            <div className="space-y-0 border border-gray-700/50 rounded-xl overflow-hidden">
-              <div className="bg-gray-800/50 px-6 py-3 border-b border-gray-700/50">
-                <div className="grid grid-cols-2 gap-6 text-xs font-medium text-gray-300 uppercase tracking-wide">
+            <div className={`space-y-0 border rounded-xl overflow-hidden ${themeClasses.card.base}`}>
+              <div className={`px-6 py-3 border-b ${themeClasses.border.secondary} ${themeClasses.bg.secondary}`}>
+                <div className={`grid grid-cols-2 gap-6 text-xs font-medium uppercase tracking-wide ${themeClasses.text.secondary}`}>
                   <div>Key</div>
                   <div>Value</div>
                 </div>
               </div>
-              <div className="divide-y divide-gray-700/50">
+              <div className={`divide-y ${themeClasses.border.primary}`}>
                 {Object.entries(response.headers || {}).map(([key, value]) => (
-                  <div key={key} className="grid grid-cols-2 gap-6 px-6 py-4 bg-gray-800/20 hover:bg-gray-800/40 transition-all duration-200">
-                    <div className="text-sm font-medium text-blue-400 font-mono break-all">{key}</div>
-                    <div className="text-sm text-gray-300 font-mono break-all">{value}</div>
+                  <div key={key} className={`grid grid-cols-2 gap-6 px-6 py-4 transition-all duration-200 ${isDark ? 'bg-gray-800/20 hover:bg-gray-800/40' : 'bg-white hover:bg-gray-50'}`}>
+                    <div className={`text-sm font-medium font-mono break-all ${themeClasses.text.accent}`}>{key}</div>
+                    <div className={`text-sm font-mono break-all ${themeClasses.text.primary}`}>{value}</div>
                   </div>
                 ))}
               </div>
@@ -319,15 +319,15 @@ export default function ResponsePanel({ response, loading, request }) {
           </TabsContent>
           
           <TabsContent value="test" className="flex-1 p-6">
-            <div className="text-center py-16 text-gray-500">
-              <div className="w-16 h-16 bg-gray-800/50 rounded-xl flex items-center justify-center mx-auto mb-6 border border-gray-700/50">
-                <Check className="h-8 w-8 text-gray-400" />
+            <div className={`text-center py-16 ${themeClasses.text.tertiary}`}>
+              <div className={`w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-6 ${themeClasses.card.base}`}>
+                <Check className={`h-8 w-8 ${themeClasses.text.tertiary}`} />
               </div>
-              <h3 className="text-base font-medium text-white mb-3">No tests configured</h3>
-              <p className="text-sm text-gray-400 max-w-sm mx-auto">
+              <h3 className={`text-base font-medium mb-3 ${themeClasses.text.primary}`}>No tests configured</h3>
+              <p className={`text-sm max-w-sm mx-auto ${themeClasses.text.tertiary}`}>
                 Write test scripts to validate your API responses automatically
               </p>
-              <button className="mt-6 h-9 text-sm px-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white rounded-lg transition-all duration-200 shadow-lg hover:shadow-blue-500/25">
+              <button className={`mt-6 h-9 text-sm px-4 rounded-lg transition-all duration-200 ${themeClasses.button.primary}`}>
                 Add Test
               </button>
             </div>

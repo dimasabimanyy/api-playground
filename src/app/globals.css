@@ -119,4 +119,31 @@
   body {
     @apply bg-background text-foreground;
   }
+  
+  /* Smooth theme transitions */
+  html {
+    transition: background-color 300ms ease-in-out, color 300ms ease-in-out;
+  }
+  
+  /* Ensure all elements transition smoothly */
+  * {
+    transition-property: background-color, border-color, color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+  }
+  
+  /* Preserve specific transition overrides */
+  .transition-none {
+    transition: none !important;
+  }
+  
+  /* Custom scrollbar for webkit browsers */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }

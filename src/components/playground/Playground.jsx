@@ -5,7 +5,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { Share2, History, BookOpen, Check, Copy, PanelLeftOpen, PanelLeftClose, Zap, FolderOpen, User, Settings, Globe, Search, Plus, X } from 'lucide-react'
+import { Share2, History, BookOpen, Check, Copy, PanelLeftOpen, PanelLeftClose, Zap, FolderOpen, User, Settings, Globe, Search, Plus, X, Moon, Sun } from 'lucide-react'
+import { useTheme } from '@/contexts/ThemeContext'
+import { getThemeClasses, getMethodColors } from '@/lib/theme'
 import RequestPanel from './RequestPanel'
 import ResponsePanel from './ResponsePanel'
 import HistoryPanel from './HistoryPanel'
@@ -17,6 +19,8 @@ import { getActiveCollectionId, getCollection, addRequestToCollection, updateReq
 import CollectionsSidebar from '@/components/collections/CollectionsSidebar'
 
 export default function Playground() {
+  const { theme, toggleTheme, isDark } = useTheme()
+  const themeClasses = getThemeClasses(isDark)
   // Request tabs state
   const [requestTabs, setRequestTabs] = useState([
     {
@@ -258,62 +262,68 @@ export default function Playground() {
   }
 
   return (
-    <div className="min-h-screen bg-[#111] text-white">
-      {/* Header - Dark Premium Style */}
-      <header className="border-b border-gray-800/50 bg-[#111]/80 backdrop-blur-xl h-14 flex items-center px-6">
+    <div className={`min-h-screen transition-colors duration-300 ${themeClasses.bg.primary} ${themeClasses.text.primary}`}>
+      {/* Header - Theme Aware */}
+      <header className={`border-b ${themeClasses.border.primary} ${themeClasses.bg.glass} h-14 flex items-center px-6 transition-all duration-300`}>
         <div className="flex items-center space-x-6 min-w-0 flex-shrink-0">
           <div className="flex items-center space-x-3">
             <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
               <Zap className="h-4 w-4 text-white" />
             </div>
-            <h1 className="text-lg font-semibold text-white tracking-tight">API Playground</h1>
+            <h1 className={`text-lg font-semibold tracking-tight ${themeClasses.text.primary}`}>API Playground</h1>
           </div>
         </div>
         
         <div className="flex-1 flex justify-center max-w-lg mx-auto">
           <div className="relative w-full">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${themeClasses.text.tertiary}`} />
             <Input
               placeholder="Search requests, collections..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-9 text-sm border-0 bg-gray-800/50 text-white placeholder-gray-400 focus:bg-gray-800/80 focus:ring-1 focus:ring-blue-500/50 rounded-lg transition-all backdrop-blur-sm"
+              className={`pl-10 h-9 text-sm rounded-lg transition-all backdrop-blur-sm ${themeClasses.input.base}`}
             />
           </div>
         </div>
         
         <div className="flex items-center space-x-3 ml-auto">
-          <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-800/50 rounded-lg transition-all duration-200">
+          <button 
+            onClick={toggleTheme}
+            className={`p-2 rounded-lg transition-all duration-200 ${themeClasses.button.ghost}`}
+          >
+            {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </button>
+          <button className={`p-2 rounded-lg transition-all duration-200 ${themeClasses.button.ghost}`}>
             <Settings className="h-4 w-4" />
           </button>
-          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
-            <User className="h-4 w-4 text-gray-300" />
+          <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${isDark ? 'bg-gradient-to-br from-gray-700 to-gray-800' : 'bg-gradient-to-br from-gray-200 to-gray-300'}`}>
+            <User className={`h-4 w-4 ${isDark ? 'text-gray-300' : 'text-gray-600'}`} />
           </div>
         </div>
       </header>
 
-      {/* Main Content Layout - Dark Premium */}
+      {/* Main Content Layout - Theme Aware */}
       <div className="flex h-[calc(100vh-3.5rem)]">
-        {/* Left Sidebar - Dark Glassy */}
-        <div className="w-72 border-r border-gray-800/50 bg-[#1a1a1a]/50 backdrop-blur-xl flex flex-col">
-          <div className="p-6 border-b border-gray-800/50">
+        {/* Left Sidebar - Theme Aware */}
+        <div className={`w-72 border-r ${themeClasses.border.primary} ${themeClasses.bg.glass} flex flex-col transition-all duration-300`}>
+          <div className={`p-6 border-b ${themeClasses.border.primary}`}>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-semibold text-white tracking-wide">Collections</h2>
-              <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-800/50 rounded-lg transition-all duration-200 group">
+              <h2 className={`text-sm font-semibold tracking-wide ${themeClasses.text.primary}`}>Collections</h2>
+              <button className={`p-2 rounded-lg transition-all duration-200 group ${themeClasses.button.ghost}`}>
                 <Plus className="h-4 w-4 group-hover:scale-110 transition-transform" />
               </button>
             </div>
             
-            <button className="w-full flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 rounded-lg transition-all duration-200 shadow-lg hover:shadow-blue-500/25 mb-4">
+            <button className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 mb-4 ${themeClasses.button.primary}`}>
               <Plus className="h-4 w-4 text-white" />
               <span className="text-sm font-medium text-white">New Request</span>
             </button>
             
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${themeClasses.text.tertiary}`} />
               <Input
                 placeholder="Filter collections..."
-                className="pl-10 h-9 text-sm border-0 bg-gray-800/30 text-white placeholder-gray-500 focus:bg-gray-800/50 focus:ring-1 focus:ring-blue-500/50 rounded-lg transition-all backdrop-blur-sm"
+                className={`pl-10 h-9 text-sm rounded-lg transition-all backdrop-blur-sm ${themeClasses.input.base}`}
               />
             </div>
           </div>
@@ -321,7 +331,7 @@ export default function Playground() {
           <div className="flex-1 overflow-y-auto">
             <div className="p-4">
               <div className="space-y-2">
-                <div className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-3">Workspace</div>
+                <div className={`text-xs font-medium uppercase tracking-wider mb-3 ${themeClasses.text.tertiary}`}>Workspace</div>
                 <button
                   onClick={() => {
                     setActiveMenuTab('collections')
@@ -330,8 +340,8 @@ export default function Playground() {
                   }}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-all duration-200 ${
                     activeMenuTab === 'collections'
-                      ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
-                      : 'text-gray-300 hover:text-white hover:bg-gray-800/50'
+                      ? `${themeClasses.status.info} border`
+                      : `${themeClasses.text.secondary} hover:${themeClasses.text.primary} ${isDark ? 'hover:bg-gray-800/50' : 'hover:bg-gray-100'}`
                   }`}
                 >
                   <FolderOpen className="h-4 w-4" />
@@ -345,8 +355,8 @@ export default function Playground() {
                   }}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-all duration-200 ${
                     activeMenuTab === 'history'
-                      ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
-                      : 'text-gray-300 hover:text-white hover:bg-gray-800/50'
+                      ? `${themeClasses.status.info} border`
+                      : `${themeClasses.text.secondary} hover:${themeClasses.text.primary} ${isDark ? 'hover:bg-gray-800/50' : 'hover:bg-gray-100'}`
                   }`}
                 >
                   <History className="h-4 w-4" />
@@ -356,14 +366,14 @@ export default function Playground() {
               
               {/* Collections List */}
               <div className="mt-6">
-                <div className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-3">Recent Collections</div>
+                <div className={`text-xs font-medium uppercase tracking-wider mb-3 ${themeClasses.text.tertiary}`}>Recent Collections</div>
                 <div className="space-y-1">
-                  <div className="p-3 rounded-lg bg-gray-800/30 border border-gray-700/50 hover:bg-gray-800/50 transition-all duration-200 cursor-pointer group">
+                  <div className={`p-3 rounded-lg transition-all duration-200 cursor-pointer group ${themeClasses.card.base} hover:${themeClasses.card.elevated}`}>
                     <div className="flex items-center gap-2 mb-1">
-                      <div className="h-2 w-2 rounded-full bg-green-500"></div>
-                      <span className="text-sm font-medium text-white">My API Tests</span>
+                      <div className="h-2 w-2 rounded-full bg-emerald-500"></div>
+                      <span className={`text-sm font-medium ${themeClasses.text.primary}`}>My API Tests</span>
                     </div>
-                    <div className="text-xs text-gray-400">3 requests</div>
+                    <div className={`text-xs ${themeClasses.text.tertiary}`}>3 requests</div>
                   </div>
                 </div>
               </div>
@@ -372,51 +382,31 @@ export default function Playground() {
         </div>
 
         
-        {/* Main Workbench - Dark Premium */}
-        <div className="flex-1 flex flex-col bg-[#111]">
-          {/* Request Tabs - Dark Premium Style */}
-          <div className="bg-[#1a1a1a]/50 border-b border-gray-800/50 backdrop-blur-xl">
+        {/* Main Workbench - Theme Aware */}
+        <div className={`flex-1 flex flex-col ${themeClasses.bg.primary} transition-colors duration-300`}>
+          {/* Request Tabs - Theme Aware */}
+          <div className={`${themeClasses.bg.glass} border-b ${themeClasses.border.primary}`}>
             <div className="flex items-center px-6 py-3">
               <div className="flex items-center overflow-x-auto scrollbar-hide gap-1">
                 {requestTabs.map((tab, index) => {
-                  const getMethodColor = (method) => {
-                    const colors = {
-                      GET: 'text-emerald-400',
-                      POST: 'text-blue-400', 
-                      PUT: 'text-orange-400',
-                      PATCH: 'text-yellow-400',
-                      DELETE: 'text-red-400',
-                    }
-                    return colors[method] || 'text-gray-400'
-                  }
-                  
-                  const getMethodBg = (method) => {
-                    const colors = {
-                      GET: 'bg-emerald-500/10 border-emerald-500/20',
-                      POST: 'bg-blue-500/10 border-blue-500/20', 
-                      PUT: 'bg-orange-500/10 border-orange-500/20',
-                      PATCH: 'bg-yellow-500/10 border-yellow-500/20',
-                      DELETE: 'bg-red-500/10 border-red-500/20',
-                    }
-                    return colors[method] || 'bg-gray-500/10 border-gray-500/20'
-                  }
+                  const methodColors = getMethodColors(tab.request.method, isDark)
                   
                   return (
                     <div
                       key={tab.id}
                       className={`flex items-center gap-3 px-4 py-2.5 cursor-pointer min-w-0 group rounded-lg transition-all duration-200 ${
                         tab.id === activeTabId
-                          ? 'bg-gray-800/50 text-white border border-gray-700/50 shadow-lg'
-                          : 'text-gray-400 hover:text-white hover:bg-gray-800/30'
+                          ? `${themeClasses.card.elevated} ${themeClasses.text.primary} shadow-lg`
+                          : `${themeClasses.text.secondary} hover:${themeClasses.text.primary} ${isDark ? 'hover:bg-gray-800/30' : 'hover:bg-gray-100/50'}`
                       }`}
                       onClick={() => setActiveTabId(tab.id)}
                     >
-                      <div className={`px-2 py-1 rounded text-xs font-medium border ${getMethodBg(tab.request.method)} ${getMethodColor(tab.request.method)} flex-shrink-0`}>
+                      <div className={`px-2 py-1 rounded text-xs font-medium border ${methodColors.bg} ${methodColors.text} flex-shrink-0`}>
                         {tab.request.method}
                       </div>
                       <span className={`text-sm truncate min-w-0 ${tab.isModified ? 'italic' : ''}`}>
                         {tab.name || 'Untitled Request'}
-                        {tab.isModified && <span className="text-blue-400 ml-1">•</span>}
+                        {tab.isModified && <span className={`${themeClasses.text.accent} ml-1`}>•</span>}
                       </span>
                       {requestTabs.length > 1 && (
                         <button
@@ -424,7 +414,7 @@ export default function Playground() {
                             e.stopPropagation()
                             closeTab(tab.id)
                           }}
-                          className="h-5 w-5 opacity-0 group-hover:opacity-100 transition-all duration-200 text-gray-500 hover:text-white hover:bg-gray-700 rounded flex-shrink-0 flex items-center justify-center"
+                          className={`h-5 w-5 opacity-0 group-hover:opacity-100 transition-all duration-200 rounded flex-shrink-0 flex items-center justify-center ${themeClasses.text.tertiary} hover:${themeClasses.text.primary} ${isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-200'}`}
                         >
                           <X className="h-3 w-3" />
                         </button>
@@ -434,14 +424,14 @@ export default function Playground() {
                 })}
                 <button
                   onClick={createNewTab}
-                  className="h-9 w-9 text-gray-400 hover:text-white hover:bg-gray-800/50 rounded-lg transition-all duration-200 flex-shrink-0 flex items-center justify-center group"
+                  className={`h-9 w-9 rounded-lg transition-all duration-200 flex-shrink-0 flex items-center justify-center group ${themeClasses.button.ghost}`}
                 >
                   <Plus className="h-4 w-4 group-hover:scale-110 transition-transform" />
                 </button>
               </div>
               <div className="flex items-center ml-auto">
                 {request.url && (
-                  <button onClick={handleSaveRequest} className="h-8 text-sm px-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white rounded-lg transition-all duration-200 shadow-lg hover:shadow-blue-500/25">
+                  <button onClick={handleSaveRequest} className={`h-8 text-sm px-4 rounded-lg transition-all duration-200 ${themeClasses.button.primary}`}>
                     {currentTab?.collectionRequestId ? 'Update' : 'Save'}
                   </button>
                 )}
@@ -449,8 +439,8 @@ export default function Playground() {
             </div>
           </div>
           
-          {/* Main Content Area - Dark Premium Split View */}
-          <div className="flex-1 flex bg-[#111]">
+          {/* Main Content Area - Theme Aware Split View */}
+          <div className={`flex-1 flex ${themeClasses.bg.primary} transition-colors duration-300`}>
             <RequestPanel 
               request={request}
               setRequest={setRequest}
