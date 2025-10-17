@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { Share2, History, BookOpen, Check, Copy, PanelLeftOpen, PanelLeftClose } from 'lucide-react'
+import { Share2, History, BookOpen, Check, Copy, PanelLeftOpen, PanelLeftClose, Zap, FolderOpen, User } from 'lucide-react'
 import RequestPanel from './RequestPanel'
 import ResponsePanel from './ResponsePanel'
 import HistoryPanel from './HistoryPanel'
@@ -36,6 +36,7 @@ export default function Playground() {
   const [activeRequestId, setActiveRequestId] = useState(null)
   const [currentRequestName, setCurrentRequestName] = useState('')
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [activeMenuTab, setActiveMenuTab] = useState('collections')
 
   // Load shared request and active collection on mount
   useEffect(() => {
@@ -191,18 +192,9 @@ export default function Playground() {
       {/* Header */}
       <header className="border-b border-gray-200 bg-white h-14 flex items-center px-6">
         <div className="flex items-center space-x-3 min-w-0 flex-shrink-0">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className="h-8 w-8 p-0 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-          >
-            {sidebarCollapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
-          </Button>
-          <div className="h-7 w-7 rounded bg-green-600 flex items-center justify-center">
-            <div className="h-4 w-4 rounded-sm bg-white" />
+          <div className="h-8 w-8 rounded bg-green-600 flex items-center justify-center">
+            <Zap className="h-4 w-4 text-white" />
           </div>
-          <h1 className="text-lg font-semibold text-gray-900">API Playground</h1>
         </div>
         
         <div className="flex-1 flex justify-center px-8">
@@ -223,15 +215,6 @@ export default function Playground() {
         </div>
         
         <div className="flex items-center space-x-3">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={() => setShowHistory(!showHistory)}
-            className="h-8 px-3 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-          >
-            <History className="h-4 w-4 mr-2" />
-            History
-          </Button>
           <div className="h-6 w-px bg-gray-200" />
           <Button 
             variant="outline" 
@@ -245,8 +228,64 @@ export default function Playground() {
 
       {/* Main Content Layout */}
       <div className="flex h-[calc(100vh-3.5rem)]">
+        {/* Menu Sidebar */}
+        <div className="w-14 border-r border-gray-200 bg-white flex flex-col">
+          <div className="flex-1 py-3">
+            <div className="space-y-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  if (activeMenuTab === 'collections' && !sidebarCollapsed) {
+                    setSidebarCollapsed(true)
+                  } else {
+                    setActiveMenuTab('collections')
+                    setSidebarCollapsed(false)
+                    setShowHistory(false)
+                  }
+                }}
+                className={`w-10 h-10 mx-2 p-0 rounded-md transition-colors cursor-pointer ${
+                  activeMenuTab === 'collections' && !sidebarCollapsed
+                    ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                <FolderOpen className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setActiveMenuTab('history')
+                  setShowHistory(!showHistory)
+                  setSidebarCollapsed(true)
+                }}
+                className={`w-10 h-10 mx-2 p-0 rounded-md transition-colors cursor-pointer ${
+                  showHistory
+                    ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                <History className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setActiveMenuTab('profile')}
+                className={`w-10 h-10 mx-2 p-0 rounded-md transition-colors cursor-pointer ${
+                  activeMenuTab === 'profile'
+                    ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                <User className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
+
         {/* Collections Sidebar */}
-        {!sidebarCollapsed && (
+        {!sidebarCollapsed && activeMenuTab === 'collections' && (
           <CollectionsSidebar
             onCollectionSelect={handleCollectionSelect}
             onRequestSelect={handleRequestSelect}
