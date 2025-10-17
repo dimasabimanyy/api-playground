@@ -218,25 +218,25 @@ export default function RequestPanel({
         <div>
           <Tabs defaultValue="headers" className="w-full">
             <div className={`border-b ${themeClasses.border.primary} ${themeClasses.bg.secondary}`}>
-              <TabsList className="grid w-full grid-cols-4 h-12 bg-transparent p-0 border-b-0">
-                <TabsTrigger value="params" className={`text-sm data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:${themeClasses.border.accent.replace('border-', 'border-b-')} data-[state=active]:${themeClasses.text.accent} border-b-2 border-transparent rounded-none transition-all ${themeClasses.tab.inactive}`}>
+              <TabsList className="grid w-full grid-cols-4 h-9 bg-transparent p-0 border-b-0">
+                <TabsTrigger value="params" className={`text-xs data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:${themeClasses.border.accent.replace('border-', 'border-b-')} data-[state=active]:${themeClasses.text.accent} border-b-2 border-transparent rounded-none transition-all ${themeClasses.tab.inactive}`}>
                   Params
                 </TabsTrigger>
-                <TabsTrigger value="headers" className={`text-sm data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:${themeClasses.border.accent.replace('border-', 'border-b-')} data-[state=active]:${themeClasses.text.accent} border-b-2 border-transparent rounded-none transition-all ${themeClasses.tab.inactive}`}>
+                <TabsTrigger value="headers" className={`text-xs data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:${themeClasses.border.accent.replace('border-', 'border-b-')} data-[state=active]:${themeClasses.text.accent} border-b-2 border-transparent rounded-none transition-all ${themeClasses.tab.inactive}`}>
                   Headers
                   {Object.keys(request.headers).length > 0 && (
-                    <span className={`ml-2 text-xs px-1.5 py-0.5 rounded border ${themeClasses.status.info}`}>
+                    <span className={`ml-1.5 text-xs px-1.5 py-0.5 rounded border ${themeClasses.status.info}`}>
                       {Object.keys(request.headers).length}
                     </span>
                   )}
                 </TabsTrigger>
-                <TabsTrigger value="body" className={`text-sm data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:${themeClasses.border.accent.replace('border-', 'border-b-')} data-[state=active]:${themeClasses.text.accent} border-b-2 border-transparent rounded-none transition-all ${themeClasses.tab.inactive}`}>
+                <TabsTrigger value="body" className={`text-xs data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:${themeClasses.border.accent.replace('border-', 'border-b-')} data-[state=active]:${themeClasses.text.accent} border-b-2 border-transparent rounded-none transition-all ${themeClasses.tab.inactive}`}>
                   Body
                   {request.body && (
-                    <div className={`ml-2 h-2 w-2 rounded-full ${isDark ? 'bg-blue-500' : 'bg-blue-600'}`} />
+                    <div className={`ml-1.5 h-2 w-2 rounded-full ${isDark ? 'bg-blue-500' : 'bg-blue-600'}`} />
                   )}
                 </TabsTrigger>
-                <TabsTrigger value="auth" className={`text-sm data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:${themeClasses.border.accent.replace('border-', 'border-b-')} data-[state=active]:${themeClasses.text.accent} border-b-2 border-transparent rounded-none transition-all ${themeClasses.tab.inactive}`}>
+                <TabsTrigger value="auth" className={`text-xs data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:${themeClasses.border.accent.replace('border-', 'border-b-')} data-[state=active]:${themeClasses.text.accent} border-b-2 border-transparent rounded-none transition-all ${themeClasses.tab.inactive}`}>
                   Authorization
                 </TabsTrigger>
               </TabsList>

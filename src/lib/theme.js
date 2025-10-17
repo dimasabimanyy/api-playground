@@ -3,17 +3,17 @@
 export const getThemeClasses = (isDark) => ({
   // Background colors
   bg: {
-    primary: isDark ? 'bg-[#111]' : 'bg-white',
-    secondary: isDark ? 'bg-[#1a1a1a]/50' : 'bg-gray-50/50',
-    tertiary: isDark ? 'bg-gray-800/50' : 'bg-white',
-    surface: isDark ? 'bg-[#1a1a1a]/80' : 'bg-white/80',
-    elevated: isDark ? 'bg-gray-800/30' : 'bg-white',
-    glass: isDark ? 'bg-[#1a1a1a]/50 backdrop-blur-xl' : 'bg-white/70 backdrop-blur-xl',
+    primary: isDark ? 'bg-[#111]' : 'bg-gray-50/30',
+    secondary: isDark ? 'bg-[#1a1a1a]/50' : 'bg-gray-100/40',
+    tertiary: isDark ? 'bg-gray-800/50' : 'bg-white/80',
+    surface: isDark ? 'bg-[#1a1a1a]/80' : 'bg-gray-50/60',
+    elevated: isDark ? 'bg-gray-800/30' : 'bg-white/90',
+    glass: isDark ? 'bg-[#1a1a1a]/50 backdrop-blur-xl' : 'bg-white/60 backdrop-blur-xl',
   },
   
   // Text colors
   text: {
-    primary: isDark ? 'text-white' : 'text-gray-900',
+    primary: isDark ? 'text-white' : 'text-gray-800',
     secondary: isDark ? 'text-gray-300' : 'text-gray-600',
     tertiary: isDark ? 'text-gray-400' : 'text-gray-500',
     muted: isDark ? 'text-gray-500' : 'text-gray-400',
@@ -22,8 +22,8 @@ export const getThemeClasses = (isDark) => ({
   
   // Border colors
   border: {
-    primary: isDark ? 'border-gray-800/50' : 'border-gray-200/50',
-    secondary: isDark ? 'border-gray-700/50' : 'border-gray-300/50',
+    primary: isDark ? 'border-gray-800/50' : 'border-gray-200/60',
+    secondary: isDark ? 'border-gray-700/50' : 'border-gray-300/40',
     accent: isDark ? 'border-blue-500/50' : 'border-blue-400/50',
   },
   
@@ -31,43 +31,43 @@ export const getThemeClasses = (isDark) => ({
   input: {
     base: isDark 
       ? 'border-0 bg-gray-800/50 text-white placeholder-gray-400 focus:bg-gray-800/80 focus:ring-1 focus:ring-blue-500/50' 
-      : 'border border-gray-300 bg-white text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50',
+      : 'border border-gray-200/80 bg-white/80 text-gray-800 placeholder-gray-500 focus:border-blue-400/60 focus:ring-1 focus:ring-blue-400/30',
     disabled: isDark 
       ? 'bg-gray-700/50 border-0 text-gray-300' 
-      : 'bg-gray-100 border-gray-200 text-gray-600',
+      : 'bg-gray-100/60 border-gray-200/60 text-gray-600',
   },
   
   // Button styles
   button: {
     primary: isDark 
-      ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white shadow-lg hover:shadow-blue-500/25' 
-      : 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white shadow-lg hover:shadow-blue-500/25',
+      ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white shadow-lg hover:shadow-blue-500/25 cursor-pointer' 
+      : 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white shadow-md hover:shadow-blue-500/20 cursor-pointer',
     secondary: isDark 
-      ? 'text-gray-300 hover:text-white hover:bg-gray-800/50 border border-gray-700/50' 
-      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100 border border-gray-300',
+      ? 'text-gray-300 hover:text-white hover:bg-gray-800/50 border border-gray-700/50 cursor-pointer' 
+      : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100/60 border border-gray-200/80 cursor-pointer',
     ghost: isDark 
-      ? 'text-gray-400 hover:text-white hover:bg-gray-800/50' 
-      : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100',
+      ? 'text-gray-400 hover:text-white hover:bg-gray-800/50 cursor-pointer' 
+      : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100/50 cursor-pointer',
   },
   
   // Card/panel styles
   card: {
     base: isDark 
       ? 'bg-gray-800/30 border border-gray-700/50' 
-      : 'bg-white border border-gray-200 shadow-sm',
+      : 'bg-white/80 border border-gray-200/70 shadow-sm',
     elevated: isDark 
       ? 'bg-gray-800/50 border border-gray-700/50 shadow-lg' 
-      : 'bg-white border border-gray-200 shadow-lg',
+      : 'bg-white/90 border border-gray-200/80 shadow-md',
   },
   
   // Tab styles
   tab: {
     inactive: isDark 
-      ? 'text-gray-400 hover:text-white' 
-      : 'text-gray-500 hover:text-gray-700',
+      ? 'text-gray-400 hover:text-white cursor-pointer' 
+      : 'text-gray-500 hover:text-gray-700 cursor-pointer',
     active: isDark 
-      ? 'text-blue-400 border-blue-500' 
-      : 'text-blue-600 border-blue-500',
+      ? 'text-blue-400 border-blue-500 cursor-pointer' 
+      : 'text-blue-600 border-blue-500 cursor-pointer',
   },
   
   // Status indicators

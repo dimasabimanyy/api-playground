@@ -331,14 +331,14 @@ export default function ResponsePanel({ response, loading, request }) {
             {request && <CodeGenerationPanel request={request} />}
             <button
               onClick={() => copyToClipboard(formatResponseData(response.data))}
-              className={`h-9 text-xs px-4 rounded-lg transition-all duration-200 ${themeClasses.button.secondary}`}
+              className={`h-9 text-xs px-4 rounded transition-all duration-200 ${themeClasses.button.secondary}`}
             >
               <Copy className="h-3 w-3 mr-2" />
               {copied ? 'Copied!' : 'Copy'}
             </button>
             <button 
               onClick={downloadResponse}
-              className={`h-9 text-xs px-4 rounded-lg transition-all duration-200 ${themeClasses.button.secondary}`}
+              className={`h-9 text-xs px-4 rounded transition-all duration-200 ${themeClasses.button.secondary}`}
             >
               <Download className="h-3 w-3 mr-2" />
               Save
@@ -351,24 +351,24 @@ export default function ResponsePanel({ response, loading, request }) {
       <div className={`flex-1 overflow-hidden transition-colors duration-300 ${themeClasses.bg.primary}`}>
         <Tabs defaultValue="body" className="w-full h-full flex flex-col">
           <div className={`border-b ${themeClasses.border.primary} ${themeClasses.bg.secondary}`}>
-            <TabsList className="grid w-full grid-cols-3 h-12 bg-transparent p-0 border-b-0">
-              <TabsTrigger value="body" className={`text-sm data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:${themeClasses.border.accent.replace('border-', 'border-b-')} data-[state=active]:${themeClasses.text.accent} border-b-2 border-transparent rounded-none transition-all ${themeClasses.tab.inactive}`}>
+            <TabsList className="grid w-full grid-cols-3 h-9 bg-transparent p-0 border-b-0">
+              <TabsTrigger value="body" className={`text-xs data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:${themeClasses.border.accent.replace('border-', 'border-b-')} data-[state=active]:${themeClasses.text.accent} border-b-2 border-transparent rounded-none transition-all ${themeClasses.tab.inactive}`}>
                 Body
               </TabsTrigger>
-              <TabsTrigger value="headers" className={`text-sm data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:${themeClasses.border.accent.replace('border-', 'border-b-')} data-[state=active]:${themeClasses.text.accent} border-b-2 border-transparent rounded-none transition-all ${themeClasses.tab.inactive}`}>
+              <TabsTrigger value="headers" className={`text-xs data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:${themeClasses.border.accent.replace('border-', 'border-b-')} data-[state=active]:${themeClasses.text.accent} border-b-2 border-transparent rounded-none transition-all ${themeClasses.tab.inactive}`}>
                 Headers
-                <span className={`ml-2 text-xs px-1.5 py-0.5 rounded border ${themeClasses.status.info}`}>
+                <span className={`ml-1.5 text-xs px-1.5 py-0.5 rounded border ${themeClasses.status.info}`}>
                   {Object.keys(response.headers || {}).length}
                 </span>
               </TabsTrigger>
-              <TabsTrigger value="test" className={`text-sm data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:${themeClasses.border.accent.replace('border-', 'border-b-')} data-[state=active]:${themeClasses.text.accent} border-b-2 border-transparent rounded-none transition-all ${themeClasses.tab.inactive}`}>
+              <TabsTrigger value="test" className={`text-xs data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:${themeClasses.border.accent.replace('border-', 'border-b-')} data-[state=active]:${themeClasses.text.accent} border-b-2 border-transparent rounded-none transition-all ${themeClasses.tab.inactive}`}>
                 Test Results
               </TabsTrigger>
             </TabsList>
           </div>
           
           <TabsContent value="body" className="flex-1 p-6 overflow-y-auto">
-            <div className={`border rounded-xl overflow-hidden backdrop-blur-sm ${themeClasses.card.base}`}>
+            <div className={`border rounded overflow-hidden backdrop-blur-sm ${themeClasses.card.base}`}>
               <div className={`px-4 py-3 border-b flex items-center justify-between ${themeClasses.border.secondary} ${themeClasses.bg.secondary}`}>
                 <span className={`text-xs font-medium uppercase tracking-wide flex items-center gap-2 ${themeClasses.text.secondary}`}>
                   <div className="h-2 w-2 bg-emerald-500 rounded-full"></div>

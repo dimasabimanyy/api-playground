@@ -267,7 +267,7 @@ export default function Playground() {
       <header className={`border-b ${themeClasses.border.primary} ${themeClasses.bg.glass} h-14 flex items-center px-6 transition-all duration-300`}>
         <div className="flex items-center space-x-6 min-w-0 flex-shrink-0">
           <div className="flex items-center space-x-3">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
+            <div className="h-8 w-8 rounded bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
               <Zap className="h-4 w-4 text-white" />
             </div>
             <h1 className={`text-lg font-semibold tracking-tight ${themeClasses.text.primary}`}>API Playground</h1>
@@ -281,7 +281,7 @@ export default function Playground() {
               placeholder="Search requests, collections..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className={`pl-10 h-9 text-sm rounded-lg transition-all backdrop-blur-sm ${themeClasses.input.base}`}
+              className={`pl-10 h-9 text-sm rounded transition-all backdrop-blur-sm ${themeClasses.input.base}`}
             />
           </div>
         </div>
@@ -289,14 +289,14 @@ export default function Playground() {
         <div className="flex items-center space-x-3 ml-auto">
           <button 
             onClick={toggleTheme}
-            className={`p-2 rounded-lg transition-all duration-200 ${themeClasses.button.ghost}`}
+            className={`p-2 rounded transition-all duration-200 ${themeClasses.button.ghost}`}
           >
             {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
-          <button className={`p-2 rounded-lg transition-all duration-200 ${themeClasses.button.ghost}`}>
+          <button className={`p-2 rounded transition-all duration-200 ${themeClasses.button.ghost}`}>
             <Settings className="h-4 w-4" />
           </button>
-          <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${isDark ? 'bg-gradient-to-br from-gray-700 to-gray-800' : 'bg-gradient-to-br from-gray-200 to-gray-300'}`}>
+          <div className={`h-8 w-8 rounded flex items-center justify-center cursor-pointer ${isDark ? 'bg-gradient-to-br from-gray-700 to-gray-800' : 'bg-gradient-to-br from-gray-200 to-gray-300'}`}>
             <User className={`h-4 w-4 ${isDark ? 'text-gray-300' : 'text-gray-600'}`} />
           </div>
         </div>
@@ -338,7 +338,7 @@ export default function Playground() {
                     setSidebarCollapsed(false)
                     setShowHistory(false)
                   }}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-all duration-200 ${
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded transition-all duration-200 cursor-pointer ${
                     activeMenuTab === 'collections'
                       ? `${themeClasses.status.info} border`
                       : `${themeClasses.text.secondary} hover:${themeClasses.text.primary} ${isDark ? 'hover:bg-gray-800/50' : 'hover:bg-gray-100'}`
