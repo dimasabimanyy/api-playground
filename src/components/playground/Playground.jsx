@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { Share2, History, BookOpen, Check, Copy, PanelLeftOpen, PanelLeftClose, Zap, FolderOpen, User, Settings } from 'lucide-react'
+import { Share2, History, BookOpen, Check, Copy, PanelLeftOpen, PanelLeftClose, Zap, FolderOpen, User, Settings, Globe, Search } from 'lucide-react'
 import RequestPanel from './RequestPanel'
 import ResponsePanel from './ResponsePanel'
 import HistoryPanel from './HistoryPanel'
@@ -37,6 +37,7 @@ export default function Playground() {
   const [currentRequestName, setCurrentRequestName] = useState('')
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [activeMenuTab, setActiveMenuTab] = useState('collections')
+  const [searchQuery, setSearchQuery] = useState('')
 
   // Load shared request and active collection on mount
   useEffect(() => {
@@ -190,30 +191,40 @@ export default function Playground() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="border-b border-gray-200 bg-white h-14 flex items-center px-6">
+      <header className="border-b border-gray-200 bg-white h-14 flex items-center px-6 relative">
         <div className="flex items-center space-x-3 min-w-0 flex-shrink-0">
           <div className="h-8 w-8 rounded bg-green-600 flex items-center justify-center">
             <Zap className="h-4 w-4 text-white" />
           </div>
         </div>
         
-        <div className="flex-1 flex justify-center px-8">
-          <div className="flex items-center gap-6">
-            <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="h-8 bg-gray-100">
-                <TabsTrigger value="rest" className="text-sm px-4 data-[state=active]:bg-white">REST</TabsTrigger>
-                <TabsTrigger value="graphql" disabled className="text-sm px-4 text-gray-400">GraphQL</TabsTrigger>
-              </TabsList>
-            </Tabs>
-            {showShared && (
-              <div className="text-sm text-blue-700 bg-blue-50 px-3 py-1 rounded-md border border-blue-200">
-                Shared request loaded
-              </div>
-            )}
+        {/* Search Input - Absolutely centered */}
+        <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              placeholder="Search requests and collections..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 h-8 w-80 text-sm border-gray-300 bg-white focus:border-green-500 focus:ring-0"
+            />
           </div>
         </div>
         
-        <div className="flex items-center space-x-3">
+        {showShared && (
+          <div className="absolute top-1/2 transform -translate-y-1/2 left-1/2 translate-x-48 text-sm text-blue-700 bg-blue-50 px-3 py-1 rounded-md border border-blue-200">
+            Shared request loaded
+          </div>
+        )}
+        
+        <div className="flex items-center space-x-3 ml-auto">
+          {/* REST/GraphQL Toggle */}
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="h-8 bg-gray-100">
+              <TabsTrigger value="rest" className="text-sm px-4 data-[state=active]:bg-white">REST</TabsTrigger>
+              <TabsTrigger value="graphql" disabled className="text-sm px-4 text-gray-400">GraphQL</TabsTrigger>
+            </TabsList>
+          </Tabs>
           <div className="h-6 w-px bg-gray-200" />
           <Button 
             variant="outline" 
@@ -228,7 +239,7 @@ export default function Playground() {
       {/* Main Content Layout */}
       <div className="flex h-[calc(100vh-3.5rem)]">
         {/* Menu Sidebar */}
-        <div className="w-14 border-r border-gray-200 bg-white flex flex-col">
+        <div className="group w-14 hover:w-48 border-r border-gray-200 bg-white flex flex-col transition-all duration-200 ease-in-out">
           <div className="flex-1 py-3">
             <div className="space-y-1">
               <Button
@@ -243,13 +254,17 @@ export default function Playground() {
                     setShowHistory(false)
                   }
                 }}
-                className={`w-10 h-10 mx-2 p-0 rounded-md transition-colors cursor-pointer ${
+                className={`w-full h-10 mx-2 px-2 justify-start rounded-md transition-colors cursor-pointer ${
                   activeMenuTab === 'collections' && !sidebarCollapsed
                     ? 'bg-green-100 text-green-700 hover:bg-green-200'
                     : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
                 }`}
+                style={{ width: 'calc(100% - 1rem)' }}
               >
-                <FolderOpen className="h-4 w-4" />
+                <FolderOpen className="h-4 w-4 flex-shrink-0" />
+                <span className="ml-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap text-sm font-medium">
+                  Collections
+                </span>
               </Button>
               <Button
                 variant="ghost"
@@ -263,13 +278,41 @@ export default function Playground() {
                     setShowHistory(false)
                   }
                 }}
-                className={`w-10 h-10 mx-2 p-0 rounded-md transition-colors cursor-pointer ${
+                className={`w-full h-10 mx-2 px-2 justify-start rounded-md transition-colors cursor-pointer ${
                   activeMenuTab === 'history' && !sidebarCollapsed
                     ? 'bg-green-100 text-green-700 hover:bg-green-200'
                     : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
                 }`}
+                style={{ width: 'calc(100% - 1rem)' }}
               >
-                <History className="h-4 w-4" />
+                <History className="h-4 w-4 flex-shrink-0" />
+                <span className="ml-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap text-sm font-medium">
+                  History
+                </span>
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  if (activeMenuTab === 'environments' && !sidebarCollapsed) {
+                    setSidebarCollapsed(true)
+                  } else {
+                    setActiveMenuTab('environments')
+                    setSidebarCollapsed(false)
+                    setShowHistory(false)
+                  }
+                }}
+                className={`w-full h-10 mx-2 px-2 justify-start rounded-md transition-colors cursor-pointer ${
+                  activeMenuTab === 'environments' && !sidebarCollapsed
+                    ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                }`}
+                style={{ width: 'calc(100% - 1rem)' }}
+              >
+                <Globe className="h-4 w-4 flex-shrink-0" />
+                <span className="ml-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap text-sm font-medium">
+                  Environments
+                </span>
               </Button>
               <Button
                 variant="ghost"
@@ -283,13 +326,17 @@ export default function Playground() {
                     setShowHistory(false)
                   }
                 }}
-                className={`w-10 h-10 mx-2 p-0 rounded-md transition-colors cursor-pointer ${
+                className={`w-full h-10 mx-2 px-2 justify-start rounded-md transition-colors cursor-pointer ${
                   activeMenuTab === 'settings' && !sidebarCollapsed
                     ? 'bg-green-100 text-green-700 hover:bg-green-200'
                     : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
                 }`}
+                style={{ width: 'calc(100% - 1rem)' }}
               >
-                <Settings className="h-4 w-4" />
+                <Settings className="h-4 w-4 flex-shrink-0" />
+                <span className="ml-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap text-sm font-medium">
+                  Settings
+                </span>
               </Button>
             </div>
           </div>
@@ -311,6 +358,33 @@ export default function Playground() {
           </div>
         )}
         
+        {!sidebarCollapsed && activeMenuTab === 'environments' && (
+          <div className="w-64 border-r border-gray-200 bg-white h-full flex flex-col">
+            {/* Environments Header */}
+            <div className="px-4 py-4">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-sm font-semibold text-gray-900">Environments</h2>
+              </div>
+              
+              {/* Current Environment Selector */}
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-700">Active Environment</label>
+                <EnvironmentSelector />
+              </div>
+            </div>
+
+            {/* Environment Management */}
+            <div className="flex-1 overflow-y-auto bg-white">
+              <div className="px-4 pb-4">
+                <div className="text-sm text-gray-600 bg-blue-50 p-3 rounded-lg">
+                  <p className="font-medium mb-1">Environment Variables</p>
+                  <p className="text-xs">Use the settings button in the environment selector above to manage your environment variables and create new environments.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {!sidebarCollapsed && activeMenuTab === 'settings' && (
           <div className="w-64 border-r border-gray-200 bg-white h-full flex flex-col">
             {/* Settings Header */}
@@ -321,12 +395,6 @@ export default function Playground() {
             {/* Settings Content */}
             <div className="flex-1 overflow-y-auto bg-white">
               <div className="px-4 pb-4 space-y-6">
-                {/* Environment Settings */}
-                <div className="space-y-3">
-                  <h3 className="text-sm font-medium text-gray-900">Environment</h3>
-                  <EnvironmentSelector />
-                </div>
-                
                 {/* Theme Settings */}
                 <div className="space-y-3">
                   <h3 className="text-sm font-medium text-gray-900">Appearance</h3>
@@ -361,6 +429,21 @@ export default function Playground() {
                     <label className="flex items-center space-x-2">
                       <input type="checkbox" className="w-4 h-4 text-green-600 rounded" />
                       <span className="text-sm text-gray-700">Follow redirects</span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Editor Settings */}
+                <div className="space-y-3">
+                  <h3 className="text-sm font-medium text-gray-900">Editor</h3>
+                  <div className="space-y-2">
+                    <label className="flex items-center space-x-2">
+                      <input type="checkbox" defaultChecked className="w-4 h-4 text-green-600 rounded" />
+                      <span className="text-sm text-gray-700">Word wrap</span>
+                    </label>
+                    <label className="flex items-center space-x-2">
+                      <input type="checkbox" className="w-4 h-4 text-green-600 rounded" />
+                      <span className="text-sm text-gray-700">Show line numbers</span>
                     </label>
                   </div>
                 </div>
