@@ -104,7 +104,7 @@ export default function RequestPanel({
               placeholder="https://api.example.com/endpoint"
               value={request.url}
               onChange={(e) => updateRequest('url', e.target.value)}
-              className={`h-10 text-sm rounded-lg font-mono transition-all backdrop-blur-sm ${themeClasses.input.base}`}
+              className={`h-10 text-sm rounded transition-all backdrop-blur-sm ${themeClasses.input.base}`}
             />
           </div>
           <button 
