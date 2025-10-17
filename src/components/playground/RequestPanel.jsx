@@ -62,31 +62,40 @@ export default function RequestPanel({
     return colors[method] || 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300'
   }
 
+  const getMethodBorderColor = (method) => {
+    const colors = {
+      GET: 'border-green-500',
+      POST: 'border-blue-500', 
+      PUT: 'border-orange-500',
+      PATCH: 'border-yellow-500',
+      DELETE: 'border-red-500',
+    }
+    return colors[method] || 'border-gray-300'
+  }
+
   return (
     <div className="flex-1 bg-white h-full flex flex-col">
-      <div className="px-8 py-6 border-b border-gray-100 bg-gray-50/50">
+      <div className="px-4 py-3 border-b border-gray-100">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <TemplatesPanel onLoadTemplate={setRequest} />
+          <div className="flex items-center gap-2">
             <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
               <DialogTrigger asChild>
-                <Button variant="ghost" size="sm" onClick={onShare} className="h-9 text-sm px-4 text-gray-600 hover:text-gray-900 hover:bg-white rounded-lg transition-all duration-200">
-                  <Share2 className="h-4 w-4 mr-2" />
+                <button onClick={onShare} className="h-6 text-xs px-2 text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded transition-colors">
+                  <Share2 className="h-3 w-3 mr-1" />
                   Share
-                </Button>
+                </button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-lg">
+              <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                  <DialogTitle className="text-lg font-semibold">Share this request</DialogTitle>
+                  <DialogTitle className="text-base font-medium">Share Request</DialogTitle>
                 </DialogHeader>
-                <div className="space-y-6 pt-4">
+                <div className="space-y-3 pt-3">
                   <p className="text-sm text-gray-600">
-                    Copy this URL to share your API request configuration with others.
+                    Copy this URL to share your request configuration.
                   </p>
-                  <div className="flex gap-3">
-                    <Input value={shareUrl} readOnly className="font-mono text-sm h-10 bg-gray-50 border-gray-200 rounded-lg" />
-                    <Button onClick={copyShareUrl} variant="outline" className="px-4 py-2 rounded-lg border-gray-200">
-                      <Copy className="h-4 w-4 mr-2" />
+                  <div className="flex gap-2">
+                    <Input value={shareUrl} readOnly className="font-mono text-sm h-8 bg-gray-50 border-gray-200" />
+                    <Button onClick={copyShareUrl} variant="outline" size="sm" className="px-3 text-xs">
                       {copySuccess ? 'Copied!' : 'Copy'}
                     </Button>
                   </div>
@@ -95,46 +104,35 @@ export default function RequestPanel({
             </Dialog>
           </div>
           
-          <Button 
-            onClick={onExecute} 
-            disabled={loading || !request.url}
-            className={`h-10 text-sm px-6 font-medium rounded-lg transition-all duration-200 ${
-              loading || !request.url 
-              ? 'bg-gray-200 text-gray-500 cursor-not-allowed' 
-              : 'bg-green-600 hover:bg-green-700 text-white shadow-sm hover:shadow-md'
-            }`}
-          >
-            <Send className="h-4 w-4 mr-2" />
-            {loading ? 'Sending...' : 'Send'}
-          </Button>
+          <TemplatesPanel onLoadTemplate={setRequest} />
         </div>
       </div>
-      <div className="flex-1 px-8 py-8 space-y-8 overflow-y-auto">
+      <div className="flex-1 px-4 py-4 space-y-4 overflow-y-auto">
         {/* Request Name */}
         {currentRequestName !== undefined && (
-          <div className="space-y-3">
-            <label className="text-sm font-semibold text-gray-900">Request Name</label>
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-gray-600">Request Name</label>
             <Input
               placeholder="Untitled request"
               value={currentRequestName}
               onChange={(e) => setCurrentRequestName?.(e.target.value)}
-              className="h-11 text-sm border-gray-200 bg-white focus:border-green-500 focus:ring-2 focus:ring-green-100 rounded-lg transition-all duration-200"
+              className="h-7 text-sm border-gray-200 bg-white focus:border-gray-300 focus:ring-0"
             />
           </div>
         )}
 
         {/* Method and URL */}
-        <div className="space-y-4">
-          <div className="flex gap-4">
-            <div className="w-32">
+        <div className="space-y-2">
+          <div className="flex gap-2">
+            <div className="w-20">
               <Select value={request.method} onValueChange={(value) => updateRequest('method', value)}>
-                <SelectTrigger className="h-11 text-sm border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-100 rounded-lg transition-all duration-200">
+                <SelectTrigger className="h-7 text-xs border-gray-200 focus:border-gray-300 focus:ring-0">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="rounded-lg border-gray-200">
+                <SelectContent className="border-gray-200">
                   {HTTP_METHODS.map(method => (
-                    <SelectItem key={method} value={method} className="rounded-md">
-                      <span className="font-mono text-sm font-medium">{method}</span>
+                    <SelectItem key={method} value={method}>
+                      <span className="font-mono text-xs">{method}</span>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -145,81 +143,97 @@ export default function RequestPanel({
                 placeholder="https://api.example.com/endpoint"
                 value={request.url}
                 onChange={(e) => updateRequest('url', e.target.value)}
-                className="h-11 text-sm border-gray-200 bg-white focus:border-green-500 focus:ring-2 focus:ring-green-100 font-mono rounded-lg transition-all duration-200"
+                className="h-7 text-sm border-gray-200 bg-white focus:border-gray-300 focus:ring-0 font-mono"
               />
             </div>
+            <button 
+              onClick={onExecute} 
+              disabled={loading || !request.url}
+              className={`h-7 text-xs px-3 rounded transition-colors ${
+                loading || !request.url 
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                : 'bg-black hover:bg-gray-800 text-white'
+              }`}
+            >
+              {loading ? 'Sending...' : 'Send'}
+            </button>
           </div>
           {request.url.includes('{{') && (
-            <div className="flex items-center space-x-3 text-sm text-amber-700 bg-amber-50 px-4 py-3 rounded-lg border border-amber-200 shadow-sm">
-              <div className="h-2 w-2 bg-amber-500 rounded-full" />
-              <span className="font-medium">Using environment variables</span>
+            <div className="flex items-center space-x-2 text-xs text-amber-600 bg-amber-50 px-2 py-1.5 rounded border border-amber-100">
+              <div className="h-1 w-1 bg-amber-500 rounded-full" />
+              <span>Using environment variables</span>
             </div>
           )}
         </div>
 
+        {/* Request Path/Name Display */}
+        <div className="text-xs text-gray-500 font-mono">
+          {currentRequestName || request.url || 'Untitled Request'}
+        </div>
+
         {/* Tabs for Headers and Body */}
-        <div className="space-y-6">
+        <div className="space-y-3">
           <Tabs defaultValue="headers" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 h-11 bg-gray-100 p-1 rounded-lg">
-              <TabsTrigger value="headers" className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-md transition-all duration-200">
+            <TabsList className="grid w-full grid-cols-2 h-7 bg-gray-50 p-0.5">
+              <TabsTrigger value="headers" className="text-xs data-[state=active]:bg-white data-[state=active]:shadow-none transition-all">
                 Headers
                 {Object.keys(request.headers).length > 0 && (
-                  <span className="ml-2 text-xs text-gray-500 bg-gray-200 px-1.5 py-0.5 rounded-full">
+                  <span className="ml-1 text-xs text-gray-400">
                     {Object.keys(request.headers).length}
                   </span>
                 )}
               </TabsTrigger>
-              <TabsTrigger value="body" className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-md transition-all duration-200">
+              <TabsTrigger value="body" className="text-xs data-[state=active]:bg-white data-[state=active]:shadow-none transition-all">
                 Body
                 {request.body && (
-                  <div className="ml-2 h-2 w-2 bg-green-500 rounded-full" />
+                  <div className="ml-1 h-1 w-1 bg-green-500 rounded-full" />
                 )}
               </TabsTrigger>
             </TabsList>
           
-            <TabsContent value="headers" className="space-y-4 mt-4">
+            <TabsContent value="headers" className="space-y-3 mt-3">
               {/* Add New Header */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <Input
                   placeholder="Key"
                   value={newHeaderKey}
                   onChange={(e) => setNewHeaderKey(e.target.value)}
-                  className="h-8 text-sm font-mono border-gray-300 bg-white focus:border-green-500 focus:ring-0"
+                  className="h-7 text-sm font-mono border-gray-200 bg-white focus:border-gray-300 focus:ring-0"
                 />
                 <Input
                   placeholder="Value"
                   value={newHeaderValue}
                   onChange={(e) => setNewHeaderValue(e.target.value)}
-                  className="h-8 text-sm font-mono border-gray-300 bg-white focus:border-green-500 focus:ring-0"
+                  className="h-7 text-sm font-mono border-gray-200 bg-white focus:border-gray-300 focus:ring-0"
                 />
                 <Button 
                   variant="ghost" 
                   size="sm" 
                   onClick={addHeader}
-                  className="h-8 px-3 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                  className="h-7 px-2 text-xs text-gray-500 hover:text-gray-700 hover:bg-gray-50"
                   disabled={!newHeaderKey || !newHeaderValue}
                 >
-                  <Plus className="h-4 w-4 mr-1" />
+                  <Plus className="h-3 w-3 mr-1" />
                   Add
                 </Button>
               </div>
               
               {/* Existing Headers */}
               {Object.keys(request.headers).length > 0 && (
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   {Object.entries(request.headers).map(([key, value]) => (
-                    <div key={key} className="flex items-center gap-3 py-2">
-                      <div className="flex-1 grid grid-cols-2 gap-3">
-                        <Input value={key} disabled className="h-8 bg-gray-50 border-gray-200 text-sm font-mono text-gray-600" />
-                        <Input value={value} disabled className="h-8 bg-gray-50 border-gray-200 text-sm font-mono text-gray-600" />
+                    <div key={key} className="flex items-center gap-2 py-1">
+                      <div className="flex-1 grid grid-cols-2 gap-2">
+                        <Input value={key} disabled className="h-7 bg-gray-50 border-gray-200 text-sm font-mono text-gray-600" />
+                        <Input value={value} disabled className="h-7 bg-gray-50 border-gray-200 text-sm font-mono text-gray-600" />
                       </div>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => removeHeader(key)}
-                        className="h-8 w-8 p-0 text-gray-400 hover:text-red-500 hover:bg-red-50"
+                        className="h-7 w-7 p-0 text-gray-400 hover:text-red-500 hover:bg-red-50"
                       >
-                        <X className="h-4 w-4" />
+                        <X className="h-3 w-3" />
                       </Button>
                     </div>
                   ))}
@@ -227,16 +241,16 @@ export default function RequestPanel({
               )}
             </TabsContent>
             
-            <TabsContent value="body" className="space-y-4 mt-4">
-              <div className="space-y-3">
+            <TabsContent value="body" className="space-y-3 mt-3">
+              <div className="space-y-2">
                 <Textarea
                   placeholder={`{\n  "key": "value"\n}`}
                   value={request.body}
                   onChange={(e) => updateRequest('body', e.target.value)}
-                  className="min-h-32 font-mono text-sm border-gray-300 bg-white focus:border-green-500 focus:ring-0 resize-none"
+                  className="min-h-28 font-mono text-sm border-gray-200 bg-white focus:border-gray-300 focus:ring-0 resize-none"
                 />
                 {request.body && (
-                  <div className="text-sm text-gray-500">
+                  <div className="text-xs text-gray-500">
                     {new Blob([request.body]).size} bytes
                   </div>
                 )}
