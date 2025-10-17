@@ -125,15 +125,67 @@ export default function ResponsePanel({ response, loading, request }) {
           <div className="flex items-center space-x-3">
             <div className={`animate-spin rounded-full h-4 w-4 border-2 ${isDark ? 'border-blue-400/30 border-t-blue-500' : 'border-blue-300/30 border-t-blue-600'}`}></div>
             <h3 className={`text-sm font-medium ${themeClasses.text.primary}`}>Response</h3>
-            <span className={`text-xs ${themeClasses.text.tertiary}`}>Sending request...</span>
+            <span className={`text-xs px-2 py-1 rounded border font-mono ${isDark ? 'text-blue-400 bg-blue-500/10 border-blue-500/20' : 'text-blue-600 bg-blue-100 border-blue-300'}`}>
+              Loading...
+            </span>
           </div>
         </div>
-        <div className={`flex-1 flex items-center justify-center transition-colors duration-300 ${themeClasses.bg.primary}`}>
-          <div className="text-center space-y-6">
-            <div className={`animate-spin rounded-full h-12 w-12 border-2 mx-auto ${isDark ? 'border-blue-400/30 border-t-blue-500' : 'border-blue-300/30 border-t-blue-600'}`}></div>
-            <div>
-              <p className={`text-base font-medium mb-2 ${themeClasses.text.primary}`}>Sending request...</p>
-              <p className={`text-sm ${themeClasses.text.tertiary}`}>Waiting for response</p>
+        
+        {/* Loading shimmer content */}
+        <div className={`flex-1 p-6 transition-colors duration-300 ${themeClasses.bg.primary}`}>
+          <div className="space-y-6">
+            {/* Status and timing placeholders */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-6">
+                <div className={`h-6 w-24 rounded shimmer ${isDark ? 'bg-gray-800/50' : 'bg-gray-200/50'}`}></div>
+                <div className={`h-4 w-16 rounded shimmer ${isDark ? 'bg-gray-800/50' : 'bg-gray-200/50'}`}></div>
+                <div className={`h-4 w-20 rounded shimmer ${isDark ? 'bg-gray-800/50' : 'bg-gray-200/50'}`}></div>
+              </div>
+              <div className="flex gap-3">
+                <div className={`h-9 w-16 rounded-lg shimmer ${isDark ? 'bg-gray-800/50' : 'bg-gray-200/50'}`}></div>
+                <div className={`h-9 w-16 rounded-lg shimmer ${isDark ? 'bg-gray-800/50' : 'bg-gray-200/50'}`}></div>
+              </div>
+            </div>
+            
+            {/* Tabs placeholder */}
+            <div className="flex space-x-6 border-b pb-3">
+              <div className={`h-5 w-12 rounded shimmer ${isDark ? 'bg-gray-800/50' : 'bg-gray-200/50'}`}></div>
+              <div className={`h-5 w-16 rounded shimmer ${isDark ? 'bg-gray-800/50' : 'bg-gray-200/50'}`}></div>
+              <div className={`h-5 w-20 rounded shimmer ${isDark ? 'bg-gray-800/50' : 'bg-gray-200/50'}`}></div>
+            </div>
+            
+            {/* Content area shimmer */}
+            <div className={`border rounded-xl p-6 space-y-4 ${themeClasses.card.base}`}>
+              <div className="flex justify-between items-center">
+                <div className={`h-4 w-16 rounded shimmer ${isDark ? 'bg-gray-800/50' : 'bg-gray-200/50'}`}></div>
+                <div className="flex gap-2">
+                  <div className={`h-6 w-12 rounded shimmer ${isDark ? 'bg-gray-800/50' : 'bg-gray-200/50'}`}></div>
+                  <div className={`h-6 w-12 rounded shimmer ${isDark ? 'bg-gray-800/50' : 'bg-gray-200/50'}`}></div>
+                </div>
+              </div>
+              
+              {/* Response content lines */}
+              <div className="space-y-3">
+                {[...Array(8)].map((_, i) => (
+                  <div 
+                    key={i}
+                    className={`h-4 rounded shimmer ${isDark ? 'bg-gray-800/50' : 'bg-gray-200/50'}`}
+                    style={{ width: `${Math.random() * 40 + 60}%` }}
+                  ></div>
+                ))}
+              </div>
+            </div>
+            
+            {/* Loading indicator at bottom */}
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-3">
+                <div className={`animate-pulse h-2 w-2 rounded-full ${isDark ? 'bg-blue-500' : 'bg-blue-600'}`}></div>
+                <div className={`animate-pulse h-2 w-2 rounded-full ${isDark ? 'bg-blue-500' : 'bg-blue-600'}`} style={{ animationDelay: '0.2s' }}></div>
+                <div className={`animate-pulse h-2 w-2 rounded-full ${isDark ? 'bg-blue-500' : 'bg-blue-600'}`} style={{ animationDelay: '0.4s' }}></div>
+              </div>
+              <p className={`text-sm mt-3 ${themeClasses.text.tertiary}`}>
+                Processing your request...
+              </p>
             </div>
           </div>
         </div>
@@ -148,15 +200,52 @@ export default function ResponsePanel({ response, loading, request }) {
           <h3 className={`text-sm font-medium ${themeClasses.text.primary}`}>Response</h3>
         </div>
         <div className={`flex-1 flex items-center justify-center transition-colors duration-300 ${themeClasses.bg.primary}`}>
-          <div className="text-center space-y-6">
-            <div className={`w-20 h-20 rounded-xl flex items-center justify-center mx-auto ${themeClasses.card.base}`}>
-              <div className={`w-10 h-10 border-2 border-dashed rounded-lg ${isDark ? 'border-gray-600' : 'border-gray-400'}`} />
+          <div className="text-center space-y-8 max-w-md mx-auto px-6">
+            {/* Hero Icon */}
+            <div className="relative">
+              <div className={`w-24 h-24 rounded-2xl flex items-center justify-center mx-auto ${isDark ? 'bg-gradient-to-br from-blue-500/20 to-purple-600/20 border border-blue-500/20' : 'bg-gradient-to-br from-blue-50 to-purple-50 border border-blue-200'}`}>
+                <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${isDark ? 'bg-blue-500/30' : 'bg-blue-100'}`}>
+                  <div className={`w-6 h-6 border-2 border-dashed rounded ${isDark ? 'border-blue-400' : 'border-blue-500'}`} />
+                </div>
+              </div>
+              <div className={`absolute -top-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center ${isDark ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
+                <div className={`w-2 h-2 rounded-full ${isDark ? 'bg-blue-400' : 'bg-blue-500'} animate-pulse`}></div>
+              </div>
             </div>
-            <div className="space-y-3">
-              <h3 className={`text-lg font-medium ${themeClasses.text.primary}`}>Ready to send</h3>
-              <p className={`text-sm max-w-sm ${themeClasses.text.tertiary}`}>
-                Enter a URL and click Send to see the response here
-              </p>
+            
+            {/* Welcome Content */}
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <h3 className={`text-xl font-semibold ${themeClasses.text.primary}`}>
+                  Start testing APIs
+                </h3>
+                <p className={`text-sm leading-relaxed ${themeClasses.text.secondary}`}>
+                  Enter an API endpoint in the request panel and click Send to see the response here. 
+                  Perfect for testing REST APIs, debugging responses, and exploring data.
+                </p>
+              </div>
+              
+              {/* Feature highlights */}
+              <div className="grid grid-cols-1 gap-3 mt-6">
+                <div className={`flex items-center gap-3 p-3 rounded-lg ${isDark ? 'bg-gray-800/30' : 'bg-gray-50'}`}>
+                  <div className={`w-6 h-6 rounded flex items-center justify-center ${isDark ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-600'}`}>
+                    <div className="w-2 h-2 rounded-full bg-current"></div>
+                  </div>
+                  <span className={`text-sm ${themeClasses.text.secondary}`}>Real-time response preview</span>
+                </div>
+                <div className={`flex items-center gap-3 p-3 rounded-lg ${isDark ? 'bg-gray-800/30' : 'bg-gray-50'}`}>
+                  <div className={`w-6 h-6 rounded flex items-center justify-center ${isDark ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-600'}`}>
+                    <div className="w-2 h-2 rounded-full bg-current"></div>
+                  </div>
+                  <span className={`text-sm ${themeClasses.text.secondary}`}>Headers & body inspection</span>
+                </div>
+                <div className={`flex items-center gap-3 p-3 rounded-lg ${isDark ? 'bg-gray-800/30' : 'bg-gray-50'}`}>
+                  <div className={`w-6 h-6 rounded flex items-center justify-center ${isDark ? 'bg-purple-500/20 text-purple-400' : 'bg-purple-100 text-purple-600'}`}>
+                    <div className="w-2 h-2 rounded-full bg-current"></div>
+                  </div>
+                  <span className={`text-sm ${themeClasses.text.secondary}`}>Export & share results</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>

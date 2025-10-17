@@ -155,6 +155,64 @@ export default function RequestPanel({
         </div>
       </div>
       
+      {/* Onboarding Section - Shows when no URL is entered */}
+      {!request.url && (
+        <div className={`p-6 border-b ${themeClasses.border.primary}`}>
+          <div className="text-center space-y-6">
+            <div className="space-y-3">
+              <h3 className={`text-lg font-semibold ${themeClasses.text.primary}`}>
+                Welcome to API Playground
+              </h3>
+              <p className={`text-sm ${themeClasses.text.secondary} max-w-md mx-auto`}>
+                Get started by entering an API endpoint above. Try one of these popular APIs to test:
+              </p>
+            </div>
+            
+            {/* Quick Start Examples */}
+            <div className="grid grid-cols-1 gap-3 max-w-md mx-auto">
+              <button
+                onClick={() => updateRequest('url', 'https://jsonplaceholder.typicode.com/posts/1')}
+                className={`flex items-center gap-3 p-4 text-left rounded-lg transition-all duration-200 ${isDark ? 'bg-gray-800/50 hover:bg-gray-800 border border-gray-700/50' : 'bg-gray-50 hover:bg-gray-100 border border-gray-200'}`}
+              >
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isDark ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-600'}`}>
+                  <span className="text-xs font-bold">JSON</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className={`text-sm font-medium ${themeClasses.text.primary}`}>JSONPlaceholder</div>
+                  <div className={`text-xs ${themeClasses.text.tertiary} truncate`}>Free fake API for testing</div>
+                </div>
+              </button>
+              
+              <button
+                onClick={() => updateRequest('url', 'https://httpbin.org/get')}
+                className={`flex items-center gap-3 p-4 text-left rounded-lg transition-all duration-200 ${isDark ? 'bg-gray-800/50 hover:bg-gray-800 border border-gray-700/50' : 'bg-gray-50 hover:bg-gray-100 border border-gray-200'}`}
+              >
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isDark ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-600'}`}>
+                  <span className="text-xs font-bold">HTTP</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className={`text-sm font-medium ${themeClasses.text.primary}`}>HTTPBin</div>
+                  <div className={`text-xs ${themeClasses.text.tertiary} truncate`}>HTTP request & response service</div>
+                </div>
+              </button>
+              
+              <button
+                onClick={() => updateRequest('url', 'https://api.github.com/repos/microsoft/vscode')}
+                className={`flex items-center gap-3 p-4 text-left rounded-lg transition-all duration-200 ${isDark ? 'bg-gray-800/50 hover:bg-gray-800 border border-gray-700/50' : 'bg-gray-50 hover:bg-gray-100 border border-gray-200'}`}
+              >
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isDark ? 'bg-purple-500/20 text-purple-400' : 'bg-purple-100 text-purple-600'}`}>
+                  <span className="text-xs font-bold">API</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className={`text-sm font-medium ${themeClasses.text.primary}`}>GitHub API</div>
+                  <div className={`text-xs ${themeClasses.text.tertiary} truncate`}>Repository information</div>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
       <div className={`flex-1 overflow-y-auto transition-colors duration-300 ${themeClasses.bg.primary}`}>
         {/* Request Configuration Tabs - Theme Aware */}
         <div>
