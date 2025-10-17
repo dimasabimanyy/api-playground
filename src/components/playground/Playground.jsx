@@ -31,6 +31,8 @@ import {
   Sun,
   ChevronLeft,
   ChevronRight,
+  Pencil,
+  Send,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { getThemeClasses, getMethodColors } from "@/lib/theme";
@@ -81,6 +83,7 @@ export default function Playground() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activeMenuTab, setActiveMenuTab] = useState("collections");
   const [searchQuery, setSearchQuery] = useState("");
+  const [editingRequestName, setEditingRequestName] = useState(false);
 
   // Helper functions for tab management
   const getCurrentTab = () => requestTabs.find((tab) => tab.id === activeTabId);
@@ -490,22 +493,31 @@ export default function Playground() {
                     >
                       Recent Collections
                     </div>
-                    <div className="space-y-1">
+                    <div>
                       <div
-                        className={`p-3 rounded-lg transition-all duration-200 cursor-pointer group ${themeClasses.card.base} hover:${themeClasses.card.elevated}`}
+                        className={`flex items-center gap-3 py-2 px-3 transition-all duration-200 cursor-pointer hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-100/50'} border-l-2 border-transparent hover:border-emerald-500`}
                       >
-                        <div className="flex items-center gap-2 mb-1">
-                          <div className="h-2 w-2 rounded-full bg-emerald-500"></div>
-                          <span
-                            className={`text-sm font-medium ${themeClasses.text.primary}`}
-                          >
+                        <div className="h-2 w-2 rounded-full bg-emerald-500 flex-shrink-0"></div>
+                        <div className="flex-1 min-w-0">
+                          <div className={`text-sm font-medium ${themeClasses.text.primary} truncate`}>
                             My API Tests
-                          </span>
+                          </div>
+                          <div className={`text-xs ${themeClasses.text.tertiary}`}>
+                            3 requests
+                          </div>
                         </div>
-                        <div
-                          className={`text-xs ${themeClasses.text.tertiary}`}
-                        >
-                          3 requests
+                      </div>
+                      <div
+                        className={`flex items-center gap-3 py-2 px-3 transition-all duration-200 cursor-pointer hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-100/50'} border-l-2 border-transparent hover:border-blue-500`}
+                      >
+                        <div className="h-2 w-2 rounded-full bg-blue-500 flex-shrink-0"></div>
+                        <div className="flex-1 min-w-0">
+                          <div className={`text-sm font-medium ${themeClasses.text.primary} truncate`}>
+                            User Service APIs
+                          </div>
+                          <div className={`text-xs ${themeClasses.text.tertiary}`}>
+                            7 requests
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -611,13 +623,36 @@ export default function Playground() {
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <input
-                  type="text"
-                  value={currentTab?.name || ""}
-                  onChange={(e) => setCurrentRequestName(e.target.value)}
-                  placeholder="Untitled Request"
-                  className={`text-sm font-medium bg-transparent border-none outline-none ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary}`}
-                />
+                <div className="flex items-center gap-2 group">
+                  {editingRequestName ? (
+                    <input
+                      type="text"
+                      value={currentTab?.name || ""}
+                      onChange={(e) => setCurrentRequestName(e.target.value)}
+                      onBlur={() => setEditingRequestName(false)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          setEditingRequestName(false)
+                        }
+                      }}
+                      placeholder="Untitled Request"
+                      className={`text-sm font-medium bg-transparent border border-gray-300 rounded px-2 py-1 outline-none focus:border-blue-500 ${themeClasses.text.primary}`}
+                      autoFocus
+                    />
+                  ) : (
+                    <>
+                      <span className={`text-sm font-medium ${themeClasses.text.primary}`}>
+                        {currentTab?.name || "Untitled Request"}
+                      </span>
+                      <button
+                        onClick={() => setEditingRequestName(true)}
+                        className={`opacity-0 group-hover:opacity-100 p-1 rounded transition-all duration-200 ${themeClasses.button.ghost}`}
+                      >
+                        <Pencil className="h-3 w-3" />
+                      </button>
+                    </>
+                  )}
+                </div>
                 {request.url && (
                   <span className={`text-xs ${themeClasses.text.tertiary}`}>
                     {(() => {
@@ -634,12 +669,20 @@ export default function Playground() {
               </div>
               <div className="flex items-center gap-2">
                 {request.url && (
-                  <button
-                    onClick={handleSaveRequest}
-                    className={`h-8 text-xs px-3 rounded transition-all duration-200 ${themeClasses.button.primary}`}
-                  >
-                    {currentTab?.collectionRequestId ? "Update" : "Save"}
-                  </button>
+                  <>
+                    <button className={`h-8 text-xs px-3 rounded transition-all duration-200 ${themeClasses.button.secondary}`}>
+                      Template
+                    </button>
+                    <button className={`h-8 text-xs px-3 rounded transition-all duration-200 ${themeClasses.button.secondary}`}>
+                      Share
+                    </button>
+                    <button
+                      onClick={handleSaveRequest}
+                      className={`h-8 text-xs px-3 rounded transition-all duration-200 ${themeClasses.button.primary}`}
+                    >
+                      {currentTab?.collectionRequestId ? "Update" : "Save"}
+                    </button>
+                  </>
                 )}
               </div>
             </div>

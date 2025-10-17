@@ -110,49 +110,26 @@ export default function RequestPanel({
           <button 
             onClick={onExecute} 
             disabled={loading || !request.url}
-            className={`h-10 text-sm px-6 rounded-lg transition-all duration-200 font-medium shadow-lg ${
+            className={`h-10 text-sm px-6 rounded transition-all duration-200 font-medium shadow-md flex items-center gap-2 ${
               loading || !request.url 
               ? `${isDark ? 'bg-gray-700 text-gray-400' : 'bg-gray-200 text-gray-500'} cursor-not-allowed` 
               : themeClasses.button.primary + ' hover:scale-105'
             }`}
           >
             {loading ? (
-              <div className="flex items-center gap-2">
+              <>
                 <div className={`animate-spin h-4 w-4 border-2 ${isDark ? 'border-blue-300 border-t-transparent' : 'border-blue-400 border-t-transparent'} rounded-full`}></div>
                 Sending...
-              </div>
-            ) : 'Send'}
+              </>
+            ) : (
+              <>
+                <Send className="h-4 w-4" />
+                Send
+              </>
+            )}
           </button>
         </div>
         
-        {/* Action Buttons */}
-        <div className="flex items-center gap-3">
-          <TemplatesPanel onLoadTemplate={setRequest} />
-          <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
-            <DialogTrigger asChild>
-              <button onClick={onShare} className={`h-8 text-xs px-3 rounded-lg transition-all duration-200 ${themeClasses.button.secondary}`}>
-                <Share2 className="h-3 w-3 mr-2" />
-                Share
-              </button>
-            </DialogTrigger>
-            <DialogContent className={`sm:max-w-md ${isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-200 text-gray-900'}`}>
-              <DialogHeader>
-                <DialogTitle className={`text-base font-medium ${themeClasses.text.primary}`}>Share Request</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-3 pt-3">
-                <p className={`text-sm ${themeClasses.text.secondary}`}>
-                  Copy this URL to share your request configuration.
-                </p>
-                <div className="flex gap-2">
-                  <Input value={shareUrl} readOnly className={`font-mono text-sm h-8 ${themeClasses.input.disabled}`} />
-                  <Button onClick={copyShareUrl} variant="outline" size="sm" className={`px-3 text-xs ${themeClasses.button.secondary}`}>
-                    {copySuccess ? 'Copied!' : 'Copy'}
-                  </Button>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
-        </div>
       </div>
       
       {/* Onboarding Section - Shows when no URL is entered */}
