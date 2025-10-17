@@ -417,7 +417,7 @@ export default function Playground() {
             onCollectionSelect={handleCollectionSelect}
             onRequestSelect={handleRequestSelect}
             activeCollectionId={activeCollectionId}
-            activeRequestId={activeRequestId}
+            activeRequestId={currentTab?.collectionRequestId}
           />
         )}
         
@@ -523,13 +523,64 @@ export default function Playground() {
         
         {/* Main Testing Area */}
         <div className="flex-1 flex flex-col">
-          <div className="border-b border-gray-200 px-6 py-3 bg-white">
-            <div className="flex items-center justify-end">
-              {request.url && (
-                <Button size="sm" onClick={handleSaveRequest} className="h-8 text-sm px-4 bg-green-600 hover:bg-green-700 text-white">
-                  {activeRequestId ? 'Update' : 'Save'}
+          {/* Request Tabs */}
+          <div className="border-b border-gray-200 bg-white">
+            <div className="flex items-start">
+              <div className="flex-1 flex items-center overflow-x-auto scrollbar-hide">
+                {requestTabs.map((tab) => (
+                  <div
+                    key={tab.id}
+                    className={`flex items-center gap-2 px-4 py-3 border-r border-gray-200 cursor-pointer min-w-0 group ${
+                      tab.id === activeTabId
+                        ? 'bg-white border-b-2 border-b-green-500'
+                        : 'bg-gray-50 hover:bg-gray-100'
+                    }`}
+                    onClick={() => setActiveTabId(tab.id)}
+                  >
+                    <span className={`text-xs font-mono px-1.5 py-0.5 rounded flex-shrink-0 ${
+                      tab.request.method === 'GET' ? 'text-green-600 bg-green-100' :
+                      tab.request.method === 'POST' ? 'text-blue-600 bg-blue-100' :
+                      tab.request.method === 'PUT' ? 'text-orange-600 bg-orange-100' :
+                      tab.request.method === 'DELETE' ? 'text-red-600 bg-red-100' :
+                      'text-gray-600 bg-gray-100'
+                    }`}>
+                      {tab.request.method}
+                    </span>
+                    <span className={`text-sm truncate min-w-0 ${tab.isModified ? 'italic' : ''}`}>
+                      {tab.name}
+                      {tab.isModified && ' *'}
+                    </span>
+                    {requestTabs.length > 1 && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          closeTab(tab.id)
+                        }}
+                        className="h-4 w-4 p-0 opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-gray-600 flex-shrink-0"
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    )}
+                  </div>
+                ))}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={createNewTab}
+                  className="h-8 w-8 p-0 m-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 flex-shrink-0"
+                >
+                  <Plus className="h-4 w-4" />
                 </Button>
-              )}
+              </div>
+              <div className="flex items-center px-4 py-3">
+                {request.url && (
+                  <Button size="sm" onClick={handleSaveRequest} className="h-8 text-sm px-4 bg-green-600 hover:bg-green-700 text-white">
+                    {currentTab?.collectionRequestId ? 'Update' : 'Save'}
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
           
@@ -547,7 +598,7 @@ export default function Playground() {
                   setShareDialogOpen={setShareDialogOpen}
                   copyShareUrl={copyShareUrl}
                   copySuccess={copySuccess}
-                  currentRequestName={currentRequestName}
+                  currentRequestName={currentTab?.name}
                   setCurrentRequestName={setCurrentRequestName}
                 />
                 <ResponsePanel response={response} loading={loading} request={request} />
