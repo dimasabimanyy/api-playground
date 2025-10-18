@@ -1,5 +1,5 @@
-import Playground from '@/components/playground/Playground'
+import LandingPage from '@/components/landing/LandingPage'
 
 export default function Home() {
-  return <Playground />
+  return <LandingPage />
 }
