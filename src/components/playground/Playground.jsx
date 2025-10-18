@@ -47,6 +47,7 @@ import {
   addRequestToCollection,
   updateRequestInCollection,
 } from "@/lib/collections";
+import DocGeneratorModal from "@/components/docs/DocGeneratorModal";
 
 export default function Playground() {
   const { toggleTheme, isDark } = useTheme();
@@ -866,7 +867,7 @@ export default function Playground() {
                       </>
                     )}
 
-                    {/* Docs Content - Trigger Modal */}
+                    {/* Docs Content - Generate Docs */}
                     {activeMenuTab === "docs" && (
                       <>
                         <div className="flex items-center justify-between mb-3">
@@ -875,20 +876,50 @@ export default function Playground() {
                           </span>
                         </div>
                         
-                        <button
-                          onClick={() => setDocsModalOpen(true)}
-                          className={`w-full flex items-center gap-3 py-3 px-3 transition-all duration-200 cursor-pointer hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-100/50'} rounded-lg border border-dashed ${themeClasses.border.primary}`}
-                        >
-                          <BookOpen className={`h-5 w-5 ${themeClasses.text.tertiary}`} />
-                          <div className="flex-1 text-left">
-                            <div className={`text-sm font-medium ${themeClasses.text.primary}`}>
-                              Open Documentation
+                        <div className="space-y-3">
+                          <button
+                            onClick={() => setDocsModalOpen(true)}
+                            className={`w-full flex items-center gap-3 py-4 px-4 transition-all duration-200 cursor-pointer hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-100/50'} rounded-lg border border-dashed ${themeClasses.border.primary} ${themeClasses.text.accent} border-blue-300 dark:border-blue-700`}
+                          >
+                            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30">
+                              <BookOpen className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                             </div>
-                            <div className={`text-xs ${themeClasses.text.tertiary}`}>
-                              Auto-generated API docs
+                            <div className="flex-1 text-left">
+                              <div className={`text-sm font-semibold ${themeClasses.text.primary}`}>
+                                Generate Docs
+                              </div>
+                              <div className={`text-xs ${themeClasses.text.tertiary}`}>
+                                Create beautiful API documentation
+                              </div>
+                            </div>
+                          </button>
+                          
+                          <div className={`p-4 rounded-lg ${themeClasses.card.base} border ${themeClasses.border.primary}`}>
+                            <div className="space-y-3">
+                              <div>
+                                <p className={`text-sm font-medium ${themeClasses.text.primary} mb-1`}>
+                                  Available Collections
+                                </p>
+                                <p className={`text-xs ${themeClasses.text.tertiary}`}>
+                                  {collections.length} collection{collections.length !== 1 ? 's' : ''} • {collections.reduce((acc, col) => acc + col.requests.length, 0)} endpoints
+                                </p>
+                              </div>
+                              
+                              <div className="flex gap-2">
+                                {collections.slice(0, 2).map(collection => (
+                                  <div key={collection.id} className={`px-2 py-1 rounded text-xs ${themeClasses.bg.secondary} ${themeClasses.text.secondary}`}>
+                                    {collection.name}
+                                  </div>
+                                ))}
+                                {collections.length > 2 && (
+                                  <div className={`px-2 py-1 rounded text-xs ${themeClasses.bg.secondary} ${themeClasses.text.tertiary}`}>
+                                    +{collections.length - 2} more
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           </div>
-                        </button>
+                        </div>
                       </>
                     )}
 
@@ -1217,27 +1248,16 @@ export default function Playground() {
         </div>
       </div>
 
-      {/* Docs Modal */}
-      <Dialog open={docsModalOpen} onOpenChange={setDocsModalOpen}>
-        <DialogContent className={`max-w-4xl max-h-[80vh] overflow-y-auto ${isDark ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'}`}>
-          <DialogHeader>
-            <DialogTitle className={`text-xl font-semibold ${themeClasses.text.primary}`}>
-              API Documentation
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-6">
-            <div className={`text-center py-12 ${themeClasses.text.tertiary}`}>
-              <BookOpen className={`h-12 w-12 mx-auto mb-4 ${themeClasses.text.tertiary}`} />
-              <h3 className={`text-lg font-semibold mb-2 ${themeClasses.text.primary}`}>
-                Documentation Coming Soon
-              </h3>
-              <p className={`text-sm max-w-md mx-auto ${themeClasses.text.secondary}`}>
-                Auto-generated API documentation will appear here based on your requests and collections.
-              </p>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Docs Generator Modal */}
+      <DocGeneratorModal
+        open={docsModalOpen}
+        onOpenChange={setDocsModalOpen}
+        collections={collections}
+        onGenerate={(docData) => {
+          console.log('Generated docs with data:', docData);
+          setDocsModalOpen(false);
+        }}
+      />
 
       {/* Settings Modal */}
       <Dialog open={settingsModalOpen} onOpenChange={setSettingsModalOpen}>
