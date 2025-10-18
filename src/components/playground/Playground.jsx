@@ -400,7 +400,7 @@ export default function Playground() {
 
           {!sidebarCollapsed && (
             <>
-              <div className={`p-6 border-b ${themeClasses.border.primary}`}>
+              <div className={`p-4 border-b ${themeClasses.border.primary}`}>
                 <div className="flex items-center justify-between mb-4">
                   <h2
                     className={`text-sm font-semibold tracking-wide ${themeClasses.text.primary}`}
@@ -415,10 +415,10 @@ export default function Playground() {
                 </div>
 
                 <button
-                  className={`w-full flex items-center gap-2 px-3 py-2 rounded transition-all duration-200 mb-4 ${themeClasses.button.primary}`}
+                  className={`w-full flex items-center gap-2 px-3 py-2 rounded transition-all duration-200 mb-3 ${themeClasses.button.primary}`}
                 >
                   <Plus className="h-3 w-3 text-white" />
-                  <span className="text-xs font-medium text-white">
+                  <span className="text-sm font-medium text-white">
                     New Request
                   </span>
                 </button>

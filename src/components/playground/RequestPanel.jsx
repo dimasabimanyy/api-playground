@@ -170,7 +170,7 @@ export default function RequestPanel({
               ? "bg-gray-700 text-gray-400"
               : "bg-gray-200 text-gray-500"
           } cursor-not-allowed`
-        : themeClasses.button.primary + " hover:scale-105"
+        : themeClasses.button.primary
     }`}
   >
     {loading ? (
