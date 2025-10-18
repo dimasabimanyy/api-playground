@@ -31,6 +31,7 @@ import {
   Sun,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   Pencil,
   Send,
   Trash2,
@@ -79,6 +80,46 @@ export default function Playground() {
   const [activeMenuTab, setActiveMenuTab] = useState("collections");
   const [searchQuery, setSearchQuery] = useState("");
   const [editingRequestName, setEditingRequestName] = useState(false);
+  
+  // Collections state
+  const [expandedCollections, setExpandedCollections] = useState(new Set(['my-api-tests'])); // Default expanded
+  const [editingCollection, setEditingCollection] = useState(null);
+  const [editingRequest, setEditingRequest] = useState(null);
+  const [selectedRequest, setSelectedRequest] = useState(null);
+
+  // Sample collections data (replace with real data later)
+  const collections = [
+    {
+      id: 'my-api-tests',
+      name: 'My API Tests',
+      requests: [
+        { id: 'req-1', name: 'Get User Profile', method: 'GET', url: '/api/users/me' },
+        { id: 'req-2', name: 'Create User', method: 'POST', url: '/api/users' },
+        { id: 'req-3', name: 'Update Settings', method: 'PUT', url: '/api/settings' },
+      ]
+    },
+    {
+      id: 'user-service',
+      name: 'User Service APIs',
+      requests: [
+        { id: 'req-4', name: 'Login', method: 'POST', url: '/auth/login' },
+        { id: 'req-5', name: 'Logout', method: 'POST', url: '/auth/logout' },
+        { id: 'req-6', name: 'Get All Users', method: 'GET', url: '/api/users' },
+        { id: 'req-7', name: 'Delete User', method: 'DELETE', url: '/api/users/:id' },
+      ]
+    }
+  ];
+
+  // Collection management functions
+  const toggleCollection = (collectionId) => {
+    const newExpanded = new Set(expandedCollections);
+    if (newExpanded.has(collectionId)) {
+      newExpanded.delete(collectionId);
+    } else {
+      newExpanded.add(collectionId);
+    }
+    setExpandedCollections(newExpanded);
+  };
 
   // Sidebar menu items
   const sidebarMenuItems = [
@@ -392,6 +433,7 @@ export default function Playground() {
                 </div> */}
 
                 <button
+                  onClick={createNewTab}
                   className={`w-full flex items-center gap-2 px-3 py-2 rounded transition-all duration-200 mb-3 ${themeClasses.button.primary}`}
                 >
                   <Plus className="h-3 w-3 text-white" />
@@ -449,33 +491,124 @@ export default function Playground() {
                             <Plus className="h-3 w-3" />
                           </button>
                         </div>
+                        
                         <div className="space-y-1">
-                          <div
-                            className={`flex items-center gap-3 py-2 px-3 transition-all duration-200 cursor-pointer hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-100/50'} rounded`}
-                          >
-                            <div className="h-2 w-2 rounded-full bg-emerald-500 flex-shrink-0"></div>
-                            <div className="flex-1 min-w-0">
-                              <div className={`text-sm font-medium ${themeClasses.text.primary} truncate`}>
-                                My API Tests
+                          {collections.map((collection) => {
+                            const isExpanded = expandedCollections.has(collection.id);
+                            
+                            return (
+                              <div key={collection.id} className="space-y-1">
+                                {/* Collection Header */}
+                                <div
+                                  className={`group relative flex items-center gap-2 py-2 px-3 transition-all duration-200 cursor-pointer hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-100/50'} rounded-lg`}
+                                >
+                                  {/* Expand/Collapse Chevron */}
+                                  <button
+                                    onClick={() => toggleCollection(collection.id)}
+                                    className={`p-0.5 rounded transition-all duration-200 ${themeClasses.button.ghost}`}
+                                  >
+                                    <ChevronDown 
+                                      className={`h-3 w-3 transition-transform duration-200 ${
+                                        isExpanded ? 'rotate-0' : '-rotate-90'
+                                      } ${themeClasses.text.tertiary}`} 
+                                    />
+                                  </button>
+                                  
+                                  {/* Collection Icon */}
+                                  <div className={`h-2 w-2 rounded-full ${collection.id === 'my-api-tests' ? 'bg-emerald-500' : 'bg-blue-500'} flex-shrink-0`}></div>
+                                  
+                                  {/* Collection Name */}
+                                  <div className="flex-1 min-w-0">
+                                    {editingCollection === collection.id ? (
+                                      <input
+                                        type="text"
+                                        defaultValue={collection.name}
+                                        onBlur={() => setEditingCollection(null)}
+                                        onKeyDown={(e) => {
+                                          if (e.key === 'Enter') setEditingCollection(null);
+                                        }}
+                                        className={`w-full text-sm font-medium bg-transparent border border-gray-300 rounded px-1 py-0.5 outline-none focus:border-blue-500 ${themeClasses.text.primary}`}
+                                        autoFocus
+                                      />
+                                    ) : (
+                                      <div
+                                        onClick={() => setEditingCollection(collection.id)}
+                                        className="flex items-center justify-between"
+                                      >
+                                        <div className={`text-sm font-medium ${themeClasses.text.primary} truncate`}>
+                                          {collection.name}
+                                        </div>
+                                        <div className={`text-xs ${themeClasses.text.tertiary} opacity-60`}>
+                                          {collection.requests.length}
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                                
+                                {/* Requests List */}
+                                {isExpanded && (
+                                  <div className="ml-6 space-y-0.5 overflow-hidden">
+                                    {collection.requests.map((request) => {
+                                      const methodColors = getMethodColors(request.method, isDark);
+                                      const isSelected = selectedRequest === request.id;
+                                      
+                                      return (
+                                        <div
+                                          key={request.id}
+                                          onClick={() => setSelectedRequest(request.id)}
+                                          className={`group relative flex items-center gap-3 py-1.5 px-3 transition-all duration-200 cursor-pointer rounded-lg ${
+                                            isSelected 
+                                              ? `${isDark ? 'bg-blue-500/10 border-l-2 border-blue-500' : 'bg-blue-50 border-l-2 border-blue-500'}` 
+                                              : `hover:${isDark ? 'bg-gray-800/20' : 'bg-gray-100/40'}`
+                                          }`}
+                                        >
+                                          {/* HTTP Method Badge */}
+                                          <div className={`px-1.5 py-0.5 rounded text-xs font-medium border ${methodColors.bg} ${methodColors.text} flex-shrink-0`}>
+                                            {request.method}
+                                          </div>
+                                          
+                                          {/* Request Name */}
+                                          <div className="flex-1 min-w-0">
+                                            {editingRequest === request.id ? (
+                                              <input
+                                                type="text"
+                                                defaultValue={request.name}
+                                                onBlur={() => setEditingRequest(null)}
+                                                onKeyDown={(e) => {
+                                                  if (e.key === 'Enter') setEditingRequest(null);
+                                                }}
+                                                className={`w-full text-xs bg-transparent border border-gray-300 rounded px-1 py-0.5 outline-none focus:border-blue-500 ${themeClasses.text.primary}`}
+                                                autoFocus
+                                              />
+                                            ) : (
+                                              <div
+                                                onDoubleClick={() => setEditingRequest(request.id)}
+                                                className={`text-xs ${themeClasses.text.primary} truncate`}
+                                              >
+                                                {request.name}
+                                              </div>
+                                            )}
+                                          </div>
+                                          
+                                          {/* Edit Icon (visible on hover) */}
+                                          <button
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              setEditingRequest(request.id);
+                                            }}
+                                            className={`opacity-0 group-hover:opacity-100 p-1 rounded transition-all duration-200 ${themeClasses.button.ghost}`}
+                                          >
+                                            <Pencil className="h-3 w-3" />
+                                          </button>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                )}
                               </div>
-                              <div className={`text-xs ${themeClasses.text.tertiary}`}>
-                                3 requests
-                              </div>
-                            </div>
-                          </div>
-                          <div
-                            className={`flex items-center gap-3 py-2 px-3 transition-all duration-200 cursor-pointer hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-100/50'} rounded`}
-                          >
-                            <div className="h-2 w-2 rounded-full bg-blue-500 flex-shrink-0"></div>
-                            <div className="flex-1 min-w-0">
-                              <div className={`text-sm font-medium ${themeClasses.text.primary} truncate`}>
-                                User Service APIs
-                              </div>
-                              <div className={`text-xs ${themeClasses.text.tertiary}`}>
-                                7 requests
-                              </div>
-                            </div>
-                          </div>
+                            );
+                          })}
                         </div>
                       </>
                     )}
