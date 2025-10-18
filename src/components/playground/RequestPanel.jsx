@@ -107,79 +107,92 @@ export default function RequestPanel({
     >
       {/* URL Bar Section - Theme Aware */}
       <div className={`p-6 border-b ${themeClasses.border.primary}`}>
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-24">
-            <Select
-              value={request.method}
-              onValueChange={(value) => updateRequest("method", value)}
+        <div className="flex items-center gap-2">
+  {/* METHOD SELECT */}
+  <div className="w-20">
+    <Select
+      value={request.method}
+      onValueChange={(value) => updateRequest("method", value)}
+    >
+      <SelectTrigger
+        className={`h-11 text-sm rounded backdrop-blur-sm ${themeClasses.input.base} px-3 flex items-center justify-between !h-11 !min-h-[44px] [&>span]:leading-none`}
+      >
+        <SelectValue />
+      </SelectTrigger>
+
+      <SelectContent
+        className={`
+          w-[var(--radix-select-trigger-width)] 
+          ${
+            isDark
+              ? "border-gray-700 bg-gray-800 text-white"
+              : "border-gray-200 bg-white text-gray-900"
+          }
+        `}
+        align="start"
+      >
+        {HTTP_METHODS.map((method) => {
+          const methodColors = getMethodColors(method, isDark);
+          return (
+            <SelectItem
+              key={method}
+              value={method}
+              className="text-sm py-2"
             >
-              <SelectTrigger
-                className={`h-10 text-sm rounded backdrop-blur-sm ${themeClasses.input.base} py-2 px-3 flex items-center justify-between`}
-              >
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent
-                className={`${
-                  isDark
-                    ? "border-gray-700 bg-gray-800 text-white"
-                    : "border-gray-200 bg-white text-gray-900"
-                }`}
-              >
-                {HTTP_METHODS.map((method) => {
-                  const methodColors = getMethodColors(method, isDark);
-                  return (
-                    <SelectItem key={method} value={method}>
-                      <span
-                        className={`font-bold text-sm ${methodColors.text}`}
-                      >
-                        {method}
-                      </span>
-                    </SelectItem>
-                  );
-                })}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex-1">
-            <Input
-              placeholder="https://api.example.com/endpoint"
-              value={request.url}
-              onChange={(e) => updateRequest("url", e.target.value)}
-              className={`h-10 text-sm rounded backdrop-blur-sm ${themeClasses.input.base}`}
-            />
-          </div>
-          <button
-            onClick={onExecute}
-            disabled={loading || !request.url}
-            className={`h-10 text-sm px-6 rounded transition-all duration-200 font-medium shadow-md flex items-center gap-2 ${
-              loading || !request.url
-                ? `${
-                    isDark
-                      ? "bg-gray-700 text-gray-400"
-                      : "bg-gray-200 text-gray-500"
-                  } cursor-not-allowed`
-                : themeClasses.button.primary + " hover:scale-105"
-            }`}
-          >
-            {loading ? (
-              <>
-                <div
-                  className={`animate-spin h-4 w-4 border-2 ${
-                    isDark
-                      ? "border-blue-300 border-t-transparent"
-                      : "border-blue-400 border-t-transparent"
-                  } rounded-full`}
-                ></div>
-                Sending...
-              </>
-            ) : (
-              <>
-                <Send className="h-4 w-4" />
-                Send
-              </>
-            )}
-          </button>
-        </div>
+              <span className={`font-bold ${methodColors.text}`}>
+                {method}
+              </span>
+            </SelectItem>
+          );
+        })}
+      </SelectContent>
+    </Select>
+  </div>
+
+  {/* URL INPUT */}
+  <div className="flex-1">
+    <Input
+      placeholder="https://api.example.com/endpoint"
+      value={request.url}
+      onChange={(e) => updateRequest("url", e.target.value)}
+      className={`h-[42px] text-sm rounded-md backdrop-blur-sm ${themeClasses.input.base}`}
+    />
+  </div>
+
+  {/* SEND BUTTON */}
+  <button
+    onClick={onExecute}
+    disabled={loading || !request.url}
+    className={`h-[42px] text-sm px-5 rounded-md transition-all duration-200 font-medium shadow-sm flex items-center gap-2 ${
+      loading || !request.url
+        ? `${
+            isDark
+              ? "bg-gray-700 text-gray-400"
+              : "bg-gray-200 text-gray-500"
+          } cursor-not-allowed`
+        : themeClasses.button.primary + " hover:scale-105"
+    }`}
+  >
+    {loading ? (
+      <>
+        <div
+          className={`animate-spin h-4 w-4 border-2 ${
+            isDark
+              ? "border-blue-300 border-t-transparent"
+              : "border-blue-400 border-t-transparent"
+          } rounded-full`}
+        ></div>
+        Sending...
+      </>
+    ) : (
+      <>
+        <Send className="h-4 w-4" />
+        Send
+      </>
+    )}
+  </button>
+</div>
+
       </div>
 
       {/* Onboarding Section - Shows when no URL is entered */}
