@@ -196,10 +196,10 @@ export default function RequestPanel({
           <Tabs defaultValue="headers" className="w-full">
             <div className={`border-b ${themeClasses.border.primary}`}>
               <TabsList className="grid w-full grid-cols-4 h-8 bg-transparent p-0 border-b-0">
-                <TabsTrigger value="params" className={`text-xs py-2 data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-b-blue-500 data-[state=active]:${themeClasses.text.accent} border-b border-transparent hover:border-gray-300 rounded-none transition-all ${themeClasses.tab.inactive}`}>
+                <TabsTrigger value="params" className={`text-xs py-2 data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-b-blue-500 data-[state=active]:${themeClasses.text.accent} border-b border-gray-200 hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-50'} hover:border-gray-300 rounded-none transition-all ${themeClasses.tab.inactive}`}>
                   Params
                 </TabsTrigger>
-                <TabsTrigger value="headers" className={`text-xs py-2 data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-b-blue-500 data-[state=active]:${themeClasses.text.accent} border-b border-transparent hover:border-gray-300 rounded-none transition-all ${themeClasses.tab.inactive}`}>
+                <TabsTrigger value="headers" className={`text-xs py-2 data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-b-blue-500 data-[state=active]:${themeClasses.text.accent} border-b border-gray-200 hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-50'} hover:border-gray-300 rounded-none transition-all ${themeClasses.tab.inactive}`}>
                   Headers
                   {Object.keys(request.headers).length > 0 && (
                     <span className={`ml-1.5 text-xs px-1.5 py-0.5 rounded border ${themeClasses.status.info}`}>
@@ -207,13 +207,13 @@ export default function RequestPanel({
                     </span>
                   )}
                 </TabsTrigger>
-                <TabsTrigger value="body" className={`text-xs py-2 data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-b-blue-500 data-[state=active]:${themeClasses.text.accent} border-b border-transparent hover:border-gray-300 rounded-none transition-all ${themeClasses.tab.inactive}`}>
+                <TabsTrigger value="body" className={`text-xs py-2 data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-b-blue-500 data-[state=active]:${themeClasses.text.accent} border-b border-gray-200 hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-50'} hover:border-gray-300 rounded-none transition-all ${themeClasses.tab.inactive}`}>
                   Body
                   {request.body && (
                     <div className={`ml-1.5 h-2 w-2 rounded-full ${isDark ? 'bg-blue-500' : 'bg-blue-600'}`} />
                   )}
                 </TabsTrigger>
-                <TabsTrigger value="auth" className={`text-xs py-2 data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-b-blue-500 data-[state=active]:${themeClasses.text.accent} border-b border-transparent hover:border-gray-300 rounded-none transition-all ${themeClasses.tab.inactive}`}>
+                <TabsTrigger value="auth" className={`text-xs py-2 data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-b-blue-500 data-[state=active]:${themeClasses.text.accent} border-b border-gray-200 hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-50'} hover:border-gray-300 rounded-none transition-all ${themeClasses.tab.inactive}`}>
                   Authorization
                 </TabsTrigger>
               </TabsList>

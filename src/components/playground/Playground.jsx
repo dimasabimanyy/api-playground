@@ -436,32 +436,22 @@ export default function Playground() {
 
               <div className="flex-1 overflow-y-auto">
                 <div className="p-4">
-                  <div className="space-y-2">
-                    <div
-                      className={`text-xs font-medium uppercase tracking-wider mb-3 ${themeClasses.text.tertiary}`}
-                    >
-                      Workspace
-                    </div>
+                  {/* Main Navigation */}
+                  <div className="space-y-1 mb-6">
                     <button
                       onClick={() => {
                         setActiveMenuTab("collections");
                         setSidebarCollapsed(false);
                         setShowHistory(false);
                       }}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded transition-all duration-200 cursor-pointer ${
+                      className={`w-full flex items-center gap-3 px-3 py-2 text-sm rounded transition-all duration-200 cursor-pointer ${
                         activeMenuTab === "collections"
-                          ? `${themeClasses.status.info} border`
-                          : `${themeClasses.text.secondary} hover:${
-                              themeClasses.text.primary
-                            } ${
-                              isDark
-                                ? "hover:bg-gray-800/50"
-                                : "hover:bg-gray-100"
-                            }`
+                          ? `${themeClasses.text.accent} ${isDark ? 'bg-blue-500/10' : 'bg-blue-50'}`
+                          : `${themeClasses.text.secondary} hover:${themeClasses.text.primary} hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-100/50'}`
                       }`}
                     >
-                      <FolderOpen className="h-4 w-4" />
-                      My Collections
+                      <FolderOpen className="h-4 w-4 flex-shrink-0" />
+                      Collections
                     </button>
                     <button
                       onClick={() => {
@@ -469,33 +459,30 @@ export default function Playground() {
                         setSidebarCollapsed(false);
                         setShowHistory(false);
                       }}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-all duration-200 ${
+                      className={`w-full flex items-center gap-3 px-3 py-2 text-sm rounded transition-all duration-200 cursor-pointer ${
                         activeMenuTab === "history"
-                          ? `${themeClasses.status.info} border`
-                          : `${themeClasses.text.secondary} hover:${
-                              themeClasses.text.primary
-                            } ${
-                              isDark
-                                ? "hover:bg-gray-800/50"
-                                : "hover:bg-gray-100"
-                            }`
+                          ? `${themeClasses.text.accent} ${isDark ? 'bg-blue-500/10' : 'bg-blue-50'}`
+                          : `${themeClasses.text.secondary} hover:${themeClasses.text.primary} hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-100/50'}`
                       }`}
                     >
-                      <History className="h-4 w-4" />
-                      Request History
+                      <History className="h-4 w-4 flex-shrink-0" />
+                      History
                     </button>
                   </div>
 
                   {/* Collections List */}
-                  <div className="mt-6">
-                    <div
-                      className={`text-xs font-medium uppercase tracking-wider mb-3 ${themeClasses.text.tertiary}`}
-                    >
-                      Recent Collections
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <span className={`text-xs font-medium ${themeClasses.text.tertiary}`}>
+                        Your Collections
+                      </span>
+                      <button className={`p-1 rounded transition-all duration-200 ${themeClasses.button.ghost}`}>
+                        <Plus className="h-3 w-3" />
+                      </button>
                     </div>
-                    <div>
+                    <div className="space-y-1">
                       <div
-                        className={`flex items-center gap-3 py-2 px-3 transition-all duration-200 cursor-pointer hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-100/50'} border-l-2 border-transparent hover:border-emerald-500`}
+                        className={`flex items-center gap-3 py-2 px-3 transition-all duration-200 cursor-pointer hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-100/50'} rounded`}
                       >
                         <div className="h-2 w-2 rounded-full bg-emerald-500 flex-shrink-0"></div>
                         <div className="flex-1 min-w-0">
@@ -508,7 +495,7 @@ export default function Playground() {
                         </div>
                       </div>
                       <div
-                        className={`flex items-center gap-3 py-2 px-3 transition-all duration-200 cursor-pointer hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-100/50'} border-l-2 border-transparent hover:border-blue-500`}
+                        className={`flex items-center gap-3 py-2 px-3 transition-all duration-200 cursor-pointer hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-100/50'} rounded`}
                       >
                         <div className="h-2 w-2 rounded-full bg-blue-500 flex-shrink-0"></div>
                         <div className="flex-1 min-w-0">

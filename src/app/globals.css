@@ -168,6 +168,17 @@
     box-shadow: none !important;
   }
   
+  /* Remove all shadows from tabs and interactive elements */
+  [data-state="active"],
+  [data-state="inactive"],
+  [role="tab"],
+  [role="tablist"],
+  .tab,
+  .tabs {
+    box-shadow: none !important;
+    filter: none !important;
+  }
+  
   /* Loading shimmer animation */
   .shimmer {
     background: linear-gradient(
