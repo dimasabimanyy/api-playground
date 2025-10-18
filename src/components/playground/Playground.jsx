@@ -33,26 +33,23 @@ import {
   ChevronRight,
   Pencil,
   Send,
+  Trash2,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { getThemeClasses, getMethodColors } from "@/lib/theme";
 import RequestPanel from "./RequestPanel";
 import ResponsePanel from "./ResponsePanel";
-import HistoryPanel from "./HistoryPanel";
-import EnvironmentSelector from "./EnvironmentSelector";
 import { generateShareableUrl, getSharedRequest } from "@/lib/share-encoding";
 import { saveToHistory } from "@/lib/storage";
 import { processRequestWithVariables } from "@/lib/environments";
 import {
   getActiveCollectionId,
-  getCollection,
   addRequestToCollection,
   updateRequestInCollection,
 } from "@/lib/collections";
-import CollectionsSidebar from "@/components/collections/CollectionsSidebar";
 
 export default function Playground() {
-  const { theme, toggleTheme, isDark } = useTheme();
+  const { toggleTheme, isDark } = useTheme();
   const themeClasses = getThemeClasses(isDark);
   // Request tabs state
   const [requestTabs, setRequestTabs] = useState([
@@ -73,10 +70,8 @@ export default function Playground() {
   ]);
   const [activeTabId, setActiveTabId] = useState("1");
 
-  const [activeTab, setActiveTab] = useState("rest");
   const [shareUrl, setShareUrl] = useState("");
   const [showShared, setShowShared] = useState(false);
-  const [showHistory, setShowHistory] = useState(false);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
   const [activeCollectionId, setActiveCollectionId] = useState("my-apis");
@@ -84,6 +79,16 @@ export default function Playground() {
   const [activeMenuTab, setActiveMenuTab] = useState("collections");
   const [searchQuery, setSearchQuery] = useState("");
   const [editingRequestName, setEditingRequestName] = useState(false);
+
+  // Sidebar menu items
+  const sidebarMenuItems = [
+    { id: "collections", icon: FolderOpen, label: "Collections", description: "Saved grouped requests" },
+    { id: "history", icon: History, label: "History", description: "Past requests sent" },
+    { id: "environments", icon: Globe, label: "Environments", description: "Manage variables like API keys, URLs, tokens" },
+    { id: "docs", icon: BookOpen, label: "Docs", description: "Auto-generated API documentation" },
+    { id: "settings", icon: Settings, label: "Settings", description: "User and app preferences" },
+    { id: "trash", icon: Trash2, label: "Trash", description: "Deleted or outdated requests" },
+  ];
 
   // Helper functions for tab management
   const getCurrentTab = () => requestTabs.find((tab) => tab.id === activeTabId);
@@ -156,24 +161,6 @@ export default function Playground() {
   const response = currentTab?.response || null;
   const loading = currentTab?.loading || false;
 
-  const handleCollectionSelect = (collectionId) => {
-    setActiveCollectionId(collectionId);
-  };
-
-  const handleRequestSelect = (selectedRequest) => {
-    updateCurrentTab({
-      name: selectedRequest.name,
-      request: {
-        method: selectedRequest.method,
-        url: selectedRequest.url,
-        headers: selectedRequest.headers,
-        body: selectedRequest.body,
-      },
-      response: null,
-      collectionRequestId: selectedRequest.id,
-      isModified: false,
-    });
-  };
 
   const handleSaveRequest = () => {
     if (!request.url) return;
@@ -289,16 +276,6 @@ export default function Playground() {
     }
   };
 
-  const handleLoadFromHistory = (historicalRequest) => {
-    updateCurrentTab({
-      request: historicalRequest,
-      name: `${historicalRequest.method} ${historicalRequest.url}`,
-      response: null,
-      collectionRequestId: null,
-      isModified: false,
-    });
-    setShowHistory(false);
-  };
 
   // Request modification handlers
   const setRequest = (newRequest) => {
@@ -438,76 +415,143 @@ export default function Playground() {
                 <div className="p-4">
                   {/* Main Navigation */}
                   <div className="space-y-1 mb-6">
-                    <button
-                      onClick={() => {
-                        setActiveMenuTab("collections");
-                        setSidebarCollapsed(false);
-                        setShowHistory(false);
-                      }}
-                      className={`w-full flex items-center gap-3 px-3 py-2 text-sm rounded transition-all duration-200 cursor-pointer ${
-                        activeMenuTab === "collections"
-                          ? `${themeClasses.text.accent} ${isDark ? 'bg-blue-500/10' : 'bg-blue-50'}`
-                          : `${themeClasses.text.secondary} hover:${themeClasses.text.primary} hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-100/50'}`
-                      }`}
-                    >
-                      <FolderOpen className="h-4 w-4 flex-shrink-0" />
-                      Collections
-                    </button>
-                    <button
-                      onClick={() => {
-                        setActiveMenuTab("history");
-                        setSidebarCollapsed(false);
-                        setShowHistory(false);
-                      }}
-                      className={`w-full flex items-center gap-3 px-3 py-2 text-sm rounded transition-all duration-200 cursor-pointer ${
-                        activeMenuTab === "history"
-                          ? `${themeClasses.text.accent} ${isDark ? 'bg-blue-500/10' : 'bg-blue-50'}`
-                          : `${themeClasses.text.secondary} hover:${themeClasses.text.primary} hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-100/50'}`
-                      }`}
-                    >
-                      <History className="h-4 w-4 flex-shrink-0" />
-                      History
-                    </button>
+                    {sidebarMenuItems.map((item) => {
+                      const Icon = item.icon;
+                      const isActive = activeMenuTab === item.id;
+                      
+                      return (
+                        <button
+                          key={item.id}
+                          onClick={() => setActiveMenuTab(item.id)}
+                          className={`w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg transition-all duration-200 cursor-pointer ${
+                            isActive
+                              ? `${themeClasses.text.accent} ${isDark ? 'bg-blue-500/10' : 'bg-blue-50'}`
+                              : `${themeClasses.text.secondary} hover:${themeClasses.text.primary} hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-100/50'}`
+                          }`}
+                        >
+                          <Icon className="h-4 w-4 flex-shrink-0" />
+                          {item.label}
+                        </button>
+                      );
+                    })}
                   </div>
 
-                  {/* Collections List */}
+                  {/* Dynamic Content Based on Active Menu */}
                   <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <span className={`text-xs font-medium ${themeClasses.text.tertiary}`}>
-                        Your Collections
-                      </span>
-                      <button className={`p-1 rounded transition-all duration-200 ${themeClasses.button.ghost}`}>
-                        <Plus className="h-3 w-3" />
-                      </button>
-                    </div>
-                    <div className="space-y-1">
-                      <div
-                        className={`flex items-center gap-3 py-2 px-3 transition-all duration-200 cursor-pointer hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-100/50'} rounded`}
-                      >
-                        <div className="h-2 w-2 rounded-full bg-emerald-500 flex-shrink-0"></div>
-                        <div className="flex-1 min-w-0">
-                          <div className={`text-sm font-medium ${themeClasses.text.primary} truncate`}>
-                            My API Tests
+                    {/* Collections Content */}
+                    {activeMenuTab === "collections" && (
+                      <>
+                        <div className="flex items-center justify-between mb-3">
+                          <span className={`text-xs font-medium ${themeClasses.text.tertiary}`}>
+                            Your Collections
+                          </span>
+                          <button className={`p-1 rounded transition-all duration-200 ${themeClasses.button.ghost}`}>
+                            <Plus className="h-3 w-3" />
+                          </button>
+                        </div>
+                        <div className="space-y-1">
+                          <div
+                            className={`flex items-center gap-3 py-2 px-3 transition-all duration-200 cursor-pointer hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-100/50'} rounded`}
+                          >
+                            <div className="h-2 w-2 rounded-full bg-emerald-500 flex-shrink-0"></div>
+                            <div className="flex-1 min-w-0">
+                              <div className={`text-sm font-medium ${themeClasses.text.primary} truncate`}>
+                                My API Tests
+                              </div>
+                              <div className={`text-xs ${themeClasses.text.tertiary}`}>
+                                3 requests
+                              </div>
+                            </div>
                           </div>
-                          <div className={`text-xs ${themeClasses.text.tertiary}`}>
-                            3 requests
+                          <div
+                            className={`flex items-center gap-3 py-2 px-3 transition-all duration-200 cursor-pointer hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-100/50'} rounded`}
+                          >
+                            <div className="h-2 w-2 rounded-full bg-blue-500 flex-shrink-0"></div>
+                            <div className="flex-1 min-w-0">
+                              <div className={`text-sm font-medium ${themeClasses.text.primary} truncate`}>
+                                User Service APIs
+                              </div>
+                              <div className={`text-xs ${themeClasses.text.tertiary}`}>
+                                7 requests
+                              </div>
+                            </div>
                           </div>
                         </div>
+                      </>
+                    )}
+
+                    {/* History Content */}
+                    {activeMenuTab === "history" && (
+                      <div className={`text-center py-12 ${themeClasses.text.tertiary}`}>
+                        <History className={`h-8 w-8 mx-auto mb-3 ${themeClasses.text.tertiary}`} />
+                        <p className={`text-sm ${themeClasses.text.primary}`}>No history yet</p>
+                        <p className={`text-xs ${themeClasses.text.tertiary}`}>Your sent requests will appear here</p>
                       </div>
-                      <div
-                        className={`flex items-center gap-3 py-2 px-3 transition-all duration-200 cursor-pointer hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-100/50'} rounded`}
-                      >
-                        <div className="h-2 w-2 rounded-full bg-blue-500 flex-shrink-0"></div>
-                        <div className="flex-1 min-w-0">
-                          <div className={`text-sm font-medium ${themeClasses.text.primary} truncate`}>
-                            User Service APIs
-                          </div>
-                          <div className={`text-xs ${themeClasses.text.tertiary}`}>
-                            7 requests
+                    )}
+
+                    {/* Environments Content */}
+                    {activeMenuTab === "environments" && (
+                      <>
+                        <div className="flex items-center justify-between mb-3">
+                          <span className={`text-xs font-medium ${themeClasses.text.tertiary}`}>
+                            Environments
+                          </span>
+                          <button className={`p-1 rounded transition-all duration-200 ${themeClasses.button.ghost}`}>
+                            <Plus className="h-3 w-3" />
+                          </button>
+                        </div>
+                        <div className={`text-center py-8 ${themeClasses.text.tertiary}`}>
+                          <Globe className={`h-6 w-6 mx-auto mb-2 ${themeClasses.text.tertiary}`} />
+                          <p className={`text-sm ${themeClasses.text.primary}`}>No environments</p>
+                          <p className={`text-xs ${themeClasses.text.tertiary}`}>Create environments to manage variables</p>
+                        </div>
+                      </>
+                    )}
+
+                    {/* Docs Content */}
+                    {activeMenuTab === "docs" && (
+                      <div className={`text-center py-12 ${themeClasses.text.tertiary}`}>
+                        <BookOpen className={`h-8 w-8 mx-auto mb-3 ${themeClasses.text.tertiary}`} />
+                        <p className={`text-sm ${themeClasses.text.primary}`}>Coming Soon</p>
+                        <p className={`text-xs ${themeClasses.text.tertiary}`}>Auto-generated API documentation</p>
+                      </div>
+                    )}
+
+                    {/* Settings Content */}
+                    {activeMenuTab === "settings" && (
+                      <>
+                        <div className="mb-3">
+                          <span className={`text-xs font-medium ${themeClasses.text.tertiary}`}>
+                            Preferences
+                          </span>
+                        </div>
+                        <div className="space-y-2">
+                          <div className={`p-3 rounded-lg ${themeClasses.card.base}`}>
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <p className={`text-sm font-medium ${themeClasses.text.primary}`}>Theme</p>
+                                <p className={`text-xs ${themeClasses.text.tertiary}`}>Switch between light and dark mode</p>
+                              </div>
+                              <button
+                                onClick={toggleTheme}
+                                className={`p-2 rounded transition-all duration-200 ${themeClasses.button.ghost}`}
+                              >
+                                {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                              </button>
+                            </div>
                           </div>
                         </div>
+                      </>
+                    )}
+
+                    {/* Trash Content */}
+                    {activeMenuTab === "trash" && (
+                      <div className={`text-center py-12 ${themeClasses.text.tertiary}`}>
+                        <Trash2 className={`h-8 w-8 mx-auto mb-3 ${themeClasses.text.tertiary}`} />
+                        <p className={`text-sm ${themeClasses.text.primary}`}>Trash is empty</p>
+                        <p className={`text-xs ${themeClasses.text.tertiary}`}>Deleted requests will appear here</p>
                       </div>
-                    </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -516,21 +560,29 @@ export default function Playground() {
 
           {/* Collapsed Sidebar Icons */}
           {sidebarCollapsed && (
-            <div className="p-3 flex flex-col items-center gap-3 mt-16">
-              <button
-                onClick={() => setSidebarCollapsed(false)}
-                className={`w-12 h-12 rounded transition-all duration-200 flex items-center justify-center ${themeClasses.button.ghost}`}
-                title="Collections"
-              >
-                <FolderOpen className="h-5 w-5" />
-              </button>
-              <button
-                onClick={() => setSidebarCollapsed(false)}
-                className={`w-12 h-12 rounded transition-all duration-200 flex items-center justify-center ${themeClasses.button.ghost}`}
-                title="History"
-              >
-                <History className="h-5 w-5" />
-              </button>
+            <div className="p-3 flex flex-col items-center gap-2 mt-8">
+              {sidebarMenuItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = activeMenuTab === item.id;
+                
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      setActiveMenuTab(item.id);
+                      setSidebarCollapsed(false);
+                    }}
+                    title={item.label}
+                    className={`w-10 h-10 rounded-lg transition-all duration-200 flex items-center justify-center ${
+                      isActive
+                        ? `${themeClasses.text.accent} ${isDark ? 'bg-blue-500/10' : 'bg-blue-50'}`
+                        : `${themeClasses.text.secondary} hover:${themeClasses.text.primary} hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-100/50'}`
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" />
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>
@@ -545,7 +597,7 @@ export default function Playground() {
           >
             <div className="flex items-center px-6 py-0">
               <div className="flex items-center overflow-x-auto scrollbar-hide">
-                {requestTabs.map((tab, index) => {
+                {requestTabs.map((tab) => {
                   const methodColors = getMethodColors(
                     tab.request.method,
                     isDark
