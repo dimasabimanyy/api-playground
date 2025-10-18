@@ -1157,8 +1157,8 @@ export default function Playground() {
 
 
           {/* Request Name Header - Full Width */}
-          <div className={`border-b ${themeClasses.border.primary} ${isDark ? "bg-gray-900/20" : "bg-gray-50/50"}`}>
-            <div className="px-6 py-4">
+          <div className={`${themeClasses.border.primary} ${isDark ? "bg-gray-900/20" : "bg-gray-50/50"}`}>
+            <div className="px-6 pt-4">
               <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <div className="flex items-center gap-2 group flex-1 min-w-0">
