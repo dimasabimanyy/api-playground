@@ -514,8 +514,6 @@ export default function Playground() {
                                     />
                                   </button>
                                   
-                                  {/* Collection Icon */}
-                                  <div className={`h-2 w-2 rounded-full ${collection.id === 'my-api-tests' ? 'bg-emerald-500' : 'bg-blue-500'} flex-shrink-0`}></div>
                                   
                                   {/* Collection Name */}
                                   <div className="flex-1 min-w-0">
