@@ -378,7 +378,7 @@ export default function Playground() {
           {!sidebarCollapsed && (
             <>
               <div className={`p-4 border-b ${themeClasses.border.primary}`}>
-                <div className="flex items-center justify-between mb-4">
+                {/* <div className="flex items-center justify-between mb-4">
                   <h2
                     className={`text-sm font-semibold tracking-wide ${themeClasses.text.primary}`}
                   >
@@ -389,7 +389,7 @@ export default function Playground() {
                   >
                     <Plus className="h-4 w-4 group-hover:scale-110 transition-transform" />
                   </button>
-                </div>
+                </div> */}
 
                 <button
                   className={`w-full flex items-center gap-2 px-3 py-2 rounded transition-all duration-200 mb-3 ${themeClasses.button.primary}`}
