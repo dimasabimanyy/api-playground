@@ -8,7 +8,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
@@ -87,6 +86,14 @@ export default function Playground() {
   const [editingRequest, setEditingRequest] = useState(null);
   const [selectedRequest, setSelectedRequest] = useState(null);
 
+  // Modal states
+  const [docsModalOpen, setDocsModalOpen] = useState(false);
+  const [settingsModalOpen, setSettingsModalOpen] = useState(false);
+
+  // Environments state
+  const [expandedEnvironments, setExpandedEnvironments] = useState(new Set());
+  const [editingEnvironment, setEditingEnvironment] = useState(null);
+
   // Sample collections data (replace with real data later)
   const collections = [
     {
@@ -110,6 +117,43 @@ export default function Playground() {
     }
   ];
 
+  // Sample history data
+  const historyItems = [
+    { id: 'hist-1', name: 'Get User Profile', method: 'GET', url: '/api/users/me', timestamp: '2 min ago', status: 200 },
+    { id: 'hist-2', name: 'Create User', method: 'POST', url: '/api/users', timestamp: '5 min ago', status: 201 },
+    { id: 'hist-3', name: 'Update Settings', method: 'PUT', url: '/api/settings', timestamp: '10 min ago', status: 200 },
+    { id: 'hist-4', name: 'Failed Login', method: 'POST', url: '/auth/login', timestamp: '15 min ago', status: 401 },
+    { id: 'hist-5', name: 'Get All Users', method: 'GET', url: '/api/users', timestamp: '1 hour ago', status: 200 },
+  ];
+
+  // Sample environments data
+  const environments = [
+    {
+      id: 'dev',
+      name: 'Development',
+      variables: [
+        { key: 'BASE_URL', value: 'https://api.dev.example.com' },
+        { key: 'API_KEY', value: 'dev_key_123' },
+        { key: 'VERSION', value: 'v1' }
+      ]
+    },
+    {
+      id: 'prod',
+      name: 'Production',
+      variables: [
+        { key: 'BASE_URL', value: 'https://api.example.com' },
+        { key: 'API_KEY', value: 'prod_key_456' },
+        { key: 'VERSION', value: 'v1' }
+      ]
+    }
+  ];
+
+  // Sample trash data
+  const trashItems = [
+    { id: 'trash-1', name: 'Old API Collection', type: 'collection', deletedAt: '2 days ago' },
+    { id: 'trash-2', name: 'Test Request', type: 'request', method: 'DELETE', deletedAt: '1 week ago' },
+  ];
+
   // Collection management functions
   const toggleCollection = (collectionId) => {
     const newExpanded = new Set(expandedCollections);
@@ -119,6 +163,17 @@ export default function Playground() {
       newExpanded.add(collectionId);
     }
     setExpandedCollections(newExpanded);
+  };
+
+  // Environment management functions
+  const toggleEnvironment = (envId) => {
+    const newExpanded = new Set(expandedEnvironments);
+    if (newExpanded.has(envId)) {
+      newExpanded.delete(envId);
+    } else {
+      newExpanded.add(envId);
+    }
+    setExpandedEnvironments(newExpanded);
   };
 
   // Sidebar menu items
@@ -613,11 +668,82 @@ export default function Playground() {
 
                     {/* History Content */}
                     {activeMenuTab === "history" && (
-                      <div className={`text-center py-12 ${themeClasses.text.tertiary}`}>
-                        <History className={`h-8 w-8 mx-auto mb-3 ${themeClasses.text.tertiary}`} />
-                        <p className={`text-sm ${themeClasses.text.primary}`}>No history yet</p>
-                        <p className={`text-xs ${themeClasses.text.tertiary}`}>Your sent requests will appear here</p>
-                      </div>
+                      <>
+                        <div className="flex items-center justify-between mb-3">
+                          <span className={`text-xs font-medium ${themeClasses.text.tertiary}`}>
+                            Recent Requests
+                          </span>
+                          <button className={`p-1 rounded transition-all duration-200 ${themeClasses.button.ghost}`}>
+                            <X className="h-3 w-3" />
+                          </button>
+                        </div>
+                        
+                        {historyItems.length === 0 ? (
+                          <div className={`text-center py-12 ${themeClasses.text.tertiary}`}>
+                            <History className={`h-8 w-8 mx-auto mb-3 ${themeClasses.text.tertiary}`} />
+                            <p className={`text-sm ${themeClasses.text.primary}`}>No history yet</p>
+                            <p className={`text-xs ${themeClasses.text.tertiary}`}>Your sent requests will appear here</p>
+                          </div>
+                        ) : (
+                          <div className="space-y-1 max-h-96 overflow-y-auto">
+                            {historyItems.map((item) => {
+                              const methodColors = getMethodColors(item.method, isDark);
+                              const statusColors = item.status >= 200 && item.status < 300 
+                                ? (isDark ? 'text-emerald-400' : 'text-emerald-600')
+                                : item.status >= 400 
+                                ? (isDark ? 'text-red-400' : 'text-red-600') 
+                                : (isDark ? 'text-yellow-400' : 'text-yellow-600');
+                              
+                              return (
+                                <div
+                                  key={item.id}
+                                  onClick={() => {
+                                    // Load this request into the editor
+                                    updateCurrentTab({
+                                      request: {
+                                        method: item.method,
+                                        url: item.url,
+                                        headers: {},
+                                        body: ""
+                                      },
+                                      name: item.name,
+                                      response: null,
+                                      collectionRequestId: null,
+                                      isModified: false,
+                                    });
+                                  }}
+                                  className={`group flex items-center gap-3 py-2 px-3 transition-all duration-200 cursor-pointer hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-100/50'} rounded-lg`}
+                                >
+                                  {/* HTTP Method Badge */}
+                                  <div className={`px-1.5 py-0.5 rounded text-xs font-medium border ${methodColors.bg} ${methodColors.text} flex-shrink-0`}>
+                                    {item.method}
+                                  </div>
+                                  
+                                  {/* Request Info */}
+                                  <div className="flex-1 min-w-0">
+                                    <div className={`text-sm font-medium ${themeClasses.text.primary} truncate`}>
+                                      {item.name}
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <span className={`text-xs ${themeClasses.text.tertiary} truncate`}>
+                                        {item.url}
+                                      </span>
+                                      <span className={`text-xs ${statusColors} font-mono`}>
+                                        {item.status}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  
+                                  {/* Timestamp */}
+                                  <div className={`text-xs ${themeClasses.text.tertiary} opacity-60 flex-shrink-0`}>
+                                    {item.timestamp}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </>
                     )}
 
                     {/* Environments Content */}
@@ -631,32 +757,152 @@ export default function Playground() {
                             <Plus className="h-3 w-3" />
                           </button>
                         </div>
-                        <div className={`text-center py-8 ${themeClasses.text.tertiary}`}>
-                          <Globe className={`h-6 w-6 mx-auto mb-2 ${themeClasses.text.tertiary}`} />
-                          <p className={`text-sm ${themeClasses.text.primary}`}>No environments</p>
-                          <p className={`text-xs ${themeClasses.text.tertiary}`}>Create environments to manage variables</p>
-                        </div>
+                        
+                        {environments.length === 0 ? (
+                          <div className={`text-center py-8 ${themeClasses.text.tertiary}`}>
+                            <Globe className={`h-6 w-6 mx-auto mb-2 ${themeClasses.text.tertiary}`} />
+                            <p className={`text-sm ${themeClasses.text.primary}`}>No environments</p>
+                            <p className={`text-xs ${themeClasses.text.tertiary}`}>Create environments to manage variables</p>
+                          </div>
+                        ) : (
+                          <div className="space-y-1">
+                            {environments.map((env) => {
+                              const isExpanded = expandedEnvironments.has(env.id);
+                              
+                              return (
+                                <div key={env.id} className="space-y-1">
+                                  {/* Environment Header */}
+                                  <div
+                                    className={`group relative flex items-center gap-2 py-2 px-3 transition-all duration-200 cursor-pointer hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-100/50'} rounded-lg`}
+                                  >
+                                    {/* Expand/Collapse Chevron */}
+                                    <button
+                                      onClick={() => toggleEnvironment(env.id)}
+                                      className={`p-0.5 rounded transition-all duration-200 ${themeClasses.button.ghost}`}
+                                    >
+                                      <ChevronDown 
+                                        className={`h-3 w-3 transition-transform duration-200 ${
+                                          isExpanded ? 'rotate-0' : '-rotate-90'
+                                        } ${themeClasses.text.tertiary}`} 
+                                      />
+                                    </button>
+                                    
+                                    {/* Environment Name */}
+                                    <div className="flex-1 min-w-0">
+                                      {editingEnvironment === env.id ? (
+                                        <input
+                                          type="text"
+                                          defaultValue={env.name}
+                                          onBlur={() => setEditingEnvironment(null)}
+                                          onKeyDown={(e) => {
+                                            if (e.key === 'Enter') setEditingEnvironment(null);
+                                          }}
+                                          className={`w-full text-sm font-medium bg-transparent border border-gray-300 rounded px-1 py-0.5 outline-none focus:border-blue-500 ${themeClasses.text.primary}`}
+                                          autoFocus
+                                        />
+                                      ) : (
+                                        <div
+                                          onClick={() => setEditingEnvironment(env.id)}
+                                          className="flex items-center justify-between"
+                                        >
+                                          <div className={`text-sm font-medium ${themeClasses.text.primary} truncate`}>
+                                            {env.name}
+                                          </div>
+                                          <div className={`text-xs ${themeClasses.text.tertiary} opacity-60`}>
+                                            {env.variables.length} vars
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                  
+                                  {/* Variables List */}
+                                  {isExpanded && (
+                                    <div className="ml-6 space-y-1 overflow-hidden">
+                                      {env.variables.map((variable, index) => (
+                                        <div
+                                          key={index}
+                                          className={`group relative flex items-center gap-3 py-1.5 px-3 transition-all duration-200 hover:${isDark ? 'bg-gray-800/20' : 'bg-gray-100/40'} rounded-lg`}
+                                        >
+                                          {/* Variable Key */}
+                                          <div className={`text-xs font-mono ${themeClasses.text.accent} flex-shrink-0 min-w-0 max-w-24 truncate`}>
+                                            {variable.key}
+                                          </div>
+                                          
+                                          {/* Variable Value */}
+                                          <div className="flex-1 min-w-0">
+                                            <div className={`text-xs font-mono ${themeClasses.text.primary} truncate`}>
+                                              {variable.key === 'API_KEY' ? '••••••••••••' : variable.value}
+                                            </div>
+                                          </div>
+                                          
+                                          {/* Edit Icon (visible on hover) */}
+                                          <button
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              // Handle variable editing
+                                            }}
+                                            className={`opacity-0 group-hover:opacity-100 p-1 rounded transition-all duration-200 ${themeClasses.button.ghost}`}
+                                          >
+                                            <Pencil className="h-3 w-3" />
+                                          </button>
+                                        </div>
+                                      ))}
+                                      
+                                      {/* Add Variable Button */}
+                                      <button
+                                        className={`w-full flex items-center gap-2 py-1.5 px-3 text-xs transition-all duration-200 ${themeClasses.button.ghost} ${themeClasses.text.tertiary} hover:${themeClasses.text.primary} rounded-lg`}
+                                      >
+                                        <Plus className="h-3 w-3" />
+                                        Add Variable
+                                      </button>
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
                       </>
                     )}
 
-                    {/* Docs Content */}
+                    {/* Docs Content - Trigger Modal */}
                     {activeMenuTab === "docs" && (
-                      <div className={`text-center py-12 ${themeClasses.text.tertiary}`}>
-                        <BookOpen className={`h-8 w-8 mx-auto mb-3 ${themeClasses.text.tertiary}`} />
-                        <p className={`text-sm ${themeClasses.text.primary}`}>Coming Soon</p>
-                        <p className={`text-xs ${themeClasses.text.tertiary}`}>Auto-generated API documentation</p>
-                      </div>
+                      <>
+                        <div className="flex items-center justify-between mb-3">
+                          <span className={`text-xs font-medium ${themeClasses.text.tertiary}`}>
+                            Documentation
+                          </span>
+                        </div>
+                        
+                        <button
+                          onClick={() => setDocsModalOpen(true)}
+                          className={`w-full flex items-center gap-3 py-3 px-3 transition-all duration-200 cursor-pointer hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-100/50'} rounded-lg border border-dashed ${themeClasses.border.primary}`}
+                        >
+                          <BookOpen className={`h-5 w-5 ${themeClasses.text.tertiary}`} />
+                          <div className="flex-1 text-left">
+                            <div className={`text-sm font-medium ${themeClasses.text.primary}`}>
+                              Open Documentation
+                            </div>
+                            <div className={`text-xs ${themeClasses.text.tertiary}`}>
+                              Auto-generated API docs
+                            </div>
+                          </div>
+                        </button>
+                      </>
                     )}
 
-                    {/* Settings Content */}
+                    {/* Settings Content - Trigger Modal */}
                     {activeMenuTab === "settings" && (
                       <>
-                        <div className="mb-3">
+                        <div className="flex items-center justify-between mb-3">
                           <span className={`text-xs font-medium ${themeClasses.text.tertiary}`}>
                             Preferences
                           </span>
                         </div>
+                        
                         <div className="space-y-2">
+                          {/* Quick Theme Toggle */}
                           <div className={`p-3 rounded-lg ${themeClasses.card.base}`}>
                             <div className="flex items-center justify-between">
                               <div>
@@ -671,17 +917,103 @@ export default function Playground() {
                               </button>
                             </div>
                           </div>
+                          
+                          {/* Open Full Settings */}
+                          <button
+                            onClick={() => setSettingsModalOpen(true)}
+                            className={`w-full flex items-center gap-3 py-3 px-3 transition-all duration-200 cursor-pointer hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-100/50'} rounded-lg border border-dashed ${themeClasses.border.primary}`}
+                          >
+                            <Settings className={`h-5 w-5 ${themeClasses.text.tertiary}`} />
+                            <div className="flex-1 text-left">
+                              <div className={`text-sm font-medium ${themeClasses.text.primary}`}>
+                                All Settings
+                              </div>
+                              <div className={`text-xs ${themeClasses.text.tertiary}`}>
+                                Preferences, shortcuts, and more
+                              </div>
+                            </div>
+                          </button>
                         </div>
                       </>
                     )}
 
                     {/* Trash Content */}
                     {activeMenuTab === "trash" && (
-                      <div className={`text-center py-12 ${themeClasses.text.tertiary}`}>
-                        <Trash2 className={`h-8 w-8 mx-auto mb-3 ${themeClasses.text.tertiary}`} />
-                        <p className={`text-sm ${themeClasses.text.primary}`}>Trash is empty</p>
-                        <p className={`text-xs ${themeClasses.text.tertiary}`}>Deleted requests will appear here</p>
-                      </div>
+                      <>
+                        <div className="flex items-center justify-between mb-3">
+                          <span className={`text-xs font-medium ${themeClasses.text.tertiary}`}>
+                            Deleted Items
+                          </span>
+                          {trashItems.length > 0 && (
+                            <button className={`p-1 rounded transition-all duration-200 ${themeClasses.button.ghost} ${themeClasses.text.tertiary} hover:text-red-500`}>
+                              <Trash2 className="h-3 w-3" />
+                            </button>
+                          )}
+                        </div>
+                        
+                        {trashItems.length === 0 ? (
+                          <div className={`text-center py-12 ${themeClasses.text.tertiary}`}>
+                            <Trash2 className={`h-8 w-8 mx-auto mb-3 ${themeClasses.text.tertiary}`} />
+                            <p className={`text-sm ${themeClasses.text.primary}`}>Trash is empty</p>
+                            <p className={`text-xs ${themeClasses.text.tertiary}`}>Deleted requests will appear here</p>
+                          </div>
+                        ) : (
+                          <div className="space-y-1">
+                            {trashItems.map((item) => (
+                              <div
+                                key={item.id}
+                                className={`group flex items-center gap-3 py-2 px-3 transition-all duration-200 hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-100/50'} rounded-lg`}
+                              >
+                                {/* Item Type Icon */}
+                                <div className={`p-1 rounded ${themeClasses.text.tertiary}`}>
+                                  {item.type === 'collection' ? (
+                                    <FolderOpen className="h-4 w-4" />
+                                  ) : (
+                                    <div className={`px-1.5 py-0.5 rounded text-xs font-medium border ${getMethodColors(item.method || 'GET', isDark).bg} ${getMethodColors(item.method || 'GET', isDark).text}`}>
+                                      {item.method || 'REQ'}
+                                    </div>
+                                  )}
+                                </div>
+                                
+                                {/* Item Info */}
+                                <div className="flex-1 min-w-0">
+                                  <div className={`text-sm font-medium ${themeClasses.text.primary} truncate`}>
+                                    {item.name}
+                                  </div>
+                                  <div className={`text-xs ${themeClasses.text.tertiary}`}>
+                                    Deleted {item.deletedAt}
+                                  </div>
+                                </div>
+                                
+                                {/* Action Buttons */}
+                                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  {/* Restore Button */}
+                                  <button
+                                    onClick={() => {
+                                      // Handle restore
+                                    }}
+                                    className={`p-1 rounded transition-all duration-200 ${themeClasses.button.ghost} ${themeClasses.text.tertiary} hover:text-emerald-500`}
+                                    title="Restore"
+                                  >
+                                    <Plus className="h-3 w-3 rotate-45" />
+                                  </button>
+                                  
+                                  {/* Permanent Delete Button */}
+                                  <button
+                                    onClick={() => {
+                                      // Handle permanent delete
+                                    }}
+                                    className={`p-1 rounded transition-all duration-200 ${themeClasses.button.ghost} ${themeClasses.text.tertiary} hover:text-red-500`}
+                                    title="Delete permanently"
+                                  >
+                                    <X className="h-3 w-3" />
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
                 </div>
@@ -884,6 +1216,125 @@ export default function Playground() {
           </div>
         </div>
       </div>
+
+      {/* Docs Modal */}
+      <Dialog open={docsModalOpen} onOpenChange={setDocsModalOpen}>
+        <DialogContent className={`max-w-4xl max-h-[80vh] overflow-y-auto ${isDark ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'}`}>
+          <DialogHeader>
+            <DialogTitle className={`text-xl font-semibold ${themeClasses.text.primary}`}>
+              API Documentation
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6">
+            <div className={`text-center py-12 ${themeClasses.text.tertiary}`}>
+              <BookOpen className={`h-12 w-12 mx-auto mb-4 ${themeClasses.text.tertiary}`} />
+              <h3 className={`text-lg font-semibold mb-2 ${themeClasses.text.primary}`}>
+                Documentation Coming Soon
+              </h3>
+              <p className={`text-sm max-w-md mx-auto ${themeClasses.text.secondary}`}>
+                Auto-generated API documentation will appear here based on your requests and collections.
+              </p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Settings Modal */}
+      <Dialog open={settingsModalOpen} onOpenChange={setSettingsModalOpen}>
+        <DialogContent className={`max-w-2xl max-h-[80vh] overflow-y-auto ${isDark ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'}`}>
+          <DialogHeader>
+            <DialogTitle className={`text-xl font-semibold ${themeClasses.text.primary}`}>
+              Settings & Preferences
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6">
+            {/* Appearance Section */}
+            <div>
+              <h3 className={`text-sm font-semibold mb-3 ${themeClasses.text.primary}`}>
+                Appearance
+              </h3>
+              <div className="space-y-3">
+                <div className={`p-4 rounded-lg ${themeClasses.card.base}`}>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className={`text-sm font-medium ${themeClasses.text.primary}`}>Theme</p>
+                      <p className={`text-xs ${themeClasses.text.tertiary}`}>Choose your preferred color scheme</p>
+                    </div>
+                    <button
+                      onClick={toggleTheme}
+                      className={`p-2 rounded transition-all duration-200 ${themeClasses.button.ghost}`}
+                    >
+                      {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Editor Section */}
+            <div>
+              <h3 className={`text-sm font-semibold mb-3 ${themeClasses.text.primary}`}>
+                Editor
+              </h3>
+              <div className="space-y-3">
+                <div className={`p-4 rounded-lg ${themeClasses.card.base}`}>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className={`text-sm font-medium ${themeClasses.text.primary}`}>Font Size</p>
+                      <p className={`text-xs ${themeClasses.text.tertiary}`}>Adjust the editor font size</p>
+                    </div>
+                    <select className={`px-3 py-1 rounded text-sm ${themeClasses.input.base}`}>
+                      <option value="12">12px</option>
+                      <option value="14" selected>14px</option>
+                      <option value="16">16px</option>
+                    </select>
+                  </div>
+                </div>
+                <div className={`p-4 rounded-lg ${themeClasses.card.base}`}>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className={`text-sm font-medium ${themeClasses.text.primary}`}>Auto-save</p>
+                      <p className={`text-xs ${themeClasses.text.tertiary}`}>Automatically save changes</p>
+                    </div>
+                    <button className={`w-10 h-6 rounded-full transition-colors ${isDark ? 'bg-blue-600' : 'bg-blue-500'} relative`}>
+                      <div className="w-4 h-4 bg-white rounded-full absolute top-1 right-1 transition-transform"></div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* API Section */}
+            <div>
+              <h3 className={`text-sm font-semibold mb-3 ${themeClasses.text.primary}`}>
+                API Defaults
+              </h3>
+              <div className="space-y-3">
+                <div className={`p-4 rounded-lg ${themeClasses.card.base}`}>
+                  <label className={`text-sm font-medium ${themeClasses.text.primary}`}>
+                    Default Base URL
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="https://api.example.com"
+                    className={`w-full mt-2 px-3 py-2 text-sm rounded ${themeClasses.input.base}`}
+                  />
+                </div>
+                <div className={`p-4 rounded-lg ${themeClasses.card.base}`}>
+                  <label className={`text-sm font-medium ${themeClasses.text.primary}`}>
+                    Request Timeout (ms)
+                  </label>
+                  <input
+                    type="number"
+                    placeholder="5000"
+                    className={`w-full mt-2 px-3 py-2 text-sm rounded ${themeClasses.input.base}`}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
