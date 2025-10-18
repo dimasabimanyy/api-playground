@@ -11,6 +11,13 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Share2,
   History,
   BookOpen,
@@ -1148,78 +1155,306 @@ export default function Playground() {
             </div>
           </div>
 
-          {/* Request Info Row */}
-          <div
-            className={`px-6 py-3 border-b ${themeClasses.border.primary} ${
-              isDark ? "bg-gray-900/20" : "bg-gray-50/50"
-            }`}
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 group">
-                  {editingRequestName ? (
-                    <input
-                      type="text"
-                      value={currentTab?.name || ""}
-                      onChange={(e) => setCurrentRequestName(e.target.value)}
-                      onBlur={() => setEditingRequestName(false)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          setEditingRequestName(false)
+
+          {/* Request Name Header - Full Width */}
+          <div className={`border-b ${themeClasses.border.primary} ${isDark ? "bg-gray-900/20" : "bg-gray-50/50"}`}>
+            <div className="px-6 py-4">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <div className="flex items-center gap-2 group flex-1 min-w-0">
+                    {editingRequestName ? (
+                      <input
+                        type="text"
+                        value={currentTab?.name || ""}
+                        onChange={(e) => setCurrentRequestName(e.target.value)}
+                        onBlur={() => setEditingRequestName(false)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            setEditingRequestName(false)
+                          }
+                        }}
+                        placeholder="Untitled Request"
+                        className={`text-sm font-medium bg-transparent border border-gray-300 rounded px-2 py-1 outline-none focus:border-blue-500 focus:ring-0 transition-colors duration-200 w-full ${themeClasses.text.primary}`}
+                        autoFocus
+                      />
+                    ) : (
+                      <>
+                        <span className={`text-sm font-medium ${themeClasses.text.primary} truncate`}>
+                          {currentTab?.name || "Untitled Request"}
+                        </span>
+                        <button
+                          onClick={() => setEditingRequestName(true)}
+                          className={`opacity-0 group-hover:opacity-100 p-1 rounded transition-all duration-200 flex-shrink-0 ${themeClasses.button.ghost}`}
+                        >
+                          <Pencil className="h-3 w-3" />
+                        </button>
+                      </>
+                    )}
+                  </div>
+                  {request.url && (
+                    <span className={`text-xs ${themeClasses.text.tertiary} hidden sm:block truncate`}>
+                      {(() => {
+                        try {
+                          return new URL(request.url).pathname;
+                        } catch {
+                          return (
+                            request.url.replace(/^https?:\/\/[^\/]+/, "") || "/"
+                          );
                         }
-                      }}
-                      placeholder="Untitled Request"
-                      className={`text-sm font-medium bg-transparent border border-gray-300 rounded px-2 py-1 outline-none focus:border-blue-500 focus:ring-0 transition-colors duration-200 ${themeClasses.text.primary}`}
-                      autoFocus
-                    />
-                  ) : (
+                      })()}
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  {request.url && (
                     <>
-                      <span className={`text-sm font-medium ${themeClasses.text.primary}`}>
-                        {currentTab?.name || "Untitled Request"}
-                      </span>
-                      <button
-                        onClick={() => setEditingRequestName(true)}
-                        className={`opacity-0 group-hover:opacity-100 p-1 rounded transition-all duration-200 ${themeClasses.button.ghost}`}
+                      <button className={`h-8 text-xs px-3 rounded transition-all duration-200 hidden sm:block ${themeClasses.button.secondary}`}>
+                        Template
+                      </button>
+                      <button className={`h-8 text-xs px-3 rounded transition-all duration-200 hidden sm:block ${themeClasses.button.secondary}`}>
+                        Share
+                      </button>
+                      <button 
+                        onClick={handleSaveRequest}
+                        className={`h-8 text-xs px-3 rounded transition-all duration-200 ${themeClasses.button.primary}`}
                       >
-                        <Pencil className="h-3 w-3" />
+                        {currentTab?.collectionRequestId ? "Update" : "Save"}
                       </button>
                     </>
                   )}
                 </div>
-                {request.url && (
-                  <span className={`text-xs ${themeClasses.text.tertiary}`}>
-                    {(() => {
-                      try {
-                        return new URL(request.url).pathname;
-                      } catch {
-                        return (
-                          request.url.replace(/^https?:\/\/[^\/]+/, "") || "/"
-                        );
-                      }
-                    })()}
-                  </span>
-                )}
-              </div>
-              <div className="flex items-center gap-2">
-                {request.url && (
-                  <>
-                    <button className={`h-8 text-xs px-3 rounded transition-all duration-200 ${themeClasses.button.secondary}`}>
-                      Template
-                    </button>
-                    <button className={`h-8 text-xs px-3 rounded transition-all duration-200 ${themeClasses.button.secondary}`}>
-                      Share
-                    </button>
-                    <button
-                      onClick={handleSaveRequest}
-                      className={`h-8 text-xs px-3 rounded transition-all duration-200 ${themeClasses.button.primary}`}
-                    >
-                      {currentTab?.collectionRequestId ? "Update" : "Save"}
-                    </button>
-                  </>
-                )}
               </div>
             </div>
           </div>
+
+          {/* Method + URL + Send Row - Full Width */}
+          <div className={`border-b ${themeClasses.border.primary}`}>
+            <div className="px-6 py-4">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                {/* METHOD SELECT + URL INPUT ROW */}
+                <div className="flex items-center gap-3 flex-1">
+                  {/* METHOD SELECT */}
+                  <div className="w-24 flex-shrink-0">
+                    <Select
+                      value={request.method}
+                      onValueChange={(value) => updateCurrentTab({ request: { ...request, method: value } })}
+                    >
+                      <SelectTrigger
+                        className={`h-11 text-sm rounded backdrop-blur-sm ${themeClasses.input.base} px-3 flex items-center justify-between !h-11 !min-h-[44px] [&>span]:leading-none`}
+                      >
+                        <SelectValue />
+                      </SelectTrigger>
+
+                      <SelectContent
+                        className={`
+                          w-[var(--radix-select-trigger-width)] 
+                          ${
+                            isDark
+                              ? "border-gray-700 bg-gray-800 text-white"
+                              : "border-gray-200 bg-white text-gray-900"
+                          }
+                        `}
+                        align="start"
+                      >
+                        {["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"].map((method) => {
+                          const methodColors = getMethodColors(method, isDark);
+                          return (
+                            <SelectItem
+                              key={method}
+                              value={method}
+                              className="text-sm py-2"
+                            >
+                              <span className={`font-bold ${methodColors.text}`}>
+                                {method}
+                              </span>
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* URL INPUT */}
+                  <div className="flex-1">
+                    <Input
+                      placeholder="https://api.example.com/endpoint"
+                      value={request.url}
+                      onChange={(e) => updateCurrentTab({ request: { ...request, url: e.target.value } })}
+                      className={`h-11 text-sm rounded-md backdrop-blur-sm ${themeClasses.input.base}`}
+                    />
+                  </div>
+                </div>
+
+                {/* SEND BUTTON */}
+                <button
+                  onClick={executeRequest}
+                  disabled={loading || !request.url}
+                  className={`h-11 text-sm px-6 rounded-md transition-all duration-200 font-medium shadow-sm flex items-center justify-center gap-2 flex-shrink-0 sm:w-auto w-full ${
+                    loading || !request.url
+                      ? `${
+                          isDark
+                            ? "bg-gray-700 text-gray-400"
+                            : "bg-gray-200 text-gray-500"
+                        } cursor-not-allowed`
+                      : themeClasses.button.primary
+                  }`}
+                >
+                  {loading ? (
+                    <>
+                      <div
+                        className={`animate-spin h-4 w-4 border-2 ${
+                          isDark
+                            ? "border-blue-300 border-t-transparent"
+                            : "border-blue-400 border-t-transparent"
+                        } rounded-full`}
+                      ></div>
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-4 w-4" />
+                      Send
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Onboarding Section - Shows when no URL is entered */}
+          {!request.url && (
+            <div className={`border-b ${themeClasses.border.primary}`}>
+              <div className="px-6 py-6">
+                <div className="text-center space-y-6">
+                  <div className="space-y-3">
+                    <h3
+                      className={`text-lg font-semibold ${themeClasses.text.primary}`}
+                    >
+                      Welcome to API Playground
+                    </h3>
+                    <p
+                      className={`text-sm ${themeClasses.text.secondary} max-w-md mx-auto`}
+                    >
+                      Get started by entering an API endpoint above. Try one of these
+                      popular APIs to test:
+                    </p>
+                  </div>
+
+                  {/* Quick Start Examples */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 max-w-2xl mx-auto">
+                    <button
+                      onClick={() =>
+                        updateCurrentTab({
+                          request: {
+                            ...request,
+                            url: "https://jsonplaceholder.typicode.com/posts/1"
+                          }
+                        })
+                      }
+                      className={`flex items-center gap-3 p-4 text-left rounded-lg transition-all duration-200 ${
+                        isDark
+                          ? "bg-gray-800/50 hover:bg-gray-800 border border-gray-700/50"
+                          : "bg-gray-50 hover:bg-gray-100 border border-gray-200"
+                      }`}
+                    >
+                      <div
+                        className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                          isDark
+                            ? "bg-emerald-500/20 text-emerald-400"
+                            : "bg-emerald-100 text-emerald-600"
+                        }`}
+                      >
+                        <span className="text-xs font-bold">JSON</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div
+                          className={`text-sm font-medium ${themeClasses.text.primary}`}
+                        >
+                          JSONPlaceholder
+                        </div>
+                        <div
+                          className={`text-xs ${themeClasses.text.tertiary} truncate`}
+                        >
+                          Free fake API for testing
+                        </div>
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={() => updateCurrentTab({
+                        request: { ...request, url: "https://httpbin.org/get" }
+                      })}
+                      className={`flex items-center gap-3 p-4 text-left rounded-lg transition-all duration-200 ${
+                        isDark
+                          ? "bg-gray-800/50 hover:bg-gray-800 border border-gray-700/50"
+                          : "bg-gray-50 hover:bg-gray-100 border border-gray-200"
+                      }`}
+                    >
+                      <div
+                        className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                          isDark
+                            ? "bg-blue-500/20 text-blue-400"
+                            : "bg-blue-100 text-blue-600"
+                        }`}
+                      >
+                        <span className="text-xs font-bold">HTTP</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div
+                          className={`text-sm font-medium ${themeClasses.text.primary}`}
+                        >
+                          HTTPBin
+                        </div>
+                        <div
+                          className={`text-xs ${themeClasses.text.tertiary} truncate`}
+                        >
+                          HTTP request & response service
+                        </div>
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        updateCurrentTab({
+                          request: {
+                            ...request,
+                            url: "https://api.github.com/repos/microsoft/vscode"
+                          }
+                        })
+                      }
+                      className={`flex items-center gap-3 p-4 text-left rounded-lg transition-all duration-200 ${
+                        isDark
+                          ? "bg-gray-800/50 hover:bg-gray-800 border border-gray-700/50"
+                          : "bg-gray-50 hover:bg-gray-100 border border-gray-200"
+                      }`}
+                    >
+                      <div
+                        className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                          isDark
+                            ? "bg-purple-500/20 text-purple-400"
+                            : "bg-purple-100 text-purple-600"
+                        }`}
+                      >
+                        <span className="text-xs font-bold">API</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div
+                          className={`text-sm font-medium ${themeClasses.text.primary}`}
+                        >
+                          GitHub API
+                        </div>
+                        <div
+                          className={`text-xs ${themeClasses.text.tertiary} truncate`}
+                        >
+                          Repository information
+                        </div>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Main Content Area - Theme Aware Split View */}
           <div
@@ -1228,16 +1463,6 @@ export default function Playground() {
             <RequestPanel
               request={request}
               setRequest={setRequest}
-              onExecute={executeRequest}
-              loading={loading}
-              onShare={handleShare}
-              shareUrl={shareUrl}
-              shareDialogOpen={shareDialogOpen}
-              setShareDialogOpen={setShareDialogOpen}
-              copyShareUrl={copyShareUrl}
-              copySuccess={copySuccess}
-              currentRequestName={currentTab?.name}
-              setCurrentRequestName={setCurrentRequestName}
             />
             <ResponsePanel
               response={response}

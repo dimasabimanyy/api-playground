@@ -1,56 +1,19 @@
 "use client";
 
 import { useState } from "react";
-// Removed Card components - using plain divs for seamless integration
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Send, Plus, X, Share2, Copy } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
-import { getThemeClasses, getMethodColors } from "@/lib/theme";
-import TemplatesPanel from "./TemplatesPanel";
-
-const HTTP_METHODS = [
-  "GET",
-  "POST",
-  "PUT",
-  "PATCH",
-  "DELETE",
-  "HEAD",
-  "OPTIONS",
-];
+import { getThemeClasses } from "@/lib/theme";
 
 export default function RequestPanel({
   request,
   setRequest,
-  onExecute,
-  loading,
-  onShare,
-  shareUrl,
-  shareDialogOpen,
-  setShareDialogOpen,
-  copyShareUrl,
-  copySuccess,
-  currentRequestName,
-  setCurrentRequestName,
 }) {
-  const { theme, isDark } = useTheme();
+  const { isDark } = useTheme();
   const themeClasses = getThemeClasses(isDark);
   const [newHeaderKey, setNewHeaderKey] = useState("");
   const [newHeaderValue, setNewHeaderValue] = useState("");
@@ -75,253 +38,11 @@ export default function RequestPanel({
     updateRequest("headers", rest);
   };
 
-  const getMethodColor = (method) => {
-    const colors = {
-      GET: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
-      POST: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
-      PUT: "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300",
-      PATCH:
-        "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
-      DELETE: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
-    };
-    return (
-      colors[method] ||
-      "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300"
-    );
-  };
-
-  const getMethodBorderColor = (method) => {
-    const colors = {
-      GET: "border-green-500",
-      POST: "border-blue-500",
-      PUT: "border-orange-500",
-      PATCH: "border-yellow-500",
-      DELETE: "border-red-500",
-    };
-    return colors[method] || "border-gray-300";
-  };
 
   return (
     <div
       className={`flex-1 h-full flex flex-col border-r transition-all duration-300 ${themeClasses.border.primary} ${themeClasses.bg.glass}`}
     >
-      {/* URL Bar Section - Theme Aware */}
-      <div className={`p-6 border-b ${themeClasses.border.primary}`}>
-        <div className="flex items-center gap-2">
-  {/* METHOD SELECT */}
-  <div className="w-20">
-    <Select
-      value={request.method}
-      onValueChange={(value) => updateRequest("method", value)}
-    >
-      <SelectTrigger
-        className={`h-11 text-sm rounded backdrop-blur-sm ${themeClasses.input.base} px-3 flex items-center justify-between !h-11 !min-h-[44px] [&>span]:leading-none`}
-      >
-        <SelectValue />
-      </SelectTrigger>
-
-      <SelectContent
-        className={`
-          w-[var(--radix-select-trigger-width)] 
-          ${
-            isDark
-              ? "border-gray-700 bg-gray-800 text-white"
-              : "border-gray-200 bg-white text-gray-900"
-          }
-        `}
-        align="start"
-      >
-        {HTTP_METHODS.map((method) => {
-          const methodColors = getMethodColors(method, isDark);
-          return (
-            <SelectItem
-              key={method}
-              value={method}
-              className="text-sm py-2"
-            >
-              <span className={`font-bold ${methodColors.text}`}>
-                {method}
-              </span>
-            </SelectItem>
-          );
-        })}
-      </SelectContent>
-    </Select>
-  </div>
-
-  {/* URL INPUT */}
-  <div className="flex-1">
-    <Input
-      placeholder="https://api.example.com/endpoint"
-      value={request.url}
-      onChange={(e) => updateRequest("url", e.target.value)}
-      className={`h-[42px] text-sm rounded-md backdrop-blur-sm ${themeClasses.input.base}`}
-    />
-  </div>
-
-  {/* SEND BUTTON */}
-  <button
-    onClick={onExecute}
-    disabled={loading || !request.url}
-    className={`h-[42px] text-sm px-5 rounded-md transition-all duration-200 font-medium shadow-sm flex items-center gap-2 ${
-      loading || !request.url
-        ? `${
-            isDark
-              ? "bg-gray-700 text-gray-400"
-              : "bg-gray-200 text-gray-500"
-          } cursor-not-allowed`
-        : themeClasses.button.primary
-    }`}
-  >
-    {loading ? (
-      <>
-        <div
-          className={`animate-spin h-4 w-4 border-2 ${
-            isDark
-              ? "border-blue-300 border-t-transparent"
-              : "border-blue-400 border-t-transparent"
-          } rounded-full`}
-        ></div>
-        Sending...
-      </>
-    ) : (
-      <>
-        <Send className="h-4 w-4" />
-        Send
-      </>
-    )}
-  </button>
-</div>
-
-      </div>
-
-      {/* Onboarding Section - Shows when no URL is entered */}
-      {!request.url && (
-        <div className={`p-6 border-b ${themeClasses.border.primary}`}>
-          <div className="text-center space-y-6">
-            <div className="space-y-3">
-              <h3
-                className={`text-lg font-semibold ${themeClasses.text.primary}`}
-              >
-                Welcome to API Playground
-              </h3>
-              <p
-                className={`text-sm ${themeClasses.text.secondary} max-w-md mx-auto`}
-              >
-                Get started by entering an API endpoint above. Try one of these
-                popular APIs to test:
-              </p>
-            </div>
-
-            {/* Quick Start Examples */}
-            <div className="grid grid-cols-1 gap-3 max-w-md mx-auto">
-              <button
-                onClick={() =>
-                  updateRequest(
-                    "url",
-                    "https://jsonplaceholder.typicode.com/posts/1"
-                  )
-                }
-                className={`flex items-center gap-3 p-4 text-left rounded-lg transition-all duration-200 ${
-                  isDark
-                    ? "bg-gray-800/50 hover:bg-gray-800 border border-gray-700/50"
-                    : "bg-gray-50 hover:bg-gray-100 border border-gray-200"
-                }`}
-              >
-                <div
-                  className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                    isDark
-                      ? "bg-emerald-500/20 text-emerald-400"
-                      : "bg-emerald-100 text-emerald-600"
-                  }`}
-                >
-                  <span className="text-xs font-bold">JSON</span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div
-                    className={`text-sm font-medium ${themeClasses.text.primary}`}
-                  >
-                    JSONPlaceholder
-                  </div>
-                  <div
-                    className={`text-xs ${themeClasses.text.tertiary} truncate`}
-                  >
-                    Free fake API for testing
-                  </div>
-                </div>
-              </button>
-
-              <button
-                onClick={() => updateRequest("url", "https://httpbin.org/get")}
-                className={`flex items-center gap-3 p-4 text-left rounded-lg transition-all duration-200 ${
-                  isDark
-                    ? "bg-gray-800/50 hover:bg-gray-800 border border-gray-700/50"
-                    : "bg-gray-50 hover:bg-gray-100 border border-gray-200"
-                }`}
-              >
-                <div
-                  className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                    isDark
-                      ? "bg-blue-500/20 text-blue-400"
-                      : "bg-blue-100 text-blue-600"
-                  }`}
-                >
-                  <span className="text-xs font-bold">HTTP</span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div
-                    className={`text-sm font-medium ${themeClasses.text.primary}`}
-                  >
-                    HTTPBin
-                  </div>
-                  <div
-                    className={`text-xs ${themeClasses.text.tertiary} truncate`}
-                  >
-                    HTTP request & response service
-                  </div>
-                </div>
-              </button>
-
-              <button
-                onClick={() =>
-                  updateRequest(
-                    "url",
-                    "https://api.github.com/repos/microsoft/vscode"
-                  )
-                }
-                className={`flex items-center gap-3 p-4 text-left rounded-lg transition-all duration-200 ${
-                  isDark
-                    ? "bg-gray-800/50 hover:bg-gray-800 border border-gray-700/50"
-                    : "bg-gray-50 hover:bg-gray-100 border border-gray-200"
-                }`}
-              >
-                <div
-                  className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                    isDark
-                      ? "bg-purple-500/20 text-purple-400"
-                      : "bg-purple-100 text-purple-600"
-                  }`}
-                >
-                  <span className="text-xs font-bold">API</span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div
-                    className={`text-sm font-medium ${themeClasses.text.primary}`}
-                  >
-                    GitHub API
-                  </div>
-                  <div
-                    className={`text-xs ${themeClasses.text.tertiary} truncate`}
-                  >
-                    Repository information
-                  </div>
-                </div>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       <div
         className={`flex-1 overflow-y-auto transition-colors duration-300 ${themeClasses.bg.primary}`}
       >
