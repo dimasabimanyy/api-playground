@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import {
@@ -55,6 +56,71 @@ import {
   updateRequestInCollection,
 } from "@/lib/collections";
 import DocGeneratorModal from "@/components/docs/DocGeneratorModal";
+
+function UserAvatar({ user, isDark }) {
+  const [imageLoaded, setImageLoaded] = useState(true);
+  const [imageSrc, setImageSrc] = useState(null);
+
+  useEffect(() => {
+    if (user?.user_metadata?.avatar_url) {
+      // Fix Google profile image URL by removing size parameter and adding referrer policy bypass
+      let avatarUrl = user.user_metadata.avatar_url;
+      
+      // If it's a Google profile image, modify the URL for better compatibility
+      if (avatarUrl.includes('googleusercontent.com')) {
+        // Remove the size parameter (=s96-c) and replace with a larger size
+        avatarUrl = avatarUrl.replace(/=s\d+-c$/, '=s128-c');
+      }
+      
+      setImageSrc(avatarUrl);
+      setImageLoaded(true);
+    }
+  }, [user]);
+
+  const getInitials = () => {
+    if (user?.user_metadata?.full_name) {
+      return user.user_metadata.full_name.charAt(0).toUpperCase();
+    }
+    if (user?.user_metadata?.name) {
+      return user.user_metadata.name.charAt(0).toUpperCase();
+    }
+    if (user?.email) {
+      return user.email.charAt(0).toUpperCase();
+    }
+    return 'U';
+  };
+
+  if (imageLoaded && imageSrc) {
+    return (
+      <div className="w-8 h-8 rounded-full overflow-hidden cursor-pointer">
+        <Image 
+          src={imageSrc}
+          alt="User avatar"
+          width={32}
+          height={32}
+          className="object-cover"
+          unoptimized
+          onError={() => {
+            console.log('Profile image failed to load:', imageSrc);
+            setImageLoaded(false);
+          }}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={`h-8 w-8 rounded-full flex items-center justify-center cursor-pointer ${
+        isDark
+          ? "bg-gradient-to-br from-blue-600 to-blue-700"
+          : "bg-gradient-to-br from-blue-500 to-blue-600"
+      } text-white font-medium text-sm`}
+    >
+      {getInitials()}
+    </div>
+  );
+}
 
 export default function Playground() {
   const { toggleTheme, isDark } = useTheme();
@@ -448,25 +514,7 @@ export default function Playground() {
             <div className="h-8 w-8 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
           ) : user ? (
             <div className="relative group">
-              <div
-                className={`h-8 w-8 rounded-full flex items-center justify-center cursor-pointer ${
-                  isDark
-                    ? "bg-gradient-to-br from-blue-600 to-blue-700"
-                    : "bg-gradient-to-br from-blue-500 to-blue-600"
-                } text-white font-medium text-sm`}
-              >
-                {user.user_metadata?.avatar_url ? (
-                  <img 
-                    src={user.user_metadata.avatar_url} 
-                    alt="User avatar"
-                    className="w-8 h-8 rounded-full"
-                  />
-                ) : (
-                  user.user_metadata?.full_name?.charAt(0)?.toUpperCase() || 
-                  user.email?.charAt(0)?.toUpperCase() || 
-                  'U'
-                )}
-              </div>
+              <UserAvatar user={user} isDark={isDark} />
               
               {/* Dropdown Menu */}
               <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
