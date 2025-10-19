@@ -41,6 +41,7 @@ import {
   Pencil,
   Send,
   Trash2,
+  Loader2,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -121,7 +122,7 @@ function UserAvatar({ user, isDark }) {
 export default function Playground() {
   const { toggleTheme, isDark } = useTheme();
   const { user, signOut, loading: authLoading } = useAuth();
-  const { collections, activeCollectionId, setActiveCollectionId, addRequestToCollection, updateRequestInCollection, saveToHistory } = useCollections();
+  const { collections, activeCollectionId, setActiveCollectionId, addRequestToCollection, updateRequestInCollection, saveToHistory, createCollection } = useCollections();
   const themeClasses = getThemeClasses(isDark);
   // Request tabs state
   const [requestTabs, setRequestTabs] = useState([
@@ -160,6 +161,9 @@ export default function Playground() {
   // Modal states
   const [docsModalOpen, setDocsModalOpen] = useState(false);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
+  const [createCollectionDialogOpen, setCreateCollectionDialogOpen] = useState(false);
+  const [newCollectionName, setNewCollectionName] = useState('');
+  const [creatingCollection, setCreatingCollection] = useState(false);
 
   // Environments state
   const [expandedEnvironments, setExpandedEnvironments] = useState(new Set());
@@ -421,6 +425,21 @@ export default function Playground() {
     }
   };
 
+  const handleCreateCollection = async () => {
+    if (!newCollectionName.trim()) return;
+    
+    setCreatingCollection(true);
+    try {
+      console.log('Creating collection:', newCollectionName);
+      await createCollection(newCollectionName, '', 'blue');
+      setCreateCollectionDialogOpen(false);
+      setNewCollectionName('');
+    } catch (err) {
+      console.error('Failed to create collection:', err);
+    } finally {
+      setCreatingCollection(false);
+    }
+  };
 
   // Request modification handlers
   const setRequest = (newRequest) => {
@@ -614,7 +633,13 @@ export default function Playground() {
                           <span className={`text-xs font-medium ${themeClasses.text.tertiary}`}>
                             Your Collections
                           </span>
-                          <button className={`p-1 rounded transition-all duration-200 ${themeClasses.button.ghost}`}>
+                          <button 
+                            className={`p-1 rounded transition-all duration-200 ${themeClasses.button.ghost}`}
+                            onClick={() => {
+                              console.log('Plus button clicked - opening create collection dialog');
+                              setCreateCollectionDialogOpen(true);
+                            }}
+                          >
                             <Plus className="h-3 w-3" />
                           </button>
                         </div>
@@ -1640,6 +1665,57 @@ export default function Playground() {
                   />
                 </div>
               </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Create Collection Dialog */}
+      <Dialog open={createCollectionDialogOpen} onOpenChange={setCreateCollectionDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-base font-medium">Create Collection</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 pt-3">
+            <div>
+              <Input
+                placeholder="Collection name"
+                value={newCollectionName}
+                onChange={(e) => setNewCollectionName(e.target.value)}
+                className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
+                disabled={creatingCollection}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    handleCreateCollection();
+                  }
+                }}
+              />
+            </div>
+            <div className="flex justify-end gap-2 pt-1">
+              <Button 
+                variant="outline" 
+                onClick={() => setCreateCollectionDialogOpen(false)} 
+                size="sm" 
+                className="px-3 text-xs"
+                disabled={creatingCollection}
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleCreateCollection} 
+                disabled={!newCollectionName.trim() || creatingCollection} 
+                size="sm" 
+                className="px-3 text-xs bg-black hover:bg-gray-800 text-white"
+              >
+                {creatingCollection ? (
+                  <>
+                    <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  'Create'
+                )}
+              </Button>
             </div>
           </div>
         </DialogContent>

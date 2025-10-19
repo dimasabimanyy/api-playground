@@ -65,9 +65,16 @@ export async function createCollection(name, description = '', color = 'blue') {
   const supabase = createClient()
   
   try {
+    // Get the current user
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      throw new Error('User must be authenticated to create collections')
+    }
+
     const { data: collection, error } = await supabase
       .from('collections')
       .insert({
+        user_id: user.id,
         name,
         description,
         color
@@ -381,9 +388,17 @@ export async function saveRequestToHistory(requestData, response) {
   const supabase = createClient()
   
   try {
+    // Get the current user
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      console.warn('No authenticated user for request history')
+      return false
+    }
+
     const { error } = await supabase
       .from('request_history')
       .insert({
+        user_id: user.id,
         request_id: requestData.requestId || null,
         method: requestData.method,
         url: requestData.url,
