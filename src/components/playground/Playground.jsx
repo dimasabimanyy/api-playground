@@ -27,7 +27,6 @@ import {
   PanelLeftClose,
   Zap,
   FolderOpen,
-  User,
   Settings,
   Globe,
   Search,
@@ -43,6 +42,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { getThemeClasses, getMethodColors } from "@/lib/theme";
 import RequestPanel from "./RequestPanel";
 import ResponsePanel from "./ResponsePanel";
@@ -58,6 +58,7 @@ import DocGeneratorModal from "@/components/docs/DocGeneratorModal";
 
 export default function Playground() {
   const { toggleTheme, isDark } = useTheme();
+  const { user, signOut, loading: authLoading } = useAuth();
   const themeClasses = getThemeClasses(isDark);
   // Request tabs state
   const [requestTabs, setRequestTabs] = useState([
@@ -441,19 +442,60 @@ export default function Playground() {
           >
             <Settings className="h-4 w-4" />
           </button>
-          <div
-            className={`h-8 w-8 rounded flex items-center justify-center cursor-pointer ${
-              isDark
-                ? "bg-gradient-to-br from-gray-700 to-gray-800"
-                : "bg-gradient-to-br from-gray-200 to-gray-300"
-            }`}
-          >
-            <User
-              className={`h-4 w-4 ${
-                isDark ? "text-gray-300" : "text-gray-600"
-              }`}
-            />
-          </div>
+          
+          {/* User Avatar/Auth Section */}
+          {authLoading ? (
+            <div className="h-8 w-8 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+          ) : user ? (
+            <div className="relative group">
+              <div
+                className={`h-8 w-8 rounded-full flex items-center justify-center cursor-pointer ${
+                  isDark
+                    ? "bg-gradient-to-br from-blue-600 to-blue-700"
+                    : "bg-gradient-to-br from-blue-500 to-blue-600"
+                } text-white font-medium text-sm`}
+              >
+                {user.user_metadata?.avatar_url ? (
+                  <img 
+                    src={user.user_metadata.avatar_url} 
+                    alt="User avatar"
+                    className="w-8 h-8 rounded-full"
+                  />
+                ) : (
+                  user.user_metadata?.full_name?.charAt(0)?.toUpperCase() || 
+                  user.email?.charAt(0)?.toUpperCase() || 
+                  'U'
+                )}
+              </div>
+              
+              {/* Dropdown Menu */}
+              <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <div className="p-3 border-b border-gray-200 dark:border-gray-700">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">
+                    {user.user_metadata?.full_name || 'User'}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                    {user.email}
+                  </p>
+                </div>
+                <div className="p-1">
+                  <button
+                    onClick={() => signOut()}
+                    className="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+                  >
+                    Sign out
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <button
+              onClick={() => window.location.href = '/login'}
+              className={`h-8 px-3 text-xs font-medium rounded transition-all duration-200 ${themeClasses.button.primary}`}
+            >
+              Sign in
+            </button>
+          )}
         </div>
       </header>
 

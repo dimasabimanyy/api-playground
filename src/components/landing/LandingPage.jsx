@@ -18,10 +18,12 @@ import {
   Play
 } from 'lucide-react'
 import { useTheme } from '@/contexts/ThemeContext'
+import { useAuth } from '@/contexts/AuthContext'
 import { getThemeClasses } from '@/lib/theme'
 
 export default function LandingPage() {
   const { theme, toggleTheme, isDark } = useTheme()
+  const { user, loading: authLoading } = useAuth()
   const themeClasses = getThemeClasses(isDark)
   const [email, setEmail] = useState('')
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -77,11 +79,50 @@ export default function LandingPage() {
             >
               {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
-            <Link href="/playground">
-              <Button className={`${themeClasses.button.primary}`}>
-                Open Playground
-              </Button>
-            </Link>
+            
+            {authLoading ? (
+              <div className="h-8 w-8 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+            ) : user ? (
+              <div className="flex items-center space-x-3">
+                <div
+                  className={`h-8 w-8 rounded-full flex items-center justify-center ${
+                    isDark
+                      ? "bg-gradient-to-br from-blue-600 to-blue-700"
+                      : "bg-gradient-to-br from-blue-500 to-blue-600"
+                  } text-white font-medium text-sm`}
+                >
+                  {user.user_metadata?.avatar_url ? (
+                    <img 
+                      src={user.user_metadata.avatar_url} 
+                      alt="User avatar"
+                      className="w-8 h-8 rounded-full"
+                    />
+                  ) : (
+                    user.user_metadata?.full_name?.charAt(0)?.toUpperCase() || 
+                    user.email?.charAt(0)?.toUpperCase() || 
+                    'U'
+                  )}
+                </div>
+                <Link href="/playground">
+                  <Button className={`${themeClasses.button.primary}`}>
+                    Open Playground
+                  </Button>
+                </Link>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-3">
+                <Link href="/login">
+                  <Button variant="outline" className={`${themeClasses.button.secondary}`}>
+                    Sign In
+                  </Button>
+                </Link>
+                <Link href="/playground">
+                  <Button className={`${themeClasses.button.primary}`}>
+                    Try Free
+                  </Button>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </header>
