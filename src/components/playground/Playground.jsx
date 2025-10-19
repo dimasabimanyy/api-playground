@@ -44,17 +44,13 @@ import {
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCollections } from "@/contexts/CollectionsContext";
 import { getThemeClasses, getMethodColors } from "@/lib/theme";
 import RequestPanel from "./RequestPanel";
 import ResponsePanel from "./ResponsePanel";
 import { generateShareableUrl, getSharedRequest } from "@/lib/share-encoding";
 import { saveToHistory } from "@/lib/storage";
 import { processRequestWithVariables } from "@/lib/environments";
-import {
-  getActiveCollectionId,
-  addRequestToCollection,
-  updateRequestInCollection,
-} from "@/lib/collections";
 import DocGeneratorModal from "@/components/docs/DocGeneratorModal";
 
 function UserAvatar({ user, isDark }) {
@@ -125,6 +121,7 @@ function UserAvatar({ user, isDark }) {
 export default function Playground() {
   const { toggleTheme, isDark } = useTheme();
   const { user, signOut, loading: authLoading } = useAuth();
+  const { collections, activeCollectionId, setActiveCollectionId, addRequestToCollection, updateRequestInCollection, saveToHistory } = useCollections();
   const themeClasses = getThemeClasses(isDark);
   // Request tabs state
   const [requestTabs, setRequestTabs] = useState([
@@ -149,7 +146,6 @@ export default function Playground() {
   const [showShared, setShowShared] = useState(false);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
-  const [activeCollectionId, setActiveCollectionId] = useState("my-apis");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activeMenuTab, setActiveMenuTab] = useState("collections");
   const [searchQuery, setSearchQuery] = useState("");
@@ -169,28 +165,6 @@ export default function Playground() {
   const [expandedEnvironments, setExpandedEnvironments] = useState(new Set());
   const [editingEnvironment, setEditingEnvironment] = useState(null);
 
-  // Sample collections data (replace with real data later)
-  const collections = [
-    {
-      id: 'my-api-tests',
-      name: 'My API Tests',
-      requests: [
-        { id: 'req-1', name: 'Get User Profile', method: 'GET', url: '/api/users/me' },
-        { id: 'req-2', name: 'Create User', method: 'POST', url: '/api/users' },
-        { id: 'req-3', name: 'Update Settings', method: 'PUT', url: '/api/settings' },
-      ]
-    },
-    {
-      id: 'user-service',
-      name: 'User Service APIs',
-      requests: [
-        { id: 'req-4', name: 'Login', method: 'POST', url: '/auth/login' },
-        { id: 'req-5', name: 'Logout', method: 'POST', url: '/auth/logout' },
-        { id: 'req-6', name: 'Get All Users', method: 'GET', url: '/api/users' },
-        { id: 'req-7', name: 'Delete User', method: 'DELETE', url: '/api/users/:id' },
-      ]
-    }
-  ];
 
   // Sample history data
   const historyItems = [
@@ -317,7 +291,7 @@ export default function Playground() {
     }
 
     // Load active collection
-    const activeColId = getActiveCollectionId();
+    const activeColId = activeCollectionId;
     setActiveCollectionId(activeColId);
   }, []);
 
@@ -646,7 +620,7 @@ export default function Playground() {
                         </div>
                         
                         <div className="space-y-1">
-                          {collections.map((collection) => {
+                          {Object.values(collections).map((collection) => {
                             const isExpanded = expandedCollections.has(collection.id);
                             
                             return (
@@ -690,7 +664,7 @@ export default function Playground() {
                                           {collection.name}
                                         </div>
                                         <div className={`text-xs ${themeClasses.text.tertiary} opacity-60`}>
-                                          {collection.requests.length}
+                                          {collection.requests?.length || 0}
                                         </div>
                                       </div>
                                     )}
@@ -700,7 +674,7 @@ export default function Playground() {
                                 {/* Requests List */}
                                 {isExpanded && (
                                   <div className="ml-6 space-y-0.5 overflow-hidden">
-                                    {collection.requests.map((request) => {
+                                    {(collection.requests || []).map((request) => {
                                       const methodColors = getMethodColors(request.method, isDark);
                                       const isSelected = selectedRequest === request.id;
                                       
@@ -998,19 +972,19 @@ export default function Playground() {
                                   Available Collections
                                 </p>
                                 <p className={`text-xs ${themeClasses.text.tertiary}`}>
-                                  {collections.length} collection{collections.length !== 1 ? 's' : ''} • {collections.reduce((acc, col) => acc + col.requests.length, 0)} endpoints
+                                  {Object.keys(collections).length} collection{Object.keys(collections).length !== 1 ? 's' : ''} • {Object.values(collections).reduce((acc, col) => acc + (col.requests?.length || 0), 0)} endpoints
                                 </p>
                               </div>
                               
                               <div className="flex gap-2">
-                                {collections.slice(0, 2).map(collection => (
+                                {Object.values(collections).slice(0, 2).map(collection => (
                                   <div key={collection.id} className={`px-2 py-1 rounded text-xs ${themeClasses.bg.secondary} ${themeClasses.text.secondary}`}>
                                     {collection.name}
                                   </div>
                                 ))}
-                                {collections.length > 2 && (
+                                {Object.keys(collections).length > 2 && (
                                   <div className={`px-2 py-1 rounded text-xs ${themeClasses.bg.secondary} ${themeClasses.text.tertiary}`}>
-                                    +{collections.length - 2} more
+                                    +{Object.keys(collections).length - 2} more
                                   </div>
                                 )}
                               </div>

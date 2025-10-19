@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { CollectionsProvider } from '@/contexts/CollectionsContext';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,7 +27,9 @@ export default function RootLayout({ children }) {
       >
         <ThemeProvider>
           <AuthProvider>
-            {children}
+            <CollectionsProvider>
+              {children}
+            </CollectionsProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>

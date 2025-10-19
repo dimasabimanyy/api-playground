@@ -50,7 +50,7 @@ const templates = [
 export default function DocGeneratorModal({ 
   open, 
   onOpenChange, 
-  collections = [],
+  collections = {},
   onGenerate 
 }) {
   const { isDark } = useTheme();
@@ -82,7 +82,7 @@ export default function DocGeneratorModal({
       selectedCollections,
       template: selectedTemplate,
       customization,
-      collections: collections.filter(c => selectedCollections.includes(c.id)),
+      collections: Object.values(collections).filter(c => selectedCollections.includes(c.id)),
     };
     
     if (onGenerate) {
@@ -107,7 +107,7 @@ export default function DocGeneratorModal({
               </p>
             </div>
 
-            {collections.length === 0 ? (
+            {Object.keys(collections).length === 0 ? (
               <div className={`text-center py-8 ${themeClasses.text.tertiary}`}>
                 <BookOpen className={`h-8 w-8 mx-auto mb-3 ${themeClasses.text.tertiary}`} />
                 <p className={`text-sm ${themeClasses.text.primary}`}>No collections found</p>
@@ -115,7 +115,7 @@ export default function DocGeneratorModal({
               </div>
             ) : (
               <div className="space-y-3 max-h-64 overflow-y-auto">
-                {collections.map((collection) => (
+                {Object.values(collections).map((collection) => (
                   <div
                     key={collection.id}
                     className={`p-4 rounded-lg border ${themeClasses.card.base} ${themeClasses.border.primary}`}
@@ -131,10 +131,10 @@ export default function DocGeneratorModal({
                           {collection.name}
                         </div>
                         <div className={`text-sm ${themeClasses.text.secondary} mt-1`}>
-                          {collection.requests.length} endpoint{collection.requests.length !== 1 ? 's' : ''}
+                          {collection.requests?.length || 0} endpoint{(collection.requests?.length || 0) !== 1 ? 's' : ''}
                         </div>
                         <div className="flex gap-1 mt-2">
-                          {collection.requests.slice(0, 3).map((request, idx) => (
+                          {(collection.requests || []).slice(0, 3).map((request, idx) => (
                             <span
                               key={idx}
                               className={`px-2 py-1 text-xs rounded ${
@@ -147,9 +147,9 @@ export default function DocGeneratorModal({
                               {request.method}
                             </span>
                           ))}
-                          {collection.requests.length > 3 && (
+                          {(collection.requests?.length || 0) > 3 && (
                             <span className={`px-2 py-1 text-xs rounded ${themeClasses.text.tertiary} bg-gray-100 dark:bg-gray-800`}>
-                              +{collection.requests.length - 3}
+                              +{(collection.requests?.length || 0) - 3}
                             </span>
                           )}
                         </div>

@@ -17,41 +17,40 @@ import {
   Star,
   ChevronDown,
   ChevronRight,
-  Folder
+  Folder,
+  Loader2
 } from 'lucide-react'
-import { 
-  getCollections, 
-  getActiveCollectionId, 
-  setActiveCollectionId,
-  createCollection,
-  deleteCollection 
-} from '@/lib/collections'
+import { useCollections } from '@/contexts/CollectionsContext'
 
 export default function CollectionsSidebar({ 
   onCollectionSelect, 
   onRequestSelect, 
-  activeCollectionId,
   activeRequestId 
 }) {
-  const [collections, setCollections] = useState({})
+  const { 
+    collections, 
+    activeCollectionId, 
+    loading, 
+    error,
+    createCollection,
+    deleteCollection,
+    setActiveCollectionId,
+    clearError
+  } = useCollections()
+  
   const [searchQuery, setSearchQuery] = useState('')
   const [newCollectionDialog, setNewCollectionDialog] = useState(false)
   const [newCollectionName, setNewCollectionName] = useState('')
   const [newCollectionDescription, setNewCollectionDescription] = useState('')
   const [expandedCollections, setExpandedCollections] = useState(new Set())
+  const [creating, setCreating] = useState(false)
 
   useEffect(() => {
-    loadCollections()
-  }, [])
-
-  const loadCollections = () => {
-    const cols = getCollections()
-    setCollections(cols)
     // Auto-expand active collection
     if (activeCollectionId) {
       setExpandedCollections(prev => new Set(prev).add(activeCollectionId))
     }
-  }
+  }, [activeCollectionId])
 
   const handleCollectionSelect = (collectionId) => {
     setActiveCollectionId(collectionId)
@@ -60,26 +59,35 @@ export default function CollectionsSidebar({
     }
   }
 
-  const handleCreateCollection = () => {
+  const handleCreateCollection = async () => {
     if (!newCollectionName.trim()) return
     
-    const newCollection = createCollection(
-      newCollectionName,
-      newCollectionDescription,
-      'blue'
-    )
-    
-    loadCollections()
-    handleCollectionSelect(newCollection.id)
-    setNewCollectionDialog(false)
-    setNewCollectionName('')
-    setNewCollectionDescription('')
+    setCreating(true)
+    try {
+      const newCollection = await createCollection(
+        newCollectionName,
+        newCollectionDescription,
+        'blue'
+      )
+      
+      handleCollectionSelect(newCollection.id)
+      setNewCollectionDialog(false)
+      setNewCollectionName('')
+      setNewCollectionDescription('')
+    } catch (err) {
+      console.error('Failed to create collection:', err)
+    } finally {
+      setCreating(false)
+    }
   }
 
-  const handleDeleteCollection = (collectionId) => {
+  const handleDeleteCollection = async (collectionId) => {
     if (window.confirm('Are you sure you want to delete this collection?')) {
-      deleteCollection(collectionId)
-      loadCollections()
+      try {
+        await deleteCollection(collectionId)
+      } catch (err) {
+        console.error('Failed to delete collection:', err)
+      }
     }
   }
 
@@ -96,7 +104,7 @@ export default function CollectionsSidebar({
   }
 
   const getCollectionIcon = (collection, isExpanded) => {
-    if (collection.id === 'examples') return <Star className="h-4 w-4" />
+    if (collection.name === 'Examples') return <Star className="h-4 w-4" />
     return isExpanded ? <FolderOpen className="h-4 w-4" /> : <Folder className="h-4 w-4" />
   }
 
@@ -114,7 +122,7 @@ export default function CollectionsSidebar({
   const filteredCollections = Object.values(collections).filter(collection =>
     collection.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     collection.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    collection.requests.some(req => 
+    collection.requests?.some(req => 
       req.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       req.url.toLowerCase().includes(searchQuery.toLowerCase())
     )
@@ -128,7 +136,13 @@ export default function CollectionsSidebar({
           <h2 className="text-sm font-medium text-gray-900">Collections</h2>
           <Dialog open={newCollectionDialog} onOpenChange={setNewCollectionDialog}>
             <DialogTrigger asChild>
-              <button className="h-6 w-6 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded transition-colors">
+              <button 
+                className="h-6 w-6 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded transition-colors"
+                onClick={() => {
+                  console.log('Plus button clicked, opening dialog');
+                  setNewCollectionDialog(true);
+                }}
+              >
                 <FolderPlus className="h-4 w-4" />
               </button>
             </DialogTrigger>
@@ -143,20 +157,41 @@ export default function CollectionsSidebar({
                     value={newCollectionName}
                     onChange={(e) => setNewCollectionName(e.target.value)}
                     className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
+                    disabled={creating}
                   />
                 </div>
                 <div className="flex justify-end gap-2 pt-1">
-                  <Button variant="outline" onClick={() => setNewCollectionDialog(false)} size="sm" className="px-3 text-xs">
+                  <Button variant="outline" onClick={() => setNewCollectionDialog(false)} size="sm" className="px-3 text-xs" disabled={creating}>
                     Cancel
                   </Button>
-                  <Button onClick={handleCreateCollection} disabled={!newCollectionName.trim()} size="sm" className="px-3 text-xs bg-black hover:bg-gray-800 text-white">
-                    Create
+                  <Button onClick={handleCreateCollection} disabled={!newCollectionName.trim() || creating} size="sm" className="px-3 text-xs bg-black hover:bg-gray-800 text-white">
+                    {creating ? (
+                      <>
+                        <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                        Creating...
+                      </>
+                    ) : (
+                      'Create'
+                    )}
                   </Button>
                 </div>
               </div>
             </DialogContent>
           </Dialog>
         </div>
+
+        {/* Error Display */}
+        {error && (
+          <div className="mb-3 p-2 bg-red-50 border border-red-200 rounded text-xs text-red-700">
+            {error}
+            <button 
+              onClick={clearError}
+              className="ml-1 underline hover:no-underline"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
 
         {/* Search */}
         <div className="relative">
@@ -172,8 +207,13 @@ export default function CollectionsSidebar({
 
       {/* Collections List */}
       <div className="flex-1 overflow-y-auto">
-        <div className="p-2 space-y-1">
-          {filteredCollections.map(collection => {
+        {loading ? (
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
+          </div>
+        ) : (
+          <div className="p-2 space-y-1">
+            {filteredCollections.map(collection => {
             const isExpanded = expandedCollections.has(collection.id)
             return (
               <div key={collection.id} className="group">
@@ -207,11 +247,11 @@ export default function CollectionsSidebar({
                         {collection.name}
                       </span>
                       <span className="text-xs text-gray-400 ml-auto">
-                        {collection.requests.length}
+                        {collection.requests?.length || 0}
                       </span>
                     </div>
                     
-                    {collection.id !== 'examples' && (
+                    {collection.name !== 'Examples' && (
                       <button
                         className="h-5 w-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-600 ml-1"
                         onClick={(e) => {
@@ -226,7 +266,7 @@ export default function CollectionsSidebar({
                 </div>
 
                 {/* Requests List */}
-                {isExpanded && collection.requests.length > 0 && (
+                {isExpanded && collection.requests?.length > 0 && (
                   <div className="ml-6 space-y-0.5">
                     {collection.requests.map(request => (
                       <div
@@ -256,7 +296,7 @@ export default function CollectionsSidebar({
                 )}
 
                 {/* Empty state */}
-                {isExpanded && collection.requests.length === 0 && (
+                {isExpanded && (!collection.requests || collection.requests.length === 0) && (
                   <div className="ml-6 py-2">
                     <p className="text-xs text-gray-400">No requests</p>
                   </div>
@@ -264,7 +304,8 @@ export default function CollectionsSidebar({
               </div>
             )
           })}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   )
