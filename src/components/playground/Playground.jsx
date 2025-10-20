@@ -19,6 +19,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   Share2,
   History,
   BookOpen,
@@ -42,6 +49,9 @@ import {
   Send,
   Trash2,
   Loader2,
+  MoreHorizontal,
+  FileText,
+  Edit,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -122,7 +132,7 @@ function UserAvatar({ user, isDark }) {
 export default function Playground() {
   const { toggleTheme, isDark } = useTheme();
   const { user, signOut, loading: authLoading } = useAuth();
-  const { collections, activeCollectionId, setActiveCollectionId, addRequestToCollection, updateRequestInCollection, saveToHistory, createCollection } = useCollections();
+  const { collections, activeCollectionId, setActiveCollectionId, addRequestToCollection, updateRequestInCollection, saveToHistory, createCollection, deleteCollection } = useCollections();
   const themeClasses = getThemeClasses(isDark);
   // Request tabs state
   const [requestTabs, setRequestTabs] = useState([
@@ -441,6 +451,38 @@ export default function Playground() {
     }
   };
 
+  const handleDeleteCollection = async (collectionId, collectionName) => {
+    if (window.confirm(`Are you sure you want to delete "${collectionName}"? This will also delete all requests in this collection.`)) {
+      try {
+        console.log('Deleting collection:', collectionId);
+        await deleteCollection(collectionId);
+      } catch (err) {
+        console.error('Failed to delete collection:', err);
+      }
+    }
+  };
+
+  const handleCreateRequest = (collectionId) => {
+    // Create a new request in this collection
+    console.log('Creating new request in collection:', collectionId);
+    // TODO: Implement create request functionality
+  };
+
+  const handleEditCollection = (collectionId) => {
+    setEditingCollection(collectionId);
+  };
+
+  const handleDuplicateCollection = async (collection) => {
+    try {
+      console.log('Duplicating collection:', collection.name);
+      const duplicatedName = `${collection.name} Copy`;
+      await createCollection(duplicatedName, collection.description, collection.color);
+      // TODO: Also duplicate the requests in the collection
+    } catch (err) {
+      console.error('Failed to duplicate collection:', err);
+    }
+  };
+
   // Request modification handlers
   const setRequest = (newRequest) => {
     updateCurrentTab({ request: newRequest });
@@ -681,19 +723,60 @@ export default function Playground() {
                                         autoFocus
                                       />
                                     ) : (
-                                      <div
-                                        onClick={() => setEditingCollection(collection.id)}
-                                        className="flex items-center justify-between"
-                                      >
-                                        <div className={`text-sm font-medium ${themeClasses.text.primary} truncate`}>
+                                      <div className="flex items-center justify-between w-full">
+                                        <div className={`text-sm font-medium ${themeClasses.text.primary} truncate flex-1`}>
                                           {collection.name}
-                                        </div>
-                                        <div className={`text-xs ${themeClasses.text.tertiary} opacity-60`}>
-                                          {collection.requests?.length || 0}
                                         </div>
                                       </div>
                                     )}
                                   </div>
+                                  
+                                  {/* Collection Menu */}
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <button
+                                        onClick={(e) => e.stopPropagation()}
+                                        className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                                        title="Collection menu"
+                                      >
+                                        <MoreHorizontal className="h-4 w-4" />
+                                      </button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end" className="w-48">
+                                      <DropdownMenuItem
+                                        onClick={() => handleCreateRequest(collection.id)}
+                                        className="flex items-center gap-2"
+                                      >
+                                        <Plus className="h-4 w-4" />
+                                        Create Request
+                                      </DropdownMenuItem>
+                                      <DropdownMenuSeparator />
+                                      <DropdownMenuItem
+                                        onClick={() => handleEditCollection(collection.id)}
+                                        className="flex items-center gap-2"
+                                      >
+                                        <Edit className="h-4 w-4" />
+                                        Rename Collection
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem
+                                        onClick={() => handleDuplicateCollection(collection)}
+                                        className="flex items-center gap-2"
+                                      >
+                                        <Copy className="h-4 w-4" />
+                                        Duplicate Collection
+                                      </DropdownMenuItem>
+                                      <DropdownMenuSeparator />
+                                      {collection.name !== 'Examples' && (
+                                        <DropdownMenuItem
+                                          onClick={() => handleDeleteCollection(collection.id, collection.name)}
+                                          className="flex items-center gap-2 text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400"
+                                        >
+                                          <Trash2 className="h-4 w-4" />
+                                          Delete Collection
+                                        </DropdownMenuItem>
+                                      )}
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
                                 </div>
                                 
                                 {/* Requests List */}

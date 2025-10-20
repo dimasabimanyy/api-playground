@@ -140,3 +140,8 @@ npm start
 ## 📄 License
 
 MIT License - feel free to use this project for personal or commercial purposes.
+
+<!-- 
+Generated docs design reference:
+  - https://clerk.com/docs/reference/nextjs/overview
+ -->
