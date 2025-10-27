@@ -323,41 +323,8 @@ export default function Playground() {
 
 
   const handleSaveRequest = () => {
-    if (!request.url) return;
-
-    const requestData = {
-      name:
-        currentTab?.name ||
-        `${request.method} ${new URL(request.url).pathname}`,
-      description: "",
-      method: request.method,
-      url: request.url,
-      headers: request.headers,
-      body: request.body,
-      tags: [],
-    };
-
-    if (currentTab?.collectionRequestId) {
-      // Update existing request
-      updateRequestInCollection(
-        activeCollectionId,
-        currentTab.collectionRequestId,
-        requestData
-      );
-    } else {
-      // Create new request
-      const newRequest = addRequestToCollection(
-        activeCollectionId,
-        requestData
-      );
-      if (newRequest) {
-        updateCurrentTab({
-          collectionRequestId: newRequest.id,
-          name: newRequest.name,
-          isModified: false,
-        });
-      }
-    }
+    // Use the same logic as the keyboard shortcut - will show modal if needed
+    saveCurrentRequestToCollection();
   };
 
   const executeRequest = async () => {
