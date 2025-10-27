@@ -129,6 +129,9 @@ npm start
 - [ ] **Environments**: Variable management for different environments
 - [ ] **Team Collaboration**: Share collections with team members
 
+## Roadmap (V2)
+- [ ] **Generated DOCS design by AI**: Create your own documentation page with whatever design you have from AI with your request collections
+
 ## 🤝 Contributing
 
 1. Fork the repository
