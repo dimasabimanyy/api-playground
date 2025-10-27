@@ -166,7 +166,6 @@ export default function Playground() {
   const [expandedCollections, setExpandedCollections] = useState(new Set(['my-api-tests'])); // Default expanded
   const [editingCollection, setEditingCollection] = useState(null);
   const [editingRequest, setEditingRequest] = useState(null);
-  const [selectedRequest, setSelectedRequest] = useState(null);
 
   // Modal states
   const [docsModalOpen, setDocsModalOpen] = useState(false);
@@ -462,10 +461,53 @@ export default function Playground() {
     }
   };
 
-  const handleCreateRequest = (collectionId) => {
-    // Create a new request in this collection
-    console.log('Creating new request in collection:', collectionId);
-    // TODO: Implement create request functionality
+  const handleCreateRequest = async (collectionId) => {
+    try {
+      console.log('Creating new request in collection:', collectionId);
+      
+      // Create a new request object
+      const newRequest = {
+        name: 'Untitled Request',
+        description: '',
+        method: 'GET',
+        url: '',
+        headers: {},
+        body: '',
+        tags: []
+      };
+      
+      // Add the request to the collection in the database
+      const savedRequest = await addRequestToCollection(collectionId, newRequest);
+      
+      // Create a new tab with this request
+      const newTabId = Date.now().toString();
+      const newTab = {
+        id: newTabId,
+        name: savedRequest.name,
+        request: {
+          method: savedRequest.method,
+          url: savedRequest.url,
+          headers: savedRequest.headers || {},
+          body: savedRequest.body || '',
+        },
+        response: null,
+        loading: false,
+        collectionRequestId: savedRequest.id,
+        isModified: false,
+      };
+      
+      // Add the new tab and make it active
+      setRequestTabs(prev => [...prev, newTab]);
+      setActiveTabId(newTabId);
+      
+      // Expand the collection to show the new request
+      setExpandedCollections(prev => new Set(prev).add(collectionId));
+      
+      console.log('New request created and tab opened:', savedRequest);
+      
+    } catch (err) {
+      console.error('Failed to create request:', err);
+    }
   };
 
   const handleEditCollection = (collectionId) => {
@@ -483,14 +525,88 @@ export default function Playground() {
     }
   };
 
+  const handleRequestClick = (request) => {
+    console.log('Opening request in new tab:', request.name);
+    
+    // Check if request is already open in a tab
+    const existingTab = requestTabs.find(tab => tab.collectionRequestId === request.id);
+    
+    if (existingTab) {
+      // If tab exists, just switch to it
+      setActiveTabId(existingTab.id);
+      return;
+    }
+    
+    // Create a new tab with this request
+    const newTabId = Date.now().toString();
+    const newTab = {
+      id: newTabId,
+      name: request.name,
+      request: {
+        method: request.method,
+        url: request.url,
+        headers: request.headers || {},
+        body: request.body || '',
+      },
+      response: null,
+      loading: false,
+      collectionRequestId: request.id,
+      isModified: false,
+    };
+    
+    // Add the new tab and make it active
+    setRequestTabs(prev => [...prev, newTab]);
+    setActiveTabId(newTabId);
+  };
+
   // Request modification handlers
   const setRequest = (newRequest) => {
-    updateCurrentTab({ request: newRequest });
+    updateCurrentTab({ request: newRequest, isModified: true });
   };
 
   const setCurrentRequestName = (name) => {
-    updateCurrentTab({ name });
+    updateCurrentTab({ name, isModified: true });
   };
+
+  // Auto-save request changes to collection
+  const saveCurrentRequestToCollection = async () => {
+    const currentTab = requestTabs.find(tab => tab.id === activeTabId);
+    if (!currentTab || !currentTab.collectionRequestId || !currentTab.isModified) {
+      return;
+    }
+
+    try {
+      const updatedRequest = {
+        name: currentTab.name,
+        method: currentTab.request.method,
+        url: currentTab.request.url,
+        headers: currentTab.request.headers,
+        body: currentTab.request.body,
+      };
+
+      await updateRequestInCollection(currentTab.collectionRequestId, updatedRequest);
+      
+      // Mark as saved
+      updateCurrentTab({ isModified: false });
+      
+      console.log('Request saved to collection');
+    } catch (err) {
+      console.error('Failed to save request to collection:', err);
+    }
+  };
+
+  // Keyboard shortcut for saving (Ctrl+S / Cmd+S)
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        saveCurrentRequestToCollection();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeTabId, requestTabs]);
 
   return (
     <div
@@ -784,12 +900,12 @@ export default function Playground() {
                                   <div className="ml-6 space-y-0.5 overflow-hidden">
                                     {(collection.requests || []).map((request) => {
                                       const methodColors = getMethodColors(request.method, isDark);
-                                      const isSelected = selectedRequest === request.id;
+                                      const isSelected = requestTabs.some(tab => tab.collectionRequestId === request.id && tab.id === activeTabId);
                                       
                                       return (
                                         <div
                                           key={request.id}
-                                          onClick={() => setSelectedRequest(request.id)}
+                                          onClick={() => handleRequestClick(request)}
                                           className={`group relative flex items-center gap-3 py-1.5 px-3 transition-all duration-200 cursor-pointer rounded-lg ${
                                             isSelected 
                                               ? `${isDark ? 'bg-blue-500/10 border-l-2 border-blue-500' : 'bg-blue-50 border-l-2 border-blue-500'}` 
