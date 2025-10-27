@@ -173,6 +173,8 @@ export default function Playground() {
   const [createCollectionDialogOpen, setCreateCollectionDialogOpen] = useState(false);
   const [newCollectionName, setNewCollectionName] = useState('');
   const [creatingCollection, setCreatingCollection] = useState(false);
+  const [saveToCollectionModalOpen, setSaveToCollectionModalOpen] = useState(false);
+  const [pendingRequestToSave, setPendingRequestToSave] = useState(null);
 
   // Environments state
   const [expandedEnvironments, setExpandedEnvironments] = useState(new Set());
@@ -571,7 +573,19 @@ export default function Playground() {
   // Auto-save request changes to collection
   const saveCurrentRequestToCollection = async () => {
     const currentTab = requestTabs.find(tab => tab.id === activeTabId);
-    if (!currentTab || !currentTab.collectionRequestId || !currentTab.isModified) {
+    if (!currentTab) {
+      return;
+    }
+
+    // If request has no collection association, show the save modal
+    if (!currentTab.collectionRequestId) {
+      setPendingRequestToSave(currentTab);
+      setSaveToCollectionModalOpen(true);
+      return;
+    }
+
+    // If not modified, no need to save
+    if (!currentTab.isModified) {
       return;
     }
 
@@ -594,6 +608,41 @@ export default function Playground() {
       console.error('Failed to save request to collection:', err);
     }
   };
+
+  // Handle saving request to selected collection
+  const handleSaveToCollection = async (collectionId) => {
+    if (!pendingRequestToSave) return;
+
+    try {
+      const requestData = {
+        name: pendingRequestToSave.name || 'Untitled Request',
+        description: '',
+        method: pendingRequestToSave.request.method,
+        url: pendingRequestToSave.request.url,
+        headers: pendingRequestToSave.request.headers,
+        body: pendingRequestToSave.request.body,
+        tags: []
+      };
+
+      const savedRequest = await addRequestToCollection(collectionId, requestData);
+      
+      // Update the tab to link it to the saved request
+      setRequestTabs(prev => prev.map(tab => 
+        tab.id === pendingRequestToSave.id 
+          ? { ...tab, collectionRequestId: savedRequest.id, isModified: false }
+          : tab
+      ));
+
+      // Close modal and clear pending request
+      setSaveToCollectionModalOpen(false);
+      setPendingRequestToSave(null);
+      
+      console.log('Request saved to collection:', savedRequest);
+    } catch (err) {
+      console.error('Failed to save request to collection:', err);
+    }
+  };
+
 
   // Keyboard shortcut for saving (Ctrl+S / Cmd+S)
   useEffect(() => {
@@ -1914,6 +1963,59 @@ export default function Playground() {
                 ) : (
                   'Create'
                 )}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Save to Collection Modal */}
+      <Dialog open={saveToCollectionModalOpen} onOpenChange={setSaveToCollectionModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-base font-medium">Save Request</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-3">
+            <div>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                Choose a collection to save this request to:
+              </p>
+              
+              <div className="space-y-2 max-h-64 overflow-y-auto">
+                {Object.values(collections).map((collection) => (
+                  <button
+                    key={collection.id}
+                    onClick={() => handleSaveToCollection(collection.id)}
+                    className="w-full text-left p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="h-8 w-8 rounded bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+                        <FolderOpen className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                      </div>
+                      <div>
+                        <div className="font-medium text-gray-900 dark:text-gray-100">
+                          {collection.name}
+                        </div>
+                        {collection.description && (
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                            {collection.description}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            <div className="flex justify-end gap-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+              <Button 
+                variant="outline" 
+                onClick={() => setSaveToCollectionModalOpen(false)} 
+                size="sm" 
+                className="px-3 text-xs"
+              >
+                Cancel
               </Button>
             </div>
           </div>
