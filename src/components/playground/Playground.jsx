@@ -134,24 +134,10 @@ export default function Playground() {
   const { user, signOut, loading: authLoading } = useAuth();
   const { collections, activeCollectionId, setActiveCollectionId, addRequestToCollection, updateRequestInCollection, saveToHistory, createCollection, deleteCollection } = useCollections();
   const themeClasses = getThemeClasses(isDark);
-  // Request tabs state
-  const [requestTabs, setRequestTabs] = useState([
-    {
-      id: "1",
-      name: "Untitled",
-      request: {
-        method: "GET",
-        url: "https://jsonplaceholder.typicode.com/posts/1",
-        headers: {},
-        body: "",
-      },
-      response: null,
-      loading: false,
-      collectionRequestId: null,
-      isModified: false,
-    },
-  ]);
-  const [activeTabId, setActiveTabId] = useState("1");
+  // Request tabs state - will be restored from localStorage if available
+  const [requestTabs, setRequestTabs] = useState([]);
+  const [activeTabId, setActiveTabId] = useState(null);
+  const [tabsInitialized, setTabsInitialized] = useState(false);
 
   const [shareUrl, setShareUrl] = useState("");
   const [showShared, setShowShared] = useState(false);
@@ -624,6 +610,73 @@ export default function Playground() {
   };
 
 
+  // Save tabs to localStorage whenever they change (but only after initialization)
+  useEffect(() => {
+    if (tabsInitialized && requestTabs.length > 0) {
+      const tabsToSave = {
+        tabs: requestTabs,
+        activeTabId: activeTabId,
+        timestamp: Date.now()
+      };
+      localStorage.setItem('api-playground-tabs', JSON.stringify(tabsToSave));
+      console.log('Tabs saved to localStorage:', tabsToSave);
+    }
+  }, [requestTabs, activeTabId, tabsInitialized]);
+
+  // Restore tabs from localStorage on component mount
+  useEffect(() => {
+    let restored = false;
+    
+    try {
+      const savedTabsData = localStorage.getItem('api-playground-tabs');
+      if (savedTabsData) {
+        const { tabs, activeTabId: savedActiveTabId, timestamp } = JSON.parse(savedTabsData);
+        
+        // Only restore if data is less than 7 days old
+        const sevenDaysInMs = 7 * 24 * 60 * 60 * 1000;
+        if (timestamp && Date.now() - timestamp < sevenDaysInMs && tabs && tabs.length > 0) {
+          console.log('Restoring tabs from localStorage:', { tabs, savedActiveTabId });
+          setRequestTabs(tabs);
+          if (savedActiveTabId && tabs.some(tab => tab.id === savedActiveTabId)) {
+            setActiveTabId(savedActiveTabId);
+          } else {
+            setActiveTabId(tabs[0].id);
+          }
+          restored = true;
+        } else {
+          console.log('Saved tabs are too old or invalid, removing from storage');
+          localStorage.removeItem('api-playground-tabs');
+        }
+      }
+    } catch (err) {
+      console.error('Failed to restore tabs from localStorage:', err);
+      localStorage.removeItem('api-playground-tabs');
+    }
+
+    // If no tabs were restored, create a default tab
+    if (!restored) {
+      console.log('No saved tabs found, creating default tab');
+      const defaultTab = {
+        id: "1",
+        name: "Untitled",
+        request: {
+          method: "GET",
+          url: "https://jsonplaceholder.typicode.com/posts/1",
+          headers: {},
+          body: "",
+        },
+        response: null,
+        loading: false,
+        collectionRequestId: null,
+        isModified: false,
+      };
+      setRequestTabs([defaultTab]);
+      setActiveTabId("1");
+    }
+    
+    setTabsInitialized(true);
+  }, []); // Only run on mount
+
   // Keyboard shortcut for saving (Ctrl+S / Cmd+S)
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -636,6 +689,18 @@ export default function Playground() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeTabId, requestTabs]);
+
+  // Don't render until tabs are initialized
+  if (!tabsInitialized) {
+    return (
+      <div className={`min-h-screen flex items-center justify-center ${themeClasses.bg.primary}`}>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
+          <p className={`text-sm ${themeClasses.text.secondary}`}>Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
