@@ -254,17 +254,49 @@ export async function addRequestToCollection(collectionId, request) {
 }
 
 /**
- * Update a request in a collection
+ * Update a request by ID (with user security check)
  */
-export async function updateRequestInCollection(collectionId, requestId, updates) {
+export async function updateRequestInCollection(requestIdOrCollectionId, requestIdOrUpdates, updatesOrUndefined) {
   const supabase = createClient()
   
   try {
+    // Handle both old signature (collectionId, requestId, updates) and new (requestId, updates)
+    let requestId, updates
+    if (updatesOrUndefined !== undefined) {
+      // Old signature: (collectionId, requestId, updates)
+      requestId = requestIdOrUpdates
+      updates = updatesOrUndefined
+    } else {
+      // New signature: (requestId, updates)
+      requestId = requestIdOrCollectionId
+      updates = requestIdOrUpdates
+    }
+
+    // Get the current user for security
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      throw new Error('User must be authenticated to update requests')
+    }
+
+    // First, get all collection IDs owned by the user
+    const { data: userCollections, error: collectionsError } = await supabase
+      .from('collections')
+      .select('id')
+      .eq('user_id', user.id)
+    
+    if (collectionsError) throw collectionsError
+    
+    const userCollectionIds = userCollections.map(col => col.id)
+    
+    if (userCollectionIds.length === 0) {
+      throw new Error('No collections found for user')
+    }
+
     const { data: updatedRequest, error } = await supabase
       .from('requests')
       .update(updates)
       .eq('id', requestId)
-      .eq('collection_id', collectionId)
+      .in('collection_id', userCollectionIds)
       .select()
       .single()
     

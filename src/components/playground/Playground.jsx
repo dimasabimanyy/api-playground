@@ -557,6 +557,19 @@ export default function Playground() {
     }
 
     try {
+      // Find which collection this request belongs to
+      let collectionId = null;
+      for (const [colId, collection] of Object.entries(collections)) {
+        if (collection.requests?.some(req => req.id === currentTab.collectionRequestId)) {
+          collectionId = colId;
+          break;
+        }
+      }
+
+      if (!collectionId) {
+        throw new Error('Could not find collection for this request');
+      }
+
       const updatedRequest = {
         name: currentTab.name,
         method: currentTab.request.method,
@@ -565,7 +578,7 @@ export default function Playground() {
         body: currentTab.request.body,
       };
 
-      await updateRequestInCollection(currentTab.collectionRequestId, updatedRequest);
+      await updateRequestInCollection(collectionId, currentTab.collectionRequestId, updatedRequest);
       
       // Mark as saved
       updateCurrentTab({ isModified: false });
