@@ -10,22 +10,31 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { getThemeClasses } from "@/lib/theme";
 
 export default function RequestPanel({
-  request,
+  request = { method: 'GET', url: '', headers: {}, body: '' },
   setRequest,
 }) {
+  // Ensure request always has the required properties
+  const safeRequest = {
+    method: 'GET',
+    url: '',
+    headers: {},
+    body: '',
+    ...request
+  };
   const { isDark } = useTheme();
   const themeClasses = getThemeClasses(isDark);
   const [newHeaderKey, setNewHeaderKey] = useState("");
   const [newHeaderValue, setNewHeaderValue] = useState("");
 
   const updateRequest = (field, value) => {
-    setRequest((prev) => ({ ...prev, [field]: value }));
+    const updatedRequest = { ...safeRequest, [field]: value };
+    setRequest(updatedRequest);
   };
 
   const addHeader = () => {
     if (newHeaderKey && newHeaderValue) {
       updateRequest("headers", {
-        ...(request.headers || {}),
+        ...(safeRequest.headers || {}),
         [newHeaderKey]: newHeaderValue,
       });
       setNewHeaderKey("");
@@ -34,7 +43,7 @@ export default function RequestPanel({
   };
 
   const removeHeader = (key) => {
-    const { [key]: removed, ...rest } = request.headers || {};
+    const { [key]: removed, ...rest } = safeRequest.headers || {};
     updateRequest("headers", rest);
   };
 
@@ -56,7 +65,7 @@ export default function RequestPanel({
                   {
                     value: "headers",
                     label: "Headers",
-                    count: Object.keys(request.headers || {}).length,
+                    count: Object.keys(safeRequest.headers || {}).length,
                   },
                   {
                     value: "body",
@@ -134,13 +143,13 @@ export default function RequestPanel({
                 <div className="grid grid-cols-12 gap-3">
                   <Input
                     placeholder="Content-Type"
-                    value={newHeaderKey}
+                    value={newHeaderKey || ''}
                     onChange={(e) => setNewHeaderKey(e.target.value)}
                     className={`col-span-5 h-9 text-sm rounded backdrop-blur-sm ${themeClasses.input.base}`}
                   />
                   <Input
                     placeholder="application/json"
-                    value={newHeaderValue}
+                    value={newHeaderValue || ''}
                     onChange={(e) => setNewHeaderValue(e.target.value)}
                     className={`col-span-6 h-9 text-sm rounded backdrop-blur-sm ${themeClasses.input.base}`}
                   />
@@ -156,7 +165,7 @@ export default function RequestPanel({
                 </div>
 
                 {/* Existing Headers */}
-                {Object.entries(request.headers || {}).length === 0 ? (
+                {Object.entries(safeRequest.headers || {}).length === 0 ? (
                   <div
                     className={`text-center py-12 ${themeClasses.text.tertiary}`}
                   >
@@ -176,18 +185,18 @@ export default function RequestPanel({
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {Object.entries(request.headers || {}).map(([key, value]) => (
+                    {Object.entries(safeRequest.headers || {}).map(([key, value]) => (
                       <div
                         key={key}
                         className={`grid grid-cols-12 gap-3 p-3 rounded-lg ${themeClasses.card.base}`}
                       >
                         <Input
-                          value={key}
+                          value={key || ''}
                           disabled
                           className={`col-span-5 h-8 text-sm ${themeClasses.input.disabled}`}
                         />
                         <Input
-                          value={value}
+                          value={value || ''}
                           disabled
                           className={`col-span-6 h-8 text-sm ${themeClasses.input.disabled}`}
                         />
@@ -240,7 +249,7 @@ export default function RequestPanel({
                 <div className="relative">
                   <Textarea
                     placeholder={`{\n  "name": "John Doe",\n  "email": "john@example.com"\n}`}
-                    value={request.body}
+                    value={safeRequest.body || ''}
                     onChange={(e) => updateRequest("body", e.target.value)}
                     className={`min-h-64 font-mono text-sm rounded resize-none backdrop-blur-sm ${themeClasses.input.base}`}
                   />

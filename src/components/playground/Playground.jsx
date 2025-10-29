@@ -417,11 +417,12 @@ export default function Playground() {
 
   // Get current tab data
   const currentTab = getCurrentTab();
-  const request = currentTab?.request || {
+  const request = {
     method: "GET",
     url: "",
     headers: {},
     body: "",
+    ...currentTab?.request
   };
   const response = currentTab?.response || null;
   const loading = currentTab?.loading || false;
