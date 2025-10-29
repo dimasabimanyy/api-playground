@@ -1703,7 +1703,7 @@ export default function Playground() {
               <div className="flex items-center overflow-x-auto scrollbar-hide">
                 {requestTabs.map((tab) => {
                   const methodColors = getMethodColors(
-                    tab.request.method,
+                    tab.request?.method || 'GET',
                     isDark
                   );
 
@@ -1720,7 +1720,7 @@ export default function Playground() {
                       <div
                         className={`px-1.5 py-0.5 rounded text-xs font-medium border ${methodColors.bg} ${methodColors.text} flex-shrink-0`}
                       >
-                        {tab.request.method}
+                        {tab.request?.method || 'GET'}
                       </div>
                       <span
                         className={`text-sm truncate min-w-0 max-w-32 ${
@@ -1833,9 +1833,9 @@ export default function Playground() {
           {/* Method + URL + Send Row - Full Width */}
           <div className={`border-b ${themeClasses.border.primary}`}>
             <div className="px-6 py-4">
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                {/* METHOD SELECT + URL INPUT ROW */}
-                <div className="flex items-center gap-3 flex-1">
+              <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3">
+                {/* METHOD SELECT + URL INPUT + ENVIRONMENT ROW */}
+                <div className="flex items-center gap-3 flex-1 min-w-0">
                   {/* METHOD SELECT */}
                   <div className="w-24 flex-shrink-0">
                     <Select
@@ -1905,10 +1905,10 @@ export default function Playground() {
                   </div>
                   
                   {/* Environment Switcher */}
-                  <div className="w-32 flex-shrink-0">
+                  <div className="w-28 sm:w-32 flex-shrink-0">
                     <Select value={activeEnvironmentId} onValueChange={handleEnvironmentSelect}>
-                      <SelectTrigger className={`h-11 text-sm rounded backdrop-blur-sm ${themeClasses.input.base} px-3`}>
-                        <div className="flex items-center gap-2 truncate">
+                      <SelectTrigger className={`h-11 text-xs sm:text-sm rounded backdrop-blur-sm ${themeClasses.input.base} px-2 sm:px-3`}>
+                        <div className="flex items-center gap-1 sm:gap-2 truncate">
                           <Globe className="h-3 w-3 flex-shrink-0" />
                           <SelectValue />
                         </div>
@@ -1931,7 +1931,7 @@ export default function Playground() {
                 <button
                   onClick={executeRequest}
                   disabled={loading || !request.url}
-                  className={`h-11 text-sm px-6 rounded-md transition-all duration-200 font-medium shadow-sm flex items-center justify-center gap-2 flex-shrink-0 sm:w-auto w-full ${
+                  className={`h-11 text-sm px-4 sm:px-6 rounded-md transition-all duration-200 font-medium shadow-sm flex items-center justify-center gap-2 flex-shrink-0 lg:w-auto w-full ${
                     loading || !request.url
                       ? `${
                           isDark

@@ -25,7 +25,7 @@ export default function RequestPanel({
   const addHeader = () => {
     if (newHeaderKey && newHeaderValue) {
       updateRequest("headers", {
-        ...request.headers,
+        ...(request.headers || {}),
         [newHeaderKey]: newHeaderValue,
       });
       setNewHeaderKey("");
@@ -34,7 +34,7 @@ export default function RequestPanel({
   };
 
   const removeHeader = (key) => {
-    const { [key]: removed, ...rest } = request.headers;
+    const { [key]: removed, ...rest } = request.headers || {};
     updateRequest("headers", rest);
   };
 
@@ -56,7 +56,7 @@ export default function RequestPanel({
                   {
                     value: "headers",
                     label: "Headers",
-                    count: Object.keys(request.headers).length,
+                    count: Object.keys(request.headers || {}).length,
                   },
                   {
                     value: "body",
@@ -156,7 +156,7 @@ export default function RequestPanel({
                 </div>
 
                 {/* Existing Headers */}
-                {Object.entries(request.headers).length === 0 ? (
+                {Object.entries(request.headers || {}).length === 0 ? (
                   <div
                     className={`text-center py-12 ${themeClasses.text.tertiary}`}
                   >
@@ -176,7 +176,7 @@ export default function RequestPanel({
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {Object.entries(request.headers).map(([key, value]) => (
+                    {Object.entries(request.headers || {}).map(([key, value]) => (
                       <div
                         key={key}
                         className={`grid grid-cols-12 gap-3 p-3 rounded-lg ${themeClasses.card.base}`}
