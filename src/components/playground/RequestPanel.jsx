@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, X } from "lucide-react";
+import { Plus, X, Eye, EyeOff } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { getThemeClasses } from "@/lib/theme";
 
@@ -29,6 +29,7 @@ export default function RequestPanel({
   // Simple authentication state
   const [authType, setAuthType] = useState('none');
   const [bearerToken, setBearerToken] = useState('');
+  const [showBearerToken, setShowBearerToken] = useState(true);
   const [apiKeyHeader, setApiKeyHeader] = useState('X-API-Key');
   const [apiKeyValue, setApiKeyValue] = useState('');
   const [basicUsername, setBasicUsername] = useState('');
@@ -322,38 +323,46 @@ export default function RequestPanel({
 
             <TabsContent value="auth" className="p-6">
               <div className="space-y-6">
-                {/* Auth Type Quick Select */}
-                <div className="grid grid-cols-2 gap-3">
-                  {[
-                    { value: 'none', label: 'None' },
-                    { value: 'bearer', label: 'Bearer Token' },
-                    { value: 'api-key', label: 'API Key' },
-                    { value: 'basic', label: 'Basic Auth' }
-                  ].map(({ value, label }) => (
-                    <button
-                      key={value}
-                      onClick={() => setAuthType(value)}
-                      className={`p-3 rounded-lg text-sm font-medium transition-all duration-200 ${
-                        authType === value
-                          ? `${themeClasses.button.primary} text-white`
-                          : `${themeClasses.card.base} ${themeClasses.text.secondary} hover:${themeClasses.card.hover}`
-                      }`}
-                    >
-                      {label}
-                    </button>
-                  ))}
+                {/* Auth Type Select */}
+                <div>
+                  <label className={`text-sm font-medium ${themeClasses.text.secondary} block mb-2`}>
+                    Authentication Type
+                  </label>
+                  <select
+                    value={authType}
+                    onChange={(e) => setAuthType(e.target.value)}
+                    className={`w-full rounded-lg px-3 py-3 text-sm ${themeClasses.input.base}`}
+                  >
+                    <option value="none">No Authentication</option>
+                    <option value="bearer">Bearer Token</option>
+                    <option value="api-key">API Key</option>
+                    <option value="basic">Basic Auth</option>
+                  </select>
                 </div>
 
                 {/* Auth Forms - Simplified */}
                 {authType === 'bearer' && (
                   <div className="space-y-3">
-                    <Input
-                      type="password"
-                      placeholder="Enter your bearer token"
-                      value={bearerToken}
-                      onChange={(e) => setBearerToken(e.target.value)}
-                      className={`h-12 text-sm ${themeClasses.input.base}`}
-                    />
+                    <div className="relative">
+                      <Input
+                        type={showBearerToken ? "text" : "password"}
+                        placeholder="Enter your bearer token"
+                        value={bearerToken}
+                        onChange={(e) => setBearerToken(e.target.value)}
+                        className={`h-12 text-sm pr-12 ${themeClasses.input.base}`}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowBearerToken(!showBearerToken)}
+                        className={`absolute right-3 top-1/2 transform -translate-y-1/2 ${themeClasses.text.tertiary} hover:${themeClasses.text.secondary} transition-colors`}
+                      >
+                        {showBearerToken ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                      </button>
+                    </div>
                     <p className={`text-xs ${themeClasses.text.tertiary}`}>
                       Will add Authorization header with Bearer token
                     </p>
