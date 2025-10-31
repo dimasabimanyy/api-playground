@@ -291,14 +291,124 @@ export default function Playground() {
   const [editingEnvironment, setEditingEnvironment] = useState(null);
 
 
-  // Sample history data
-  const historyItems = [
-    { id: 'hist-1', name: 'Get User Profile', method: 'GET', url: '/api/users/me', timestamp: '2 min ago', status: 200 },
-    { id: 'hist-2', name: 'Create User', method: 'POST', url: '/api/users', timestamp: '5 min ago', status: 201 },
-    { id: 'hist-3', name: 'Update Settings', method: 'PUT', url: '/api/settings', timestamp: '10 min ago', status: 200 },
-    { id: 'hist-4', name: 'Failed Login', method: 'POST', url: '/auth/login', timestamp: '15 min ago', status: 401 },
-    { id: 'hist-5', name: 'Get All Users', method: 'GET', url: '/api/users', timestamp: '1 hour ago', status: 200 },
-  ];
+  // Request history state
+  const [historyItems, setHistoryItems] = useState([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [historySearchQuery, setHistorySearchQuery] = useState('');
+  
+  // Load request history when user changes or when history tab is active
+  useEffect(() => {
+    if (user && activeMenuTab === 'history') {
+      loadRequestHistory();
+    } else if (!user) {
+      setHistoryItems([]);
+    }
+  }, [user, activeMenuTab]);
+  
+  const loadRequestHistory = async () => {
+    setHistoryLoading(true);
+    try {
+      const { getRequestHistory } = await import('@/lib/supabase-collections');
+      const history = await getRequestHistory(50); // Get last 50 requests
+      
+      // Transform the data to match our UI format
+      const transformedHistory = history.map(item => ({
+        id: item.id,
+        name: generateRequestName(item.method, item.url),
+        method: item.method,
+        url: item.url,
+        headers: item.headers,
+        body: item.body,
+        timestamp: formatTimeAgo(new Date(item.created_at)),
+        status: item.response_status,
+        responseTime: item.response_time,
+        createdAt: item.created_at,
+        responseHeaders: item.response_headers,
+        responseBody: item.response_body
+      }));
+      
+      setHistoryItems(transformedHistory);
+    } catch (error) {
+      console.error('Failed to load request history:', error);
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+  
+  // Helper function to format time ago
+  const formatTimeAgo = (date) => {
+    const now = new Date();
+    const diffInMinutes = Math.floor((now - date) / (1000 * 60));
+    
+    if (diffInMinutes < 1) return 'Just now';
+    if (diffInMinutes < 60) return `${diffInMinutes} min ago`;
+    
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+    
+    const diffInDays = Math.floor(diffInHours / 24);
+    return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+  };
+  
+  // Filter history items based on search
+  const filteredHistoryItems = historyItems.filter(item => {
+    if (!historySearchQuery.trim()) return true;
+    const query = historySearchQuery.toLowerCase();
+    return (
+      item.name.toLowerCase().includes(query) ||
+      item.method.toLowerCase().includes(query) ||
+      item.url.toLowerCase().includes(query)
+    );
+  });
+  
+  // Calculate history analytics
+  const historyAnalytics = {
+    total: historyItems.length,
+    successful: historyItems.filter(item => item.status >= 200 && item.status < 300).length,
+    failed: historyItems.filter(item => item.status >= 400).length,
+    avgResponseTime: historyItems.length > 0 
+      ? Math.round(historyItems.reduce((acc, item) => acc + (item.responseTime || 0), 0) / historyItems.length)
+      : 0,
+    methods: historyItems.reduce((acc, item) => {
+      acc[item.method] = (acc[item.method] || 0) + 1;
+      return acc;
+    }, {}),
+    recentActivity: historyItems.slice(0, 5)
+  };
+  
+  // Replay request from history
+  const replayHistoryRequest = (historyItem) => {
+    // Create a new tab with the request from history
+    const newTabId = Date.now().toString();
+    const newTab = {
+      id: newTabId,
+      name: historyItem.name + ' (Replay)',
+      request: {
+        method: historyItem.method,
+        url: historyItem.url,
+        headers: historyItem.headers || {},
+        body: historyItem.body || '',
+      },
+      response: null,
+      loading: false,
+      collectionRequestId: null,
+      isModified: false,
+    };
+    
+    setRequestTabs(prev => [...prev, newTab]);
+    setActiveTabId(newTabId);
+    
+    console.log('Replayed request from history:', historyItem.name);
+  };
+  
+  // Clear request history
+  const clearHistory = async () => {
+    if (window.confirm('Are you sure you want to clear all request history?')) {
+      setHistoryItems([]);
+      // TODO: Add actual database clearing if needed
+      console.log('Request history cleared');
+    }
+  };
 
   // Environment management state
   const [environments, setEnvironments] = useState({});
@@ -475,8 +585,18 @@ export default function Playground() {
 
       updateCurrentTab({ response: responseData, loading: false });
 
-      // Save to history
-      saveToHistory(request, responseData);
+      // Save to history (adjust format for database)
+      const historyResponse = {
+        ...responseData,
+        body: responseData.data,
+        responseTime: responseData.time
+      };
+      saveToHistory(request, historyResponse);
+      
+      // Refresh history if user is viewing history tab
+      if (activeMenuTab === 'history') {
+        loadRequestHistory();
+      }
     } catch (error) {
       const errorResponse = {
         error: error.message,
@@ -486,8 +606,18 @@ export default function Playground() {
 
       updateCurrentTab({ response: errorResponse, loading: false });
 
-      // Save failed requests to history too
-      saveToHistory(request, errorResponse);
+      // Save failed requests to history too (adjust format for database)
+      const historyErrorResponse = {
+        ...errorResponse,
+        body: errorResponse.error,
+        responseTime: errorResponse.time
+      };
+      saveToHistory(request, historyErrorResponse);
+      
+      // Refresh history if user is viewing history tab
+      if (activeMenuTab === 'history') {
+        loadRequestHistory();
+      }
     }
   };
 
@@ -1205,20 +1335,78 @@ export default function Playground() {
                           <span className={`text-xs font-medium ${themeClasses.text.tertiary}`}>
                             Recent Requests
                           </span>
-                          <button className={`p-1 rounded transition-all duration-200 ${themeClasses.button.ghost}`}>
+                          <button 
+                            onClick={clearHistory}
+                            className={`p-1 rounded transition-all duration-200 ${themeClasses.button.ghost}`}
+                            title="Clear history"
+                          >
                             <X className="h-3 w-3" />
                           </button>
                         </div>
                         
-                        {historyItems.length === 0 ? (
+                        {/* History Search */}
+                        <div className="mb-4">
+                          <div className="relative">
+                            <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-3 w-3 ${themeClasses.text.tertiary}`} />
+                            <Input
+                              placeholder="Search history..."
+                              value={historySearchQuery}
+                              onChange={(e) => setHistorySearchQuery(e.target.value)}
+                              className={`pl-9 h-8 text-sm ${themeClasses.input.base}`}
+                            />
+                          </div>
+                        </div>
+                        
+                        {/* History Analytics */}
+                        {historyItems.length > 0 && !historyLoading && (
+                          <div className={`p-3 rounded-lg ${themeClasses.card.base} border ${themeClasses.border.primary} mb-4`}>
+                            <div className="grid grid-cols-2 gap-3 text-xs">
+                              <div className="text-center">
+                                <div className={`text-lg font-semibold ${themeClasses.text.primary}`}>
+                                  {historyAnalytics.total}
+                                </div>
+                                <div className={themeClasses.text.tertiary}>Total</div>
+                              </div>
+                              <div className="text-center">
+                                <div className={`text-lg font-semibold ${historyAnalytics.successful > 0 ? 'text-green-500' : themeClasses.text.primary}`}>
+                                  {Math.round((historyAnalytics.successful / historyAnalytics.total) * 100)}%
+                                </div>
+                                <div className={themeClasses.text.tertiary}>Success</div>
+                              </div>
+                              <div className="text-center">
+                                <div className={`text-lg font-semibold ${themeClasses.text.primary}`}>
+                                  {historyAnalytics.avgResponseTime}ms
+                                </div>
+                                <div className={themeClasses.text.tertiary}>Avg Time</div>
+                              </div>
+                              <div className="text-center">
+                                <div className={`text-lg font-semibold ${historyAnalytics.failed > 0 ? 'text-red-500' : themeClasses.text.primary}`}>
+                                  {historyAnalytics.failed}
+                                </div>
+                                <div className={themeClasses.text.tertiary}>Failed</div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                        
+                        {historyLoading ? (
+                          <div className={`text-center py-12 ${themeClasses.text.tertiary}`}>
+                            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mx-auto mb-2"></div>
+                            <p className={`text-sm ${themeClasses.text.primary}`}>Loading history...</p>
+                          </div>
+                        ) : filteredHistoryItems.length === 0 ? (
                           <div className={`text-center py-12 ${themeClasses.text.tertiary}`}>
                             <History className={`h-8 w-8 mx-auto mb-3 ${themeClasses.text.tertiary}`} />
-                            <p className={`text-sm ${themeClasses.text.primary}`}>No history yet</p>
-                            <p className={`text-xs ${themeClasses.text.tertiary}`}>Your sent requests will appear here</p>
+                            <p className={`text-sm ${themeClasses.text.primary}`}>
+                              {historySearchQuery ? 'No matching requests' : 'No history yet'}
+                            </p>
+                            <p className={`text-xs ${themeClasses.text.tertiary}`}>
+                              {historySearchQuery ? 'Try a different search term' : 'Your sent requests will appear here'}
+                            </p>
                           </div>
                         ) : (
                           <div className="space-y-1 max-h-96 overflow-y-auto">
-                            {historyItems.map((item) => {
+                            {filteredHistoryItems.map((item) => {
                               const methodColors = getMethodColors(item.method, isDark);
                               const statusColors = item.status >= 200 && item.status < 300 
                                 ? (isDark ? 'text-emerald-400' : 'text-emerald-600')
@@ -1229,21 +1417,8 @@ export default function Playground() {
                               return (
                                 <div
                                   key={item.id}
-                                  onClick={() => {
-                                    // Load this request into the editor
-                                    updateCurrentTab({
-                                      request: {
-                                        method: item.method,
-                                        url: item.url,
-                                        headers: {},
-                                        body: ""
-                                      },
-                                      name: item.name,
-                                      response: null,
-                                      collectionRequestId: null,
-                                      isModified: false,
-                                    });
-                                  }}
+                                  onClick={() => replayHistoryRequest(item)}
+                                  title="Click to replay this request"
                                   className={`group flex items-center gap-3 py-2 px-3 transition-all duration-200 cursor-pointer hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-100/50'} rounded-lg`}
                                 >
                                   {/* HTTP Method Badge */}
@@ -1266,9 +1441,12 @@ export default function Playground() {
                                     </div>
                                   </div>
                                   
-                                  {/* Timestamp */}
-                                  <div className={`text-xs ${themeClasses.text.tertiary} opacity-60 flex-shrink-0`}>
-                                    {item.timestamp}
+                                  {/* Response Time & Timestamp */}
+                                  <div className={`text-xs ${themeClasses.text.tertiary} opacity-60 flex-shrink-0 text-right`}>
+                                    {item.responseTime && (
+                                      <div className="font-mono">{item.responseTime}ms</div>
+                                    )}
+                                    <div>{item.timestamp}</div>
                                   </div>
                                 </div>
                               );
