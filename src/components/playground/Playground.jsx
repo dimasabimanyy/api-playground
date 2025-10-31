@@ -949,18 +949,24 @@ export default function Playground() {
     setTabsInitialized(true);
   }, []); // Only run on mount
 
-  // Keyboard shortcut for saving (Ctrl+S / Cmd+S)
+  // Keyboard shortcuts (Ctrl+S / Cmd+S for save, Ctrl+Enter / Cmd+Enter for send)
   useEffect(() => {
     const handleKeyDown = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault();
         saveCurrentRequestToCollection();
       }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        if (request.url && !loading) {
+          executeRequest();
+        }
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeTabId, requestTabs]);
+  }, [activeTabId, requestTabs, request.url, loading]);
 
   // Don't render until tabs are initialized
   if (!tabsInitialized) {
@@ -2110,6 +2116,7 @@ export default function Playground() {
                 <button
                   onClick={executeRequest}
                   disabled={loading || !request.url}
+                  title={`Send request (${navigator.platform.includes('Mac') ? 'Cmd' : 'Ctrl'}+Enter)`}
                   className={`h-11 text-sm px-4 sm:px-6 rounded-md transition-all duration-200 font-medium shadow-sm flex items-center justify-center gap-2 flex-shrink-0 lg:w-auto w-full ${
                     loading || !request.url
                       ? `${
@@ -2134,7 +2141,10 @@ export default function Playground() {
                   ) : (
                     <>
                       <Send className="h-4 w-4" />
-                      Send
+                      <span className="hidden sm:inline">Send</span>
+                      <span className={`hidden lg:inline text-xs opacity-70 ml-1`}>
+                        {navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'}+↵
+                      </span>
                     </>
                   )}
                 </button>
