@@ -26,27 +26,13 @@ export default function RequestPanel({
   const [newHeaderKey, setNewHeaderKey] = useState("");
   const [newHeaderValue, setNewHeaderValue] = useState("");
   
-  // Authentication state
+  // Simple authentication state
   const [authType, setAuthType] = useState('none');
-  const [authConfig, setAuthConfig] = useState({
-    apiKey: { key: '', value: '', location: 'header' },
-    bearer: { token: '' },
-    basic: { username: '', password: '' },
-    oauth2: { accessToken: '', tokenType: 'Bearer' }
-  });
-  
-  // Token storage state
-  const [savedTokens, setSavedTokens] = useState(() => {
-    try {
-      const saved = localStorage.getItem('api-playground-saved-tokens');
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
-  });
-  const [showTokenManager, setShowTokenManager] = useState(false);
-  const [newTokenName, setNewTokenName] = useState('');
-  const [newTokenValue, setNewTokenValue] = useState('');
+  const [bearerToken, setBearerToken] = useState('');
+  const [apiKeyHeader, setApiKeyHeader] = useState('X-API-Key');
+  const [apiKeyValue, setApiKeyValue] = useState('');
+  const [basicUsername, setBasicUsername] = useState('');
+  const [basicPassword, setBasicPassword] = useState('');
 
   const updateRequest = (field, value) => {
     const updatedRequest = { ...safeRequest, [field]: value };
@@ -69,113 +55,45 @@ export default function RequestPanel({
     updateRequest("headers", rest);
   };
   
-  // Authentication functions
+  // Simple authentication functions
   const applyAuthentication = () => {
     let updatedHeaders = { ...safeRequest.headers };
     
-    // Remove existing auth headers first
+    // Clean up any existing auth headers
     delete updatedHeaders['Authorization'];
     delete updatedHeaders['X-API-Key'];
     delete updatedHeaders['API-Key'];
+    delete updatedHeaders[apiKeyHeader]; // Remove custom API key header
     
+    // Apply authentication based on type
     switch (authType) {
       case 'bearer':
-        if (authConfig.bearer.token) {
-          updatedHeaders['Authorization'] = `Bearer ${authConfig.bearer.token}`;
+        if (bearerToken.trim()) {
+          updatedHeaders['Authorization'] = `Bearer ${bearerToken.trim()}`;
         }
         break;
         
       case 'api-key':
-        if (authConfig.apiKey.key && authConfig.apiKey.value) {
-          if (authConfig.apiKey.location === 'header') {
-            updatedHeaders[authConfig.apiKey.key] = authConfig.apiKey.value;
-          }
-          // TODO: Add query parameter support for API keys
+        if (apiKeyHeader.trim() && apiKeyValue.trim()) {
+          updatedHeaders[apiKeyHeader.trim()] = apiKeyValue.trim();
         }
         break;
         
       case 'basic':
-        if (authConfig.basic.username && authConfig.basic.password) {
-          const credentials = btoa(`${authConfig.basic.username}:${authConfig.basic.password}`);
+        if (basicUsername.trim() && basicPassword.trim()) {
+          const credentials = btoa(`${basicUsername.trim()}:${basicPassword.trim()}`);
           updatedHeaders['Authorization'] = `Basic ${credentials}`;
         }
-        break;
-        
-      case 'oauth2':
-        if (authConfig.oauth2.accessToken) {
-          const tokenType = authConfig.oauth2.tokenType || 'Bearer';
-          updatedHeaders['Authorization'] = `${tokenType} ${authConfig.oauth2.accessToken}`;
-        }
-        break;
-        
-      default:
-        // 'none' - no authentication
         break;
     }
     
     updateRequest('headers', updatedHeaders);
   };
   
-  const updateAuthConfig = (type, field, value) => {
-    setAuthConfig(prev => ({
-      ...prev,
-      [type]: {
-        ...prev[type],
-        [field]: value
-      }
-    }));
-  };
-  
-  // Auto-apply authentication when config changes
+  // Auto-apply authentication when values change
   useEffect(() => {
-    if (authType !== 'none') {
-      applyAuthentication();
-    }
-  }, [authType, authConfig]);
-  
-  // Token management functions
-  const saveToken = () => {
-    if (!newTokenName.trim() || !newTokenValue.trim()) return;
-    
-    const newToken = {
-      id: Date.now().toString(),
-      name: newTokenName.trim(),
-      value: newTokenValue.trim(),
-      type: authType,
-      createdAt: new Date().toISOString()
-    };
-    
-    const updatedTokens = [...savedTokens, newToken];
-    setSavedTokens(updatedTokens);
-    localStorage.setItem('api-playground-saved-tokens', JSON.stringify(updatedTokens));
-    
-    setNewTokenName('');
-    setNewTokenValue('');
-    setShowTokenManager(false);
-  };
-  
-  const deleteToken = (tokenId) => {
-    const updatedTokens = savedTokens.filter(token => token.id !== tokenId);
-    setSavedTokens(updatedTokens);
-    localStorage.setItem('api-playground-saved-tokens', JSON.stringify(updatedTokens));
-  };
-  
-  const useToken = (token) => {
-    setAuthType(token.type);
-    
-    switch (token.type) {
-      case 'bearer':
-        updateAuthConfig('bearer', 'token', token.value);
-        break;
-      case 'api-key':
-        // For API keys, we'll use the saved value but user needs to set the key name
-        updateAuthConfig('apiKey', 'value', token.value);
-        break;
-      case 'oauth2':
-        updateAuthConfig('oauth2', 'accessToken', token.value);
-        break;
-    }
-  };
+    applyAuthentication();
+  }, [authType, bearerToken, apiKeyHeader, apiKeyValue, basicUsername, basicPassword]);
 
 
   return (
@@ -404,293 +322,97 @@ export default function RequestPanel({
 
             <TabsContent value="auth" className="p-6">
               <div className="space-y-6">
-                {/* Auth Type Selector */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <label className={`text-sm font-medium ${themeClasses.text.secondary}`}>
-                      Type:
-                    </label>
-                    <select
-                      value={authType}
-                      onChange={(e) => setAuthType(e.target.value)}
-                      className={`rounded-lg px-3 py-2 text-sm transition-all backdrop-blur-sm ${themeClasses.input.base}`}
+                {/* Auth Type Quick Select */}
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { value: 'none', label: 'None' },
+                    { value: 'bearer', label: 'Bearer Token' },
+                    { value: 'api-key', label: 'API Key' },
+                    { value: 'basic', label: 'Basic Auth' }
+                  ].map(({ value, label }) => (
+                    <button
+                      key={value}
+                      onClick={() => setAuthType(value)}
+                      className={`p-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                        authType === value
+                          ? `${themeClasses.button.primary} text-white`
+                          : `${themeClasses.card.base} ${themeClasses.text.secondary} hover:${themeClasses.card.hover}`
+                      }`}
                     >
-                      <option value="none">No Auth</option>
-                      <option value="bearer">Bearer Token</option>
-                      <option value="api-key">API Key</option>
-                      <option value="basic">Basic Auth</option>
-                      <option value="oauth2">OAuth 2.0</option>
-                    </select>
-                  </div>
-                  
-                  {/* Saved Tokens Dropdown */}
-                  {savedTokens.length > 0 && (
-                    <div className="flex items-center gap-2">
-                      <select
-                        onChange={(e) => {
-                          if (e.target.value) {
-                            const token = savedTokens.find(t => t.id === e.target.value);
-                            if (token) useToken(token);
-                            e.target.value = ''; // Reset dropdown
-                          }
-                        }}
-                        className={`text-xs px-2 py-1 rounded ${themeClasses.input.base}`}
-                      >
-                        <option value="">Quick Select...</option>
-                        {savedTokens.map(token => (
-                          <option key={token.id} value={token.id}>
-                            {token.name} ({token.type})
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  )}
+                      {label}
+                    </button>
+                  ))}
                 </div>
 
-                {/* Dynamic Auth Configuration */}
+                {/* Auth Forms - Simplified */}
+                {authType === 'bearer' && (
+                  <div className="space-y-3">
+                    <Input
+                      type="password"
+                      placeholder="Enter your bearer token"
+                      value={bearerToken}
+                      onChange={(e) => setBearerToken(e.target.value)}
+                      className={`h-12 text-sm ${themeClasses.input.base}`}
+                    />
+                    <p className={`text-xs ${themeClasses.text.tertiary}`}>
+                      Will add Authorization header with Bearer token
+                    </p>
+                  </div>
+                )}
+
+                {authType === 'api-key' && (
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <Input
+                        placeholder="Header name (e.g., X-API-Key)"
+                        value={apiKeyHeader}
+                        onChange={(e) => setApiKeyHeader(e.target.value)}
+                        className={`h-12 text-sm ${themeClasses.input.base}`}
+                      />
+                      <Input
+                        type="password"
+                        placeholder="API key value"
+                        value={apiKeyValue}
+                        onChange={(e) => setApiKeyValue(e.target.value)}
+                        className={`h-12 text-sm ${themeClasses.input.base}`}
+                      />
+                    </div>
+                    <p className={`text-xs ${themeClasses.text.tertiary}`}>
+                      Will add custom header with your API key
+                    </p>
+                  </div>
+                )}
+
+                {authType === 'basic' && (
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <Input
+                        placeholder="Username"
+                        value={basicUsername}
+                        onChange={(e) => setBasicUsername(e.target.value)}
+                        className={`h-12 text-sm ${themeClasses.input.base}`}
+                      />
+                      <Input
+                        type="password"
+                        placeholder="Password"
+                        value={basicPassword}
+                        onChange={(e) => setBasicPassword(e.target.value)}
+                        className={`h-12 text-sm ${themeClasses.input.base}`}
+                      />
+                    </div>
+                    <p className={`text-xs ${themeClasses.text.tertiary}`}>
+                      Will add Authorization header with Basic auth
+                    </p>
+                  </div>
+                )}
+
                 {authType === 'none' && (
                   <div className={`text-center py-12 ${themeClasses.text.tertiary}`}>
                     <div className={`w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4 ${themeClasses.card.base}`}>
-                      <div className={`w-6 h-6 border-2 border-dashed rounded ${isDark ? "border-gray-600" : "border-gray-400"}`} />
+                      <div className={`w-6 h-6 rounded-full border-2 ${themeClasses.border.primary}`} />
                     </div>
-                    <p className={`text-sm mb-2 ${themeClasses.text.primary}`}>No authorization configured</p>
-                    <p className={`text-xs ${themeClasses.text.tertiary}`}>Select an auth type above to configure credentials</p>
-                  </div>
-                )}
-
-                {/* Bearer Token */}
-                {authType === 'bearer' && (
-                  <div className="space-y-4">
-                    <div className={`p-4 rounded-lg ${themeClasses.card.base} border ${themeClasses.border.primary}`}>
-                      <h3 className={`text-sm font-medium ${themeClasses.text.primary} mb-3`}>Bearer Token Authentication</h3>
-                      <div className="space-y-3">
-                        <div>
-                          <div className="flex items-center justify-between mb-2">
-                            <label className={`text-xs font-medium ${themeClasses.text.secondary}`}>Token</label>
-                            <button
-                              onClick={() => setShowTokenManager(true)}
-                              className={`text-xs px-2 py-1 rounded transition-all ${themeClasses.button.ghost} ${themeClasses.text.accent}`}
-                            >
-                              💾 Save Token
-                            </button>
-                          </div>
-                          <Input
-                            type="password"
-                            placeholder="your-bearer-token-here"
-                            value={authConfig.bearer.token}
-                            onChange={(e) => updateAuthConfig('bearer', 'token', e.target.value)}
-                            className={`h-9 text-sm ${themeClasses.input.base}`}
-                          />
-                        </div>
-                        <div className={`text-xs ${themeClasses.text.tertiary} flex items-start gap-2`}>
-                          <div className="w-1 h-1 rounded-full bg-blue-500 mt-2 flex-shrink-0"></div>
-                          <span>Will be sent as: <code className={`px-1 py-0.5 rounded text-xs font-mono ${themeClasses.bg.secondary}`}>Authorization: Bearer your-token</code></span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* API Key */}
-                {authType === 'api-key' && (
-                  <div className="space-y-4">
-                    <div className={`p-4 rounded-lg ${themeClasses.card.base} border ${themeClasses.border.primary}`}>
-                      <h3 className={`text-sm font-medium ${themeClasses.text.primary} mb-3`}>API Key Authentication</h3>
-                      <div className="space-y-3">
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <label className={`text-xs font-medium ${themeClasses.text.secondary} block mb-2`}>Key</label>
-                            <Input
-                              placeholder="X-API-Key"
-                              value={authConfig.apiKey.key}
-                              onChange={(e) => updateAuthConfig('apiKey', 'key', e.target.value)}
-                              className={`h-9 text-sm ${themeClasses.input.base}`}
-                            />
-                          </div>
-                          <div>
-                            <label className={`text-xs font-medium ${themeClasses.text.secondary} block mb-2`}>Value</label>
-                            <Input
-                              type="password"
-                              placeholder="your-api-key"
-                              value={authConfig.apiKey.value}
-                              onChange={(e) => updateAuthConfig('apiKey', 'value', e.target.value)}
-                              className={`h-9 text-sm ${themeClasses.input.base}`}
-                            />
-                          </div>
-                        </div>
-                        <div>
-                          <label className={`text-xs font-medium ${themeClasses.text.secondary} block mb-2`}>Add to</label>
-                          <select
-                            value={authConfig.apiKey.location}
-                            onChange={(e) => updateAuthConfig('apiKey', 'location', e.target.value)}
-                            className={`w-full rounded px-3 py-2 text-sm ${themeClasses.input.base}`}
-                          >
-                            <option value="header">Header</option>
-                            <option value="query">Query Parameter</option>
-                          </select>
-                        </div>
-                        <div className={`text-xs ${themeClasses.text.tertiary} flex items-start gap-2`}>
-                          <div className="w-1 h-1 rounded-full bg-blue-500 mt-2 flex-shrink-0"></div>
-                          <span>Will be sent as: <code className={`px-1 py-0.5 rounded text-xs font-mono ${themeClasses.bg.secondary}`}>{authConfig.apiKey.key || 'Key'}: {authConfig.apiKey.value || 'Value'}</code></span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Basic Auth */}
-                {authType === 'basic' && (
-                  <div className="space-y-4">
-                    <div className={`p-4 rounded-lg ${themeClasses.card.base} border ${themeClasses.border.primary}`}>
-                      <h3 className={`text-sm font-medium ${themeClasses.text.primary} mb-3`}>Basic Authentication</h3>
-                      <div className="space-y-3">
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <label className={`text-xs font-medium ${themeClasses.text.secondary} block mb-2`}>Username</label>
-                            <Input
-                              placeholder="username"
-                              value={authConfig.basic.username}
-                              onChange={(e) => updateAuthConfig('basic', 'username', e.target.value)}
-                              className={`h-9 text-sm ${themeClasses.input.base}`}
-                            />
-                          </div>
-                          <div>
-                            <label className={`text-xs font-medium ${themeClasses.text.secondary} block mb-2`}>Password</label>
-                            <Input
-                              type="password"
-                              placeholder="password"
-                              value={authConfig.basic.password}
-                              onChange={(e) => updateAuthConfig('basic', 'password', e.target.value)}
-                              className={`h-9 text-sm ${themeClasses.input.base}`}
-                            />
-                          </div>
-                        </div>
-                        <div className={`text-xs ${themeClasses.text.tertiary} flex items-start gap-2`}>
-                          <div className="w-1 h-1 rounded-full bg-blue-500 mt-2 flex-shrink-0"></div>
-                          <span>Will be sent as: <code className={`px-1 py-0.5 rounded text-xs font-mono ${themeClasses.bg.secondary}`}>Authorization: Basic base64(username:password)</code></span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* OAuth 2.0 */}
-                {authType === 'oauth2' && (
-                  <div className="space-y-4">
-                    <div className={`p-4 rounded-lg ${themeClasses.card.base} border ${themeClasses.border.primary}`}>
-                      <h3 className={`text-sm font-medium ${themeClasses.text.primary} mb-3`}>OAuth 2.0 Authentication</h3>
-                      <div className="space-y-3">
-                        <div>
-                          <label className={`text-xs font-medium ${themeClasses.text.secondary} block mb-2`}>Access Token</label>
-                          <Input
-                            type="password"
-                            placeholder="your-access-token"
-                            value={authConfig.oauth2.accessToken}
-                            onChange={(e) => updateAuthConfig('oauth2', 'accessToken', e.target.value)}
-                            className={`h-9 text-sm ${themeClasses.input.base}`}
-                          />
-                        </div>
-                        <div>
-                          <label className={`text-xs font-medium ${themeClasses.text.secondary} block mb-2`}>Token Type</label>
-                          <select
-                            value={authConfig.oauth2.tokenType}
-                            onChange={(e) => updateAuthConfig('oauth2', 'tokenType', e.target.value)}
-                            className={`w-full rounded px-3 py-2 text-sm ${themeClasses.input.base}`}
-                          >
-                            <option value="Bearer">Bearer</option>
-                            <option value="Token">Token</option>
-                            <option value="OAuth">OAuth</option>
-                          </select>
-                        </div>
-                        <div className={`text-xs ${themeClasses.text.tertiary} flex items-start gap-2`}>
-                          <div className="w-1 h-1 rounded-full bg-blue-500 mt-2 flex-shrink-0"></div>
-                          <span>Will be sent as: <code className={`px-1 py-0.5 rounded text-xs font-mono ${themeClasses.bg.secondary}`}>Authorization: {authConfig.oauth2.tokenType} your-token</code></span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                
-                {/* Token Manager Modal */}
-                {showTokenManager && (
-                  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowTokenManager(false)}>
-                    <div className={`bg-white dark:bg-gray-800 rounded-lg p-6 w-96 max-h-96 overflow-y-auto`} onClick={(e) => e.stopPropagation()}>
-                      <h3 className={`text-lg font-semibold ${themeClasses.text.primary} mb-4`}>Manage Saved Tokens</h3>
-                      
-                      {/* Add New Token */}
-                      <div className="space-y-3 mb-6">
-                        <div>
-                          <label className={`text-sm font-medium ${themeClasses.text.secondary} block mb-1`}>Token Name</label>
-                          <Input
-                            placeholder="My API Token"
-                            value={newTokenName}
-                            onChange={(e) => setNewTokenName(e.target.value)}
-                            className={`h-8 text-sm ${themeClasses.input.base}`}
-                          />
-                        </div>
-                        <div>
-                          <label className={`text-sm font-medium ${themeClasses.text.secondary} block mb-1`}>Token Value</label>
-                          <Input
-                            type="password"
-                            placeholder="token-value"
-                            value={newTokenValue}
-                            onChange={(e) => setNewTokenValue(e.target.value)}
-                            className={`h-8 text-sm ${themeClasses.input.base}`}
-                          />
-                        </div>
-                        <button
-                          onClick={saveToken}
-                          disabled={!newTokenName.trim() || !newTokenValue.trim()}
-                          className={`w-full py-2 px-4 rounded text-sm font-medium transition-all ${
-                            newTokenName.trim() && newTokenValue.trim()
-                              ? 'bg-blue-500 hover:bg-blue-600 text-white'
-                              : 'bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed'
-                          }`}
-                        >
-                          Save Token
-                        </button>
-                      </div>
-                      
-                      {/* Saved Tokens List */}
-                      {savedTokens.length > 0 && (
-                        <div>
-                          <h4 className={`text-sm font-medium ${themeClasses.text.secondary} mb-3`}>Saved Tokens</h4>
-                          <div className="space-y-2 max-h-48 overflow-y-auto">
-                            {savedTokens.map(token => (
-                              <div key={token.id} className={`flex items-center justify-between p-2 rounded ${themeClasses.card.base} border ${themeClasses.border.primary}`}>
-                                <div>
-                                  <div className={`text-sm font-medium ${themeClasses.text.primary}`}>{token.name}</div>
-                                  <div className={`text-xs ${themeClasses.text.tertiary}`}>{token.type} • {new Date(token.createdAt).toLocaleDateString()}</div>
-                                </div>
-                                <div className="flex gap-1">
-                                  <button
-                                    onClick={() => useToken(token)}
-                                    className={`px-2 py-1 text-xs rounded ${themeClasses.button.primary}`}
-                                  >
-                                    Use
-                                  </button>
-                                  <button
-                                    onClick={() => deleteToken(token.id)}
-                                    className={`px-2 py-1 text-xs rounded text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20`}
-                                  >
-                                    ✕
-                                  </button>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                      
-                      <div className="flex justify-end mt-4">
-                        <button
-                          onClick={() => setShowTokenManager(false)}
-                          className={`px-4 py-2 text-sm rounded ${themeClasses.button.ghost}`}
-                        >
-                          Close
-                        </button>
-                      </div>
-                    </div>
+                    <p className={`text-sm ${themeClasses.text.primary} mb-1`}>No authentication</p>
+                    <p className={`text-xs ${themeClasses.text.tertiary}`}>Select an auth method above</p>
                   </div>
                 )}
               </div>
