@@ -52,6 +52,8 @@ import {
   MoreHorizontal,
   FileText,
   Edit,
+  Columns,
+  SplitSquareHorizontal,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -171,6 +173,7 @@ export default function Playground() {
   const [activeMenuTab, setActiveMenuTab] = useState("collections");
   const [searchQuery, setSearchQuery] = useState("");
   const [editingRequestName, setEditingRequestName] = useState(false);
+  const [layoutMode, setLayoutMode] = useState("single"); // 'single' or 'split'
 
   // Collections state
   const [expandedCollections, setExpandedCollections] = useState(
@@ -1229,6 +1232,26 @@ export default function Playground() {
               Sign in
             </button>
           )}
+          {/* Layout Toggle Button */}
+          <div className="flex items-center gap-2 ml-4">
+            <button
+              onClick={() =>
+                setLayoutMode(layoutMode === "single" ? "split" : "single")
+              }
+              className={`p-2 rounded transition-all duration-200 ${themeClasses.button.ghost} relative group`}
+              title={
+                layoutMode === "single"
+                  ? "Switch to split layout"
+                  : "Switch to single column layout"
+              }
+            >
+              {layoutMode === "single" ? (
+                <SplitSquareHorizontal className="h-4 w-4" />
+              ) : (
+                <Columns className="h-4 w-4" />
+              )}
+            </button>
+          </div>
         </div>
       </header>
 
@@ -2705,7 +2728,7 @@ export default function Playground() {
           </div>
 
           {/* Onboarding Section - Shows when no URL is entered */}
-          {!request.url && (
+          {/* {!request.url && (
             <div className={`border-b ${themeClasses.border.primary}`}>
               <div className="px-6 py-6">
                 <div className="text-center space-y-6">
@@ -2723,7 +2746,6 @@ export default function Playground() {
                     </p>
                   </div>
 
-                  {/* Quick Start Examples */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3 max-w-2xl mx-auto">
                     <button
                       onClick={() =>
@@ -2842,11 +2864,13 @@ export default function Playground() {
                 </div>
               </div>
             </div>
-          )}
+          )} */}
 
-          {/* Main Content Area - Theme Aware Split View */}
+          {/* Main Content Area - Theme Aware Layout */}
           <div
-            className={`flex-1 flex flex-col lg:flex-row ${themeClasses.bg.primary} transition-colors duration-300`}
+            className={`flex-1 flex ${
+              layoutMode === "single" ? "flex-col" : "flex-col lg:flex-row"
+            } ${themeClasses.bg.primary} transition-colors duration-300`}
           >
             <RequestPanel request={request} setRequest={setRequest} />
             <ResponsePanel
