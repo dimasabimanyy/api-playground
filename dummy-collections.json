@@ -1,0 +1,267 @@
+{
+  "collections": [
+    {
+      "name": "🐾 Public APIs Demo",
+      "description": "Collection of free public APIs for testing",
+      "color": "blue",
+      "requests": [
+        {
+          "name": "Random Cat Fact",
+          "description": "Get a random cat fact",
+          "method": "GET",
+          "url": "https://catfact.ninja/fact",
+          "headers": {},
+          "body": "",
+          "tags": ["animals", "facts"]
+        },
+        {
+          "name": "Random Dog Image",
+          "description": "Get a random dog image",
+          "method": "GET", 
+          "url": "https://dog.ceo/api/breeds/image/random",
+          "headers": {},
+          "body": "",
+          "tags": ["animals", "images"]
+        },
+        {
+          "name": "Current Weather (London)",
+          "description": "Get current weather for London",
+          "method": "GET",
+          "url": "https://api.open-meteo.com/v1/forecast?latitude=51.5074&longitude=-0.1278&current_weather=true",
+          "headers": {},
+          "body": "",
+          "tags": ["weather", "london"]
+        },
+        {
+          "name": "Random Quote",
+          "description": "Get a random inspirational quote",
+          "method": "GET",
+          "url": "https://api.quotable.io/random",
+          "headers": {},
+          "body": "",
+          "tags": ["quotes", "inspiration"]
+        },
+        {
+          "name": "ISS Location",
+          "description": "Get current International Space Station location",
+          "method": "GET",
+          "url": "http://api.open-notify.org/iss-now.json",
+          "headers": {},
+          "body": "",
+          "tags": ["space", "location"]
+        }
+      ]
+    },
+    {
+      "name": "🔧 JSON Placeholder Tests",
+      "description": "Testing CRUD operations with JSONPlaceholder",
+      "color": "green",
+      "requests": [
+        {
+          "name": "Get All Posts",
+          "description": "Fetch all blog posts",
+          "method": "GET",
+          "url": "https://jsonplaceholder.typicode.com/posts",
+          "headers": {},
+          "body": "",
+          "tags": ["crud", "posts"]
+        },
+        {
+          "name": "Get Single Post",
+          "description": "Fetch a specific post by ID",
+          "method": "GET",
+          "url": "https://jsonplaceholder.typicode.com/posts/1",
+          "headers": {},
+          "body": "",
+          "tags": ["crud", "posts"]
+        },
+        {
+          "name": "Create New Post",
+          "description": "Create a new blog post",
+          "method": "POST",
+          "url": "https://jsonplaceholder.typicode.com/posts",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": "{\n  \"title\": \"My New Post\",\n  \"body\": \"This is the content of my new post\",\n  \"userId\": 1\n}",
+          "tags": ["crud", "create"]
+        },
+        {
+          "name": "Update Post",
+          "description": "Update an existing post",
+          "method": "PUT",
+          "url": "https://jsonplaceholder.typicode.com/posts/1",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": "{\n  \"id\": 1,\n  \"title\": \"Updated Post Title\",\n  \"body\": \"This post has been updated\",\n  \"userId\": 1\n}",
+          "tags": ["crud", "update"]
+        },
+        {
+          "name": "Delete Post",
+          "description": "Delete a post by ID",
+          "method": "DELETE",
+          "url": "https://jsonplaceholder.typicode.com/posts/1",
+          "headers": {},
+          "body": "",
+          "tags": ["crud", "delete"]
+        },
+        {
+          "name": "Get User Comments",
+          "description": "Get comments for a specific post",
+          "method": "GET",
+          "url": "https://jsonplaceholder.typicode.com/posts/1/comments",
+          "headers": {},
+          "body": "",
+          "tags": ["comments", "relationships"]
+        }
+      ]
+    },
+    {
+      "name": "🐙 GitHub API Examples",
+      "description": "Real GitHub API endpoints (no auth required)",
+      "color": "purple",
+      "requests": [
+        {
+          "name": "Get Repository Info",
+          "description": "Get information about a public repository",
+          "method": "GET",
+          "url": "https://api.github.com/repos/microsoft/vscode",
+          "headers": {
+            "User-Agent": "API-Playground-Demo"
+          },
+          "body": "",
+          "tags": ["github", "repos"]
+        },
+        {
+          "name": "List Repository Issues",
+          "description": "Get open issues for a repository",
+          "method": "GET",
+          "url": "https://api.github.com/repos/microsoft/vscode/issues?state=open&per_page=5",
+          "headers": {
+            "User-Agent": "API-Playground-Demo"
+          },
+          "body": "",
+          "tags": ["github", "issues"]
+        },
+        {
+          "name": "Get User Profile",
+          "description": "Get public profile information",
+          "method": "GET",
+          "url": "https://api.github.com/users/octocat",
+          "headers": {
+            "User-Agent": "API-Playground-Demo"
+          },
+          "body": "",
+          "tags": ["github", "users"]
+        },
+        {
+          "name": "Search Repositories",
+          "description": "Search for repositories by topic",
+          "method": "GET",
+          "url": "https://api.github.com/search/repositories?q=topic:javascript&sort=stars&order=desc&per_page=5",
+          "headers": {
+            "User-Agent": "API-Playground-Demo"
+          },
+          "body": "",
+          "tags": ["github", "search"]
+        }
+      ]
+    },
+    {
+      "name": "🚦 HTTP Status Testing",
+      "description": "Test different HTTP status codes and responses",
+      "color": "red",
+      "requests": [
+        {
+          "name": "Success Response (200)",
+          "description": "Test successful response",
+          "method": "GET",
+          "url": "https://httpstat.us/200",
+          "headers": {},
+          "body": "",
+          "tags": ["status", "success"]
+        },
+        {
+          "name": "Not Found (404)",
+          "description": "Test 404 error response",
+          "method": "GET",
+          "url": "https://httpstat.us/404",
+          "headers": {},
+          "body": "",
+          "tags": ["status", "error"]
+        },
+        {
+          "name": "Server Error (500)",
+          "description": "Test internal server error",
+          "method": "GET",
+          "url": "https://httpstat.us/500",
+          "headers": {},
+          "body": "",
+          "tags": ["status", "error"]
+        },
+        {
+          "name": "Delayed Response",
+          "description": "Test response with 3 second delay",
+          "method": "GET",
+          "url": "https://httpstat.us/200?sleep=3000",
+          "headers": {},
+          "body": "",
+          "tags": ["performance", "delay"]
+        },
+        {
+          "name": "Random Status",
+          "description": "Get a random HTTP status code",
+          "method": "GET",
+          "url": "https://httpstat.us/random",
+          "headers": {},
+          "body": "",
+          "tags": ["status", "random"]
+        }
+      ]
+    },
+    {
+      "name": "🌍 RESTful Country API",
+      "description": "Country data and geographical information",
+      "color": "yellow",
+      "requests": [
+        {
+          "name": "All Countries",
+          "description": "Get basic info for all countries",
+          "method": "GET",
+          "url": "https://restcountries.com/v3.1/all?fields=name,capital,population,region",
+          "headers": {},
+          "body": "",
+          "tags": ["countries", "geography"]
+        },
+        {
+          "name": "Country by Name",
+          "description": "Get detailed info about a specific country",
+          "method": "GET",
+          "url": "https://restcountries.com/v3.1/name/brazil",
+          "headers": {},
+          "body": "",
+          "tags": ["countries", "search"]
+        },
+        {
+          "name": "Countries by Region",
+          "description": "Get all countries in a specific region",
+          "method": "GET",
+          "url": "https://restcountries.com/v3.1/region/europe",
+          "headers": {},
+          "body": "",
+          "tags": ["countries", "region"]
+        },
+        {
+          "name": "Country by Currency",
+          "description": "Find countries using a specific currency",
+          "method": "GET",
+          "url": "https://restcountries.com/v3.1/currency/eur",
+          "headers": {},
+          "body": "",
+          "tags": ["countries", "currency"]
+        }
+      ]
+    }
+  ]
+}
