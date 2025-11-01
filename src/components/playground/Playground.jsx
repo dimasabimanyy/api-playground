@@ -1895,7 +1895,7 @@ export default function Playground() {
                   return (
                     <div
                       key={tab.id}
-                      className={`flex items-center gap-2 px-3 py-3 cursor-pointer min-w-0 group transition-all duration-200 border-b-2 ${
+                      className={`flex items-center gap-2 px-1 py-3 cursor-pointer min-w-0 group transition-all duration-200 border-b-2 ${
                         tab.id === activeTabId
                           ? `${themeClasses.text.primary} border-blue-500`
                           : `${themeClasses.text.secondary} hover:${themeClasses.text.primary} border-transparent hover:border-gray-300`
@@ -1908,7 +1908,7 @@ export default function Playground() {
                         {tab.request?.method || 'GET'}
                       </div>
                       <span
-                        className={`text-sm truncate min-w-0 max-w-32 ${
+                        className={`text-[12.5px] truncate min-w-0 max-w-32 ${
                           tab.isModified ? "italic" : ""
                         }`}
                       >
@@ -1919,6 +1919,7 @@ export default function Playground() {
                           </span>
                         )}
                       </span>
+
                       {requestTabs.length > 1 && (
                         <button
                           onClick={(e) => {
