@@ -2541,7 +2541,7 @@ export default function Playground() {
                 {/* METHOD SELECT + URL INPUT + ENVIRONMENT ROW */}
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 flex-1 min-w-0">
                   {/* METHOD SELECT */}
-                  <div className="w-full sm:w-24 flex-shrink-0">
+                  <div className="w-full sm:w-16 flex-shrink-0">
                     <Select
                       value={request.method}
                       onValueChange={(value) =>
@@ -2632,7 +2632,8 @@ export default function Playground() {
                   </div>
 
                   {/* Environment Switcher */}
-                  <div className="w-28 sm:w-32 flex-shrink-0">
+                  {/* Archived feature - Uncomment anytime */}
+                  {/* <div className="w-28 sm:w-32 flex-shrink-0">
                     <Select
                       value={activeEnvironmentId}
                       onValueChange={handleEnvironmentSelect}
@@ -2645,22 +2646,18 @@ export default function Playground() {
                           <SelectValue />
                         </div>
                       </SelectTrigger>
+
                       <SelectContent>
                         {Object.values(environments).map((env) => (
                           <SelectItem key={env.id} value={env.id}>
                             <div className="flex items-center gap-2">
-                              <div
-                                className={`w-2 h-2 rounded-full bg-${
-                                  env.color || "blue"
-                                }-500 flex-shrink-0`}
-                              ></div>
                               <span className="truncate">{env.name}</span>
                             </div>
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                  </div>
+                  </div> */}
                 </div>
 
                 {/* SEND BUTTON */}
@@ -2693,13 +2690,13 @@ export default function Playground() {
                     </>
                   ) : (
                     <>
-                      <Send className="h-4 w-4" />
+                      <Send className="h-3 w-3" />
                       <span className="hidden sm:inline">Send</span>
-                      <span
+                      {/* <span
                         className={`hidden lg:inline text-xs opacity-70 ml-1`}
                       >
                         {navigator.platform.includes("Mac") ? "⌘" : "Ctrl"}+↵
-                      </span>
+                      </span> */}
                     </>
                   )}
                 </button>
