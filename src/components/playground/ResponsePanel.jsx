@@ -305,42 +305,30 @@ export default function ResponsePanel({ response, loading, request }) {
 
   return (
     <div className={`flex-1 h-full flex flex-col transition-all duration-300 ${themeClasses.bg.glass}`}>
-      {/* Response Header - Theme Aware */}
-      <div className={`px-6 py-4 border-b ${themeClasses.border.primary}`}>
+      {/* Response Header - Simplified */}
+      <div className={`px-4 py-3 ${themeClasses.bg.primary}`}>
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-6">
-            <div className="flex items-center gap-3">
-              <h3 className={`text-sm font-medium ${themeClasses.text.primary}`}>Response</h3>
-              <span className={`text-xs font-mono px-3 py-1.5 rounded-lg font-medium border ${getStatusColor(response.status)}`}>
-                {response.status} {response.statusText}
-              </span>
-            </div>
-            <div className={`flex items-center gap-6 text-xs ${themeClasses.text.tertiary}`}>
-              <div className="flex items-center gap-2">
-                <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
-                <span className="font-mono">{response.time}ms</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="h-2 w-2 bg-purple-500 rounded-full"></div>
-                <span className="font-mono">{formatBytes(response.size || 0)}</span>
-              </div>
-            </div>
+          <div className="flex items-center gap-4">
+            <span className={`text-xs font-mono px-2 py-1 rounded ${getStatusColor(response.status)}`}>
+              {response.status}
+            </span>
+            <span className={`text-xs ${themeClasses.text.tertiary}`}>{response.time}ms</span>
+            <span className={`text-xs ${themeClasses.text.tertiary}`}>{formatBytes(response.size || 0)}</span>
           </div>
           
-          <div className="flex items-center gap-3">
-            {request && <CodeGenerationPanel request={request} />}
+          <div className="flex items-center gap-2">
             <button
               onClick={() => copyToClipboard(formatResponseData(response.data))}
-              className={`h-9 text-xs px-4 rounded transition-all duration-200 ${themeClasses.button.secondary}`}
+              className={`text-xs px-3 py-1 rounded ${themeClasses.button.secondary}`}
             >
-              <Copy className="h-3 w-3 mr-2" />
-              {copied ? 'Copied!' : 'Copy'}
+              <Copy className="h-3 w-3 mr-1" />
+              Copy
             </button>
             <button 
               onClick={downloadResponse}
-              className={`h-9 text-xs px-4 rounded transition-all duration-200 ${themeClasses.button.secondary}`}
+              className={`text-xs px-3 py-1 rounded ${themeClasses.button.secondary}`}
             >
-              <Download className="h-3 w-3 mr-2" />
+              <Download className="h-3 w-3 mr-1" />
               Save
             </button>
           </div>
@@ -350,77 +338,48 @@ export default function ResponsePanel({ response, loading, request }) {
       {/* Response Content - Theme Aware */}
       <div className={`flex-1 overflow-hidden transition-colors duration-300 ${themeClasses.bg.primary}`}>
         <Tabs defaultValue="body" className="w-full h-full flex flex-col">
-          <div className={`border-b ${themeClasses.border.primary}`}>
-            <TabsList className="grid w-full grid-cols-3 h-8 bg-transparent p-0 border-b-0">
-              <TabsTrigger value="body" className={`text-xs py-2 data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-b-blue-500 data-[state=active]:${themeClasses.text.accent} border-b border-gray-200 hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-50'} hover:border-gray-300 rounded-none transition-all ${themeClasses.tab.inactive}`}>
-                Body
+          <div className="px-4 py-2">
+            <TabsList className="h-auto bg-transparent p-0 flex space-x-6">
+              <TabsTrigger value="body" className={`text-xs px-0 py-1 border-0 bg-transparent data-[state=active]:${themeClasses.text.primary} ${themeClasses.text.secondary} hover:${themeClasses.text.primary}`}>
+                Response
               </TabsTrigger>
-              <TabsTrigger value="headers" className={`text-xs py-2 data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-b-blue-500 data-[state=active]:${themeClasses.text.accent} border-b border-gray-200 hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-50'} hover:border-gray-300 rounded-none transition-all ${themeClasses.tab.inactive}`}>
-                Headers
-                <span className={`ml-1.5 text-xs px-1.5 py-0.5 rounded border ${themeClasses.status.info}`}>
-                  {Object.keys(response.headers || {}).length}
-                </span>
-              </TabsTrigger>
-              <TabsTrigger value="test" className={`text-xs py-2 data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-b-blue-500 data-[state=active]:${themeClasses.text.accent} border-b border-gray-200 hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-50'} hover:border-gray-300 rounded-none transition-all ${themeClasses.tab.inactive}`}>
-                Test Results
+              <TabsTrigger value="headers" className={`text-xs px-0 py-1 border-0 bg-transparent data-[state=active]:${themeClasses.text.primary} ${themeClasses.text.secondary} hover:${themeClasses.text.primary}`}>
+                Headers ({Object.keys(response.headers || {}).length})
               </TabsTrigger>
             </TabsList>
           </div>
           
-          <TabsContent value="body" className="flex-1 p-6 overflow-y-auto">
-            <div className={`border rounded overflow-hidden backdrop-blur-sm ${themeClasses.card.base}`}>
-              <div className={`px-4 py-3 border-b flex items-center justify-between ${themeClasses.border.secondary} ${themeClasses.bg.secondary}`}>
-                <span className={`text-xs font-medium uppercase tracking-wide flex items-center gap-2 ${themeClasses.text.secondary}`}>
-                  <div className="h-2 w-2 bg-emerald-500 rounded-full"></div>
-                  {getContentType()}
-                </span>
-                <div className="flex items-center gap-3">
-                  <button className={`text-xs px-2 py-1 rounded transition-all duration-200 ${isDark ? 'text-gray-400 hover:text-white bg-gray-700/50' : 'text-gray-600 hover:text-gray-900 bg-gray-200'}`}>Pretty</button>
-                  <button className={`text-xs px-2 py-1 rounded transition-all duration-200 ${themeClasses.button.ghost}`}>Raw</button>
-                  <button className={`text-xs px-2 py-1 rounded transition-all duration-200 ${themeClasses.button.ghost}`}>Preview</button>
-                </div>
-              </div>
-              <div className={`p-6 max-h-96 overflow-auto ${isDark ? 'bg-gray-900/50' : 'bg-gray-50'}`}>
-                <div className={`text-xs font-mono leading-relaxed ${themeClasses.text.primary}`}>
-                  {renderFormattedContent(response.data, getContentType())}
-                </div>
-              </div>
+          <TabsContent value="body" className="flex-1 px-4 pb-4 overflow-y-auto">
+            <div className={`text-xs font-mono leading-relaxed ${themeClasses.text.primary} p-4 rounded ${isDark ? 'bg-gray-900/30' : 'bg-gray-50/50'}`}>
+              {renderFormattedContent(response.data, getContentType())}
             </div>
           </TabsContent>
           
-          <TabsContent value="headers" className="flex-1 p-6 overflow-y-auto">
-            <div className={`space-y-0 border rounded-xl overflow-hidden ${themeClasses.card.base}`}>
-              <div className={`px-6 py-3 border-b ${themeClasses.border.secondary} ${themeClasses.bg.secondary}`}>
-                <div className={`grid grid-cols-2 gap-6 text-xs font-medium uppercase tracking-wide ${themeClasses.text.secondary}`}>
-                  <div>Key</div>
-                  <div>Value</div>
-                </div>
-              </div>
-              <div className={`divide-y ${themeClasses.border.primary}`}>
-                {Object.entries(response.headers || {}).map(([key, value]) => (
-                  <div key={key} className={`grid grid-cols-2 gap-6 px-6 py-4 transition-all duration-200 ${isDark ? 'bg-gray-800/20 hover:bg-gray-800/40' : 'bg-white hover:bg-gray-50'}`}>
-                    <div className={`text-sm font-medium font-mono break-all ${themeClasses.text.accent}`}>{key}</div>
-                    <div className={`text-sm font-mono break-all ${themeClasses.text.primary}`}>{value}</div>
+          <TabsContent value="headers" className="flex-1 px-4 pb-4 overflow-y-auto">
+            <div className="space-y-1">
+              {Object.entries(response.headers || {}).map(([key, value]) => (
+                <div key={key} className="py-1">
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className={`text-xs ${themeClasses.text.secondary}`}>
+                      {key}
+                    </div>
+                    <div className="col-span-2">
+                      <div className={`text-xs font-mono ${themeClasses.text.primary} break-all`}>
+                        {value}
+                      </div>
+                    </div>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
+              
+              {Object.keys(response.headers || {}).length === 0 && (
+                <div className={`text-center py-8 ${themeClasses.text.tertiary}`}>
+                  <p className={`text-xs`}>No headers</p>
+                </div>
+              )}
             </div>
           </TabsContent>
           
-          <TabsContent value="test" className="flex-1 p-6">
-            <div className={`text-center py-16 ${themeClasses.text.tertiary}`}>
-              <div className={`w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-6 ${themeClasses.card.base}`}>
-                <Check className={`h-8 w-8 ${themeClasses.text.tertiary}`} />
-              </div>
-              <h3 className={`text-base font-medium mb-3 ${themeClasses.text.primary}`}>No tests configured</h3>
-              <p className={`text-sm max-w-sm mx-auto ${themeClasses.text.tertiary}`}>
-                Write test scripts to validate your API responses automatically
-              </p>
-              <button className={`mt-6 h-9 text-sm px-4 rounded-lg transition-all duration-200 ${themeClasses.button.primary}`}>
-                Add Test
-              </button>
-            </div>
-          </TabsContent>
         </Tabs>
       </div>
     </div>
