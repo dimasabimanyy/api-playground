@@ -107,8 +107,8 @@ export default function RequestPanel({
         {/* Request Configuration Tabs - Theme Aware */}
         <div>
           <Tabs defaultValue="headers" className="w-full">
-            <div className={`border-b ${themeClasses.border.primary}`}>
-              <TabsList className="grid w-full grid-cols-4 h-8 bg-transparent p-0 border-none">
+            <div className={`border-b ${themeClasses.border.primary} flex justify-between items-center`}>
+              <TabsList className="flex h-8 bg-transparent p-0 border-none gap-6">
                 {[
                   { value: "params", label: "Params" },
                   {
@@ -158,6 +158,11 @@ export default function RequestPanel({
                   </TabsTrigger>
                 ))}
               </TabsList>
+              
+              {/* Right side space for future features */}
+              <div className="flex items-center gap-2">
+                {/* Future content can go here */}
+              </div>
             </div>
 
             <TabsContent value="params" className="p-6">
