@@ -165,7 +165,9 @@ export default function Playground() {
   const [showShared, setShowShared] = useState(false);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(
+    typeof window !== 'undefined' && window.innerWidth < 1024
+  );
   const [activeMenuTab, setActiveMenuTab] = useState("collections");
   const [searchQuery, setSearchQuery] = useState("");
   const [editingRequestName, setEditingRequestName] = useState(false);
@@ -1121,36 +1123,51 @@ export default function Playground() {
     >
       {/* Header - Theme Aware */}
       <header
-        className={`border-b ${themeClasses.border.primary} ${themeClasses.bg.glass} h-14 flex items-center px-6 transition-all duration-300`}
+        className={`border-b ${themeClasses.border.primary} ${themeClasses.bg.glass} h-14 flex items-center px-3 sm:px-6 transition-all duration-300`}
       >
-        <div className="flex items-center space-x-6 min-w-0 flex-shrink-0">
-          <div className="flex items-center space-x-3">
-            <div className="h-8 w-8 rounded bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
-              <Zap className="h-4 w-4 text-white" />
+        <div className="flex items-center space-x-2 sm:space-x-6 min-w-0 flex-shrink-0">
+          {/* Mobile Hamburger Menu */}
+          <button
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            className={`lg:hidden p-1.5 rounded transition-all duration-200 ${themeClasses.button.ghost}`}
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          
+          <div className="flex items-center space-x-2 sm:space-x-3">
+            <div className="h-6 w-6 sm:h-8 sm:w-8 rounded bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
+              <Zap className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
             </div>
             <h1
-              className={`text-lg font-semibold tracking-tight ${themeClasses.text.primary}`}
+              className={`text-sm sm:text-lg font-semibold tracking-tight ${themeClasses.text.primary} hidden sm:block`}
             >
               API Playground
+            </h1>
+            <h1
+              className={`text-sm font-semibold tracking-tight ${themeClasses.text.primary} sm:hidden`}
+            >
+              API
             </h1>
           </div>
         </div>
 
-        <div className="flex-1 flex justify-center max-w-lg mx-auto">
+        <div className="flex-1 flex justify-center max-w-xs sm:max-w-lg mx-2 sm:mx-auto">
           <div className="relative w-full">
             <Search
-              className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${themeClasses.text.tertiary}`}
+              className={`absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 ${themeClasses.text.tertiary}`}
             />
             <Input
-              placeholder="Search requests, collections..."
+              placeholder="Search..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className={`pl-10 h-9 text-sm rounded backdrop-blur-sm ${themeClasses.input.base}`}
+              className={`pl-7 sm:pl-10 h-8 sm:h-9 text-xs sm:text-sm rounded backdrop-blur-sm ${themeClasses.input.base}`}
             />
           </div>
         </div>
 
-        <div className="flex items-center space-x-3 ml-auto">
+        <div className="flex items-center space-x-1 sm:space-x-3 ml-auto">
           <button
             onClick={toggleTheme}
             className={`p-2 rounded transition-all duration-200 ${themeClasses.button.ghost}`}
@@ -1206,14 +1223,30 @@ export default function Playground() {
       </header>
 
       {/* Main Content Layout - Theme Aware */}
-      <div className="flex h-[calc(100vh-3.5rem)]">
+      <div className="flex h-[calc(100vh-3.5rem)] relative">
+        {/* Mobile Sidebar Overlay */}
+        {!sidebarCollapsed && (
+          <div 
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            onClick={() => setSidebarCollapsed(true)}
+          />
+        )}
+        
         {/* Left Sidebar - Theme Aware */}
         <div
-          className={`${sidebarCollapsed ? "w-16" : "w-72"} border-r ${
+          className={`${
+            sidebarCollapsed 
+              ? "w-16 lg:w-16" 
+              : "w-72 lg:w-72"
+          } ${
+            sidebarCollapsed 
+              ? "-translate-x-full lg:translate-x-0" 
+              : "translate-x-0"
+          } fixed lg:relative top-[3.5rem] lg:top-0 left-0 h-[calc(100vh-3.5rem)] lg:h-full border-r ${
             themeClasses.border.primary
           } ${
             themeClasses.bg.glass
-          } flex flex-col transition-all duration-300 relative`}
+          } flex flex-col transition-all duration-300 z-50 lg:z-auto`}
         >
           {/* Sidebar Toggle Button */}
           <button
@@ -2342,13 +2375,15 @@ export default function Playground() {
 
         {/* Main Workbench - Theme Aware */}
         <div
-          className={`flex-1 flex flex-col ${themeClasses.bg.primary} transition-colors duration-300`}
+          className={`flex-1 flex flex-col ${themeClasses.bg.primary} transition-colors duration-300 ${
+            sidebarCollapsed ? 'lg:ml-0' : 'lg:ml-0'
+          } ml-0 lg:ml-0 w-full lg:w-auto`}
         >
           {/* Request Tabs - Flat Design */}
           <div
             className={`${themeClasses.bg.glass} border-b ${themeClasses.border.primary}`}
           >
-            <div className="flex items-center px-6 py-0">
+            <div className="flex items-center px-3 sm:px-6 py-0">
               <div className="flex items-center overflow-x-auto scrollbar-hide">
                 {requestTabs.map((tab) => {
                   const methodColors = getMethodColors(
@@ -2493,12 +2528,12 @@ export default function Playground() {
 
           {/* Method + URL + Send Row - Full Width */}
           <div className={`border-b ${themeClasses.border.primary}`}>
-            <div className="px-6 py-4">
+            <div className="px-3 sm:px-6 py-3 sm:py-4">
               <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3">
                 {/* METHOD SELECT + URL INPUT + ENVIRONMENT ROW */}
-                <div className="flex items-center gap-3 flex-1 min-w-0">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 flex-1 min-w-0">
                   {/* METHOD SELECT */}
-                  <div className="w-24 flex-shrink-0">
+                  <div className="w-full sm:w-24 flex-shrink-0">
                     <Select
                       value={request.method}
                       onValueChange={(value) =>
@@ -2508,7 +2543,7 @@ export default function Playground() {
                       }
                     >
                       <SelectTrigger
-                        className={`h-11 text-xs rounded backdrop-blur-sm ${themeClasses.input.base} px-2 flex items-center justify-between !h-11 !min-h-[44px] [&>span]:leading-none font-medium`}
+                        className={`h-10 sm:h-11 text-xs rounded backdrop-blur-sm ${themeClasses.input.base} px-2 flex items-center justify-between !h-10 sm:!h-11 !min-h-[40px] sm:!min-h-[44px] [&>span]:leading-none font-medium`}
                       >
                         <SelectValue />
                       </SelectTrigger>
@@ -2555,14 +2590,14 @@ export default function Playground() {
                   {/* URL INPUT with Variables */}
                   <div className="flex-1 relative">
                     <Input
-                      placeholder="https://api.example.com/endpoint (use {{VARIABLE}} for environment variables)"
+                      placeholder="https://api.example.com/endpoint"
                       value={request.url}
                       onChange={(e) =>
                         updateCurrentTab({
                           request: { ...request, url: e.target.value },
                         })
                       }
-                      className={`h-11 text-sm rounded-md backdrop-blur-sm ${themeClasses.input.base} pr-10`}
+                      className={`h-10 sm:h-11 text-sm rounded-md backdrop-blur-sm ${themeClasses.input.base} pr-10`}
                     />
                     {/* Variable Indicator */}
                     {(() => {
@@ -2627,7 +2662,7 @@ export default function Playground() {
                   title={`Send request (${
                     navigator.platform.includes("Mac") ? "Cmd" : "Ctrl"
                   }+Enter)`}
-                  className={`h-11 text-sm px-4 sm:px-6 rounded-md transition-all duration-200 font-medium shadow-sm flex items-center justify-center gap-2 flex-shrink-0 lg:w-auto w-full ${
+                  className={`h-10 sm:h-11 text-sm px-4 sm:px-6 rounded-md transition-all duration-200 font-medium shadow-sm flex items-center justify-center gap-2 flex-shrink-0 w-full sm:w-auto ${
                     loading || !request.url
                       ? `${
                           isDark
@@ -2806,7 +2841,7 @@ export default function Playground() {
 
           {/* Main Content Area - Theme Aware Split View */}
           <div
-            className={`flex-1 flex ${themeClasses.bg.primary} transition-colors duration-300`}
+            className={`flex-1 flex flex-col lg:flex-row ${themeClasses.bg.primary} transition-colors duration-300`}
           >
             <RequestPanel request={request} setRequest={setRequest} />
             <ResponsePanel
