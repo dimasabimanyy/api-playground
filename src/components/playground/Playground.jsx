@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -54,6 +54,7 @@ import {
   Edit,
   Columns,
   SplitSquareHorizontal,
+  GripVertical,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -174,6 +175,43 @@ export default function Playground() {
   const [searchQuery, setSearchQuery] = useState("");
   const [editingRequestName, setEditingRequestName] = useState(false);
   const [layoutMode, setLayoutMode] = useState("single"); // 'single' or 'split'
+  const [requestPanelWidth, setRequestPanelWidth] = useState(50); // percentage
+  const [isDragging, setIsDragging] = useState(false);
+
+  // Drag handling functions for resizable panels (must be at top level)
+  const handleMouseDown = (e) => {
+    if (layoutMode === 'split') {
+      setIsDragging(true);
+      e.preventDefault();
+    }
+  };
+
+  const handleMouseMove = useCallback((e) => {
+    if (isDragging && layoutMode === 'split') {
+      const container = document.querySelector('[data-layout-container]');
+      if (container) {
+        const containerRect = container.getBoundingClientRect();
+        const newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
+        setRequestPanelWidth(Math.min(Math.max(newWidth, 20), 80)); // Limit between 20% and 80%
+      }
+    }
+  }, [isDragging, layoutMode]);
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  // Effect to handle mouse events (must be at top level)
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isDragging, handleMouseMove]);
 
   // Collections state
   const [expandedCollections, setExpandedCollections] = useState(
@@ -1119,6 +1157,7 @@ export default function Playground() {
       </div>
     );
   }
+
 
   return (
     <div
@@ -2868,16 +2907,47 @@ export default function Playground() {
 
           {/* Main Content Area - Theme Aware Layout */}
           <div
+            data-layout-container
             className={`flex-1 flex ${
               layoutMode === "single" ? "flex-col" : "flex-col lg:flex-row"
-            } ${themeClasses.bg.primary} transition-colors duration-300`}
+            } ${themeClasses.bg.primary} transition-colors duration-300 ${isDragging ? 'cursor-col-resize' : ''}`}
           >
-            <RequestPanel request={request} setRequest={setRequest} />
-            <ResponsePanel
-              response={response}
-              loading={loading}
-              request={request}
-            />
+            {layoutMode === 'split' ? (
+              <>
+                {/* Request Panel with dynamic width */}
+                <div style={{ width: `${requestPanelWidth}%` }}>
+                  <RequestPanel request={request} setRequest={setRequest} />
+                </div>
+                
+                {/* Draggable Divider */}
+                <div
+                  className={`w-1 bg-gray-300 dark:bg-gray-600 hover:bg-blue-500 dark:hover:bg-blue-400 cursor-col-resize transition-colors duration-200 ${isDragging ? 'bg-blue-500 dark:bg-blue-400' : ''}`}
+                  onMouseDown={handleMouseDown}
+                >
+                  <div className="w-full h-full flex items-center justify-center">
+                    <GripVertical className="h-4 w-4 text-gray-400 opacity-0 hover:opacity-100 transition-opacity" />
+                  </div>
+                </div>
+                
+                {/* Response Panel with remaining width */}
+                <div style={{ width: `${100 - requestPanelWidth}%` }}>
+                  <ResponsePanel
+                    response={response}
+                    loading={loading}
+                    request={request}
+                  />
+                </div>
+              </>
+            ) : (
+              <>
+                <RequestPanel request={request} setRequest={setRequest} />
+                <ResponsePanel
+                  response={response}
+                  loading={loading}
+                  request={request}
+                />
+              </>
+            )}
           </div>
         </div>
       </div>

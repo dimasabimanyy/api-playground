@@ -107,7 +107,7 @@ export default function RequestPanel({
         {/* Request Configuration Tabs - Theme Aware */}
         <div>
           <Tabs defaultValue="headers" className="w-full">
-            <div className={`border-b ${themeClasses.border.primary} flex justify-between items-center`}>
+            <div className="flex justify-between items-center">
               <TabsList className="flex h-8 bg-transparent p-0 border-none gap-6">
                 {[
                   { value: "params", label: "Params" },
