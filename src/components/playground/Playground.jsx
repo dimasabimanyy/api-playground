@@ -55,6 +55,7 @@ import {
   Columns,
   SplitSquareHorizontal,
   GripVertical,
+  GripHorizontal,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -176,23 +177,30 @@ export default function Playground() {
   const [editingRequestName, setEditingRequestName] = useState(false);
   const [layoutMode, setLayoutMode] = useState("single"); // 'single' or 'split'
   const [requestPanelWidth, setRequestPanelWidth] = useState(50); // percentage
+  const [requestPanelHeight, setRequestPanelHeight] = useState(50); // percentage for single column
   const [isDragging, setIsDragging] = useState(false);
 
   // Drag handling functions for resizable panels (must be at top level)
   const handleMouseDown = (e) => {
-    if (layoutMode === 'split') {
-      setIsDragging(true);
-      e.preventDefault();
-    }
+    setIsDragging(true);
+    e.preventDefault();
   };
 
   const handleMouseMove = useCallback((e) => {
-    if (isDragging && layoutMode === 'split') {
+    if (isDragging) {
       const container = document.querySelector('[data-layout-container]');
       if (container) {
         const containerRect = container.getBoundingClientRect();
-        const newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
-        setRequestPanelWidth(Math.min(Math.max(newWidth, 20), 80)); // Limit between 20% and 80%
+        
+        if (layoutMode === 'split') {
+          // Horizontal dragging for split layout
+          const newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
+          setRequestPanelWidth(Math.min(Math.max(newWidth, 20), 80)); // Limit between 20% and 80%
+        } else {
+          // Vertical dragging for single column layout
+          const newHeight = ((e.clientY - containerRect.top) / containerRect.height) * 100;
+          setRequestPanelHeight(Math.min(Math.max(newHeight, 20), 80)); // Limit between 20% and 80%
+        }
       }
     }
   }, [isDragging, layoutMode]);
@@ -2910,7 +2918,7 @@ export default function Playground() {
             data-layout-container
             className={`flex-1 flex ${
               layoutMode === "single" ? "flex-col" : "flex-col lg:flex-row"
-            } ${themeClasses.bg.primary} transition-colors duration-300 ${isDragging ? 'cursor-col-resize' : ''}`}
+            } ${themeClasses.bg.primary} transition-colors duration-300 ${isDragging ? (layoutMode === 'single' ? 'cursor-row-resize' : 'cursor-col-resize') : ''}`}
           >
             {layoutMode === 'split' ? (
               <>
@@ -2919,7 +2927,7 @@ export default function Playground() {
                   <RequestPanel request={request} setRequest={setRequest} />
                 </div>
                 
-                {/* Draggable Divider */}
+                {/* Horizontal Draggable Divider */}
                 <div
                   className={`w-1 bg-gray-300 dark:bg-gray-600 hover:bg-blue-500 dark:hover:bg-blue-400 cursor-col-resize transition-colors duration-200 ${isDragging ? 'bg-blue-500 dark:bg-blue-400' : ''}`}
                   onMouseDown={handleMouseDown}
@@ -2940,12 +2948,29 @@ export default function Playground() {
               </>
             ) : (
               <>
-                <RequestPanel request={request} setRequest={setRequest} />
-                <ResponsePanel
-                  response={response}
-                  loading={loading}
-                  request={request}
-                />
+                {/* Request Panel with dynamic height */}
+                <div style={{ height: `${requestPanelHeight}%` }}>
+                  <RequestPanel request={request} setRequest={setRequest} />
+                </div>
+                
+                {/* Vertical Draggable Divider */}
+                <div
+                  className={`h-1 bg-gray-300 dark:bg-gray-600 hover:bg-blue-500 dark:hover:bg-blue-400 cursor-row-resize transition-colors duration-200 ${isDragging ? 'bg-blue-500 dark:bg-blue-400' : ''}`}
+                  onMouseDown={handleMouseDown}
+                >
+                  <div className="w-full h-full flex items-center justify-center">
+                    <GripHorizontal className="h-4 w-4 text-gray-400 opacity-0 hover:opacity-100 transition-opacity" />
+                  </div>
+                </div>
+                
+                {/* Response Panel with remaining height */}
+                <div style={{ height: `${100 - requestPanelHeight}%` }}>
+                  <ResponsePanel
+                    response={response}
+                    loading={loading}
+                    request={request}
+                  />
+                </div>
               </>
             )}
           </div>
