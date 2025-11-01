@@ -166,7 +166,7 @@ export default function Playground() {
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(
-    typeof window !== 'undefined' && window.innerWidth < 1024
+    typeof window !== "undefined" && window.innerWidth < 1024
   );
   const [activeMenuTab, setActiveMenuTab] = useState("collections");
   const [searchQuery, setSearchQuery] = useState("");
@@ -1131,11 +1131,21 @@ export default function Playground() {
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
             className={`lg:hidden p-1.5 rounded transition-all duration-200 ${themeClasses.button.ghost}`}
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
             </svg>
           </button>
-          
+
           <div className="flex items-center space-x-2 sm:space-x-3">
             <div className="h-6 w-6 sm:h-8 sm:w-8 rounded bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
               <Zap className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
@@ -1226,21 +1236,17 @@ export default function Playground() {
       <div className="flex h-[calc(100vh-3.5rem)] relative">
         {/* Mobile Sidebar Overlay */}
         {!sidebarCollapsed && (
-          <div 
+          <div
             className="fixed inset-0 bg-black/50 z-40 lg:hidden"
             onClick={() => setSidebarCollapsed(true)}
           />
         )}
-        
+
         {/* Left Sidebar - Theme Aware */}
         <div
-          className={`${
-            sidebarCollapsed 
-              ? "w-16 lg:w-16" 
-              : "w-72 lg:w-72"
-          } ${
-            sidebarCollapsed 
-              ? "-translate-x-full lg:translate-x-0" 
+          className={`${sidebarCollapsed ? "w-16 lg:w-16" : "w-72 lg:w-72"} ${
+            sidebarCollapsed
+              ? "-translate-x-full lg:translate-x-0"
               : "translate-x-0"
           } fixed lg:relative top-[3.5rem] lg:top-0 left-0 h-[calc(100vh-3.5rem)] lg:h-full border-r ${
             themeClasses.border.primary
@@ -2375,8 +2381,10 @@ export default function Playground() {
 
         {/* Main Workbench - Theme Aware */}
         <div
-          className={`flex-1 flex flex-col ${themeClasses.bg.primary} transition-colors duration-300 ${
-            sidebarCollapsed ? 'lg:ml-0' : 'lg:ml-0'
+          className={`flex-1 flex flex-col ${
+            themeClasses.bg.primary
+          } transition-colors duration-300 ${
+            sidebarCollapsed ? "lg:ml-0" : "lg:ml-0"
           } ml-0 lg:ml-0 w-full lg:w-auto`}
         >
           {/* Request Tabs - Flat Design */}
@@ -2503,11 +2511,11 @@ export default function Playground() {
                 <div className="flex items-center gap-2 flex-shrink-0">
                   {request.url && (
                     <>
-                      <button
+                      {/* <button
                         className={`h-8 text-xs px-3 rounded transition-all duration-200 hidden sm:block ${themeClasses.button.secondary}`}
                       >
                         Template
-                      </button>
+                      </button> */}
                       <button
                         className={`h-8 text-xs px-3 rounded transition-all duration-200 hidden sm:block ${themeClasses.button.secondary}`}
                       >
