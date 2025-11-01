@@ -9,11 +9,13 @@ import { useState } from 'react'
 import { useTheme } from '@/contexts/ThemeContext'
 import { getThemeClasses, getStatusColors } from '@/lib/theme'
 import CodeGenerationPanel from './CodeGenerationPanel'
+import JsonView from '@uiw/react-json-view'
 
 export default function ResponsePanel({ response, loading, request }) {
   const { theme, isDark } = useTheme()
   const themeClasses = getThemeClasses(isDark)
   const [copied, setCopied] = useState(false)
+  const [viewFormat, setViewFormat] = useState('pretty') // pretty, raw, javascript
 
   const copyToClipboard = async (text) => {
     try {
@@ -88,9 +90,53 @@ export default function ResponsePanel({ response, loading, request }) {
   }
 
   const renderFormattedContent = (data, type) => {
-    const formattedData = formatContent(data, type)
+    if (type === 'json') {
+      try {
+        const jsonData = typeof data === 'string' ? JSON.parse(data) : data
+        
+        if (viewFormat === 'pretty') {
+          return (
+            <JsonView 
+              value={jsonData}
+              style={{
+                backgroundColor: 'transparent',
+                fontSize: '12px',
+                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace'
+              }}
+              theme={isDark ? 'dark' : 'light'}
+              collapsed={false}
+              displayDataTypes={false}
+              displayObjectSize={true}
+              enableClipboard={false}
+            />
+          )
+        } else if (viewFormat === 'javascript') {
+          const jsCode = `const data = ${JSON.stringify(jsonData, null, 2)};`
+          return (
+            <pre className={`text-xs leading-relaxed font-mono ${themeClasses.text.primary}`}>
+              <code>{jsCode}</code>
+            </pre>
+          )
+        } else { // raw
+          return (
+            <pre className={`text-xs leading-relaxed font-mono ${themeClasses.text.primary}`}>
+              {JSON.stringify(jsonData, null, 2)}
+            </pre>
+          )
+        }
+      } catch (error) {
+        // Fall back to plain text if JSON parsing fails
+        const formattedData = formatContent(data, type)
+        return (
+          <pre className={`text-xs leading-relaxed font-mono ${themeClasses.text.primary}`}>
+            {formattedData}
+          </pre>
+        )
+      }
+    }
     
     if (type === 'html') {
+      const formattedData = formatContent(data, type)
       return (
         <div className="space-y-4">
           <div className="border rounded p-4 bg-background">
@@ -111,6 +157,7 @@ export default function ResponsePanel({ response, loading, request }) {
       )
     }
     
+    const formattedData = formatContent(data, type)
     return (
       <pre className={`text-xs p-4 overflow-auto max-h-64 whitespace-pre-wrap font-mono rounded-lg border ${isDark ? 'bg-gray-900/50 text-gray-200 border-gray-700/50' : 'bg-gray-100 text-gray-800 border-gray-300'}`}>
         {formattedData}
@@ -378,9 +425,35 @@ export default function ResponsePanel({ response, loading, request }) {
             </TabsList>
           </div>
           
-          <TabsContent value="body" className="flex-1 px-4 pb-4 overflow-y-auto">
-            <div className={`text-xs font-mono leading-relaxed ${themeClasses.text.primary} p-4 rounded ${isDark ? 'bg-gray-900/30' : 'bg-gray-50/50'}`}>
-              {renderFormattedContent(response.data, getContentType())}
+          <TabsContent value="body" className="flex-1 flex flex-col overflow-hidden">
+            {/* Format buttons for JSON responses */}
+            {getContentType() === 'json' && (
+              <div className={`px-4 py-2 border-b ${themeClasses.border.primary} flex items-center gap-2`}>
+                <span className={`text-xs ${themeClasses.text.secondary} mr-2`}>Format:</span>
+                {[
+                  { key: 'pretty', label: 'Pretty' },
+                  { key: 'raw', label: 'Raw' },
+                  { key: 'javascript', label: 'JavaScript' }
+                ].map(({ key, label }) => (
+                  <button
+                    key={key}
+                    onClick={() => setViewFormat(key)}
+                    className={`text-xs px-3 py-1 rounded transition-all duration-200 ${
+                      viewFormat === key 
+                        ? `${isDark ? 'bg-blue-600 text-white' : 'bg-blue-600 text-white'}` 
+                        : `${isDark ? 'text-gray-400 hover:text-white hover:bg-gray-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'}`
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
+            
+            <div className="flex-1 px-4 pt-4 pb-4 overflow-y-auto">
+              <div className={`text-xs font-mono leading-relaxed ${themeClasses.text.primary} ${getContentType() === 'json' && viewFormat === 'pretty' ? '' : 'p-4 rounded ' + (isDark ? 'bg-gray-900/30' : 'bg-gray-50/50')}`}>
+                {renderFormattedContent(response.data, getContentType())}
+              </div>
             </div>
           </TabsContent>
           
