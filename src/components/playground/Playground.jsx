@@ -1285,7 +1285,7 @@ export default function Playground() {
                                           }`}
                                         >
                                           {/* HTTP Method Badge */}
-                                          <div className={`px-1.5 py-0.5 rounded text-xs font-medium border ${methodColors.bg} ${methodColors.text} flex-shrink-0`}>
+                                          <div className={`px-1 py-0.5 rounded text-xs font-medium border ${methodColors.bg} ${methodColors.text} flex-shrink-0 text-[10px] leading-none`}>
                                             {request.method}
                                           </div>
                                           
@@ -1428,7 +1428,7 @@ export default function Playground() {
                                   className={`group flex items-center gap-3 py-2 px-3 transition-all duration-200 cursor-pointer hover:${isDark ? 'bg-gray-800/30' : 'bg-gray-100/50'} rounded-lg`}
                                 >
                                   {/* HTTP Method Badge */}
-                                  <div className={`px-1.5 py-0.5 rounded text-xs font-medium border ${methodColors.bg} ${methodColors.text} flex-shrink-0`}>
+                                  <div className={`px-1 py-0.5 rounded text-xs font-medium border ${methodColors.bg} ${methodColors.text} flex-shrink-0 text-[10px] leading-none`}>
                                     {item.method}
                                   </div>
                                   
@@ -1795,7 +1795,7 @@ export default function Playground() {
                                   {item.type === 'collection' ? (
                                     <FolderOpen className="h-4 w-4" />
                                   ) : (
-                                    <div className={`px-1.5 py-0.5 rounded text-xs font-medium border ${getMethodColors(item.method || 'GET', isDark).bg} ${getMethodColors(item.method || 'GET', isDark).text}`}>
+                                    <div className={`px-1 py-0.5 rounded text-xs font-medium border ${getMethodColors(item.method || 'GET', isDark).bg} ${getMethodColors(item.method || 'GET', isDark).text} text-[10px] leading-none`}>
                                       {item.method || 'REQ'}
                                     </div>
                                   )}
@@ -1903,7 +1903,7 @@ export default function Playground() {
                       onClick={() => setActiveTabId(tab.id)}
                     >
                       <div
-                        className={`px-1.5 py-0.5 rounded text-xs font-medium border ${methodColors.bg} ${methodColors.text} flex-shrink-0`}
+                        className={`px-1 py-0.5 rounded text-xs font-medium border ${methodColors.bg} ${methodColors.text} flex-shrink-0 text-[10px] leading-none`}
                       >
                         {tab.request?.method || 'GET'}
                       </div>
@@ -2028,7 +2028,7 @@ export default function Playground() {
                       onValueChange={(value) => updateCurrentTab({ request: { ...request, method: value } })}
                     >
                       <SelectTrigger
-                        className={`h-11 text-sm rounded backdrop-blur-sm ${themeClasses.input.base} px-3 flex items-center justify-between !h-11 !min-h-[44px] [&>span]:leading-none`}
+                        className={`h-11 text-xs rounded backdrop-blur-sm ${themeClasses.input.base} px-2 flex items-center justify-between !h-11 !min-h-[44px] [&>span]:leading-none font-medium`}
                       >
                         <SelectValue />
                       </SelectTrigger>
@@ -2050,9 +2050,9 @@ export default function Playground() {
                             <SelectItem
                               key={method}
                               value={method}
-                              className="text-sm py-2"
+                              className="text-sm py-1.5"
                             >
-                              <span className={`font-bold ${methodColors.text}`}>
+                              <span className={`font-medium text-xs ${methodColors.text}`}>
                                 {method}
                               </span>
                             </SelectItem>
