@@ -338,13 +338,42 @@ export default function ResponsePanel({ response, loading, request }) {
       {/* Response Content - Theme Aware */}
       <div className={`flex-1 overflow-hidden transition-colors duration-300 ${themeClasses.bg.primary}`}>
         <Tabs defaultValue="body" className="w-full h-full flex flex-col">
-          <div className="px-4 py-2">
-            <TabsList className="h-auto bg-transparent p-0 flex space-x-6">
-              <TabsTrigger value="body" className={`text-xs px-0 py-1 border-0 bg-transparent data-[state=active]:${themeClasses.text.primary} ${themeClasses.text.secondary} hover:${themeClasses.text.primary}`}>
+          <div className={`border-b ${themeClasses.border.primary}`}>
+            <TabsList className="grid w-full grid-cols-2 h-8 bg-transparent p-0 border-none">
+              <TabsTrigger
+                value="body"
+                className={`
+                  relative text-xs py-2 rounded-none border-none bg-transparent
+                  transition-all duration-200
+                  ${themeClasses.tab.inactive}
+                  hover:bg-transparent hover:text-blue-500
+                  data-[state=active]:text-blue-500
+                  after:absolute after:bottom-[-1px] after:left-0 after:h-[2px] after:w-0 after:bg-blue-500 after:transition-all after:duration-300
+                  data-[state=active]:after:w-full hover:after:w-full
+                `}
+              >
                 Response
               </TabsTrigger>
-              <TabsTrigger value="headers" className={`text-xs px-0 py-1 border-0 bg-transparent data-[state=active]:${themeClasses.text.primary} ${themeClasses.text.secondary} hover:${themeClasses.text.primary}`}>
-                Headers ({Object.keys(response.headers || {}).length})
+              <TabsTrigger
+                value="headers"
+                className={`
+                  relative text-xs py-2 rounded-none border-none bg-transparent
+                  transition-all duration-200
+                  ${themeClasses.tab.inactive}
+                  hover:bg-transparent hover:text-blue-500
+                  data-[state=active]:text-blue-500
+                  after:absolute after:bottom-[-1px] after:left-0 after:h-[2px] after:w-0 after:bg-blue-500 after:transition-all after:duration-300
+                  data-[state=active]:after:w-full hover:after:w-full
+                `}
+              >
+                Headers
+                {Object.keys(response.headers || {}).length > 0 && (
+                  <span
+                    className={`ml-1.5 text-xs px-1.5 py-0.5 rounded border ${themeClasses.status.info}`}
+                  >
+                    {Object.keys(response.headers || {}).length}
+                  </span>
+                )}
               </TabsTrigger>
             </TabsList>
           </div>
