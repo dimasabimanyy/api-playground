@@ -400,8 +400,14 @@ export default function ResponsePanel({ response, loading, request }) {
               <span className={`text-xs font-mono px-2 py-1 rounded ${getStatusColor(response.status)}`}>
                 {response.status} {response.statusText}
               </span>
-              <span className={`text-xs ${themeClasses.text.tertiary}`}>{response.time}ms</span>
-              <span className={`text-xs ${themeClasses.text.tertiary}`}>{formatBytes(response.size || 0)}</span>
+              <div className="flex items-center gap-1">
+                <div className={`w-1 h-1 rounded-full ${isDark ? 'bg-gray-600' : 'bg-gray-400'}`}></div>
+                <span className={`text-xs ${themeClasses.text.tertiary}`}>{response.time}ms</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className={`w-1 h-1 rounded-full ${isDark ? 'bg-gray-600' : 'bg-gray-400'}`}></div>
+                <span className={`text-xs ${themeClasses.text.tertiary}`}>{formatBytes(response.size || 0)}</span>
+              </div>
               
               <div className="flex items-center gap-1">
                 {request && <CodeGenerationPanel request={request} />}
