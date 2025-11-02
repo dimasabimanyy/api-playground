@@ -100,7 +100,7 @@ export default function ResponsePanel({ response, loading, request }) {
               value={jsonData}
               style={{
                 backgroundColor: 'transparent',
-                fontSize: '12px',
+                fontSize: '14px',
                 fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace'
               }}
               theme={isDark ? 'dark' : 'light'}
@@ -113,13 +113,13 @@ export default function ResponsePanel({ response, loading, request }) {
         } else if (viewFormat === 'javascript') {
           const jsCode = `const data = ${JSON.stringify(jsonData, null, 2)};`
           return (
-            <pre className={`text-xs leading-relaxed font-mono ${themeClasses.text.primary}`}>
+            <pre className={`text-sm leading-relaxed font-mono ${themeClasses.text.primary}`}>
               <code>{jsCode}</code>
             </pre>
           )
         } else { // raw
           return (
-            <pre className={`text-xs leading-relaxed font-mono ${themeClasses.text.primary}`}>
+            <pre className={`text-sm leading-relaxed font-mono ${themeClasses.text.primary}`}>
               {JSON.stringify(jsonData, null, 2)}
             </pre>
           )
@@ -128,7 +128,7 @@ export default function ResponsePanel({ response, loading, request }) {
         // Fall back to plain text if JSON parsing fails
         const formattedData = formatContent(data, type)
         return (
-          <pre className={`text-xs leading-relaxed font-mono ${themeClasses.text.primary}`}>
+          <pre className={`text-sm leading-relaxed font-mono ${themeClasses.text.primary}`}>
             {formattedData}
           </pre>
         )
@@ -149,7 +149,7 @@ export default function ResponsePanel({ response, loading, request }) {
           </div>
           <div>
             <h4 className="text-sm font-medium mb-2">HTML Source:</h4>
-            <pre className={`text-xs p-4 overflow-auto max-h-64 whitespace-pre-wrap font-mono rounded-lg border ${isDark ? 'bg-gray-900/50 text-gray-200 border-gray-700/50' : 'bg-gray-100 text-gray-800 border-gray-300'}`}>
+            <pre className={`text-sm p-4 overflow-auto max-h-64 whitespace-pre-wrap font-mono rounded-lg border ${isDark ? 'bg-gray-900/50 text-gray-200 border-gray-700/50' : 'bg-gray-100 text-gray-800 border-gray-300'}`}>
               {formattedData}
             </pre>
           </div>
@@ -159,7 +159,7 @@ export default function ResponsePanel({ response, loading, request }) {
     
     const formattedData = formatContent(data, type)
     return (
-      <pre className={`text-xs p-4 overflow-auto max-h-64 whitespace-pre-wrap font-mono rounded-lg border ${isDark ? 'bg-gray-900/50 text-gray-200 border-gray-700/50' : 'bg-gray-100 text-gray-800 border-gray-300'}`}>
+      <pre className={`text-sm p-4 overflow-auto max-h-64 whitespace-pre-wrap font-mono rounded-lg border ${isDark ? 'bg-gray-900/50 text-gray-200 border-gray-700/50' : 'bg-gray-100 text-gray-800 border-gray-300'}`}>
         {formattedData}
       </pre>
     )
@@ -449,7 +449,7 @@ export default function ResponsePanel({ response, loading, request }) {
             )}
             
             <div className="flex-1 px-4 pt-4 pb-4 overflow-y-auto">
-              <div className={`text-xs font-mono leading-relaxed ${themeClasses.text.primary} ${getContentType() === 'json' && viewFormat === 'pretty' ? '' : 'p-4 rounded ' + (isDark ? 'bg-gray-900/30' : 'bg-gray-50/50')}`}>
+              <div className={`text-sm font-mono leading-relaxed ${themeClasses.text.primary} ${getContentType() === 'json' && viewFormat === 'pretty' ? '' : 'p-4 rounded ' + (isDark ? 'bg-gray-900/30' : 'bg-gray-50/50')}`}>
                 {renderFormattedContent(response.data, getContentType())}
               </div>
             </div>
@@ -460,11 +460,11 @@ export default function ResponsePanel({ response, loading, request }) {
               {Object.entries(response.headers || {}).map(([key, value]) => (
                 <div key={key} className="py-1">
                   <div className="grid grid-cols-3 gap-4">
-                    <div className={`text-xs ${themeClasses.text.secondary}`}>
+                    <div className={`text-sm ${themeClasses.text.secondary}`}>
                       {key}
                     </div>
                     <div className="col-span-2">
-                      <div className={`text-xs font-mono ${themeClasses.text.primary} break-all`}>
+                      <div className={`text-sm font-mono ${themeClasses.text.primary} break-all`}>
                         {value}
                       </div>
                     </div>
@@ -474,7 +474,7 @@ export default function ResponsePanel({ response, loading, request }) {
               
               {Object.keys(response.headers || {}).length === 0 && (
                 <div className={`text-center py-8 ${themeClasses.text.tertiary}`}>
-                  <p className={`text-xs`}>No headers</p>
+                  <p className={`text-sm`}>No headers</p>
                 </div>
               )}
             </div>

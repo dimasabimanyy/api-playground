@@ -165,163 +165,164 @@ export default function RequestPanel({
               </div>
             </div>
 
-            <TabsContent value="params" className="p-6">
-              <div className={`text-sm mb-6 ${themeClasses.text.secondary}`}>
-                Query parameters are appended to the request URL.
-              </div>
-              <div
-                className={`text-center py-12 ${themeClasses.text.tertiary}`}
-              >
-                <div
-                  className={`w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4 ${themeClasses.card.base}`}
-                >
-                  <Plus className={`h-6 w-6 ${themeClasses.text.tertiary}`} />
-                </div>
-                <p className={`text-sm mb-2 ${themeClasses.text.primary}`}>
-                  No query parameters yet
-                </p>
-                <p className={`text-xs ${themeClasses.text.tertiary}`}>
-                  Add parameters to customize your request
-                </p>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="headers" className="p-6">
-              <div className="space-y-6">
-                {/* Headers Table Header */}
-                <div
-                  className={`grid grid-cols-12 gap-3 text-xs font-medium pb-3 border-b ${themeClasses.text.tertiary} ${themeClasses.border.primary}`}
-                >
+            <TabsContent value="params" className="p-4 h-full flex flex-col">
+              {/* Table Container with padding */}
+              <div className={`border rounded-lg overflow-hidden ${themeClasses.border.primary} ${themeClasses.bg.glass}`}>
+                {/* Table Header - Compact Postman style */}
+                <div className={`grid grid-cols-12 gap-2 px-3 py-2 text-xs font-medium border-b ${themeClasses.border.primary} ${themeClasses.text.secondary} ${isDark ? 'bg-gray-800/30' : 'bg-gray-50'}`}>
                   <div className="col-span-5">Key</div>
                   <div className="col-span-6">Value</div>
                   <div className="col-span-1"></div>
                 </div>
 
-                {/* Add New Header */}
-                <div className="grid grid-cols-12 gap-3">
-                  <Input
-                    placeholder="Content-Type"
-                    value={newHeaderKey || ''}
-                    onChange={(e) => setNewHeaderKey(e.target.value)}
-                    className={`col-span-5 h-9 text-sm rounded backdrop-blur-sm ${themeClasses.input.base}`}
+                {/* Params Table Body */}
+                <div className="flex-1 overflow-y-auto">
+                {/* Add new param row - Always at bottom for now since no params state yet */}
+                <div className={`grid grid-cols-12 gap-2 px-3 py-2 border-b ${themeClasses.border.primary} ${isDark ? 'bg-gray-800/10' : 'bg-gray-50/30'}`}>
+                  <input
+                    type="text"
+                    placeholder="page"
+                    className={`col-span-5 h-7 px-2 text-sm border-0 bg-transparent ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:bg-${isDark ? 'gray-800/50' : 'gray-100/80'} rounded font-mono`}
                   />
-                  <Input
-                    placeholder="application/json"
-                    value={newHeaderValue || ''}
-                    onChange={(e) => setNewHeaderValue(e.target.value)}
-                    className={`col-span-6 h-9 text-sm rounded backdrop-blur-sm ${themeClasses.input.base}`}
+                  <input
+                    type="text"
+                    placeholder="1"
+                    className={`col-span-6 h-7 px-2 text-sm border-0 bg-transparent ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:bg-${isDark ? 'gray-800/50' : 'gray-100/80'} rounded font-mono`}
                   />
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={addHeader}
-                    className={`col-span-1 h-9 w-9 p-0 rounded-lg transition-all duration-200 ${themeClasses.button.ghost}`}
-                    disabled={!newHeaderKey || !newHeaderValue}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
-
-                {/* Existing Headers */}
-                {Object.entries(safeRequest.headers || {}).length === 0 ? (
-                  <div
-                    className={`text-center py-12 ${themeClasses.text.tertiary}`}
-                  >
-                    <div
-                      className={`w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4 ${themeClasses.card.base}`}
+                  <div className="col-span-1 flex justify-center items-center">
+                    <button
+                      className={`w-5 h-5 flex items-center justify-center rounded transition-all duration-200 ${themeClasses.text.tertiary} hover:${isDark ? 'bg-blue-500/20' : 'bg-blue-100'} hover:text-blue-500`}
                     >
-                      <Plus
-                        className={`h-6 w-6 ${themeClasses.text.tertiary}`}
-                      />
-                    </div>
-                    <p className={`text-sm mb-2 ${themeClasses.text.primary}`}>
-                      No headers added yet
-                    </p>
-                    <p className={`text-xs ${themeClasses.text.tertiary}`}>
-                      Add custom headers to your request
-                    </p>
+                      <Plus className="h-3 w-3" />
+                    </button>
                   </div>
-                ) : (
-                  <div className="space-y-3">
-                    {Object.entries(safeRequest.headers || {}).map(([key, value]) => (
-                      <div
-                        key={key}
-                        className={`grid grid-cols-12 gap-3 p-3 rounded-lg ${themeClasses.card.base}`}
-                      >
-                        <Input
-                          value={key || ''}
-                          disabled
-                          className={`col-span-5 h-8 text-sm ${themeClasses.input.disabled}`}
-                        />
-                        <Input
-                          value={value || ''}
-                          disabled
-                          className={`col-span-6 h-8 text-sm ${themeClasses.input.disabled}`}
-                        />
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeHeader(key)}
-                          className={`col-span-1 h-8 w-8 p-0 rounded transition-all duration-200 ${
-                            themeClasses.text.tertiary
-                          } hover:text-red-400 ${
-                            isDark ? "hover:bg-red-500/20" : "hover:bg-red-100"
-                          }`}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                </div>
+                
+                {/* Empty state */}
+                <div className={`text-center py-8 ${themeClasses.text.tertiary}`}>
+                  <p className="text-xs">Add query parameters above</p>
+                  <p className="text-xs mt-1">Parameters will be appended to the URL: ?key=value</p>
+                </div>
+                </div>
               </div>
             </TabsContent>
 
-            <TabsContent value="body" className="p-6">
-              <div className="space-y-6">
-                <div className="flex items-center gap-4">
-                  <label
-                    className={`text-sm font-medium ${themeClasses.text.secondary}`}
-                  >
-                    Body type:
-                  </label>
-                  <select
-                    className={`rounded px-3 py-2 text-sm backdrop-blur-sm ${themeClasses.input.base}`}
-                  >
-                    <option value="raw">raw</option>
-                    <option value="form-data">form-data</option>
-                    <option value="x-www-form-urlencoded">
-                      x-www-form-urlencoded
-                    </option>
-                    <option value="binary">binary</option>
-                  </select>
-                  <select
-                    className={`rounded px-3 py-2 text-sm backdrop-blur-sm ${themeClasses.input.base}`}
-                  >
-                    <option value="json">JSON</option>
-                    <option value="text">Text</option>
-                    <option value="xml">XML</option>
-                    <option value="html">HTML</option>
-                  </select>
+            <TabsContent value="headers" className="p-4 h-full flex flex-col">
+              {/* Table Container with padding */}
+              <div className={`border rounded-lg overflow-hidden ${themeClasses.border.primary} ${themeClasses.bg.glass}`}>
+                {/* Table Header - Compact Postman style */}
+                <div className={`grid grid-cols-12 gap-2 px-3 py-2 text-xs font-medium border-b ${themeClasses.border.primary} ${themeClasses.text.secondary} ${isDark ? 'bg-gray-800/30' : 'bg-gray-50'}`}>
+                  <div className="col-span-5">Key</div>
+                  <div className="col-span-6">Value</div>
+                  <div className="col-span-1"></div>
                 </div>
-                <div className="relative">
+
+                {/* Headers Table Body */}
+                <div className="flex-1 overflow-y-auto">
+                {/* Existing Headers */}
+                {Object.entries(safeRequest.headers || {}).map(([key, value]) => (
+                  <div
+                    key={key}
+                    className={`grid grid-cols-12 gap-2 px-3 py-2 border-b ${themeClasses.border.primary} hover:${isDark ? 'bg-gray-800/20' : 'bg-gray-50/50'} transition-colors group`}
+                  >
+                    <div className={`col-span-5 text-sm ${themeClasses.text.primary} font-mono break-all py-1`}>
+                      {key}
+                    </div>
+                    <div className={`col-span-6 text-sm ${themeClasses.text.secondary} font-mono break-all py-1`}>
+                      {value}
+                    </div>
+                    <div className="col-span-1 flex justify-center items-center">
+                      <button
+                        onClick={() => removeHeader(key)}
+                        className={`w-5 h-5 flex items-center justify-center rounded opacity-0 group-hover:opacity-100 transition-all duration-200 ${themeClasses.text.tertiary} hover:text-red-400 ${isDark ? "hover:bg-red-500/20" : "hover:bg-red-100"}`}
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                
+                {/* Add new header row - Always at bottom */}
+                <div className={`grid grid-cols-12 gap-2 px-3 py-2 border-b ${themeClasses.border.primary} ${isDark ? 'bg-gray-800/10' : 'bg-gray-50/30'}`}>
+                  <input
+                    type="text"
+                    placeholder="Content-Type"
+                    value={newHeaderKey}
+                    onChange={(e) => setNewHeaderKey(e.target.value)}
+                    className={`col-span-5 h-7 px-2 text-sm border-0 bg-transparent ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:bg-${isDark ? 'gray-800/50' : 'gray-100/80'} rounded font-mono`}
+                  />
+                  <input
+                    type="text"
+                    placeholder="application/json"
+                    value={newHeaderValue}
+                    onChange={(e) => setNewHeaderValue(e.target.value)}
+                    className={`col-span-6 h-7 px-2 text-sm border-0 bg-transparent ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:bg-${isDark ? 'gray-800/50' : 'gray-100/80'} rounded font-mono`}
+                  />
+                  <div className="col-span-1 flex justify-center items-center">
+                    <button
+                      onClick={addHeader}
+                      disabled={!newHeaderKey || !newHeaderValue}
+                      className={`w-5 h-5 flex items-center justify-center rounded transition-all duration-200 ${
+                        newHeaderKey && newHeaderValue 
+                          ? `${themeClasses.text.primary} hover:${isDark ? 'bg-blue-500/20' : 'bg-blue-100'} hover:text-blue-500` 
+                          : themeClasses.text.tertiary
+                      }`}
+                    >
+                      <Plus className="h-3 w-3" />
+                    </button>
+                  </div>
+                </div>
+                
+                {/* Empty state - only show if no headers */}
+                {Object.keys(safeRequest.headers || {}).length === 0 && (
+                  <div className={`text-center py-8 ${themeClasses.text.tertiary}`}>
+                    <p className="text-xs">Add headers above to customize your request</p>
+                  </div>
+                )}
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="body" className="p-4 h-full flex flex-col">
+              {/* Table Container with padding */}
+              <div className={`border rounded-lg overflow-hidden ${themeClasses.border.primary} ${themeClasses.bg.glass}`}>
+                {/* Body Type Controls - Compact header */}
+                <div className={`flex items-center gap-3 px-3 py-2 border-b ${themeClasses.border.primary} ${isDark ? 'bg-gray-800/30' : 'bg-gray-50'}`}>
+                  <span className={`text-xs font-medium ${themeClasses.text.secondary}`}>
+                    Body:
+                  </span>
+                <select
+                  className={`text-xs px-2 py-1 rounded border-0 bg-transparent ${themeClasses.text.primary} focus:outline-none focus:bg-${isDark ? 'gray-800/50' : 'gray-100/80'}`}
+                >
+                  <option value="raw">raw</option>
+                  <option value="form-data">form-data</option>
+                  <option value="x-www-form-urlencoded">urlencoded</option>
+                  <option value="binary">binary</option>
+                </select>
+                <select
+                  className={`text-xs px-2 py-1 rounded border-0 bg-transparent ${themeClasses.text.primary} focus:outline-none focus:bg-${isDark ? 'gray-800/50' : 'gray-100/80'}`}
+                >
+                  <option value="json">JSON</option>
+                  <option value="text">Text</option>
+                  <option value="xml">XML</option>
+                  <option value="html">HTML</option>
+                </select>
+                
+                {safeRequest.body && (
+                  <span className={`text-xs ${themeClasses.text.tertiary} ml-auto`}>
+                    {new Blob([safeRequest.body]).size} bytes
+                  </span>
+                )}
+              </div>
+              
+                {/* Body Editor - Full height */}
+                <div className="flex-1 p-3">
                   <Textarea
                     placeholder={`{\n  "name": "John Doe",\n  "email": "john@example.com"\n}`}
                     value={safeRequest.body || ''}
                     onChange={(e) => updateRequest("body", e.target.value)}
-                    className={`min-h-64 font-mono text-sm rounded resize-none backdrop-blur-sm ${themeClasses.input.base}`}
+                    className={`w-full h-full font-mono text-sm resize-none border-0 bg-transparent ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none p-2 rounded`}
                   />
-                  {request.body && (
-                    <div
-                      className={`absolute bottom-3 right-3 text-xs px-2 py-1 rounded backdrop-blur-sm ${
-                        isDark
-                          ? "text-gray-400 bg-gray-900/80"
-                          : "text-gray-600 bg-white/80"
-                      }`}
-                    >
-                      {new Blob([request.body]).size} bytes
-                    </div>
-                  )}
                 </div>
               </div>
             </TabsContent>
