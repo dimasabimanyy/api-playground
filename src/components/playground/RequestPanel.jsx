@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, X, Eye, EyeOff } from "lucide-react";
@@ -165,7 +164,7 @@ export default function RequestPanel({
               </div>
             </div>
 
-            <TabsContent value="params" className="px-6 py-0 h-full flex flex-col space-y-4">
+            <TabsContent value="params" className="px-6 py-3 h-full flex flex-col space-y-4">
               {/* Add Parameter Section */}
               <div className="space-y-3">
                 {/* <div className="flex items-center justify-end">
@@ -175,31 +174,29 @@ export default function RequestPanel({
                   </span>
                 </div> */}
                 
-                {/* Parameter Input Card */}
-                <div className={`rounded-xl border ${themeClasses.border.primary} ${isDark ? 'bg-gray-900/20' : 'bg-white'} p-4`}>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div className="space-y-1.5">
-                      <label className={`text-xs font-medium ${themeClasses.text.secondary}`}>Parameter Name</label>
+                {/* Parameter Input - Simplified Vercel Style */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className={`text-xs font-medium ${themeClasses.text.secondary}`}>Key</label>
+                    <input
+                      type="text"
+                      placeholder="Key"
+                      className={`w-full h-9 px-3 text-sm rounded-md border ${themeClasses.border.primary} ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all`}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className={`text-xs font-medium ${themeClasses.text.secondary}`}>Value</label>
+                    <div className="flex gap-2">
                       <input
                         type="text"
-                        placeholder="page"
-                        className={`w-full h-9 px-3 text-sm rounded-lg border ${themeClasses.border.primary} ${isDark ? 'bg-gray-800/30' : 'bg-gray-50/50'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 transition-all font-mono`}
+                        placeholder="1"
+                        className={`flex-1 h-9 px-3 text-sm rounded-md border ${themeClasses.border.primary} ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all`}
                       />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className={`text-xs font-medium ${themeClasses.text.secondary}`}>Value</label>
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          placeholder="1"
-                          className={`flex-1 h-9 px-3 text-sm rounded-lg border ${themeClasses.border.primary} ${isDark ? 'bg-gray-800/30' : 'bg-gray-50/50'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 transition-all font-mono`}
-                        />
-                        <button
-                          className={`h-9 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${isDark ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-blue-600 hover:bg-blue-700 text-white'} focus:outline-none focus:ring-2 focus:ring-blue-500/20`}
-                        >
-                          <Plus className="h-4 w-4" />
-                        </button>
-                      </div>
+                      <button
+                        className={`h-9 w-9 rounded-md border ${themeClasses.border.primary} flex items-center justify-center transition-all duration-200 ${isDark ? 'text-gray-400 hover:text-white hover:bg-gray-800' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}`}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -207,74 +204,68 @@ export default function RequestPanel({
 
             </TabsContent>
 
-            <TabsContent value="headers" className="p-6 h-full flex flex-col space-y-4">
+            <TabsContent value="headers" className="px-6 py-3 h-full flex flex-col space-y-4">
               {/* Add Header Section */}
               <div className="space-y-3">
-                <div className="flex items-center justify-between">
+                {/* <div className="flex items-center justify-between">
                   <h4 className={`text-sm font-medium ${themeClasses.text.primary}`}>Request Headers</h4>
                   <span className={`text-xs px-2 py-1 rounded-full ${isDark ? 'bg-gray-800/60 text-gray-400' : 'bg-gray-100 text-gray-600'}`}>
                     {Object.keys(safeRequest.headers || {}).length} headers
                   </span>
-                </div>
+                </div> */}
                 
-                {/* Header Input Card */}
-                <div className={`rounded-xl border ${themeClasses.border.primary} ${isDark ? 'bg-gray-900/20' : 'bg-white'} p-4`}>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div className="space-y-1.5">
-                      <label className={`text-xs font-medium ${themeClasses.text.secondary}`}>Header Name</label>
+                {/* Header Input - Simplified Vercel Style */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className={`text-xs font-medium ${themeClasses.text.secondary}`}>Key</label>
+                    <input
+                      type="text"
+                      placeholder="Content-Type"
+                      value={newHeaderKey}
+                      onChange={(e) => setNewHeaderKey(e.target.value)}
+                      className={`w-full h-9 px-3 text-sm rounded-md border ${themeClasses.border.primary} ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all`}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className={`text-xs font-medium ${themeClasses.text.secondary}`}>Value</label>
+                    <div className="flex gap-2">
                       <input
                         type="text"
-                        placeholder="Content-Type"
-                        value={newHeaderKey}
-                        onChange={(e) => setNewHeaderKey(e.target.value)}
-                        className={`w-full h-9 px-3 text-sm rounded-lg border ${themeClasses.border.primary} ${isDark ? 'bg-gray-800/30' : 'bg-gray-50/50'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 transition-all font-mono`}
+                        placeholder="application/json"
+                        value={newHeaderValue}
+                        onChange={(e) => setNewHeaderValue(e.target.value)}
+                        className={`flex-1 h-9 px-3 text-sm rounded-md border ${themeClasses.border.primary} ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all`}
                       />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className={`text-xs font-medium ${themeClasses.text.secondary}`}>Value</label>
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          placeholder="application/json"
-                          value={newHeaderValue}
-                          onChange={(e) => setNewHeaderValue(e.target.value)}
-                          className={`flex-1 h-9 px-3 text-sm rounded-lg border ${themeClasses.border.primary} ${isDark ? 'bg-gray-800/30' : 'bg-gray-50/50'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 transition-all font-mono`}
-                        />
-                        <button
-                          onClick={addHeader}
-                          disabled={!newHeaderKey || !newHeaderValue}
-                          className={`h-9 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${
-                            newHeaderKey && newHeaderValue
-                              ? `${isDark ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-blue-600 hover:bg-blue-700 text-white'} focus:outline-none focus:ring-2 focus:ring-blue-500/20`
-                              : `${isDark ? 'bg-gray-800/50 text-gray-500' : 'bg-gray-200 text-gray-400'} cursor-not-allowed`
-                          }`}
-                        >
-                          <Plus className="h-4 w-4" />
-                        </button>
-                      </div>
+                      <button
+                        onClick={addHeader}
+                        disabled={!newHeaderKey || !newHeaderValue}
+                        className={`h-9 w-9 rounded-md border ${themeClasses.border.primary} flex items-center justify-center transition-all duration-200 ${
+                          newHeaderKey && newHeaderValue
+                            ? `${isDark ? 'text-gray-400 hover:text-white hover:bg-gray-800' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}`
+                            : `${isDark ? 'text-gray-600 cursor-not-allowed' : 'text-gray-400 cursor-not-allowed'}`
+                        }`}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </button>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Headers List */}
-              <div className="flex-1 space-y-2 overflow-y-auto">
+              {/* Headers List - Simplified */}
+              <div className="flex-1 space-y-3 overflow-y-auto">
                 {Object.entries(safeRequest.headers || {}).map(([key, value]) => (
                   <div
                     key={key}
-                    className={`rounded-lg border ${themeClasses.border.primary} ${isDark ? 'bg-gray-900/20' : 'bg-white'} p-3 group hover:${isDark ? 'bg-gray-900/40' : 'bg-gray-50'} transition-all`}
+                    className={`grid grid-cols-1 md:grid-cols-2 gap-3 p-3 rounded-md border ${themeClasses.border.primary} group hover:${isDark ? 'bg-gray-900/20' : 'bg-gray-50'} transition-all`}
                   >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className={`text-xs font-medium ${themeClasses.text.secondary}`}>Header</span>
-                        </div>
-                        <p className={`text-sm font-mono ${themeClasses.text.primary} break-all`}>{key}</p>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className={`text-xs font-medium ${themeClasses.text.secondary}`}>Value</span>
-                        </div>
+                    <div className="space-y-1">
+                      <span className={`text-xs font-medium ${themeClasses.text.secondary}`}>Key</span>
+                      <p className={`text-sm font-mono ${themeClasses.text.primary} break-all`}>{key}</p>
+                    </div>
+                    <div className="space-y-1 flex justify-between items-start">
+                      <div className="flex-1">
+                        <span className={`text-xs font-medium ${themeClasses.text.secondary}`}>Value</span>
                         <p className={`text-sm font-mono ${themeClasses.text.secondary} break-all`}>{value}</p>
                       </div>
                       <button
@@ -287,81 +278,65 @@ export default function RequestPanel({
                   </div>
                 ))}
                 
-                {/* Empty state */}
-                {Object.keys(safeRequest.headers || {}).length === 0 && (
-                  <div className={`text-center py-8 ${themeClasses.text.tertiary}`}>
-                    <p className="text-sm">Add headers above to customize your request</p>
-                  </div>
-                )}
               </div>
             </TabsContent>
 
-            <TabsContent value="body" className="p-6 h-full flex flex-col space-y-4">
+            <TabsContent value="body" className="px-6 py-3 h-full flex flex-col space-y-4">
               {/* Body Configuration */}
               <div className="space-y-3">
-                <div className="flex items-center justify-between">
+                {/* <div className="flex items-center justify-between">
                   <h4 className={`text-sm font-medium ${themeClasses.text.primary}`}>Request Body</h4>
                   {safeRequest.body && (
                     <span className={`text-xs px-2 py-1 rounded-full ${isDark ? 'bg-gray-800/60 text-gray-400' : 'bg-gray-100 text-gray-600'}`}>
                       {new Blob([safeRequest.body]).size} bytes
                     </span>
                   )}
-                </div>
+                </div> */}
                 
-                {/* Body Type Controls */}
-                <div className={`rounded-xl border ${themeClasses.border.primary} ${isDark ? 'bg-gray-900/20' : 'bg-white'} p-4`}>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-1.5">
-                      <label className={`text-xs font-medium ${themeClasses.text.secondary}`}>Body Type</label>
-                      <select
-                        className={`w-full h-9 px-3 text-sm rounded-lg border ${themeClasses.border.primary} ${isDark ? 'bg-gray-800/30' : 'bg-gray-50/50'} ${themeClasses.text.primary} focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 transition-all`}
-                      >
-                        <option value="raw">Raw</option>
-                        <option value="form-data">Form Data</option>
-                        <option value="x-www-form-urlencoded">URL Encoded</option>
-                        <option value="binary">Binary</option>
-                      </select>
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className={`text-xs font-medium ${themeClasses.text.secondary}`}>Content Type</label>
-                      <select
-                        className={`w-full h-9 px-3 text-sm rounded-lg border ${themeClasses.border.primary} ${isDark ? 'bg-gray-800/30' : 'bg-gray-50/50'} ${themeClasses.text.primary} focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 transition-all`}
-                      >
-                        <option value="json">JSON</option>
-                        <option value="text">Text</option>
-                        <option value="xml">XML</option>
-                        <option value="html">HTML</option>
-                      </select>
-                    </div>
-                  </div>
+                {/* Content Type Radio Buttons - Postman Style */}
+                <div className="flex items-center gap-4">
+                  {[
+                    { value: 'json', label: 'JSON' },
+                    { value: 'text', label: 'Text' },
+                    { value: 'xml', label: 'XML' },
+                    { value: 'form', label: 'Form' }
+                  ].map(({ value, label }) => (
+                    <label key={value} className="flex items-center gap-1.5 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="contentType"
+                        value={value}
+                        defaultChecked={value === 'json'}
+                        className={`w-3 h-3 text-blue-600 ${isDark ? 'bg-transparent border-gray-600' : 'bg-white border-gray-300'} focus:ring-blue-500 focus:ring-1`}
+                      />
+                      <span className={`text-xs ${themeClasses.text.primary}`}>{label}</span>
+                    </label>
+                  ))}
                 </div>
               </div>
               
-              {/* Body Editor */}
-              <div className="flex-1 space-y-2">
-                <label className={`text-xs font-medium ${themeClasses.text.secondary}`}>Content</label>
-                <div className={`flex-1 rounded-xl border ${themeClasses.border.primary} ${isDark ? 'bg-gray-900/20' : 'bg-white'} overflow-hidden`}>
-                  <Textarea
-                    placeholder={`{\n  "name": "John Doe",\n  "email": "john@example.com",\n  "role": "developer"\n}`}
-                    value={safeRequest.body || ''}
-                    onChange={(e) => updateRequest("body", e.target.value)}
-                    className={`w-full h-full min-h-[300px] font-mono text-sm resize-none border-0 ${isDark ? 'bg-gray-900/20' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:ring-2 focus:ring-blue-500/20 p-4 transition-all`}
-                  />
-                </div>
+              {/* Body Editor - Clean */}
+              <div className="flex-1">
+                <Textarea
+                  placeholder="Request body content..."
+                  value={safeRequest.body || ''}
+                  onChange={(e) => updateRequest("body", e.target.value)}
+                  className={`w-full h-full min-h-[300px] text-sm resize-none rounded-md border ${themeClasses.border.primary} ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 p-4 transition-all`}
+                />
               </div>
             </TabsContent>
 
-            <TabsContent value="auth" className="p-6">
-              <div className="space-y-6">
-                {/* Auth Type Select */}
-                <div>
-                  <label className={`text-sm font-medium ${themeClasses.text.secondary} block mb-2`}>
+            <TabsContent value="auth" className="px-6 py-3 h-full flex flex-col space-y-4">
+              <div className="space-y-3">
+                {/* Auth Type Select - Simplified */}
+                <div className="space-y-1.5">
+                  <label className={`text-xs font-medium ${themeClasses.text.secondary}`}>
                     Authentication Type
                   </label>
                   <select
                     value={authType}
                     onChange={(e) => setAuthType(e.target.value)}
-                    className={`w-full rounded-lg px-3 py-3 text-sm ${themeClasses.input.base}`}
+                    className={`w-full h-9 px-3 text-sm rounded-md border ${themeClasses.border.primary} ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all`}
                   >
                     <option value="none">No Authentication</option>
                     <option value="bearer">Bearer Token</option>
@@ -372,88 +347,81 @@ export default function RequestPanel({
 
                 {/* Auth Forms - Simplified */}
                 {authType === 'bearer' && (
-                  <div className="space-y-3">
-                    <div className="relative">
-                      <Input
-                        type={showBearerToken ? "text" : "password"}
-                        placeholder="Enter your bearer token"
-                        value={bearerToken}
-                        onChange={(e) => setBearerToken(e.target.value)}
-                        className={`h-12 text-sm pr-12 ${themeClasses.input.base}`}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowBearerToken(!showBearerToken)}
-                        className={`absolute right-3 top-1/2 transform -translate-y-1/2 ${themeClasses.text.tertiary} hover:${themeClasses.text.secondary} transition-colors`}
-                      >
-                        {showBearerToken ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </button>
+                  <div className="space-y-2">
+                    <div className="space-y-1.5">
+                      <label className={`text-xs font-medium ${themeClasses.text.secondary}`}>Bearer Token</label>
+                      <div className="relative">
+                        <input
+                          type={showBearerToken ? "text" : "password"}
+                          placeholder="Enter your bearer token"
+                          value={bearerToken}
+                          onChange={(e) => setBearerToken(e.target.value)}
+                          className={`w-full h-9 px-3 pr-10 text-sm rounded-md border ${themeClasses.border.primary} ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all`}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowBearerToken(!showBearerToken)}
+                          className={`absolute right-2 top-1/2 transform -translate-y-1/2 p-1 rounded transition-colors ${themeClasses.text.tertiary} hover:${themeClasses.text.secondary}`}
+                        >
+                          {showBearerToken ? (
+                            <EyeOff className="h-3.5 w-3.5" />
+                          ) : (
+                            <Eye className="h-3.5 w-3.5" />
+                          )}
+                        </button>
+                      </div>
                     </div>
-                    <p className={`text-xs ${themeClasses.text.tertiary}`}>
-                      Will add Authorization header with Bearer token
-                    </p>
                   </div>
                 )}
 
                 {authType === 'api-key' && (
-                  <div className="space-y-3">
-                    <div className="grid grid-cols-2 gap-3">
-                      <Input
-                        placeholder="Header name (e.g., X-API-Key)"
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <label className={`text-xs font-medium ${themeClasses.text.secondary}`}>Header Name</label>
+                      <input
+                        placeholder="X-API-Key"
                         value={apiKeyHeader}
                         onChange={(e) => setApiKeyHeader(e.target.value)}
-                        className={`h-12 text-sm ${themeClasses.input.base}`}
+                        className={`w-full h-9 px-3 text-sm rounded-md border ${themeClasses.border.primary} ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all`}
                       />
-                      <Input
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className={`text-xs font-medium ${themeClasses.text.secondary}`}>API Key</label>
+                      <input
                         type="password"
                         placeholder="API key value"
                         value={apiKeyValue}
                         onChange={(e) => setApiKeyValue(e.target.value)}
-                        className={`h-12 text-sm ${themeClasses.input.base}`}
+                        className={`w-full h-9 px-3 text-sm rounded-md border ${themeClasses.border.primary} ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all`}
                       />
                     </div>
-                    <p className={`text-xs ${themeClasses.text.tertiary}`}>
-                      Will add custom header with your API key
-                    </p>
                   </div>
                 )}
 
                 {authType === 'basic' && (
-                  <div className="space-y-3">
-                    <div className="grid grid-cols-2 gap-3">
-                      <Input
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <label className={`text-xs font-medium ${themeClasses.text.secondary}`}>Username</label>
+                      <input
                         placeholder="Username"
                         value={basicUsername}
                         onChange={(e) => setBasicUsername(e.target.value)}
-                        className={`h-12 text-sm ${themeClasses.input.base}`}
+                        className={`w-full h-9 px-3 text-sm rounded-md border ${themeClasses.border.primary} ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all`}
                       />
-                      <Input
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className={`text-xs font-medium ${themeClasses.text.secondary}`}>Password</label>
+                      <input
                         type="password"
                         placeholder="Password"
                         value={basicPassword}
                         onChange={(e) => setBasicPassword(e.target.value)}
-                        className={`h-12 text-sm ${themeClasses.input.base}`}
+                        className={`w-full h-9 px-3 text-sm rounded-md border ${themeClasses.border.primary} ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all`}
                       />
                     </div>
-                    <p className={`text-xs ${themeClasses.text.tertiary}`}>
-                      Will add Authorization header with Basic auth
-                    </p>
                   </div>
                 )}
 
-                {authType === 'none' && (
-                  <div className={`text-center py-12 ${themeClasses.text.tertiary}`}>
-                    <div className={`w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4 ${themeClasses.card.base}`}>
-                      <div className={`w-6 h-6 rounded-full border-2 ${themeClasses.border.primary}`} />
-                    </div>
-                    <p className={`text-sm ${themeClasses.text.primary} mb-1`}>No authentication</p>
-                    <p className={`text-xs ${themeClasses.text.tertiary}`}>Select an auth method above</p>
-                  </div>
-                )}
               </div>
             </TabsContent>
           </Tabs>
