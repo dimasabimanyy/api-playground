@@ -165,15 +165,15 @@ export default function RequestPanel({
               </div>
             </div>
 
-            <TabsContent value="params" className="p-6 h-full flex flex-col space-y-4">
+            <TabsContent value="params" className="px-6 py-0 h-full flex flex-col space-y-4">
               {/* Add Parameter Section */}
               <div className="space-y-3">
-                <div className="flex items-center justify-between">
+                {/* <div className="flex items-center justify-end">
                   <h4 className={`text-sm font-medium ${themeClasses.text.primary}`}>Query Parameters</h4>
                   <span className={`text-xs px-2 py-1 rounded-full ${isDark ? 'bg-gray-800/60 text-gray-400' : 'bg-gray-100 text-gray-600'}`}>
                     0 parameters
                   </span>
-                </div>
+                </div> */}
                 
                 {/* Parameter Input Card */}
                 <div className={`rounded-xl border ${themeClasses.border.primary} ${isDark ? 'bg-gray-900/20' : 'bg-white'} p-4`}>
