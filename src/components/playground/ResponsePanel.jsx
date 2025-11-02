@@ -352,41 +352,12 @@ export default function ResponsePanel({ response, loading, request }) {
 
   return (
     <div className={`flex-1 h-full flex flex-col transition-all duration-300 ${themeClasses.bg.glass}`}>
-      {/* Response Header - Simplified */}
-      <div className={`px-4 py-3 ${themeClasses.bg.primary}`}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <span className={`text-xs font-mono px-2 py-1 rounded ${getStatusColor(response.status)}`}>
-              {response.status}
-            </span>
-            <span className={`text-xs ${themeClasses.text.tertiary}`}>{response.time}ms</span>
-            <span className={`text-xs ${themeClasses.text.tertiary}`}>{formatBytes(response.size || 0)}</span>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => copyToClipboard(formatResponseData(response.data))}
-              className={`text-xs px-3 py-1 rounded ${themeClasses.button.secondary}`}
-            >
-              <Copy className="h-3 w-3 mr-1" />
-              Copy
-            </button>
-            <button 
-              onClick={downloadResponse}
-              className={`text-xs px-3 py-1 rounded ${themeClasses.button.secondary}`}
-            >
-              <Download className="h-3 w-3 mr-1" />
-              Save
-            </button>
-          </div>
-        </div>
-      </div>
       
       {/* Response Content - Theme Aware */}
       <div className={`flex-1 overflow-hidden transition-colors duration-300 ${themeClasses.bg.primary}`}>
         <Tabs defaultValue="body" className="w-full h-full flex flex-col">
-          <div className={`border-b ${themeClasses.border.primary}`}>
-            <TabsList className="grid w-full grid-cols-2 h-8 bg-transparent p-0 border-none">
+          <div className={`border-b ${themeClasses.border.primary} flex justify-between items-center px-4 py-2`}>
+            <TabsList className="flex h-8 bg-transparent p-0 border-none gap-6">
               <TabsTrigger
                 value="body"
                 className={`
@@ -423,6 +394,33 @@ export default function ResponsePanel({ response, loading, request }) {
                 )}
               </TabsTrigger>
             </TabsList>
+            
+            {/* Status info on the right side - Postman style */}
+            <div className="flex items-center gap-4">
+              <span className={`text-xs font-mono px-2 py-1 rounded ${getStatusColor(response.status)}`}>
+                {response.status} {response.statusText}
+              </span>
+              <span className={`text-xs ${themeClasses.text.tertiary}`}>{response.time}ms</span>
+              <span className={`text-xs ${themeClasses.text.tertiary}`}>{formatBytes(response.size || 0)}</span>
+              
+              <div className="flex items-center gap-2">
+                {request && <CodeGenerationPanel request={request} />}
+                <button
+                  onClick={() => copyToClipboard(formatResponseData(response.data))}
+                  className={`text-xs px-3 py-1 rounded ${themeClasses.button.secondary}`}
+                >
+                  <Copy className="h-3 w-3 mr-1" />
+                  Copy
+                </button>
+                <button 
+                  onClick={downloadResponse}
+                  className={`text-xs px-3 py-1 rounded ${themeClasses.button.secondary}`}
+                >
+                  <Download className="h-3 w-3 mr-1" />
+                  Save
+                </button>
+              </div>
+            </div>
           </div>
           
           <TabsContent value="body" className="flex-1 flex flex-col overflow-hidden">
