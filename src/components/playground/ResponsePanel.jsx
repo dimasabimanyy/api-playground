@@ -356,7 +356,7 @@ export default function ResponsePanel({ response, loading, request }) {
       {/* Response Content - Theme Aware */}
       <div className={`flex-1 overflow-hidden transition-colors duration-300 ${themeClasses.bg.primary}`}>
         <Tabs defaultValue="body" className="w-full h-full flex flex-col">
-          <div className={`border-b ${themeClasses.border.primary} flex justify-between items-center px-4 py-2`}>
+          <div className={`${themeClasses.border.primary} flex justify-between items-center px-4 pt-2`}>
             <TabsList className="flex h-8 bg-transparent p-0 border-none gap-6">
               <TabsTrigger
                 value="body"
@@ -426,7 +426,7 @@ export default function ResponsePanel({ response, loading, request }) {
           <TabsContent value="body" className="flex-1 flex flex-col overflow-hidden">
             {/* Format buttons for JSON responses */}
             {getContentType() === 'json' && (
-              <div className={`px-4 py-2 border-b ${themeClasses.border.primary} flex items-center gap-2`}>
+              <div className={`px-4 py-2 ${themeClasses.border.primary} flex items-center gap-2`}>
                 <span className={`text-xs ${themeClasses.text.secondary} mr-2`}>Format:</span>
                 {[
                   { key: 'pretty', label: 'Pretty' },

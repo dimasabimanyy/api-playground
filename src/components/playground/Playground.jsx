@@ -186,24 +186,29 @@ export default function Playground() {
     e.preventDefault();
   };
 
-  const handleMouseMove = useCallback((e) => {
-    if (isDragging) {
-      const container = document.querySelector('[data-layout-container]');
-      if (container) {
-        const containerRect = container.getBoundingClientRect();
-        
-        if (layoutMode === 'split') {
-          // Horizontal dragging for split layout
-          const newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
-          setRequestPanelWidth(Math.min(Math.max(newWidth, 20), 80)); // Limit between 20% and 80%
-        } else {
-          // Vertical dragging for single column layout
-          const newHeight = ((e.clientY - containerRect.top) / containerRect.height) * 100;
-          setRequestPanelHeight(Math.min(Math.max(newHeight, 20), 80)); // Limit between 20% and 80%
+  const handleMouseMove = useCallback(
+    (e) => {
+      if (isDragging) {
+        const container = document.querySelector("[data-layout-container]");
+        if (container) {
+          const containerRect = container.getBoundingClientRect();
+
+          if (layoutMode === "split") {
+            // Horizontal dragging for split layout
+            const newWidth =
+              ((e.clientX - containerRect.left) / containerRect.width) * 100;
+            setRequestPanelWidth(Math.min(Math.max(newWidth, 20), 80)); // Limit between 20% and 80%
+          } else {
+            // Vertical dragging for single column layout
+            const newHeight =
+              ((e.clientY - containerRect.top) / containerRect.height) * 100;
+            setRequestPanelHeight(Math.min(Math.max(newHeight, 20), 80)); // Limit between 20% and 80%
+          }
         }
       }
-    }
-  }, [isDragging, layoutMode]);
+    },
+    [isDragging, layoutMode]
+  );
 
   const handleMouseUp = () => {
     setIsDragging(false);
@@ -212,11 +217,11 @@ export default function Playground() {
   // Effect to handle mouse events (must be at top level)
   useEffect(() => {
     if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
       return () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
       };
     }
   }, [isDragging, handleMouseMove]);
@@ -1165,7 +1170,6 @@ export default function Playground() {
       </div>
     );
   }
-
 
   return (
     <div
@@ -2605,7 +2609,7 @@ export default function Playground() {
           </div>
 
           {/* Method + URL + Send Row - Full Width */}
-          <div className={`border-b ${themeClasses.border.primary}`}>
+          <div className={`${themeClasses.border.primary}`}>
             <div className="px-3 sm:px-6 py-3 sm:py-4">
               <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3">
                 {/* METHOD SELECT + URL INPUT + ENVIRONMENT ROW */}
@@ -2918,25 +2922,37 @@ export default function Playground() {
             data-layout-container
             className={`flex-1 flex ${
               layoutMode === "single" ? "flex-col" : "flex-col lg:flex-row"
-            } ${themeClasses.bg.primary} transition-colors duration-300 ${isDragging ? (layoutMode === 'single' ? 'cursor-row-resize' : 'cursor-col-resize') : ''}`}
+            } ${themeClasses.bg.primary} transition-colors duration-300 ${
+              isDragging
+                ? layoutMode === "single"
+                  ? "cursor-row-resize"
+                  : "cursor-col-resize"
+                : ""
+            }`}
           >
-            {layoutMode === 'split' ? (
+            {layoutMode === "split" ? (
               <>
                 {/* Request Panel with dynamic width */}
                 <div style={{ width: `${requestPanelWidth}%` }}>
                   <RequestPanel request={request} setRequest={setRequest} />
                 </div>
-                
+
                 {/* Horizontal Draggable Divider */}
                 <div
-                  className={`w-1 bg-gray-300 dark:bg-gray-600 hover:bg-blue-500 dark:hover:bg-blue-400 cursor-col-resize transition-colors duration-200 ${isDragging ? 'bg-blue-500 dark:bg-blue-400' : ''}`}
+                  className={`bg-gray-100 dark:bg-gray-600 hover:bg-blue-500 dark:hover:bg-blue-400 cursor-col-resize transition-colors duration-200 ${
+                    isDragging ? "bg-blue-500 dark:bg-blue-400" : ""
+                  }`}
                   onMouseDown={handleMouseDown}
+                  style={{ width: "2px" }}
                 >
-                  <div className="w-full h-full flex items-center justify-center">
+                  <div
+                    className="w-full h-full flex items-center justify-center"
+                    style={{ height: "10px" }}
+                  >
                     <GripVertical className="h-4 w-4 text-gray-400 opacity-0 hover:opacity-100 transition-opacity" />
                   </div>
                 </div>
-                
+
                 {/* Response Panel with remaining width */}
                 <div style={{ width: `${100 - requestPanelWidth}%` }}>
                   <ResponsePanel
@@ -2952,17 +2968,20 @@ export default function Playground() {
                 <div style={{ height: `${requestPanelHeight}%` }}>
                   <RequestPanel request={request} setRequest={setRequest} />
                 </div>
-                
+
                 {/* Vertical Draggable Divider */}
                 <div
-                  className={`h-1 bg-gray-300 dark:bg-gray-600 hover:bg-blue-500 dark:hover:bg-blue-400 cursor-row-resize transition-colors duration-200 ${isDragging ? 'bg-blue-500 dark:bg-blue-400' : ''}`}
+                  className={`bg-gray-100 dark:bg-gray-600 hover:bg-blue-500 dark:hover:bg-blue-400 cursor-row-resize transition-colors duration-200 ${
+                    isDragging ? "bg-blue-500 dark:bg-blue-400" : ""
+                  }`}
                   onMouseDown={handleMouseDown}
+                  style={{ height: "2px" }}
                 >
                   <div className="w-full h-full flex items-center justify-center">
                     <GripHorizontal className="h-4 w-4 text-gray-400 opacity-0 hover:opacity-100 transition-opacity" />
                   </div>
                 </div>
-                
+
                 {/* Response Panel with remaining height */}
                 <div style={{ height: `${100 - requestPanelHeight}%` }}>
                   <ResponsePanel
