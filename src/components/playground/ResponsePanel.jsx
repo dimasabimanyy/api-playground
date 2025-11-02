@@ -403,21 +403,21 @@ export default function ResponsePanel({ response, loading, request }) {
               <span className={`text-xs ${themeClasses.text.tertiary}`}>{response.time}ms</span>
               <span className={`text-xs ${themeClasses.text.tertiary}`}>{formatBytes(response.size || 0)}</span>
               
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
                 {request && <CodeGenerationPanel request={request} />}
                 <button
                   onClick={() => copyToClipboard(formatResponseData(response.data))}
-                  className={`text-xs px-3 py-1 rounded ${themeClasses.button.secondary}`}
+                  className={`p-1.5 rounded-md transition-all duration-200 ${isDark ? 'text-gray-400 hover:text-gray-200 hover:bg-gray-800/50' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'}`}
+                  title="Copy response"
                 >
-                  <Copy className="h-3 w-3 mr-1" />
-                  Copy
+                  <Copy className="h-3.5 w-3.5" />
                 </button>
                 <button 
                   onClick={downloadResponse}
-                  className={`text-xs px-3 py-1 rounded ${themeClasses.button.secondary}`}
+                  className={`p-1.5 rounded-md transition-all duration-200 ${isDark ? 'text-gray-400 hover:text-gray-200 hover:bg-gray-800/50' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'}`}
+                  title="Download response"
                 >
-                  <Download className="h-3 w-3 mr-1" />
-                  Save
+                  <Download className="h-3.5 w-3.5" />
                 </button>
               </div>
             </div>
