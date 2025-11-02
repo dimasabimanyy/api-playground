@@ -177,7 +177,7 @@ export default function Playground() {
   const [editingRequestName, setEditingRequestName] = useState(false);
   const [layoutMode, setLayoutMode] = useState("single"); // 'single' or 'split'
   const [requestPanelWidth, setRequestPanelWidth] = useState(50); // percentage
-  const [requestPanelHeight, setRequestPanelHeight] = useState(50); // percentage for single column
+  const [requestPanelHeight, setRequestPanelHeight] = useState(35); // percentage for single column
   const [isDragging, setIsDragging] = useState(false);
 
   // Drag handling functions for resizable panels (must be at top level)
