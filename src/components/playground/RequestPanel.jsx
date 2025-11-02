@@ -346,7 +346,7 @@ export default function RequestPanel({
                       parameterHints: { enabled: false },
                       hover: { enabled: false },
                       contextmenu: false,
-                      lineNumbers: 'off',
+                      lineNumbers: 'on',
                       glyphMargin: false,
                       folding: false,
                       selectOnLineNumbers: false,
