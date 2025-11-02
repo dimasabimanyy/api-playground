@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, X, Eye, EyeOff } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { getThemeClasses } from "@/lib/theme";
+import Editor from "@monaco-editor/react";
 
 export default function RequestPanel({
   request = { method: 'GET', url: '', headers: {}, body: '' },
@@ -29,6 +29,7 @@ export default function RequestPanel({
   const [authType, setAuthType] = useState('none');
   const [bearerToken, setBearerToken] = useState('');
   const [showBearerToken, setShowBearerToken] = useState(true);
+  const [contentType, setContentType] = useState('json');
   const [apiKeyHeader, setApiKeyHeader] = useState('X-API-Key');
   const [apiKeyValue, setApiKeyValue] = useState('');
   const [basicUsername, setBasicUsername] = useState('');
@@ -306,7 +307,8 @@ export default function RequestPanel({
                         type="radio"
                         name="contentType"
                         value={value}
-                        defaultChecked={value === 'json'}
+                        checked={contentType === value}
+                        onChange={(e) => setContentType(e.target.value)}
                         className={`w-3 h-3 text-blue-600 ${isDark ? 'bg-transparent border-gray-600' : 'bg-white border-gray-300'} focus:ring-blue-500 focus:ring-1`}
                       />
                       <span className={`text-xs ${themeClasses.text.primary}`}>{label}</span>
@@ -315,14 +317,44 @@ export default function RequestPanel({
                 </div>
               </div>
               
-              {/* Body Editor - Clean */}
-              <div className="flex-1">
-                <Textarea
-                  placeholder="Request body content..."
-                  value={safeRequest.body || ''}
-                  onChange={(e) => updateRequest("body", e.target.value)}
-                  className={`w-full h-full min-h-[300px] text-sm resize-none rounded-md border ${themeClasses.border.primary} ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 p-4 transition-all`}
-                />
+              {/* Body Editor - Monaco Code Editor */}
+              <div className="flex-1 flex flex-col">
+                <div className={`flex-1 min-h-[300px] rounded-md border ${themeClasses.border.primary} overflow-hidden`}>
+                  <Editor
+                    height="300px"
+                    language={contentType === 'json' ? 'json' : contentType === 'xml' ? 'xml' : 'plaintext'}
+                    value={safeRequest.body || ''}
+                    onChange={(value) => updateRequest("body", value || '')}
+                    theme={isDark ? 'vs-dark' : 'light'}
+                    options={{
+                      minimap: { enabled: false },
+                      scrollBeyondLastLine: false,
+                      fontSize: 13,
+                      lineHeight: 20,
+                      tabSize: 2,
+                      insertSpaces: true,
+                      wordWrap: 'on',
+                      automaticLayout: true,
+                      formatOnPaste: true,
+                      formatOnType: true,
+                      suggest: {
+                        showKeywords: false,
+                        showSnippets: false,
+                        showWords: false
+                      },
+                      quickSuggestions: false,
+                      parameterHints: { enabled: false },
+                      hover: { enabled: false },
+                      contextmenu: false,
+                      lineNumbers: 'off',
+                      glyphMargin: false,
+                      folding: false,
+                      selectOnLineNumbers: false,
+                      matchBrackets: 'always',
+                      autoIndent: 'full'
+                    }}
+                  />
+                </div>
               </div>
             </TabsContent>
 
