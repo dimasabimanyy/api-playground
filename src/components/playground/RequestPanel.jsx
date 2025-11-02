@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, X, Eye, EyeOff } from "lucide-react";
+import { Plus, X, Eye, EyeOff, Search } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { getThemeClasses } from "@/lib/theme";
 
@@ -165,44 +165,58 @@ export default function RequestPanel({
               </div>
             </div>
 
-            <TabsContent value="params" className="p-4 h-full flex flex-col">
-              {/* Table Container with padding */}
-              <div className={`border rounded-lg overflow-hidden ${themeClasses.border.primary} ${themeClasses.bg.glass}`}>
-                {/* Table Header - Compact Postman style */}
-                <div className={`grid grid-cols-12 gap-2 px-3 py-2 text-xs font-medium border-b ${themeClasses.border.primary} ${themeClasses.text.secondary} ${isDark ? 'bg-gray-800/30' : 'bg-gray-50'}`}>
-                  <div className="col-span-5">Key</div>
-                  <div className="col-span-6">Value</div>
-                  <div className="col-span-1"></div>
-                </div>
-
-                {/* Params Table Body */}
-                <div className="flex-1 overflow-y-auto">
-                {/* Add new param row - Always at bottom for now since no params state yet */}
-                <div className={`grid grid-cols-12 gap-2 px-3 py-2 border-b ${themeClasses.border.primary} ${isDark ? 'bg-gray-800/10' : 'bg-gray-50/30'}`}>
-                  <input
-                    type="text"
-                    placeholder="page"
-                    className={`col-span-5 h-7 px-2 text-sm border-0 bg-transparent ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:bg-${isDark ? 'gray-800/50' : 'gray-100/80'} rounded font-mono`}
-                  />
-                  <input
-                    type="text"
-                    placeholder="1"
-                    className={`col-span-6 h-7 px-2 text-sm border-0 bg-transparent ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:bg-${isDark ? 'gray-800/50' : 'gray-100/80'} rounded font-mono`}
-                  />
-                  <div className="col-span-1 flex justify-center items-center">
-                    <button
-                      className={`w-5 h-5 flex items-center justify-center rounded transition-all duration-200 ${themeClasses.text.tertiary} hover:${isDark ? 'bg-blue-500/20' : 'bg-blue-100'} hover:text-blue-500`}
-                    >
-                      <Plus className="h-3 w-3" />
-                    </button>
-                  </div>
+            <TabsContent value="params" className="p-6 h-full flex flex-col space-y-4">
+              {/* Add Parameter Section */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className={`text-sm font-medium ${themeClasses.text.primary}`}>Query Parameters</h4>
+                  <span className={`text-xs px-2 py-1 rounded-full ${isDark ? 'bg-gray-800/60 text-gray-400' : 'bg-gray-100 text-gray-600'}`}>
+                    0 parameters
+                  </span>
                 </div>
                 
-                {/* Empty state */}
-                <div className={`text-center py-8 ${themeClasses.text.tertiary}`}>
-                  <p className="text-xs">Add query parameters above</p>
-                  <p className="text-xs mt-1">Parameters will be appended to the URL: ?key=value</p>
+                {/* Parameter Input Card */}
+                <div className={`rounded-xl border ${themeClasses.border.primary} ${isDark ? 'bg-gray-900/20' : 'bg-white'} p-4`}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <label className={`text-xs font-medium ${themeClasses.text.secondary}`}>Parameter Name</label>
+                      <input
+                        type="text"
+                        placeholder="page"
+                        className={`w-full h-9 px-3 text-sm rounded-lg border ${themeClasses.border.primary} ${isDark ? 'bg-gray-800/30' : 'bg-gray-50/50'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 transition-all font-mono`}
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className={`text-xs font-medium ${themeClasses.text.secondary}`}>Value</label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          placeholder="1"
+                          className={`flex-1 h-9 px-3 text-sm rounded-lg border ${themeClasses.border.primary} ${isDark ? 'bg-gray-800/30' : 'bg-gray-50/50'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 transition-all font-mono`}
+                        />
+                        <button
+                          className={`h-9 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${isDark ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-blue-600 hover:bg-blue-700 text-white'} focus:outline-none focus:ring-2 focus:ring-blue-500/20`}
+                        >
+                          <Plus className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
+              </div>
+
+              {/* Parameters List - Empty State */}
+              <div className="flex-1 flex items-center justify-center">
+                <div className="text-center space-y-3 max-w-xs">
+                  <div className={`w-12 h-12 mx-auto rounded-full flex items-center justify-center ${isDark ? 'bg-gray-800/50' : 'bg-gray-100'}`}>
+                    <Search className={`h-5 w-5 ${themeClasses.text.tertiary}`} />
+                  </div>
+                  <div className="space-y-1">
+                    <p className={`text-sm font-medium ${themeClasses.text.primary}`}>No parameters yet</p>
+                    <p className={`text-xs ${themeClasses.text.tertiary} leading-relaxed`}>
+                      Add query parameters to customize your API request. They'll be appended to the URL as ?key=value
+                    </p>
+                  </div>
                 </div>
               </div>
             </TabsContent>
