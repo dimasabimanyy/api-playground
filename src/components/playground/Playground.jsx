@@ -56,6 +56,10 @@ import {
   SplitSquareHorizontal,
   GripVertical,
   GripHorizontal,
+  Upload,
+  Download,
+  FileUp,
+  FileDown,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -179,6 +183,9 @@ export default function Playground() {
   const [requestPanelWidth, setRequestPanelWidth] = useState(50); // percentage
   const [requestPanelHeight, setRequestPanelHeight] = useState(35); // percentage for single column
   const [isDragging, setIsDragging] = useState(false);
+  const [showImportExportModal, setShowImportExportModal] = useState(false);
+  const [importData, setImportData] = useState('');
+  const [importError, setImportError] = useState('');
 
   // Drag handling functions for resizable panels (must be at top level)
   const handleMouseDown = (e) => {
@@ -1283,8 +1290,18 @@ export default function Playground() {
               Sign in
             </button>
           )}
-          {/* Layout Toggle Button */}
+          {/* Import/Export and Layout Buttons */}
           <div className="flex items-center gap-2 ml-4">
+            {/* Import/Export Button */}
+            <button
+              onClick={() => setShowImportExportModal(true)}
+              className={`p-2 rounded transition-all duration-200 ${themeClasses.button.ghost} relative group`}
+              title="Import/Export Collections"
+            >
+              <FileUp className="h-4 w-4" />
+            </button>
+            
+            {/* Layout Toggle Button */}
             <button
               onClick={() =>
                 setLayoutMode(layoutMode === "single" ? "split" : "single")
@@ -3443,6 +3460,272 @@ export default function Playground() {
                 className="px-3 text-xs"
               >
                 Cancel
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Import/Export Modal */}
+      <Dialog open={showImportExportModal} onOpenChange={setShowImportExportModal}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Import/Export Collections</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6">
+            {/* Export Section */}
+            <div className="space-y-3">
+              <h3 className="text-sm font-medium">Export Current Request</h3>
+              <p className="text-xs text-gray-600 dark:text-gray-400">
+                Export your current request as a Postman collection
+              </p>
+              <Button
+                onClick={() => {
+                  // Parse URL to extract components
+                  let urlParts = { protocol: 'https', host: [], path: [], query: [] };
+                  if (request.url) {
+                    try {
+                      const url = new URL(request.url);
+                      urlParts.protocol = url.protocol.replace(':', '');
+                      urlParts.host = url.hostname.split('.');
+                      urlParts.path = url.pathname.split('/').filter(p => p);
+                      
+                      // Extract query parameters
+                      url.searchParams.forEach((value, key) => {
+                        urlParts.query.push({ key, value });
+                      });
+                    } catch (e) {
+                      // Fallback for invalid URLs
+                      urlParts.host = ['localhost'];
+                      urlParts.path = [];
+                    }
+                  }
+
+                  const collection = {
+                    info: {
+                      _postman_id: crypto.randomUUID(),
+                      name: "API Playground Export",
+                      schema: "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+                      _exporter_id: "api-playground"
+                    },
+                    item: [{
+                      name: request.name || "Untitled Request",
+                      request: {
+                        method: request.method || "GET",
+                        header: Object.entries(request.headers || {}).map(([key, value]) => ({
+                          key,
+                          value,
+                          type: "text"
+                        })),
+                        body: request.body ? {
+                          mode: "raw",
+                          raw: request.body,
+                          options: {
+                            raw: {
+                              language: "json"
+                            }
+                          }
+                        } : undefined,
+                        url: {
+                          raw: request.url || "",
+                          protocol: urlParts.protocol,
+                          host: urlParts.host,
+                          path: urlParts.path,
+                          query: urlParts.query.length > 0 ? urlParts.query : undefined
+                        }
+                      },
+                      response: []
+                    }]
+                  };
+                  
+                  const blob = new Blob([JSON.stringify(collection, null, 2)], { type: 'application/json' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = 'postman-collection.json';
+                  a.click();
+                  URL.revokeObjectURL(url);
+                }}
+                variant="outline"
+                className="w-full"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Export as Postman Collection
+              </Button>
+            </div>
+
+            {/* Import Section */}
+            <div className="space-y-3">
+              <h3 className="text-sm font-medium">Import Postman Collection</h3>
+              <p className="text-xs text-gray-600 dark:text-gray-400">
+                Paste your Postman collection JSON or upload a file
+              </p>
+              
+              {/* File Upload */}
+              <div className="space-y-2">
+                <input
+                  type="file"
+                  accept=".json"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onload = (event) => {
+                        try {
+                          const content = event.target?.result;
+                          setImportData(content);
+                          setImportError('');
+                        } catch (error) {
+                          setImportError('Error reading file');
+                        }
+                      };
+                      reader.readAsText(file);
+                    }
+                  }}
+                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                />
+              </div>
+
+              {/* JSON Textarea */}
+              <div className="space-y-2">
+                <label className="text-xs font-medium">Or paste JSON:</label>
+                <textarea
+                  value={importData}
+                  onChange={(e) => {
+                    setImportData(e.target.value);
+                    setImportError('');
+                  }}
+                  placeholder="Paste your Postman collection JSON here..."
+                  className="w-full h-32 p-3 text-sm border rounded-md font-mono resize-none"
+                />
+              </div>
+
+              {importError && (
+                <p className="text-xs text-red-600">{importError}</p>
+              )}
+
+              <Button
+                onClick={() => {
+                  try {
+                    const collection = JSON.parse(importData);
+                    
+                    // Validate basic Postman collection structure
+                    if (!collection.info || !collection.item) {
+                      setImportError('Invalid Postman collection format');
+                      return;
+                    }
+
+                    // Import first request from collection
+                    const firstItem = collection.item[0];
+                    if (firstItem && firstItem.request) {
+                      const request = firstItem.request;
+                      
+                      // Convert headers (V2.1 format)
+                      const headers = {};
+                      if (request.header && Array.isArray(request.header)) {
+                        request.header.forEach(h => {
+                          if (h.key && h.value && h.type !== 'disabled') {
+                            headers[h.key] = h.value;
+                          }
+                        });
+                      }
+
+                      // Build URL from V2.1 format
+                      let fullUrl = '';
+                      if (typeof request.url === 'string') {
+                        fullUrl = request.url;
+                      } else if (request.url && typeof request.url === 'object') {
+                        // Handle V2.1 URL object format
+                        if (request.url.raw) {
+                          fullUrl = request.url.raw;
+                        } else {
+                          // Construct URL from parts
+                          const protocol = request.url.protocol || 'https';
+                          const host = Array.isArray(request.url.host) ? request.url.host.join('.') : request.url.host || '';
+                          const path = Array.isArray(request.url.path) ? '/' + request.url.path.join('/') : request.url.path || '';
+                          
+                          fullUrl = `${protocol}://${host}${path}`;
+                          
+                          // Add query parameters
+                          if (request.url.query && Array.isArray(request.url.query)) {
+                            const queryParams = request.url.query
+                              .filter(q => q.key && q.value && !q.disabled)
+                              .map(q => `${encodeURIComponent(q.key)}=${encodeURIComponent(q.value)}`)
+                              .join('&');
+                            
+                            if (queryParams) {
+                              fullUrl += '?' + queryParams;
+                            }
+                          }
+                        }
+                      }
+
+                      // Extract body content
+                      let bodyContent = '';
+                      if (request.body) {
+                        if (request.body.mode === 'raw' && request.body.raw) {
+                          bodyContent = request.body.raw;
+                        } else if (request.body.mode === 'formdata' && request.body.formdata) {
+                          // Convert form data to JSON representation
+                          const formObj = {};
+                          request.body.formdata.forEach(item => {
+                            if (item.key && item.value && item.type !== 'file') {
+                              formObj[item.key] = item.value;
+                            }
+                          });
+                          bodyContent = JSON.stringify(formObj, null, 2);
+                        } else if (request.body.mode === 'urlencoded' && request.body.urlencoded) {
+                          // Convert URL encoded to JSON representation
+                          const urlEncodedObj = {};
+                          request.body.urlencoded.forEach(item => {
+                            if (item.key && item.value) {
+                              urlEncodedObj[item.key] = item.value;
+                            }
+                          });
+                          bodyContent = JSON.stringify(urlEncodedObj, null, 2);
+                        }
+                      }
+
+                      // Create a new tab with the imported request
+                      const newTabId = Date.now().toString();
+                      const newTab = {
+                        id: newTabId,
+                        name: firstItem.name || 'Imported Request',
+                        request: {
+                          method: request.method || 'GET',
+                          url: fullUrl,
+                          headers,
+                          body: bodyContent,
+                        },
+                        response: null,
+                        loading: false,
+                        collectionRequestId: null,
+                        isModified: false,
+                      };
+                      
+                      setRequestTabs((tabs) => [...tabs, newTab]);
+                      setActiveTabId(newTabId);
+
+                      setShowImportExportModal(false);
+                      setImportData('');
+                      setImportError('');
+                      
+                      // Show success message
+                      console.log(`Successfully imported: ${firstItem.name || 'Untitled Request'}`);
+                    } else {
+                      setImportError('No valid requests found in collection');
+                    }
+                  } catch (error) {
+                    console.error('Import error:', error);
+                    setImportError('Invalid JSON format or unsupported collection structure');
+                  }
+                }}
+                disabled={!importData.trim()}
+                className="w-full"
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                Import Collection
               </Button>
             </div>
           </div>
