@@ -3606,7 +3606,7 @@ export default function Playground() {
               )}
 
               <Button
-                onClick={() => {
+                onClick={async () => {
                   try {
                     const collection = JSON.parse(importData);
                     
@@ -3616,10 +3616,17 @@ export default function Playground() {
                       return;
                     }
 
-                    // Import first request from collection
-                    const firstItem = collection.item[0];
-                    if (firstItem && firstItem.request) {
-                      const request = firstItem.request;
+                    // Create a new collection with imported name and description
+                    const collectionName = collection.info.name || 'Imported Collection';
+                    const collectionDescription = collection.info.description || 'Imported from Postman';
+                    
+                    const newCollection = await createCollection(collectionName, collectionDescription, 'blue');
+                    
+                    // Function to parse Postman request into our format
+                    const parseRequest = (postmanItem) => {
+                      if (!postmanItem.request) return null;
+                      
+                      const request = postmanItem.request;
                       
                       // Convert headers (V2.1 format)
                       const headers = {};
@@ -3687,38 +3694,47 @@ export default function Playground() {
                         }
                       }
 
-                      // Create a new tab with the imported request
-                      const newTabId = Date.now().toString();
-                      const newTab = {
-                        id: newTabId,
-                        name: firstItem.name || 'Imported Request',
-                        request: {
-                          method: request.method || 'GET',
-                          url: fullUrl,
-                          headers,
-                          body: bodyContent,
-                        },
-                        response: null,
-                        loading: false,
-                        collectionRequestId: null,
-                        isModified: false,
+                      return {
+                        name: postmanItem.name || 'Untitled Request',
+                        method: request.method || 'GET',
+                        url: fullUrl,
+                        headers,
+                        body: bodyContent,
+                        description: postmanItem.description || ''
                       };
-                      
-                      setRequestTabs((tabs) => [...tabs, newTab]);
-                      setActiveTabId(newTabId);
+                    };
 
-                      setShowImportExportModal(false);
-                      setImportData('');
-                      setImportError('');
-                      
-                      // Show success message
-                      console.log(`Successfully imported: ${firstItem.name || 'Untitled Request'}`);
-                    } else {
-                      setImportError('No valid requests found in collection');
-                    }
+                    // Process all items in the collection (including nested folders)
+                    const processItems = async (items, collectionId) => {
+                      for (const item of items) {
+                        if (item.item && Array.isArray(item.item)) {
+                          // This is a folder, process its items recursively
+                          await processItems(item.item, collectionId);
+                        } else if (item.request) {
+                          // This is a request, parse and add it
+                          const parsedRequest = parseRequest(item);
+                          if (parsedRequest) {
+                            await addRequestToCollection(collectionId, parsedRequest);
+                          }
+                        }
+                      }
+                    };
+
+                    // Process all items in the collection
+                    await processItems(collection.item, newCollection.id);
+
+                    // Set the imported collection as active
+                    setActiveCollectionId(newCollection.id);
+
+                    setShowImportExportModal(false);
+                    setImportData('');
+                    setImportError('');
+                    
+                    // Show success message
+                    console.log(`Successfully imported collection: ${collectionName} with ${collection.item.length} items`);
                   } catch (error) {
                     console.error('Import error:', error);
-                    setImportError('Invalid JSON format or unsupported collection structure');
+                    setImportError('Failed to import collection: ' + error.message);
                   }
                 }}
                 disabled={!importData.trim()}
