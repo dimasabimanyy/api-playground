@@ -101,12 +101,12 @@ export default function ResponsePanel({ response, loading, request }) {
               style={{
                 backgroundColor: 'transparent',
                 fontSize: '14px',
-                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace'
+                fontFamily: 'inherit'
               }}
               theme={isDark ? 'dark' : 'light'}
               collapsed={false}
               displayDataTypes={false}
-              displayObjectSize={true}
+              displayObjectSize={false}
               enableClipboard={false}
             />
           )
