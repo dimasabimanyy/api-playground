@@ -143,14 +143,14 @@ export default function DocGeneratorModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogPortal>
         <DialogOverlay className={`${isDark ? 'bg-black/80' : 'bg-black/60'} backdrop-blur-sm`} />
-        <DialogContent className={`max-w-5xl ${isDark ? 'bg-black border-gray-800 shadow-2xl' : 'bg-white border-gray-200 shadow-2xl'} max-h-[90vh] overflow-y-auto rounded-2xl`}>
-        <DialogHeader className="space-y-3 pb-8">
-          <DialogTitle className={`text-2xl font-normal ${themeClasses.text.primary}`}>
+        <DialogContent className={`w-full max-w-5xl sm:max-w-5xl md:max-w-5xl lg:max-w-5xl xl:max-w-5xl ${isDark ? 'bg-black border-gray-800 shadow-2xl' : 'bg-white border-gray-200 shadow-2xl'} max-h-[90vh] overflow-y-auto rounded-2xl`}>
+        <DialogHeader className="space-y-3 pb-3">
+          <DialogTitle className={`text-2xl font-bold mb-0 ${themeClasses.text.primary}`}>
             Generate Documentation
           </DialogTitle>
-          <p className={`text-sm ${themeClasses.text.secondary} font-normal`}>
+          {/* <p className={`text-sm ${themeClasses.text.secondary} font-normal`}>
             Create beautiful API documentation from your collections
-          </p>
+          </p> */}
         </DialogHeader>
         
         <div className="space-y-8">
@@ -340,7 +340,7 @@ export default function DocGeneratorModal({
           <Button
             onClick={handleGenerateDocs}
             disabled={selectedCollections.length === 0}
-            className={`${isDark ? 'bg-white text-black hover:bg-gray-200' : 'bg-black text-white hover:bg-gray-800'} font-medium`}
+            className={`${isDark ? 'bg-white text-black hover:bg-gray-200' : 'bg-black text-white hover:bg-gray-800'} font-medium rounded-xl`}
           >
             Generate Documentation
           </Button>
