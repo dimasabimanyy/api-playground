@@ -6,6 +6,8 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogPortal,
+  DialogOverlay,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -139,8 +141,10 @@ export default function DocGeneratorModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className={`max-w-3xl ${isDark ? 'bg-black border-gray-800' : 'bg-white border-gray-200'}`}>
-        <DialogHeader className="space-y-3 pb-6">
+      <DialogPortal>
+        <DialogOverlay className={`${isDark ? 'bg-black/80' : 'bg-black/60'} backdrop-blur-sm`} />
+        <DialogContent className={`max-w-4xl ${isDark ? 'bg-black border-gray-800 shadow-2xl' : 'bg-white border-gray-200 shadow-2xl'} max-h-[90vh] overflow-y-auto`}>
+        <DialogHeader className="space-y-3 pb-8">
           <DialogTitle className={`text-2xl font-normal ${themeClasses.text.primary}`}>
             Generate Documentation
           </DialogTitle>
@@ -149,7 +153,7 @@ export default function DocGeneratorModal({
           </p>
         </DialogHeader>
         
-        <div className="space-y-6">
+        <div className="space-y-8">
           {/* Collections Selection with Dropdown */}
           <div className="space-y-4">
             <label className={`text-sm font-medium ${themeClasses.text.primary}`}>
@@ -341,7 +345,8 @@ export default function DocGeneratorModal({
             Generate Documentation
           </Button>
         </div>
-      </DialogContent>
+        </DialogContent>
+      </DialogPortal>
     </Dialog>
   );
 }
