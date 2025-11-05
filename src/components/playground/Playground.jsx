@@ -242,6 +242,7 @@ export default function Playground() {
 
   // Modal states
   const [docsModalOpen, setDocsModalOpen] = useState(false);
+  const [selectedCollectionForDocs, setSelectedCollectionForDocs] = useState(null);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
   const [createCollectionDialogOpen, setCreateCollectionDialogOpen] =
     useState(false);
@@ -585,12 +586,6 @@ export default function Playground() {
       icon: Globe,
       label: "Environments",
       description: "Manage variables like API keys, URLs, tokens",
-    },
-    {
-      id: "docs",
-      icon: BookOpen,
-      label: "Docs",
-      description: "Auto-generated API documentation",
     },
     {
       id: "settings",
@@ -1547,6 +1542,16 @@ export default function Playground() {
                                         <Copy className="h-4 w-4" />
                                         Duplicate Collection
                                       </DropdownMenuItem>
+                                      <DropdownMenuItem
+                                        onClick={() => {
+                                          setSelectedCollectionForDocs(collection.id);
+                                          setDocsModalOpen(true);
+                                        }}
+                                        className="flex items-center gap-2"
+                                      >
+                                        <BookOpen className="h-4 w-4" />
+                                        Generate Docs
+                                      </DropdownMenuItem>
                                       <DropdownMenuSeparator />
                                       {collection.name !== "Examples" && (
                                         <DropdownMenuItem
@@ -2153,96 +2158,6 @@ export default function Playground() {
                       </>
                     )}
 
-                    {/* Docs Content - Generate Docs */}
-                    {activeMenuTab === "docs" && (
-                      <>
-                        <div className="flex items-center justify-between mb-3">
-                          <span
-                            className={`text-xs font-medium ${themeClasses.text.tertiary}`}
-                          >
-                            Documentation
-                          </span>
-                        </div>
-
-                        <div className="space-y-3">
-                          <button
-                            onClick={() => setDocsModalOpen(true)}
-                            className={`w-full flex items-center gap-3 py-4 px-4 transition-all duration-200 cursor-pointer hover:${
-                              isDark ? "bg-gray-800/30" : "bg-gray-100/50"
-                            } rounded-lg border border-dashed ${
-                              themeClasses.border.primary
-                            } ${
-                              themeClasses.text.accent
-                            } border-blue-300 dark:border-blue-700`}
-                          >
-                            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30">
-                              <BookOpen className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                            </div>
-                            <div className="flex-1 text-left">
-                              <div
-                                className={`text-sm font-semibold ${themeClasses.text.primary}`}
-                              >
-                                Generate Docs
-                              </div>
-                              <div
-                                className={`text-xs ${themeClasses.text.tertiary}`}
-                              >
-                                Create beautiful API documentation
-                              </div>
-                            </div>
-                          </button>
-
-                          <div
-                            className={`p-4 rounded-lg ${themeClasses.card.base} border ${themeClasses.border.primary}`}
-                          >
-                            <div className="space-y-3">
-                              <div>
-                                <p
-                                  className={`text-sm font-medium ${themeClasses.text.primary} mb-1`}
-                                >
-                                  Available Collections
-                                </p>
-                                <p
-                                  className={`text-xs ${themeClasses.text.tertiary}`}
-                                >
-                                  {Object.keys(collections).length} collection
-                                  {Object.keys(collections).length !== 1
-                                    ? "s"
-                                    : ""}{" "}
-                                  •{" "}
-                                  {Object.values(collections).reduce(
-                                    (acc, col) =>
-                                      acc + (col.requests?.length || 0),
-                                    0
-                                  )}{" "}
-                                  endpoints
-                                </p>
-                              </div>
-
-                              <div className="flex gap-2">
-                                {Object.values(collections)
-                                  .slice(0, 2)
-                                  .map((collection) => (
-                                    <div
-                                      key={collection.id}
-                                      className={`px-2 py-1 rounded text-xs ${themeClasses.bg.secondary} ${themeClasses.text.secondary}`}
-                                    >
-                                      {collection.name}
-                                    </div>
-                                  ))}
-                                {Object.keys(collections).length > 2 && (
-                                  <div
-                                    className={`px-2 py-1 rounded text-xs ${themeClasses.bg.secondary} ${themeClasses.text.tertiary}`}
-                                  >
-                                    +{Object.keys(collections).length - 2} more
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </>
-                    )}
 
                     {/* Settings Content - Trigger Modal */}
                     {activeMenuTab === "settings" && (
@@ -3201,11 +3116,18 @@ export default function Playground() {
       {/* Docs Generator Modal */}
       <DocGeneratorModal
         open={docsModalOpen}
-        onOpenChange={setDocsModalOpen}
+        onOpenChange={(open) => {
+          setDocsModalOpen(open);
+          if (!open) {
+            setSelectedCollectionForDocs(null);
+          }
+        }}
         collections={collections}
+        preSelectedCollectionId={selectedCollectionForDocs}
         onGenerate={(docData) => {
           console.log("Generated docs with data:", docData);
           setDocsModalOpen(false);
+          setSelectedCollectionForDocs(null);
         }}
       />
 

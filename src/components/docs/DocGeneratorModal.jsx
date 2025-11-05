@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -51,6 +51,7 @@ export default function DocGeneratorModal({
   open, 
   onOpenChange, 
   collections = {},
+  preSelectedCollectionId = null,
   onGenerate 
 }) {
   const { isDark } = useTheme();
@@ -68,6 +69,17 @@ export default function DocGeneratorModal({
     baseUrl: "https://api.example.com",
   });
   const [currentStep, setCurrentStep] = useState(1);
+
+  // Handle pre-selected collection
+  useEffect(() => {
+    if (preSelectedCollectionId && open) {
+      setSelectedCollections([preSelectedCollectionId]);
+      setCurrentStep(1);
+    } else if (!preSelectedCollectionId && open) {
+      setSelectedCollections([]);
+      setCurrentStep(1);
+    }
+  }, [preSelectedCollectionId, open]);
 
   const handleCollectionToggle = (collectionId) => {
     setSelectedCollections(prev => 
@@ -310,7 +322,10 @@ export default function DocGeneratorModal({
       <DialogContent className={`max-w-4xl max-h-[90vh] overflow-hidden ${isDark ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'}`}>
         <DialogHeader>
           <DialogTitle className={`text-xl font-semibold ${themeClasses.text.primary}`}>
-            Generate API Documentation
+            {preSelectedCollectionId 
+              ? `Generate Docs for ${collections[preSelectedCollectionId]?.name || 'Collection'}`
+              : 'Generate API Documentation'
+            }
           </DialogTitle>
         </DialogHeader>
         
