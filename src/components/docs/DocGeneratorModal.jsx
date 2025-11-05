@@ -143,7 +143,7 @@ export default function DocGeneratorModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogPortal>
         <DialogOverlay className={`${isDark ? 'bg-black/80' : 'bg-black/60'} backdrop-blur-sm`} />
-        <DialogContent className={`max-w-4xl ${isDark ? 'bg-black border-gray-800 shadow-2xl' : 'bg-white border-gray-200 shadow-2xl'} max-h-[90vh] overflow-y-auto`}>
+        <DialogContent className={`max-w-5xl ${isDark ? 'bg-black border-gray-800 shadow-2xl' : 'bg-white border-gray-200 shadow-2xl'} max-h-[90vh] overflow-y-auto rounded-2xl`}>
         <DialogHeader className="space-y-3 pb-8">
           <DialogTitle className={`text-2xl font-normal ${themeClasses.text.primary}`}>
             Generate Documentation
@@ -185,7 +185,7 @@ export default function DocGeneratorModal({
                   
                   {/* Dropdown */}
                   {showDropdown && debouncedSearchQuery.length > 0 && (
-                    <div className={`absolute z-10 w-full mt-1 max-h-60 overflow-y-auto rounded-lg border ${
+                    <div className={`absolute z-10 w-full mt-1 max-h-60 overflow-y-auto rounded-xl border ${
                       isDark ? 'bg-black border-gray-800' : 'bg-white border-gray-200'
                     } shadow-lg`}>
                       {filteredCollections.length === 0 ? (
@@ -204,7 +204,7 @@ export default function DocGeneratorModal({
                             }}
                             className={`w-full p-3 text-left hover:${
                               isDark ? 'bg-gray-900' : 'bg-gray-50'
-                            } border-b border-gray-200 dark:border-gray-800 last:border-b-0 transition-colors`}
+                            } border-b border-gray-200 dark:border-gray-800 last:border-b-0 transition-colors cursor-pointer`}
                           >
                             <div className={`font-medium ${themeClasses.text.primary}`}>
                               {collection.name}
@@ -237,7 +237,7 @@ export default function DocGeneratorModal({
                           <span className={themeClasses.text.primary}>{collection.name}</span>
                           <button
                             onClick={() => handleCollectionToggle(collection.id)}
-                            className={`hover:${themeClasses.text.primary} ${themeClasses.text.tertiary}`}
+                            className={`hover:${themeClasses.text.primary} ${themeClasses.text.tertiary} cursor-pointer`}
                           >
                             <X className="h-3 w-3" />
                           </button>
@@ -260,7 +260,7 @@ export default function DocGeneratorModal({
                 <button
                   key={template.id}
                   onClick={() => setSelectedTemplate(template.id)}
-                  className={`p-3 rounded-lg border text-left transition-colors ${
+                  className={`p-3 rounded-xl border text-left transition-colors cursor-pointer ${
                     selectedTemplate === template.id
                       ? isDark ? 'border-white bg-gray-900' : 'border-black bg-gray-50'
                       : isDark ? 'border-gray-800 hover:border-gray-700' : 'border-gray-200 hover:border-gray-300'
