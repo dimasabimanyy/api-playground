@@ -52,8 +52,6 @@ import {
   MoreHorizontal,
   FileText,
   Edit,
-  Columns,
-  SplitSquareHorizontal,
   GripVertical,
   GripHorizontal,
   Upload,
@@ -139,11 +137,10 @@ function UserAvatar({ user, isDark }) {
 
   return (
     <div
-      className={`h-8 w-8 rounded-full flex items-center justify-center cursor-pointer ${
-        isDark
-          ? "bg-gradient-to-br from-blue-600 to-blue-700"
-          : "bg-gradient-to-br from-blue-500 to-blue-600"
-      } text-white font-medium text-sm`}
+      className="h-8 w-8 rounded-full flex items-center justify-center cursor-pointer text-white font-medium text-sm"
+      style={{ 
+        backgroundColor: '#171717' 
+      }}
     >
       {getInitials()}
     </div>
@@ -586,6 +583,12 @@ export default function Playground() {
       icon: Globe,
       label: "Environments",
       description: "Manage variables like API keys, URLs, tokens",
+    },
+    {
+      id: "import-export",
+      icon: FileUp,
+      label: "Import/Export",
+      description: "Import and export collections",
     },
     {
       id: "settings",
@@ -1233,7 +1236,7 @@ export default function Playground() {
               style={{ 
                 borderRadius: '6px', 
                 borderColor: 'rgb(235, 235, 235)', 
-                backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : '#fafafa',
+                backgroundColor: 'white',
                 border: '1px solid rgb(235, 235, 235)'
               }}
             />
@@ -1243,18 +1246,14 @@ export default function Playground() {
         <div className="flex items-center space-x-1 sm:space-x-3 ml-auto">
           <button
             onClick={toggleTheme}
-            className={`p-2 rounded transition-all duration-200 ${themeClasses.button.ghost}`}
+            className="p-2 transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-800"
+            style={{ borderRadius: '6px' }}
           >
             {isDark ? (
               <Sun className="h-4 w-4" />
             ) : (
               <Moon className="h-4 w-4" />
             )}
-          </button>
-          <button
-            className={`p-2 rounded transition-all duration-200 ${themeClasses.button.ghost}`}
-          >
-            <Settings className="h-4 w-4" />
           </button>
 
           {/* User Avatar/Auth Section */}
@@ -1265,8 +1264,13 @@ export default function Playground() {
               <UserAvatar user={user} isDark={isDark} />
 
               {/* Dropdown Menu */}
-              <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                <div className="p-3 border-b border-gray-200 dark:border-gray-700">
+              <div className="fixed right-4 mt-2 w-48 bg-white dark:bg-gray-800 shadow-xl border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[9999]" 
+                   style={{ 
+                     borderRadius: '12px', 
+                     borderColor: 'rgb(235, 235, 235)',
+                     top: '60px'
+                   }}>
+                <div className="p-3 border-b" style={{ borderColor: 'rgb(235, 235, 235)' }}>
                   <p className="text-sm font-medium text-gray-900 dark:text-white">
                     {user.user_metadata?.full_name || "User"}
                   </p>
@@ -1277,7 +1281,8 @@ export default function Playground() {
                 <div className="p-1">
                   <button
                     onClick={() => signOut()}
-                    className="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+                    className="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    style={{ borderRadius: '6px' }}
                   >
                     Sign out
                   </button>
@@ -1293,36 +1298,6 @@ export default function Playground() {
               Sign in
             </button>
           )}
-          {/* Import/Export and Layout Buttons */}
-          <div className="flex items-center gap-2 ml-4">
-            {/* Import/Export Button */}
-            <button
-              onClick={() => setShowImportExportModal(true)}
-              className={`p-2 rounded transition-all duration-200 ${themeClasses.button.ghost} relative group`}
-              title="Import/Export Collections"
-            >
-              <FileUp className="h-4 w-4" />
-            </button>
-            
-            {/* Layout Toggle Button */}
-            <button
-              onClick={() =>
-                setLayoutMode(layoutMode === "single" ? "split" : "single")
-              }
-              className={`p-2 rounded transition-all duration-200 ${themeClasses.button.ghost} relative group`}
-              title={
-                layoutMode === "single"
-                  ? "Switch to split layout"
-                  : "Switch to single column layout"
-              }
-            >
-              {layoutMode === "single" ? (
-                <SplitSquareHorizontal className="h-4 w-4" />
-              ) : (
-                <Columns className="h-4 w-4" />
-              )}
-            </button>
-          </div>
         </div>
       </header>
 
@@ -1410,7 +1385,13 @@ export default function Playground() {
                       return (
                         <button
                           key={item.id}
-                          onClick={() => setActiveMenuTab(item.id)}
+                          onClick={() => {
+                            if (item.id === 'import-export') {
+                              setShowImportExportModal(true);
+                            } else {
+                              setActiveMenuTab(item.id);
+                            }
+                          }}
                           className={`w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg transition-all duration-200 cursor-pointer ${
                             isActive
                               ? `${themeClasses.text.primary} ${
@@ -2371,8 +2352,12 @@ export default function Playground() {
                   <button
                     key={item.id}
                     onClick={() => {
-                      setActiveMenuTab(item.id);
-                      setSidebarCollapsed(false);
+                      if (item.id === 'import-export') {
+                        setShowImportExportModal(true);
+                      } else {
+                        setActiveMenuTab(item.id);
+                        setSidebarCollapsed(false);
+                      }
                     }}
                     title={item.label}
                     className={`w-10 h-10 rounded-lg transition-all duration-200 flex items-center justify-center ${
