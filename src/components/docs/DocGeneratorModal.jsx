@@ -144,8 +144,15 @@ export default function DocGeneratorModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogPortal>
-        <DialogOverlay className={`${isDark ? 'bg-black/80' : 'bg-black/60'} backdrop-blur-sm`} />
-        <DialogContent className={`max-w-2xl sm:max-w-2xl md:max-w-2xl lg:max-w-2xl xl:max-w-2xl ${isDark ? 'bg-black border-gray-800 shadow-2xl' : 'bg-white border-gray-200 shadow-2xl'} max-h-[90vh] overflow-y-auto rounded-2xl`}>
+        <DialogOverlay 
+          className={isDark ? '!bg-black/30' : '!bg-transparent'}
+          style={isDark ? {} : { backgroundColor: 'rgba(255, 255, 255)' }}
+        />
+        <DialogContent className={`max-w-2xl sm:max-w-2xl md:max-w-2xl lg:max-w-2xl xl:max-w-2xl ${isDark ? 'bg-black border-gray-800' : 'bg-white'} border shadow-lg max-h-[90vh] overflow-y-auto`} 
+          style={{ 
+            borderRadius: '12px',
+            borderColor: isDark ? 'rgb(38, 38, 38)' : 'rgb(235, 235, 235)'
+          }}>
         <DialogHeader className="space-y-3 pb-3">
           <DialogTitle className={`text-2xl font-bold mb-0 ${themeClasses.text.primary}`}>
             Generate Documentation
@@ -196,7 +203,12 @@ export default function DocGeneratorModal({
                       }
                     }}
                     placeholder="Search and select a collection..."
-                    className={`pl-9 ${selectedCollectionObject ? 'pr-16' : 'pr-9'} ${isDark ? 'border-gray-800 bg-black' : 'border-gray-200'} font-normal ${selectedCollectionObject ? 'cursor-default select-none' : ''}`}
+                    className={`pl-9 ${selectedCollectionObject ? 'pr-16' : 'pr-9'} text-sm font-normal border ${selectedCollectionObject ? 'cursor-default select-none' : ''}`}
+                    style={{
+                      borderRadius: '6px',
+                      borderColor: isDark ? 'rgb(38, 38, 38)' : 'rgb(235, 235, 235)',
+                      backgroundColor: isDark ? 'transparent' : '#fafafa'
+                    }}
                     readOnly={!!selectedCollectionObject}
                     autoFocus={false}
                   />
@@ -205,9 +217,10 @@ export default function DocGeneratorModal({
                   {selectedCollectionObject && (
                     <button
                       onClick={handleCollectionClear}
-                      className={`absolute right-3 top-1/2 transform -translate-y-1/2 p-1 rounded-md hover:${
+                      className={`absolute right-3 top-1/2 transform -translate-y-1/2 p-1 hover:${
                         isDark ? 'bg-gray-800' : 'bg-gray-100'
                       } transition-colors cursor-pointer`}
+                      style={{ borderRadius: '6px' }}
                     >
                       <X className={`h-4 w-4 ${themeClasses.text.tertiary}`} />
                     </button>
@@ -220,9 +233,15 @@ export default function DocGeneratorModal({
                   
                   {/* Dropdown */}
                   {!selectedCollectionObject && showDropdown && debouncedSearchQuery.length > 0 && (
-                    <div className={`absolute z-10 w-full mt-1 max-h-60 overflow-y-auto rounded-xl border ${
-                      isDark ? 'bg-black border-gray-800' : 'bg-white border-gray-200'
-                    } shadow-lg`}>
+                    <div 
+                      className={`absolute z-10 w-full mt-1 max-h-60 overflow-y-auto border ${
+                        isDark ? 'bg-black' : 'bg-white'
+                      } shadow-lg`}
+                      style={{ 
+                        borderRadius: '6px',
+                        borderColor: isDark ? 'rgb(38, 38, 38)' : 'rgb(235, 235, 235)'
+                      }}
+                    >
                       {filteredCollections.length === 0 ? (
                         <div className={`p-4 text-center ${themeClasses.text.tertiary}`}>
                           <Search className="h-5 w-5 mx-auto mb-2 opacity-40" />
@@ -235,7 +254,11 @@ export default function DocGeneratorModal({
                             onClick={() => handleCollectionSelect(collection.id)}
                             className={`w-full p-3 text-left hover:${
                               isDark ? 'bg-gray-900' : 'bg-gray-50'
-                            } border-b border-gray-200 dark:border-gray-800 last:border-b-0 transition-colors cursor-pointer`}
+                            } transition-colors cursor-pointer`}
+                            style={{
+                              borderBottom: `1px solid ${isDark ? 'rgb(38, 38, 38)' : 'rgb(235, 235, 235)'}`,
+                              borderBottomWidth: '1px'
+                            }}
                           >
                             <div className={`font-medium ${themeClasses.text.primary}`}>
                               {collection.name}
@@ -271,25 +294,37 @@ export default function DocGeneratorModal({
                 Select a visual theme for your documentation
               </p>
             </div>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-3 gap-3">
               {templates.map((template) => (
                 <button
                   key={template.id}
                   onClick={() => setSelectedTemplate(template.id)}
-                  className={`group relative p-4 rounded-xl border-2 text-left transition-all duration-200 cursor-pointer ${
+                  className={`group relative p-3 text-left transition-all duration-200 cursor-pointer border ${
                     selectedTemplate === template.id
-                      ? isDark ? 'border-white bg-gray-900 shadow-lg' : 'border-black bg-gray-50 shadow-lg'
-                      : isDark ? 'border-gray-800 hover:border-gray-600 hover:bg-gray-900/50' : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50/50'
+                      ? isDark ? 'bg-gray-900' : 'bg-white shadow-sm'
+                      : isDark ? 'hover:bg-gray-900/50' : 'hover:bg-gray-50'
                   }`}
+                  style={{
+                    borderRadius: '6px',
+                    borderColor: selectedTemplate === template.id 
+                      ? (isDark ? 'rgb(82, 82, 82)' : 'rgb(0, 0, 0)')
+                      : (isDark ? 'rgb(38, 38, 38)' : 'rgb(235, 235, 235)'),
+                    backgroundColor: selectedTemplate === template.id 
+                      ? (isDark ? 'rgb(23, 23, 23)' : 'white')
+                      : (isDark ? 'transparent' : '#fafafa')
+                  }}
                 >
                   {/* Preview mockup */}
-                  <div className={`w-full h-12 rounded-md mb-3 ${
-                    template.id === 'modern' 
-                      ? isDark ? 'bg-gradient-to-r from-blue-900/40 to-purple-900/40 border border-blue-800/30' : 'bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200/50'
-                      : template.id === 'minimal'
-                      ? isDark ? 'bg-gray-800/60 border border-gray-700' : 'bg-gray-100/80 border border-gray-300'
-                      : isDark ? 'bg-gradient-to-r from-emerald-900/40 to-teal-900/40 border border-emerald-800/30' : 'bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200/50'
-                  } flex items-center justify-center`}>
+                  <div 
+                    className={`w-full h-10 mb-3 flex items-center justify-center border ${
+                      template.id === 'modern' 
+                        ? isDark ? 'bg-gradient-to-r from-blue-900/40 to-purple-900/40 border-blue-800/30' : 'bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200/50'
+                        : template.id === 'minimal'
+                        ? isDark ? 'bg-gray-800/60 border-gray-700' : 'bg-gray-100/80 border-gray-300'
+                        : isDark ? 'bg-gradient-to-r from-emerald-900/40 to-teal-900/40 border-emerald-800/30' : 'bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-200/50'
+                    }`}
+                    style={{ borderRadius: '6px' }}
+                  >
                     <div className="flex space-x-1">
                       <div className={`w-1 h-6 rounded-full ${
                         template.id === 'modern' ? 'bg-blue-500/60' :
@@ -339,13 +374,23 @@ export default function DocGeneratorModal({
                   value={customization.title}
                   onChange={(e) => setCustomization(prev => ({ ...prev, title: e.target.value }))}
                   placeholder="Documentation title"
-                  className={`${isDark ? 'border-gray-800 bg-black' : 'border-gray-200'} font-normal`}
+                  className="text-sm font-normal border"
+                  style={{
+                    borderRadius: '6px',
+                    borderColor: isDark ? 'rgb(38, 38, 38)' : 'rgb(235, 235, 235)',
+                    backgroundColor: isDark ? 'transparent' : '#fafafa'
+                  }}
                 />
                 <Input
                   value={customization.baseUrl}
                   onChange={(e) => setCustomization(prev => ({ ...prev, baseUrl: e.target.value }))}
                   placeholder="Base URL (optional)"
-                  className={`${isDark ? 'border-gray-800 bg-black' : 'border-gray-200'} font-normal`}
+                  className="text-sm font-normal border"
+                  style={{
+                    borderRadius: '6px',
+                    borderColor: isDark ? 'rgb(38, 38, 38)' : 'rgb(235, 235, 235)',
+                    backgroundColor: isDark ? 'transparent' : '#fafafa'
+                  }}
                 />
               </div>
             </div>
@@ -379,11 +424,16 @@ export default function DocGeneratorModal({
         </div>
 
         {/* Actions */}
-        <div className="flex items-center justify-between pt-6 border-t border-gray-200 dark:border-gray-800">
+        <div className="flex items-center justify-between pt-6 border-t" style={{ borderColor: isDark ? 'rgb(38, 38, 38)' : 'rgb(235, 235, 235)' }}>
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
-            className={`${isDark ? 'border-gray-800 hover:bg-gray-900' : 'border-gray-200 hover:bg-gray-50'}`}
+            className={`px-4 py-2 text-sm font-medium border ${isDark ? 'border-gray-700 text-gray-300 hover:bg-gray-800' : 'text-gray-700 hover:bg-gray-50'}`}
+            style={{ 
+              borderRadius: '6px',
+              borderColor: isDark ? 'rgb(82, 82, 82)' : 'rgb(235, 235, 235)',
+              backgroundColor: isDark ? 'transparent' : '#fafafa'
+            }}
           >
             Cancel
           </Button>
@@ -391,7 +441,13 @@ export default function DocGeneratorModal({
           <Button
             onClick={handleGenerateDocs}
             disabled={!selectedCollection}
-            className={`${isDark ? 'bg-white text-black hover:bg-gray-200' : 'bg-black text-white hover:bg-gray-800'} font-medium rounded-xl`}
+            className={`px-4 py-2 text-sm font-medium ${!selectedCollection ? 'opacity-50 cursor-not-allowed' : ''}`}
+            style={{ 
+              borderRadius: '6px',
+              backgroundColor: isDark ? 'white' : 'black',
+              color: isDark ? 'black' : 'white',
+              border: 'none'
+            }}
           >
             Generate Documentation
           </Button>
