@@ -1185,7 +1185,8 @@ export default function Playground() {
           {/* Mobile Hamburger Menu */}
           <button
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className={`lg:hidden p-1.5 rounded transition-all duration-200 ${themeClasses.button.ghost}`}
+            className="lg:hidden p-1.5 transition-all duration-200 hover:bg-gray-50"
+            style={{ borderRadius: '6px' }}
           >
             <svg
               className="w-5 h-5"
@@ -1203,16 +1204,16 @@ export default function Playground() {
           </button>
 
           <div className="flex items-center space-x-2 sm:space-x-3">
-            <div className="h-6 w-6 sm:h-8 sm:w-8 rounded bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
+            <div className="h-6 w-6 sm:h-8 sm:w-8 flex items-center justify-center" style={{ borderRadius: '6px', backgroundColor: '#171717' }}>
               <Zap className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
             </div>
             <h1
-              className={`text-sm sm:text-lg font-semibold tracking-tight ${themeClasses.text.primary} hidden sm:block`}
+              className="text-sm sm:text-lg font-bold tracking-tight text-gray-900 dark:text-white hidden sm:block"
             >
               API Playground
             </h1>
             <h1
-              className={`text-sm font-semibold tracking-tight ${themeClasses.text.primary} sm:hidden`}
+              className="text-sm font-bold tracking-tight text-gray-900 dark:text-white sm:hidden"
             >
               API
             </h1>
@@ -1228,7 +1229,13 @@ export default function Playground() {
               placeholder="Search..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className={`pl-7 sm:pl-10 h-8 sm:h-9 text-xs sm:text-sm rounded backdrop-blur-sm ${themeClasses.input.base}`}
+              className="pl-7 sm:pl-10 h-8 sm:h-9 text-xs sm:text-sm backdrop-blur-sm"
+              style={{ 
+                borderRadius: '6px', 
+                borderColor: 'rgb(235, 235, 235)', 
+                backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : '#fafafa',
+                border: '1px solid rgb(235, 235, 235)'
+              }}
             />
           </div>
         </div>
@@ -1280,7 +1287,8 @@ export default function Playground() {
           ) : (
             <button
               onClick={() => (window.location.href = "/login")}
-              className={`h-8 px-3 text-xs font-medium rounded transition-all duration-200 ${themeClasses.button.primary}`}
+              className="h-8 px-3 text-xs font-medium transition-all duration-200 text-white"
+              style={{ borderRadius: '6px', backgroundColor: '#171717', border: 'none' }}
             >
               Sign in
             </button>
@@ -1343,7 +1351,8 @@ export default function Playground() {
           {/* Sidebar Toggle Button */}
           <button
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className={`absolute -right-3 top-6 z-10 w-6 h-6 rounded-full border transition-all duration-200 flex items-center justify-center ${themeClasses.card.base} ${themeClasses.button.ghost} shadow-sm`}
+            className="absolute -right-3 top-6 z-10 w-6 h-6 border transition-all duration-200 flex items-center justify-center bg-white hover:bg-gray-50 shadow-sm"
+            style={{ borderRadius: '6px', borderColor: 'rgb(235, 235, 235)' }}
           >
             {sidebarCollapsed ? (
               <ChevronRight className="h-3 w-3" />
@@ -1370,7 +1379,8 @@ export default function Playground() {
 
                 <button
                   onClick={createNewTab}
-                  className={`w-full flex items-center gap-2 px-3 py-2 rounded transition-all duration-200 ${themeClasses.button.primary}`}
+                  className="w-full flex items-center gap-2 px-3 py-2 transition-all duration-200 text-white"
+                  style={{ borderRadius: '6px', backgroundColor: '#171717', border: 'none' }}
                 >
                   <Plus className="h-3 w-3 text-white" />
                   <span className="text-sm font-medium text-white">
@@ -1403,8 +1413,8 @@ export default function Playground() {
                           onClick={() => setActiveMenuTab(item.id)}
                           className={`w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg transition-all duration-200 cursor-pointer ${
                             isActive
-                              ? `${themeClasses.text.accent} ${
-                                  isDark ? "bg-blue-500/10" : "bg-blue-50"
+                              ? `${themeClasses.text.primary} ${
+                                  isDark ? "bg-gray-800" : "bg-gray-100"
                                 }`
                               : `${themeClasses.text.secondary} hover:${
                                   themeClasses.text.primary
@@ -1597,8 +1607,8 @@ export default function Playground() {
                                               isSelected
                                                 ? `${
                                                     isDark
-                                                      ? "bg-blue-500/10 border-l-2 border-blue-500"
-                                                      : "bg-blue-50"
+                                                      ? "bg-gray-800 border-l-2 border-gray-600"
+                                                      : "bg-gray-100 border-l-2 border-gray-400"
                                                   }`
                                                 : `hover:${
                                                     isDark
@@ -1956,8 +1966,8 @@ export default function Playground() {
                                     } rounded-lg ${
                                       isActive
                                         ? isDark
-                                          ? "bg-blue-500/10 border border-blue-500/20"
-                                          : "bg-blue-50 border border-blue-200"
+                                          ? "bg-gray-800 border border-gray-600"
+                                          : "bg-gray-100 border border-gray-300"
                                         : ""
                                     }`}
                                   >
@@ -1975,7 +1985,7 @@ export default function Playground() {
 
                                     {/* Active Indicator */}
                                     {isActive && (
-                                      <div className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0"></div>
+                                      <div className="w-2 h-2 rounded-full bg-gray-600 dark:bg-gray-400 flex-shrink-0"></div>
                                     )}
 
                                     {/* Environment Name */}
@@ -2367,8 +2377,8 @@ export default function Playground() {
                     title={item.label}
                     className={`w-10 h-10 rounded-lg transition-all duration-200 flex items-center justify-center ${
                       isActive
-                        ? `${themeClasses.text.accent} ${
-                            isDark ? "bg-blue-500/10" : "bg-blue-50"
+                        ? `${themeClasses.text.primary} ${
+                            isDark ? "bg-gray-800" : "bg-gray-100"
                           }`
                         : `${themeClasses.text.secondary} hover:${
                             themeClasses.text.primary
@@ -2410,7 +2420,7 @@ export default function Playground() {
                       key={tab.id}
                       className={`flex items-center gap-2 px-1 py-3 cursor-pointer min-w-0 group transition-all duration-200 border-b-2 ${
                         tab.id === activeTabId
-                          ? `${themeClasses.text.primary} border-blue-500`
+                          ? `${themeClasses.text.primary} border-gray-800 dark:border-gray-400`
                           : `${themeClasses.text.secondary} hover:${themeClasses.text.primary} border-transparent hover:border-gray-300`
                       }`}
                       onClick={() => setActiveTabId(tab.id)}
@@ -2523,13 +2533,15 @@ export default function Playground() {
                         Template
                       </button> */}
                       <button
-                        className={`h-8 text-xs px-3 rounded transition-all duration-200 hidden sm:block ${themeClasses.button.secondary}`}
+                        className="h-8 text-xs px-3 transition-all duration-200 hidden sm:block"
+                        style={{ borderRadius: '6px', borderColor: 'rgb(235, 235, 235)', backgroundColor: '#fafafa', border: '1px solid rgb(235, 235, 235)' }}
                       >
                         Share
                       </button>
                       <button
                         onClick={handleSaveRequest}
-                        className={`h-8 text-xs px-3 rounded transition-all duration-200 ${themeClasses.button.primary}`}
+                        className="h-8 text-xs px-3 transition-all duration-200 text-white"
+                        style={{ borderRadius: '6px', backgroundColor: '#171717', border: 'none' }}
                       >
                         {currentTab?.collectionRequestId ? "Update" : "Save"}
                       </button>

@@ -3,17 +3,12 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { 
   FolderOpen, 
   FolderPlus, 
   Search, 
-  MoreHorizontal, 
   Trash2, 
-  Edit3,
-  Globe,
-  Lock,
   Star,
   ChevronDown,
   ChevronRight,
@@ -129,15 +124,16 @@ export default function CollectionsSidebar({
   )
 
   return (
-    <div className="w-64 border-r border-gray-100 bg-white h-full flex flex-col">
+    <div className="w-64 border-r bg-white h-full flex flex-col" style={{ borderColor: 'rgb(235, 235, 235)' }}>
       {/* Header */}
-      <div className="px-4 py-3 border-b border-gray-100">
+      <div className="px-4 py-3 border-b" style={{ borderColor: 'rgb(235, 235, 235)' }}>
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-sm font-medium text-gray-900">Collections</h2>
           <Dialog open={newCollectionDialog} onOpenChange={setNewCollectionDialog}>
             <DialogTrigger asChild>
               <button 
-                className="h-6 w-6 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded transition-colors"
+                className="h-6 w-6 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors"
+                style={{ borderRadius: '6px' }}
                 onClick={() => {
                   console.log('Plus button clicked, opening dialog');
                   setNewCollectionDialog(true);
@@ -146,7 +142,7 @@ export default function CollectionsSidebar({
                 <FolderPlus className="h-4 w-4" />
               </button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-md" style={{ borderRadius: '12px', borderColor: 'rgb(235, 235, 235)' }}>
               <DialogHeader>
                 <DialogTitle className="text-base font-medium">Create Collection</DialogTitle>
               </DialogHeader>
@@ -156,15 +152,16 @@ export default function CollectionsSidebar({
                     placeholder="Collection name"
                     value={newCollectionName}
                     onChange={(e) => setNewCollectionName(e.target.value)}
-                    className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
+                    className="h-8 text-sm focus:ring-0"
+                    style={{ borderRadius: '6px', borderColor: 'rgb(235, 235, 235)', backgroundColor: '#fafafa' }}
                     disabled={creating}
                   />
                 </div>
                 <div className="flex justify-end gap-2 pt-1">
-                  <Button variant="outline" onClick={() => setNewCollectionDialog(false)} size="sm" className="px-3 text-xs" disabled={creating}>
+                  <Button variant="outline" onClick={() => setNewCollectionDialog(false)} size="sm" className="px-3 text-xs" style={{ borderRadius: '6px', borderColor: 'rgb(235, 235, 235)', backgroundColor: '#fafafa' }} disabled={creating}>
                     Cancel
                   </Button>
-                  <Button onClick={handleCreateCollection} disabled={!newCollectionName.trim() || creating} size="sm" className="px-3 text-xs bg-black hover:bg-gray-800 text-white">
+                  <Button onClick={handleCreateCollection} disabled={!newCollectionName.trim() || creating} size="sm" className="px-3 text-xs text-white" style={{ borderRadius: '6px', backgroundColor: '#171717', border: 'none' }}>
                     {creating ? (
                       <>
                         <Loader2 className="h-3 w-3 mr-1 animate-spin" />
@@ -182,7 +179,7 @@ export default function CollectionsSidebar({
 
         {/* Error Display */}
         {error && (
-          <div className="mb-3 p-2 bg-red-50 border border-red-200 rounded text-xs text-red-700">
+          <div className="mb-3 p-2 bg-red-50 border text-xs text-red-700" style={{ borderRadius: '6px', borderColor: 'rgb(235, 235, 235)' }}>
             {error}
             <button 
               onClick={clearError}
@@ -200,7 +197,8 @@ export default function CollectionsSidebar({
             placeholder="Search..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-8 h-7 text-sm border-0 bg-gray-50 focus:bg-white focus:ring-1 focus:ring-gray-200 rounded transition-all"
+            className="pl-8 h-7 text-sm border-0 focus:ring-1 transition-all"
+            style={{ borderRadius: '6px', backgroundColor: '#fafafa' }}
           />
         </div>
       </div>
@@ -218,9 +216,10 @@ export default function CollectionsSidebar({
             return (
               <div key={collection.id} className="group">
                 {/* Collection Header */}
-                <div className="flex items-center px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer transition-colors">
+                <div className="flex items-center px-2 py-1.5 hover:bg-gray-50 cursor-pointer transition-colors" style={{ borderRadius: '6px' }}>
                   <button
                     className="h-5 w-5 flex items-center justify-center mr-1.5 text-gray-400 hover:text-gray-600"
+                    style={{ borderRadius: '6px' }}
                     onClick={(e) => {
                       e.stopPropagation()
                       toggleCollectionExpansion(collection.id)
@@ -254,6 +253,7 @@ export default function CollectionsSidebar({
                     {collection.name !== 'Examples' && (
                       <button
                         className="h-5 w-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-600 ml-1"
+                        style={{ borderRadius: '6px' }}
                         onClick={(e) => {
                           e.stopPropagation()
                           handleDeleteCollection(collection.id)
@@ -271,20 +271,22 @@ export default function CollectionsSidebar({
                     {collection.requests.map(request => (
                       <div
                         key={request.id}
-                        className={`flex items-center px-2 py-1 rounded cursor-pointer transition-colors ${
+                        className={`flex items-center px-2 py-1 cursor-pointer transition-colors ${
                           activeRequestId === request.id
                             ? 'bg-gray-100 text-gray-900'
                             : 'hover:bg-gray-50 text-gray-600'
                         }`}
+                        style={{ borderRadius: '6px' }}
                         onClick={() => onRequestSelect?.(request)}
                       >
-                        <span className={`text-xs font-mono px-1.5 py-0.5 rounded mr-2 ${
+                        <span className={`text-xs font-mono px-1.5 py-0.5 mr-2 ${
                           request.method === 'GET' ? 'text-green-600 bg-green-100' :
                           request.method === 'POST' ? 'text-blue-600 bg-blue-100' :
                           request.method === 'PUT' ? 'text-orange-600 bg-orange-100' :
                           request.method === 'DELETE' ? 'text-red-600 bg-red-100' :
                           'text-gray-600 bg-gray-100'
-                        }`}>
+                        }`}
+                        style={{ borderRadius: '6px' }}>
                           {request.method}
                         </span>
                         <span className="text-sm truncate">
