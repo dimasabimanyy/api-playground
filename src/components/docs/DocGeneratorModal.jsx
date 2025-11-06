@@ -181,14 +181,24 @@ export default function DocGeneratorModal({
                         setShowDropdown(e.target.value.length > 0);
                       }
                     }}
-                    onFocus={() => {
+                    onFocus={(e) => {
                       if (!selectedCollectionObject) {
                         setShowDropdown(searchQuery.length > 0);
+                      } else {
+                        // Prevent text selection when collection is already selected
+                        e.target.blur();
+                      }
+                    }}
+                    onMouseDown={(e) => {
+                      if (selectedCollectionObject) {
+                        // Prevent text selection on mouse down
+                        e.preventDefault();
                       }
                     }}
                     placeholder="Search and select a collection..."
-                    className={`pl-9 ${selectedCollectionObject ? 'pr-16' : 'pr-9'} ${isDark ? 'border-gray-800 bg-black' : 'border-gray-200'} font-normal ${selectedCollectionObject ? 'cursor-default' : ''}`}
+                    className={`pl-9 ${selectedCollectionObject ? 'pr-16' : 'pr-9'} ${isDark ? 'border-gray-800 bg-black' : 'border-gray-200'} font-normal ${selectedCollectionObject ? 'cursor-default select-none' : ''}`}
                     readOnly={!!selectedCollectionObject}
+                    autoFocus={false}
                   />
                   
                   {/* Clear button when collection is selected */}
