@@ -50,7 +50,7 @@ export default function DocGeneratorModal({
   const { isDark } = useTheme();
   const themeClasses = getThemeClasses(isDark);
   
-  const [selectedCollections, setSelectedCollections] = useState([]);
+  const [selectedCollection, setSelectedCollection] = useState(null);
   const [selectedTemplate, setSelectedTemplate] = useState("modern");
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
@@ -69,9 +69,9 @@ export default function DocGeneratorModal({
   useEffect(() => {
     if (open) {
       if (preSelectedCollectionId) {
-        setSelectedCollections([preSelectedCollectionId]);
+        setSelectedCollection(preSelectedCollectionId);
       } else {
-        setSelectedCollections([]);
+        setSelectedCollection(null);
       }
       setSearchQuery("");
       setDebouncedSearchQuery("");
@@ -100,12 +100,14 @@ export default function DocGeneratorModal({
     }
   }, [showDropdown]);
 
-  const handleCollectionToggle = (collectionId) => {
-    setSelectedCollections(prev => 
-      prev.includes(collectionId)
-        ? prev.filter(id => id !== collectionId)
-        : [...prev, collectionId]
-    );
+  const handleCollectionSelect = (collectionId) => {
+    setSelectedCollection(collectionId);
+    setSearchQuery("");
+    setShowDropdown(false);
+  };
+
+  const handleCollectionClear = () => {
+    setSelectedCollection(null);
   };
 
   // Filter collections based on debounced search query
@@ -118,17 +120,17 @@ export default function DocGeneratorModal({
     )
   );
 
-  // Get selected collection objects
-  const selectedCollectionObjects = Object.values(collections).filter(c => 
-    selectedCollections.includes(c.id)
-  );
+  // Get selected collection object
+  const selectedCollectionObject = selectedCollection ? collections[selectedCollection] : null;
 
   const handleGenerateDocs = () => {
+    if (!selectedCollection) return;
+    
     const docData = {
-      selectedCollections,
+      selectedCollections: [selectedCollection],
       template: selectedTemplate,
       customization,
-      collections: Object.values(collections).filter(c => selectedCollections.includes(c.id)),
+      collections: [selectedCollectionObject],
     };
     
     if (onGenerate) {
@@ -136,14 +138,14 @@ export default function DocGeneratorModal({
     }
     
     // Navigate to generated docs page
-    window.open(`/docs/generated?template=${selectedTemplate}&collections=${selectedCollections.join(',')}&title=${encodeURIComponent(customization.title)}`, '_blank');
+    window.open(`/docs/generated?template=${selectedTemplate}&collections=${selectedCollection}&title=${encodeURIComponent(customization.title)}`, '_blank');
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogPortal>
         <DialogOverlay className={`${isDark ? 'bg-black/80' : 'bg-black/60'} backdrop-blur-sm`} />
-        <DialogContent className={`w-full max-w-5xl sm:max-w-5xl md:max-w-5xl lg:max-w-5xl xl:max-w-5xl ${isDark ? 'bg-black border-gray-800 shadow-2xl' : 'bg-white border-gray-200 shadow-2xl'} max-h-[90vh] overflow-y-auto rounded-2xl`}>
+        <DialogContent className={`max-w-2xl sm:max-w-2xl md:max-w-2xl lg:max-w-2xl xl:max-w-2xl ${isDark ? 'bg-black border-gray-800 shadow-2xl' : 'bg-white border-gray-200 shadow-2xl'} max-h-[90vh] overflow-y-auto rounded-2xl`}>
         <DialogHeader className="space-y-3 pb-3">
           <DialogTitle className={`text-2xl font-bold mb-0 ${themeClasses.text.primary}`}>
             Generate Documentation
@@ -154,10 +156,10 @@ export default function DocGeneratorModal({
         </DialogHeader>
         
         <div className="space-y-8">
-          {/* Collections Selection with Dropdown */}
-          <div className="space-y-4">
+          {/* Collection Selection with Input Display */}
+          <div className="space-y-3">
             <label className={`text-sm font-medium ${themeClasses.text.primary}`}>
-              Select Collections
+              Select Collection
             </label>
             
             {Object.keys(collections).length === 0 ? (
@@ -168,23 +170,46 @@ export default function DocGeneratorModal({
               </div>
             ) : (
               <div className="space-y-3">
-                {/* Search Input */}
+                {/* Input with Selected Collection or Search */}
                 <div className="relative">
                   <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${themeClasses.text.tertiary}`} />
                   <Input
-                    value={searchQuery}
+                    value={selectedCollectionObject ? selectedCollectionObject.name : searchQuery}
                     onChange={(e) => {
-                      setSearchQuery(e.target.value);
-                      setShowDropdown(e.target.value.length > 0);
+                      if (!selectedCollectionObject) {
+                        setSearchQuery(e.target.value);
+                        setShowDropdown(e.target.value.length > 0);
+                      }
                     }}
-                    onFocus={() => setShowDropdown(searchQuery.length > 0)}
-                    placeholder="Search collections..."
-                    className={`pl-9 ${isDark ? 'border-gray-800 bg-black' : 'border-gray-200'} font-normal`}
+                    onFocus={() => {
+                      if (!selectedCollectionObject) {
+                        setShowDropdown(searchQuery.length > 0);
+                      }
+                    }}
+                    placeholder="Search and select a collection..."
+                    className={`pl-9 ${selectedCollectionObject ? 'pr-16' : 'pr-9'} ${isDark ? 'border-gray-800 bg-black' : 'border-gray-200'} font-normal ${selectedCollectionObject ? 'cursor-default' : ''}`}
+                    readOnly={!!selectedCollectionObject}
                   />
-                  <ChevronDown className={`absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${themeClasses.text.tertiary}`} />
+                  
+                  {/* Clear button when collection is selected */}
+                  {selectedCollectionObject && (
+                    <button
+                      onClick={handleCollectionClear}
+                      className={`absolute right-3 top-1/2 transform -translate-y-1/2 p-1 rounded-md hover:${
+                        isDark ? 'bg-gray-800' : 'bg-gray-100'
+                      } transition-colors cursor-pointer`}
+                    >
+                      <X className={`h-4 w-4 ${themeClasses.text.tertiary}`} />
+                    </button>
+                  )}
+                  
+                  {/* Chevron when no selection */}
+                  {!selectedCollectionObject && (
+                    <ChevronDown className={`absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${themeClasses.text.tertiary}`} />
+                  )}
                   
                   {/* Dropdown */}
-                  {showDropdown && debouncedSearchQuery.length > 0 && (
+                  {!selectedCollectionObject && showDropdown && debouncedSearchQuery.length > 0 && (
                     <div className={`absolute z-10 w-full mt-1 max-h-60 overflow-y-auto rounded-xl border ${
                       isDark ? 'bg-black border-gray-800' : 'bg-white border-gray-200'
                     } shadow-lg`}>
@@ -197,11 +222,7 @@ export default function DocGeneratorModal({
                         filteredCollections.map((collection) => (
                           <button
                             key={collection.id}
-                            onClick={() => {
-                              handleCollectionToggle(collection.id);
-                              setSearchQuery("");
-                              setShowDropdown(false);
-                            }}
+                            onClick={() => handleCollectionSelect(collection.id)}
                             className={`w-full p-3 text-left hover:${
                               isDark ? 'bg-gray-900' : 'bg-gray-50'
                             } border-b border-gray-200 dark:border-gray-800 last:border-b-0 transition-colors cursor-pointer`}
@@ -219,31 +240,11 @@ export default function DocGeneratorModal({
                   )}
                 </div>
 
-                {/* Selected Collections Display */}
-                {selectedCollectionObjects.length > 0 && (
-                  <div className="space-y-2">
-                    <div className={`text-xs ${themeClasses.text.tertiary} flex items-center gap-1`}>
-                      <Check className="h-3 w-3" />
-                      {selectedCollectionObjects.length} collection{selectedCollectionObjects.length !== 1 ? 's' : ''} selected
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedCollectionObjects.map((collection) => (
-                        <div
-                          key={collection.id}
-                          className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm ${
-                            isDark ? 'bg-gray-900 border border-gray-800' : 'bg-gray-100 border border-gray-200'
-                          }`}
-                        >
-                          <span className={themeClasses.text.primary}>{collection.name}</span>
-                          <button
-                            onClick={() => handleCollectionToggle(collection.id)}
-                            className={`hover:${themeClasses.text.primary} ${themeClasses.text.tertiary} cursor-pointer`}
-                          >
-                            <X className="h-3 w-3" />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
+                {/* Selected Collection Info */}
+                {selectedCollectionObject && (
+                  <div className={`text-xs ${themeClasses.text.tertiary} flex items-center gap-1`}>
+                    <Check className="h-3 w-3" />
+                    {selectedCollectionObject.requests?.length || 0} endpoint{(selectedCollectionObject.requests?.length || 0) !== 1 ? 's' : ''} in this collection
                   </div>
                 )}
               </div>
@@ -251,25 +252,65 @@ export default function DocGeneratorModal({
           </div>
 
           {/* Template Selection */}
-          <div className="space-y-4">
-            <label className={`text-sm font-medium ${themeClasses.text.primary}`}>
-              Choose Style
-            </label>
-            <div className="grid grid-cols-3 gap-3">
+          <div className="space-y-3">
+            <div>
+              <label className={`text-sm font-medium ${themeClasses.text.primary}`}>
+                Choose Style
+              </label>
+              <p className={`text-xs ${themeClasses.text.tertiary} mt-1`}>
+                Select a visual theme for your documentation
+              </p>
+            </div>
+            <div className="grid grid-cols-3 gap-4">
               {templates.map((template) => (
                 <button
                   key={template.id}
                   onClick={() => setSelectedTemplate(template.id)}
-                  className={`p-3 rounded-xl border text-left transition-colors cursor-pointer ${
+                  className={`group relative p-4 rounded-xl border-2 text-left transition-all duration-200 cursor-pointer ${
                     selectedTemplate === template.id
-                      ? isDark ? 'border-white bg-gray-900' : 'border-black bg-gray-50'
-                      : isDark ? 'border-gray-800 hover:border-gray-700' : 'border-gray-200 hover:border-gray-300'
+                      ? isDark ? 'border-white bg-gray-900 shadow-lg' : 'border-black bg-gray-50 shadow-lg'
+                      : isDark ? 'border-gray-800 hover:border-gray-600 hover:bg-gray-900/50' : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50/50'
                   }`}
                 >
+                  {/* Preview mockup */}
+                  <div className={`w-full h-12 rounded-md mb-3 ${
+                    template.id === 'modern' 
+                      ? isDark ? 'bg-gradient-to-r from-blue-900/40 to-purple-900/40 border border-blue-800/30' : 'bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200/50'
+                      : template.id === 'minimal'
+                      ? isDark ? 'bg-gray-800/60 border border-gray-700' : 'bg-gray-100/80 border border-gray-300'
+                      : isDark ? 'bg-gradient-to-r from-emerald-900/40 to-teal-900/40 border border-emerald-800/30' : 'bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200/50'
+                  } flex items-center justify-center`}>
+                    <div className="flex space-x-1">
+                      <div className={`w-1 h-6 rounded-full ${
+                        template.id === 'modern' ? 'bg-blue-500/60' :
+                        template.id === 'minimal' ? 'bg-gray-500/60' : 'bg-emerald-500/60'
+                      }`} />
+                      <div className={`w-1 h-4 rounded-full ${
+                        template.id === 'modern' ? 'bg-purple-500/60' :
+                        template.id === 'minimal' ? 'bg-gray-400/60' : 'bg-teal-500/60'
+                      }`} />
+                      <div className={`w-1 h-5 rounded-full ${
+                        template.id === 'modern' ? 'bg-blue-600/60' :
+                        template.id === 'minimal' ? 'bg-gray-600/60' : 'bg-emerald-600/60'
+                      }`} />
+                    </div>
+                  </div>
+                  
+                  {/* Selection indicator */}
+                  {selectedTemplate === template.id && (
+                    <div className="absolute top-2 right-2">
+                      <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
+                        isDark ? 'bg-white text-black' : 'bg-black text-white'
+                      }`}>
+                        <Check className="w-3 h-3" />
+                      </div>
+                    </div>
+                  )}
+                  
                   <div className={`font-medium text-sm ${themeClasses.text.primary} mb-1`}>
                     {template.name}
                   </div>
-                  <div className={`text-xs ${themeClasses.text.tertiary}`}>
+                  <div className={`text-xs ${themeClasses.text.tertiary} leading-relaxed`}>
                     {template.description}
                   </div>
                 </button>
@@ -279,7 +320,7 @@ export default function DocGeneratorModal({
 
           {/* Configuration */}
           <div className="grid grid-cols-2 gap-6">
-            <div className="space-y-4">
+            <div className="space-y-3">
               <label className={`text-sm font-medium ${themeClasses.text.primary}`}>
                 Configuration
               </label>
@@ -299,7 +340,7 @@ export default function DocGeneratorModal({
               </div>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               <label className={`text-sm font-medium ${themeClasses.text.primary}`}>
                 Include
               </label>
@@ -339,7 +380,7 @@ export default function DocGeneratorModal({
           
           <Button
             onClick={handleGenerateDocs}
-            disabled={selectedCollections.length === 0}
+            disabled={!selectedCollection}
             className={`${isDark ? 'bg-white text-black hover:bg-gray-200' : 'bg-black text-white hover:bg-gray-800'} font-medium rounded-xl`}
           >
             Generate Documentation
