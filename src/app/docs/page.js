@@ -318,6 +318,7 @@ export default function DocsPage() {
               <ProjectCard
                 key={project.id}
                 project={project}
+                collections={collections}
                 viewMode={viewMode}
                 onView={() => viewDocumentation(project)}
                 onEdit={() => {/* TODO: Edit project */}}
@@ -348,6 +349,7 @@ export default function DocsPage() {
 // Project card component
 function ProjectCard({ 
   project, 
+  collections,
   viewMode, 
   onView, 
   onEdit, 
@@ -368,8 +370,18 @@ function ProjectCard({
 
   const getCollectionCount = () => project.collections?.length || 0
   const getEndpointCount = () => {
-    // This would need to be calculated from actual collection data
-    return 0 // Placeholder
+    if (!project.collections) return 0
+    
+    // Calculate total endpoints from all collections in the project
+    let totalEndpoints = 0
+    project.collections.forEach(collectionId => {
+      const collection = collections[collectionId]
+      if (collection && collection.requests) {
+        totalEndpoints += collection.requests.length
+      }
+    })
+    
+    return totalEndpoints
   }
 
   if (viewMode === 'list') {

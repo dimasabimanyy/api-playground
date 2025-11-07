@@ -22,6 +22,7 @@ import {
 import { useTheme } from "@/contexts/ThemeContext";
 import { getThemeClasses } from "@/lib/theme";
 import { DocsGenerator } from "@/lib/docs-generator";
+import { DocsProjects } from "@/lib/docs-storage";
 
 const templates = [
   {
@@ -143,8 +144,27 @@ export default function DocGeneratorModal({
         groupBy: customization.groupByCollection ? 'collection' : 'none',
       });
       
+      // Create and save documentation project to dashboard storage
+      const project = DocsProjects.create(
+        customization.title,
+        customization.description,
+        [selectedCollection]
+      );
+      
+      // Add settings to the project
+      const updatedProject = DocsProjects.update(project.id, {
+        settings: {
+          template: selectedTemplate,
+          baseUrl: customization.baseUrl,
+          includeExamples: customization.includeExamples,
+          includeAuth: customization.includeAuth,
+          groupByCollection: customization.groupByCollection,
+          includeErrorCodes: customization.includeErrorCodes,
+        }
+      });
+      
       // Store generated docs data for the viewer page
-      const docId = `doc_${Date.now()}_${selectedCollection}`;
+      const docId = `project_${project.id}_${Date.now()}`;
       sessionStorage.setItem(`docs_${docId}`, JSON.stringify(docData));
       
       if (onGenerate) {
@@ -155,11 +175,15 @@ export default function DocGeneratorModal({
           collections: [selectedCollectionObject],
           enhancedData: docData,
           docId,
+          project: updatedProject || project,
         });
       }
       
       // Navigate to generated docs page with the enhanced data
-      window.open(`/docs/generated?docId=${docId}&template=${selectedTemplate}&collections=${selectedCollection}&title=${encodeURIComponent(customization.title)}`, '_blank');
+      window.open(`/docs/generated?docId=${docId}&project=${project.id}&template=${selectedTemplate}&collections=${selectedCollection}&title=${encodeURIComponent(customization.title)}`, '_blank');
+      
+      // Close the modal
+      onOpenChange(false);
     } catch (error) {
       console.error('Failed to generate documentation:', error);
       // Fallback to old method if generation fails
