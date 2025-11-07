@@ -1225,19 +1225,18 @@ export default function Playground() {
 
         <div className="flex-1 flex justify-center max-w-xs sm:max-w-lg mx-2 sm:mx-auto">
           <div className="relative w-full">
-            <Search
-              className={`absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 ${themeClasses.text.tertiary}`}
-            />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 z-10" />
             <Input
               placeholder="Search..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-7 sm:pl-10 h-8 sm:h-9 text-xs sm:text-sm backdrop-blur-sm"
+              className="pl-10 h-9 text-sm focus:ring-0 focus:outline-none"
               style={{ 
                 borderRadius: '6px', 
                 borderColor: 'rgb(235, 235, 235)', 
                 backgroundColor: 'white',
-                border: '1px solid rgb(235, 235, 235)'
+                border: '1px solid rgb(235, 235, 235)',
+                boxShadow: 'none'
               }}
             />
           </div>
