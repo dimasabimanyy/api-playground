@@ -151,31 +151,100 @@ export default function DocsPage() {
 
   return (
     <div className={`min-h-screen ${themeClasses.bg.primary}`}>
-      {/* Header */}
-      <div className={`border-b ${themeClasses.border.primary} ${themeClasses.bg.glass}`}>
-        <div className="max-w-7xl mx-auto px-6 py-12">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-            <div className="space-y-1">
-              <h1 className={`text-4xl font-semibold tracking-tight ${themeClasses.text.primary}`}>
-                Documentation
-              </h1>
-              <p className={`text-base ${themeClasses.text.secondary}`}>
-                Manage and view your API documentation projects
-              </p>
+      {/* Header - Theme Aware */}
+      <header
+        className={`border-b ${themeClasses.border.primary} ${themeClasses.bg.glass} h-14 flex items-center px-3 sm:px-6 transition-all duration-300 relative z-50`}
+      >
+        <div className="flex items-center justify-between w-full min-w-0">
+          {/* Left Section - Logo and Navigation */}
+          <div className="flex items-center space-x-4 min-w-0 flex-shrink-0">
+            {/* Logo/Branding */}
+            <div className="flex items-center gap-3">
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                isDark ? 'bg-white/10' : 'bg-gray-900/10'
+              }`}>
+                <FileText className={`w-4 h-4 ${themeClasses.text.primary}`} />
+              </div>
+              <div className="hidden sm:block">
+                <h1 className={`text-lg font-semibold ${themeClasses.text.primary}`}>
+                  Documentation
+                </h1>
+              </div>
             </div>
             
-            <div className="flex items-center gap-3">
+            {/* Quick Stats */}
+            <div className="hidden md:flex items-center gap-4 text-sm">
+              <span className={`${themeClasses.text.tertiary}`}>
+                {Object.keys(docsProjects).length} project{Object.keys(docsProjects).length !== 1 ? 's' : ''}
+              </span>
+              <span className={`${themeClasses.text.tertiary}`}>•</span>
+              <span className={`${themeClasses.text.tertiary}`}>
+                {Object.keys(collections).length} collection{Object.keys(collections).length !== 1 ? 's' : ''}
+              </span>
+            </div>
+          </div>
+
+          {/* Right Section - Actions */}
+          <div className="flex items-center gap-2">
+            {/* Create Documentation Button */}
+            <Button
+              onClick={createNewDocumentation}
+              size="sm"
+              className={`${
+                isDark 
+                  ? 'bg-white text-black hover:bg-gray-200' 
+                  : 'bg-black text-white hover:bg-gray-800'
+              }`}
+              style={{ borderRadius: '6px' }}
+            >
+              <Plus className="h-4 w-4 mr-1" />
+              <span className="hidden sm:inline">New Documentation</span>
+              <span className="sm:hidden">New</span>
+            </Button>
+
+            {/* Settings/More Actions */}
+            <Button
+              variant="ghost"
+              size="sm"
+              className={`px-2 ${themeClasses.text.tertiary} hover:${themeClasses.text.primary}`}
+              style={{ borderRadius: '6px' }}
+            >
+              <MoreVertical className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      {/* Sub-header with description and stats */}
+      <div className={`border-b ${themeClasses.border.primary} ${themeClasses.bg.glass}`}>
+        <div className="max-w-7xl mx-auto px-6 py-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="space-y-1">
+              <p className={`text-sm ${themeClasses.text.secondary}`}>
+                Create, manage, and share beautiful API documentation from your collections
+              </p>
+              <div className="flex items-center gap-4 text-xs">
+                <span className={`${themeClasses.text.tertiary}`}>
+                  Last updated: {Object.keys(docsProjects).length > 0 ? 'Today' : 'Never'}
+                </span>
+                <span className={`${themeClasses.text.tertiary}`}>•</span>
+                <span className={`${themeClasses.text.tertiary}`}>
+                  {Object.values(docsProjects).reduce((total, project) => {
+                    return total + (project.collections?.length || 0);
+                  }, 0)} collections documented
+                </span>
+              </div>
+            </div>
+            
+            {/* Quick Actions */}
+            <div className="hidden sm:flex items-center gap-2">
               <Button
-                onClick={createNewDocumentation}
-                className={`${
-                  isDark 
-                    ? 'bg-white text-black hover:bg-gray-200' 
-                    : 'bg-black text-white hover:bg-gray-800'
-                }`}
+                variant="outline"
+                size="sm"
                 style={{ borderRadius: '6px' }}
               >
-                <Plus className="h-4 w-4 mr-2" />
-                New Documentation
+                <Globe className="h-3 w-3 mr-1" />
+                Browse Examples
               </Button>
             </div>
           </div>
@@ -253,7 +322,7 @@ export default function DocsPage() {
       </div>
 
       {/* Content */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-6 py-12">
         {filteredProjects.length === 0 ? (
           <div className="text-center py-24">
             {searchQuery ? (
