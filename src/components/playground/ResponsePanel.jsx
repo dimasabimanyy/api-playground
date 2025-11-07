@@ -149,7 +149,8 @@ export default function ResponsePanel({ response, loading, request }) {
           </div>
           <div>
             <h4 className="text-sm font-medium mb-2">HTML Source:</h4>
-            <pre className={`text-sm p-4 overflow-auto max-h-64 whitespace-pre-wrap font-mono rounded-lg border ${isDark ? 'bg-gray-900/50 text-gray-200 border-gray-700/50' : 'bg-gray-100 text-gray-800 border-gray-300'}`}>
+            <pre className={`text-sm p-4 overflow-auto max-h-64 whitespace-pre-wrap font-mono border ${isDark ? 'bg-gray-900/50 text-gray-200' : 'bg-gray-100 text-gray-800'}`}
+                 style={{ borderRadius: '6px', borderColor: 'rgb(235, 235, 235)' }}>
               {formattedData}
             </pre>
           </div>
@@ -159,7 +160,7 @@ export default function ResponsePanel({ response, loading, request }) {
     
     const formattedData = formatContent(data, type)
     return (
-      <pre className={`text-sm p-4 overflow-auto max-h-64 whitespace-pre-wrap font-mono rounded-lg border ${isDark ? 'bg-gray-900/50 text-gray-200 border-gray-700/50' : 'bg-gray-100 text-gray-800 border-gray-300'}`}>
+      <pre className={`text-sm p-4 overflow-auto max-h-64 whitespace-pre-wrap font-mono rounded border ${isDark ? 'bg-gray-900/50 text-gray-200 border-gray-700/50' : 'bg-gray-100 text-gray-800 border-gray-300'}`}>
         {formattedData}
       </pre>
     )
@@ -170,9 +171,10 @@ export default function ResponsePanel({ response, loading, request }) {
       <div className={`flex-1 h-full flex flex-col transition-all duration-300 ${themeClasses.bg.glass}`}>
         <div className={`px-6 py-4 border-b ${themeClasses.border.primary}`}>
           <div className="flex items-center space-x-3">
-            <div className={`animate-spin rounded-full h-4 w-4 border-2 ${isDark ? 'border-blue-400/30 border-t-blue-500' : 'border-blue-300/30 border-t-blue-600'}`}></div>
+            <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 border-t-gray-600"></div>
             <h3 className={`text-sm font-medium ${themeClasses.text.primary}`}>Response</h3>
-            <span className={`text-xs px-2 py-1 rounded border font-mono ${isDark ? 'text-blue-400 bg-blue-500/10 border-blue-500/20' : 'text-blue-600 bg-blue-100 border-blue-300'}`}>
+            <span className="text-xs px-2 py-1 border font-mono text-gray-600 bg-gray-100"
+                  style={{ borderRadius: '6px', borderColor: 'rgb(235, 235, 235)' }}>
               Loading...
             </span>
           </div>
@@ -189,8 +191,8 @@ export default function ResponsePanel({ response, loading, request }) {
                 <div className={`h-4 w-20 rounded shimmer ${isDark ? 'bg-gray-800/50' : 'bg-gray-200/50'}`}></div>
               </div>
               <div className="flex gap-3">
-                <div className={`h-9 w-16 rounded-lg shimmer ${isDark ? 'bg-gray-800/50' : 'bg-gray-200/50'}`}></div>
-                <div className={`h-9 w-16 rounded-lg shimmer ${isDark ? 'bg-gray-800/50' : 'bg-gray-200/50'}`}></div>
+                <div className={`h-9 w-16 rounded shimmer ${isDark ? 'bg-gray-800/50' : 'bg-gray-200/50'}`}></div>
+                <div className={`h-9 w-16 rounded shimmer ${isDark ? 'bg-gray-800/50' : 'bg-gray-200/50'}`}></div>
               </div>
             </div>
             
@@ -251,7 +253,7 @@ export default function ResponsePanel({ response, loading, request }) {
             {/* Hero Icon */}
             <div className="relative">
               <div className={`w-24 h-24 rounded-2xl flex items-center justify-center mx-auto ${isDark ? 'bg-gradient-to-br from-blue-500/20 to-purple-600/20 border border-blue-500/20' : 'bg-gradient-to-br from-blue-50 to-purple-50 border border-blue-200'}`}>
-                <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${isDark ? 'bg-blue-500/30' : 'bg-blue-100'}`}>
+                <div className={`w-12 h-12 rounded flex items-center justify-center ${isDark ? 'bg-blue-500/30' : 'bg-blue-100'}`}>
                   <div className={`w-6 h-6 border-2 border-dashed rounded ${isDark ? 'border-blue-400' : 'border-blue-500'}`} />
                 </div>
               </div>
@@ -274,19 +276,19 @@ export default function ResponsePanel({ response, loading, request }) {
               
               {/* Feature highlights */}
               <div className="grid grid-cols-1 gap-3 mt-6">
-                <div className={`flex items-center gap-3 p-3 rounded-lg ${isDark ? 'bg-gray-800/30' : 'bg-gray-50'}`}>
+                <div className={`flex items-center gap-3 p-3 rounded ${isDark ? 'bg-gray-800/30' : 'bg-gray-50'}`}>
                   <div className={`w-6 h-6 rounded flex items-center justify-center ${isDark ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-600'}`}>
                     <div className="w-2 h-2 rounded-full bg-current"></div>
                   </div>
                   <span className={`text-sm ${themeClasses.text.secondary}`}>Real-time response preview</span>
                 </div>
-                <div className={`flex items-center gap-3 p-3 rounded-lg ${isDark ? 'bg-gray-800/30' : 'bg-gray-50'}`}>
+                <div className={`flex items-center gap-3 p-3 rounded ${isDark ? 'bg-gray-800/30' : 'bg-gray-50'}`}>
                   <div className={`w-6 h-6 rounded flex items-center justify-center ${isDark ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-600'}`}>
                     <div className="w-2 h-2 rounded-full bg-current"></div>
                   </div>
                   <span className={`text-sm ${themeClasses.text.secondary}`}>Headers & body inspection</span>
                 </div>
-                <div className={`flex items-center gap-3 p-3 rounded-lg ${isDark ? 'bg-gray-800/30' : 'bg-gray-50'}`}>
+                <div className={`flex items-center gap-3 p-3 rounded ${isDark ? 'bg-gray-800/30' : 'bg-gray-50'}`}>
                   <div className={`w-6 h-6 rounded flex items-center justify-center ${isDark ? 'bg-purple-500/20 text-purple-400' : 'bg-purple-100 text-purple-600'}`}>
                     <div className="w-2 h-2 rounded-full bg-current"></div>
                   </div>
@@ -313,12 +315,12 @@ export default function ResponsePanel({ response, loading, request }) {
           <div className="space-y-6">
             <div className={`p-6 border rounded-xl backdrop-blur-sm ${isDark ? 'border-red-500/20 bg-red-500/5' : 'border-red-300 bg-red-50'}`}>
               <div className="flex items-start space-x-4">
-                <div className={`p-2 rounded-lg ${isDark ? 'bg-red-500/20' : 'bg-red-200'}`}>
+                <div className={`p-2 rounded ${isDark ? 'bg-red-500/20' : 'bg-red-200'}`}>
                   <X className={`h-5 w-5 flex-shrink-0 ${isDark ? 'text-red-400' : 'text-red-600'}`} />
                 </div>
                 <div>
                   <h4 className={`text-sm font-medium mb-2 ${isDark ? 'text-red-400' : 'text-red-700'}`}>Request failed</h4>
-                  <p className={`text-sm font-mono p-3 rounded-lg border ${isDark ? 'text-red-300 bg-red-500/10 border-red-500/20' : 'text-red-700 bg-red-100 border-red-200'}`}>{response.error}</p>
+                  <p className={`text-sm font-mono p-3 rounded border ${isDark ? 'text-red-300 bg-red-500/10 border-red-500/20' : 'text-red-700 bg-red-100 border-red-200'}`}>{response.error}</p>
                 </div>
               </div>
             </div>

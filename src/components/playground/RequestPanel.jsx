@@ -131,14 +131,15 @@ export default function RequestPanel({
                     key={value}
                     value={value}
                     className={`
-          relative text-xs py-2 rounded-none border-none bg-transparent
+          relative text-xs py-2 border-none bg-transparent
           transition-all duration-200
           ${themeClasses.tab.inactive}
-          hover:bg-transparent hover:text-blue-500
-          data-[state=active]:text-blue-500
-          after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-blue-500 after:transition-all after:duration-300
+          hover:bg-transparent hover:text-gray-900
+          data-[state=active]:text-gray-900
+          after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-gray-800 after:transition-all after:duration-300
           data-[state=active]:after:w-full hover:after:w-full
         `}
+                    style={{ borderRadius: '0' }}
                   >
                     {label}
                     {count > 0 && (
@@ -151,7 +152,7 @@ export default function RequestPanel({
                     {dot && (
                       <div
                         className={`ml-1.5 h-2 w-2 rounded-full ${
-                          isDark ? "bg-blue-500" : "bg-blue-600"
+                          isDark ? "bg-gray-500" : "bg-gray-600"
                         }`}
                       />
                     )}
@@ -182,7 +183,12 @@ export default function RequestPanel({
                     <input
                       type="text"
                       placeholder="Key"
-                      className={`w-full h-9 px-3 text-sm rounded-md border ${themeClasses.border.primary} ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all`}
+                      className={`w-full h-9 px-3 text-sm border ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none transition-all`}
+                      style={{ 
+                        borderRadius: '6px', 
+                        borderColor: 'rgb(235, 235, 235)',
+                        backgroundColor: isDark ? 'transparent' : '#fafafa'
+                      }}
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -191,10 +197,10 @@ export default function RequestPanel({
                       <input
                         type="text"
                         placeholder="1"
-                        className={`flex-1 h-9 px-3 text-sm rounded-md border ${themeClasses.border.primary} ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all`}
+                        className={`flex-1 h-9 px-3 text-sm rounded border ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none transition-all`}
                       />
                       <button
-                        className={`h-9 w-9 rounded-md border ${themeClasses.border.primary} flex items-center justify-center transition-all duration-200 ${isDark ? 'text-gray-400 hover:text-white hover:bg-gray-800' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}`}
+                        className={`h-9 w-9 rounded border flex items-center justify-center transition-all duration-200 ${isDark ? 'text-gray-400 hover:text-white hover:bg-gray-800' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}`}
                       >
                         <Plus className="h-4 w-4" />
                       </button>
@@ -224,7 +230,7 @@ export default function RequestPanel({
                       placeholder="Content-Type"
                       value={newHeaderKey}
                       onChange={(e) => setNewHeaderKey(e.target.value)}
-                      className={`w-full h-9 px-3 text-sm rounded-md border ${themeClasses.border.primary} ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all`}
+                      className={`w-full h-9 px-3 text-sm rounded border ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none transition-all`}
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -235,12 +241,12 @@ export default function RequestPanel({
                         placeholder="application/json"
                         value={newHeaderValue}
                         onChange={(e) => setNewHeaderValue(e.target.value)}
-                        className={`flex-1 h-9 px-3 text-sm rounded-md border ${themeClasses.border.primary} ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all`}
+                        className={`flex-1 h-9 px-3 text-sm rounded border ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none transition-all`}
                       />
                       <button
                         onClick={addHeader}
                         disabled={!newHeaderKey || !newHeaderValue}
-                        className={`h-9 w-9 rounded-md border ${themeClasses.border.primary} flex items-center justify-center transition-all duration-200 ${
+                        className={`h-9 w-9 rounded border flex items-center justify-center transition-all duration-200 ${
                           newHeaderKey && newHeaderValue
                             ? `${isDark ? 'text-gray-400 hover:text-white hover:bg-gray-800' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}`
                             : `${isDark ? 'text-gray-600 cursor-not-allowed' : 'text-gray-400 cursor-not-allowed'}`
@@ -258,7 +264,7 @@ export default function RequestPanel({
                 {Object.entries(safeRequest.headers || {}).map(([key, value]) => (
                   <div
                     key={key}
-                    className={`grid grid-cols-1 md:grid-cols-2 gap-3 p-3 rounded-md border ${themeClasses.border.primary} group hover:${isDark ? 'bg-gray-900/20' : 'bg-gray-50'} transition-all`}
+                    className={`grid grid-cols-1 md:grid-cols-2 gap-3 p-3 rounded border group hover:${isDark ? 'bg-gray-900/20' : 'bg-gray-50'} transition-all`}
                   >
                     <div className="space-y-1">
                       <span className={`text-xs font-medium ${themeClasses.text.secondary}`}>Key</span>
@@ -271,7 +277,7 @@ export default function RequestPanel({
                       </div>
                       <button
                         onClick={() => removeHeader(key)}
-                        className={`opacity-0 group-hover:opacity-100 p-1 rounded-md transition-all duration-200 ${themeClasses.text.tertiary} hover:text-red-500 ${isDark ? 'hover:bg-red-500/20' : 'hover:bg-red-100'}`}
+                        className={`opacity-0 group-hover:opacity-100 p-1 rounded transition-all duration-200 ${themeClasses.text.tertiary} hover:text-red-500 ${isDark ? 'hover:bg-red-500/20' : 'hover:bg-red-100'}`}
                       >
                         <X className="h-4 w-4" />
                       </button>
@@ -319,7 +325,7 @@ export default function RequestPanel({
               
               {/* Body Editor - Monaco Code Editor */}
               <div className="flex-1 flex flex-col">
-                <div className={`flex-1 min-h-[300px] rounded-md border ${themeClasses.border.primary} overflow-hidden`}>
+                <div className={`flex-1 min-h-[300px] rounded border overflow-hidden`}>
                   <Editor
                     height="300px"
                     language={contentType === 'json' ? 'json' : contentType === 'xml' ? 'xml' : 'plaintext'}
@@ -368,7 +374,7 @@ export default function RequestPanel({
                   <select
                     value={authType}
                     onChange={(e) => setAuthType(e.target.value)}
-                    className={`w-full h-9 px-3 text-sm rounded-md border ${themeClasses.border.primary} ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all`}
+                    className={`w-full h-9 px-3 text-sm rounded border ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} focus:outline-none transition-all`}
                   >
                     <option value="none">No Authentication</option>
                     <option value="bearer">Bearer Token</option>
@@ -388,7 +394,7 @@ export default function RequestPanel({
                           placeholder="Enter your bearer token"
                           value={bearerToken}
                           onChange={(e) => setBearerToken(e.target.value)}
-                          className={`w-full h-9 px-3 pr-10 text-sm rounded-md border ${themeClasses.border.primary} ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all`}
+                          className={`w-full h-9 px-3 pr-10 text-sm rounded border ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none transition-all`}
                         />
                         <button
                           type="button"
@@ -414,7 +420,7 @@ export default function RequestPanel({
                         placeholder="X-API-Key"
                         value={apiKeyHeader}
                         onChange={(e) => setApiKeyHeader(e.target.value)}
-                        className={`w-full h-9 px-3 text-sm rounded-md border ${themeClasses.border.primary} ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all`}
+                        className={`w-full h-9 px-3 text-sm rounded border ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none transition-all`}
                       />
                     </div>
                     <div className="space-y-1.5">
@@ -424,7 +430,7 @@ export default function RequestPanel({
                         placeholder="API key value"
                         value={apiKeyValue}
                         onChange={(e) => setApiKeyValue(e.target.value)}
-                        className={`w-full h-9 px-3 text-sm rounded-md border ${themeClasses.border.primary} ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all`}
+                        className={`w-full h-9 px-3 text-sm rounded border ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none transition-all`}
                       />
                     </div>
                   </div>
@@ -438,7 +444,7 @@ export default function RequestPanel({
                         placeholder="Username"
                         value={basicUsername}
                         onChange={(e) => setBasicUsername(e.target.value)}
-                        className={`w-full h-9 px-3 text-sm rounded-md border ${themeClasses.border.primary} ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all`}
+                        className={`w-full h-9 px-3 text-sm rounded border ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none transition-all`}
                       />
                     </div>
                     <div className="space-y-1.5">
@@ -448,7 +454,7 @@ export default function RequestPanel({
                         placeholder="Password"
                         value={basicPassword}
                         onChange={(e) => setBasicPassword(e.target.value)}
-                        className={`w-full h-9 px-3 text-sm rounded-md border ${themeClasses.border.primary} ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all`}
+                        className={`w-full h-9 px-3 text-sm rounded border ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none transition-all`}
                       />
                     </div>
                   </div>

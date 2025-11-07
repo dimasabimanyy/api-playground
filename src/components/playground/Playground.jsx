@@ -1196,7 +1196,7 @@ export default function Playground() {
         className={`min-h-screen flex items-center justify-center ${themeClasses.bg.primary}`}
       >
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400 mx-auto mb-2"></div>
           <p className={`text-sm ${themeClasses.text.secondary}`}>Loading...</p>
         </div>
       </div>
@@ -1562,7 +1562,7 @@ export default function Playground() {
                                           if (e.key === "Enter")
                                             setEditingCollection(null);
                                         }}
-                                        className={`w-full text-sm font-medium bg-transparent border border-gray-300 rounded px-1 py-0.5 outline-none focus:border-blue-500 ${themeClasses.text.primary}`}
+                                        className={`w-full text-sm font-medium bg-transparent border border-gray-300 rounded px-1 py-0.5 outline-none focus:border-gray-400 ${themeClasses.text.primary}`}
                                         autoFocus
                                       />
                                     ) : (
@@ -1704,7 +1704,7 @@ export default function Playground() {
                                                     if (e.key === "Enter")
                                                       setEditingRequest(null);
                                                   }}
-                                                  className={`w-full text-xs bg-transparent border border-gray-300 rounded px-1 py-0.5 outline-none focus:border-blue-500 ${themeClasses.text.primary}`}
+                                                  className={`w-full text-xs bg-transparent border border-gray-300 rounded px-1 py-0.5 outline-none focus:border-gray-400 ${themeClasses.text.primary}`}
                                                   autoFocus
                                                 />
                                               ) : (
@@ -1846,7 +1846,7 @@ export default function Playground() {
                           <div
                             className={`text-center py-12 ${themeClasses.text.tertiary}`}
                           >
-                            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mx-auto mb-2"></div>
+                            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-400 mx-auto mb-2"></div>
                             <p
                               className={`text-sm ${themeClasses.text.primary}`}
                             >
@@ -2068,7 +2068,7 @@ export default function Playground() {
                                             if (e.key === "Enter")
                                               setEditingEnvironment(null);
                                           }}
-                                          className={`w-full text-sm font-medium bg-transparent border border-gray-300 rounded px-1 py-0.5 outline-none focus:border-blue-500 ${themeClasses.text.primary}`}
+                                          className={`w-full text-sm font-medium bg-transparent border border-gray-300 rounded px-1 py-0.5 outline-none focus:border-gray-400 ${themeClasses.text.primary}`}
                                           autoFocus
                                         />
                                       ) : (
@@ -2560,7 +2560,7 @@ export default function Playground() {
                           }
                         }}
                         placeholder="Untitled Request"
-                        className={`text-sm font-medium bg-transparent border border-gray-300 rounded px-2 py-1 outline-none focus:border-blue-500 focus:ring-0 transition-colors duration-200 w-full ${themeClasses.text.primary}`}
+                        className={`text-sm font-medium bg-transparent border border-gray-300 rounded px-2 py-1 outline-none focus:border-gray-400 focus:ring-0 transition-colors duration-200 w-full ${themeClasses.text.primary}`}
                         autoFocus
                       />
                     ) : (
@@ -2705,7 +2705,8 @@ export default function Playground() {
                         return (
                           <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
                             <div
-                              className={`px-2 py-1 rounded text-xs ${themeClasses.bg.secondary} ${themeClasses.text.tertiary} border border-blue-200 dark:border-blue-800`}
+                              className={`px-2 py-1 text-xs ${themeClasses.bg.secondary} ${themeClasses.text.tertiary} border`}
+                              style={{ borderRadius: '6px', borderColor: 'rgb(235, 235, 235)' }}
                               title={`Variables: ${variables
                                 .map((v) => v.replace(/\{\{|\}\}/g, ""))
                                 .join(", ")}`}
@@ -2756,24 +2757,22 @@ export default function Playground() {
                   title={`Send request (${
                     navigator.platform.includes("Mac") ? "Cmd" : "Ctrl"
                   }+Enter)`}
-                  className={`h-10 sm:h-11 text-sm px-4 sm:px-6 rounded-md transition-all duration-200 font-medium shadow-sm flex items-center justify-center gap-2 flex-shrink-0 w-full sm:w-auto ${
+                  className={`h-10 sm:h-11 text-sm px-4 sm:px-6 transition-all duration-200 font-medium flex items-center justify-center gap-2 flex-shrink-0 w-full sm:w-auto ${
                     loading || !request.url
-                      ? `${
-                          isDark
-                            ? "bg-gray-700 text-gray-400"
-                            : "bg-gray-200 text-gray-500"
-                        } cursor-not-allowed`
-                      : themeClasses.button.primary
+                      ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                      : "bg-black text-white hover:bg-gray-800"
                   }`}
+                  style={{ 
+                    borderRadius: '6px',
+                    border: 'none',
+                    backgroundColor: loading || !request.url ? '#f3f4f6' : '#171717',
+                    boxShadow: 'none'
+                  }}
                 >
                   {loading ? (
                     <>
                       <div
-                        className={`animate-spin h-4 w-4 border-2 ${
-                          isDark
-                            ? "border-blue-300 border-t-transparent"
-                            : "border-blue-400 border-t-transparent"
-                        } rounded-full`}
+                        className="animate-spin h-4 w-4 border-2 border-gray-400 border-t-transparent rounded-full"
                       ></div>
                       Sending...
                     </>
@@ -2867,11 +2866,12 @@ export default function Playground() {
                       }`}
                     >
                       <div
-                        className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                        className={`w-10 h-10 flex items-center justify-center ${
                           isDark
-                            ? "bg-blue-500/20 text-blue-400"
-                            : "bg-blue-100 text-blue-600"
+                            ? "bg-gray-800 text-gray-400"
+                            : "bg-gray-100 text-gray-600"
                         }`}
+                        style={{ borderRadius: '6px' }}
                       >
                         <span className="text-xs font-bold">HTTP</span>
                       </div>
@@ -2954,8 +2954,8 @@ export default function Playground() {
 
                 {/* Horizontal Draggable Divider */}
                 <div
-                  className={`bg-gray-100 dark:bg-gray-600 hover:bg-blue-500 dark:hover:bg-blue-400 cursor-col-resize transition-colors duration-200 ${
-                    isDragging ? "bg-blue-500 dark:bg-blue-400" : ""
+                  className={`bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 cursor-col-resize transition-colors duration-200 ${
+                    isDragging ? "bg-gray-300 dark:bg-gray-600" : ""
                   }`}
                   onMouseDown={handleMouseDown}
                   style={{ width: "2px" }}
@@ -2986,8 +2986,8 @@ export default function Playground() {
 
                 {/* Vertical Draggable Divider */}
                 <div
-                  className={`bg-gray-100 dark:bg-gray-600 hover:bg-blue-500 dark:hover:bg-blue-400 cursor-row-resize transition-colors duration-200 ${
-                    isDragging ? "bg-blue-500 dark:bg-blue-400" : ""
+                  className={`bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 cursor-row-resize transition-colors duration-200 ${
+                    isDragging ? "bg-gray-300 dark:bg-gray-600" : ""
                   }`}
                   onMouseDown={handleMouseDown}
                   style={{ height: "2px" }}
@@ -3588,7 +3588,8 @@ export default function Playground() {
                       reader.readAsText(file);
                     }
                   }}
-                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"
+                  style={{ borderRadius: '6px' }}
                 />
               </div>
 
