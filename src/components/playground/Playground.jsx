@@ -140,8 +140,8 @@ function UserAvatar({ user, isDark }) {
   return (
     <div
       className="h-8 w-8 rounded-full flex items-center justify-center cursor-pointer text-white font-medium text-sm"
-      style={{ 
-        backgroundColor: '#171717' 
+      style={{
+        backgroundColor: "#171717",
       }}
     >
       {getInitials()}
@@ -182,24 +182,24 @@ export default function Playground() {
   // Handle search modal keyboard shortcuts and clicks
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape' && searchModalOpen) {
+      if (e.key === "Escape" && searchModalOpen) {
         setSearchModalOpen(false);
-        setSearchQuery('');
+        setSearchQuery("");
       }
     };
 
     const handleClickOutside = (e) => {
-      if (searchModalOpen && !e.target.closest('.search-container')) {
+      if (searchModalOpen && !e.target.closest(".search-container")) {
         setSearchModalOpen(false);
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('mousedown', handleClickOutside);
-    
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("mousedown", handleClickOutside);
+
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [searchModalOpen]);
   const [editingRequestName, setEditingRequestName] = useState(false);
@@ -208,8 +208,8 @@ export default function Playground() {
   const [requestPanelHeight, setRequestPanelHeight] = useState(35); // percentage for single column
   const [isDragging, setIsDragging] = useState(false);
   const [showImportExportModal, setShowImportExportModal] = useState(false);
-  const [importData, setImportData] = useState('');
-  const [importError, setImportError] = useState('');
+  const [importData, setImportData] = useState("");
+  const [importError, setImportError] = useState("");
 
   // Drag handling functions for resizable panels (must be at top level)
   const handleMouseDown = (e) => {
@@ -266,7 +266,8 @@ export default function Playground() {
 
   // Modal states
   const [docsModalOpen, setDocsModalOpen] = useState(false);
-  const [selectedCollectionForDocs, setSelectedCollectionForDocs] = useState(null);
+  const [selectedCollectionForDocs, setSelectedCollectionForDocs] =
+    useState(null);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
   const [createCollectionDialogOpen, setCreateCollectionDialogOpen] =
     useState(false);
@@ -1204,7 +1205,7 @@ export default function Playground() {
           <button
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
             className="lg:hidden p-1.5 transition-all duration-200 hover:bg-gray-50"
-            style={{ borderRadius: '6px' }}
+            style={{ borderRadius: "6px" }}
           >
             <svg
               className="w-5 h-5"
@@ -1222,60 +1223,85 @@ export default function Playground() {
           </button>
 
           <div className="flex items-center space-x-2 sm:space-x-3">
-            <div className="h-6 w-6 sm:h-8 sm:w-8 flex items-center justify-center" style={{ borderRadius: '6px', backgroundColor: '#171717' }}>
+            <div
+              className="h-6 w-6 sm:h-8 sm:w-8 flex items-center justify-center"
+              style={{ borderRadius: "6px", backgroundColor: "#171717" }}
+            >
               <Zap className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
             </div>
-            <h1
-              className="text-sm sm:text-lg font-bold tracking-tight text-gray-900 dark:text-white hidden sm:block"
-            >
+            <h1 className="text-sm sm:text-lg font-bold tracking-tight text-gray-900 dark:text-white hidden sm:block">
               API Playground
             </h1>
-            <h1
-              className="text-sm font-bold tracking-tight text-gray-900 dark:text-white sm:hidden"
-            >
+            <h1 className="text-sm font-bold tracking-tight text-gray-900 dark:text-white sm:hidden">
               API
             </h1>
           </div>
         </div>
 
-
         <div className="flex items-center space-x-1 sm:space-x-3 ml-auto">
           {/* Search Input */}
           <div className="relative z-[99999] search-container">
-            <div className={`transition-all duration-300 ${
-              searchModalOpen ? 'w-64 sm:w-80' : 'w-32 sm:w-40'
-            }`}>
+            <div
+              className={`transition-all duration-300 ${
+                searchModalOpen ? "w-64 sm:w-80" : "w-32 sm:w-40"
+              }`}
+            >
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 z-10" />
               <Input
-                placeholder={searchModalOpen ? "Search collections, requests, environments..." : "Find..."}
+                placeholder={
+                  searchModalOpen
+                    ? "Search collections, requests, environments..."
+                    : "Find..."
+                }
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => setSearchModalOpen(true)}
                 className="pl-10 py-1.5 text-sm focus:ring-0 focus:outline-none cursor-pointer transition-all duration-300"
-                style={{ 
-                  borderRadius: '6px', 
-                  borderColor: 'rgb(235, 235, 235)', 
-                  backgroundColor: 'white',
-                  border: '1px solid rgb(235, 235, 235)',
-                  boxShadow: 'none'
+                style={{
+                  borderRadius: "6px",
+                  borderColor: "rgb(235, 235, 235)",
+                  backgroundColor: "white",
+                  border: "1px solid rgb(235, 235, 235)",
+                  boxShadow: "none",
                 }}
               />
-              
+
               {/* Search Dropdown */}
               {searchModalOpen && (
-                <div className="absolute top-full right-0 mt-2 w-80 bg-white border shadow-xs max-h-96 overflow-y-auto z-[99999]" 
-                     style={{ borderRadius: '6px', borderColor: 'rgb(235, 235, 235)' }}>
+                <div
+                  className="absolute top-full right-0 mt-2 w-80 bg-white border shadow-xs max-h-96 overflow-y-auto z-[99999]"
+                  style={{
+                    borderRadius: "6px",
+                    borderColor: "rgb(235, 235, 235)",
+                  }}
+                >
                   {searchQuery.length > 0 ? (
                     <div className="p-4">
-                      <p className="text-sm text-gray-500 mb-3">Search results for "{searchQuery}"</p>
+                      <p className="text-sm text-gray-500 mb-3">
+                        Search results for "{searchQuery}"
+                      </p>
                       <div className="space-y-2">
-                        <div className="p-3 hover:bg-gray-50 cursor-pointer" style={{ borderRadius: '6px' }}>
-                          <div className="font-medium text-sm">Example Collection</div>
-                          <div className="text-xs text-gray-500">Collection • 5 requests</div>
+                        <div
+                          className="p-3 hover:bg-gray-50 cursor-pointer"
+                          style={{ borderRadius: "6px" }}
+                        >
+                          <div className="font-medium text-sm">
+                            Example Collection
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            Collection • 5 requests
+                          </div>
                         </div>
-                        <div className="p-3 hover:bg-gray-50 cursor-pointer" style={{ borderRadius: '6px' }}>
-                          <div className="font-medium text-sm">API Request Example</div>
-                          <div className="text-xs text-gray-500">Request • GET /api/users</div>
+                        <div
+                          className="p-3 hover:bg-gray-50 cursor-pointer"
+                          style={{ borderRadius: "6px" }}
+                        >
+                          <div className="font-medium text-sm">
+                            API Request Example
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            Request • GET /api/users
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -1283,7 +1309,9 @@ export default function Playground() {
                     <div className="p-6 text-center text-gray-500">
                       <Search className="h-6 w-6 mx-auto mb-2 opacity-40" />
                       <p className="text-sm">Start typing to search...</p>
-                      <p className="text-xs text-gray-400 mt-1">Find collections, requests, and environments</p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        Find collections, requests, and environments
+                      </p>
                     </div>
                   )}
                 </div>
@@ -1295,14 +1323,16 @@ export default function Playground() {
           <button
             onClick={() => setShowImportExportModal(true)}
             className="px-3 py-1.5 text-sm transition-all duration-200 hover:bg-gray-50 border cursor-pointer"
-            style={{ 
-              borderRadius: '6px', 
-              borderColor: 'rgb(235, 235, 235)',
-              backgroundColor: 'white'
+            style={{
+              borderRadius: "6px",
+              borderColor: "rgb(235, 235, 235)",
+              backgroundColor: "white",
             }}
             title="Import/Export Collections"
           >
-            <span className="text-gray-600 text-sm font-medium">Import/Export</span>
+            <span className="text-gray-600 text-sm font-medium">
+              Import/Export
+            </span>
           </button>
 
           {/* Layout Toggle Button */}
@@ -1311,9 +1341,9 @@ export default function Playground() {
               setLayoutMode(layoutMode === "single" ? "split" : "single")
             }
             className="p-2 transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-800 border cursor-pointer"
-            style={{ 
-              borderRadius: '50%', 
-              borderColor: 'rgb(235, 235, 235)' 
+            style={{
+              borderRadius: "50%",
+              borderColor: "rgb(235, 235, 235)",
             }}
             title={
               layoutMode === "single"
@@ -1331,9 +1361,9 @@ export default function Playground() {
           <button
             onClick={toggleTheme}
             className="p-2 transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-800 border cursor-pointer"
-            style={{ 
-              borderRadius: '50%', 
-              borderColor: 'rgb(235, 235, 235)' 
+            style={{
+              borderRadius: "50%",
+              borderColor: "rgb(235, 235, 235)",
             }}
           >
             {isDark ? (
@@ -1351,13 +1381,18 @@ export default function Playground() {
               <UserAvatar user={user} isDark={isDark} />
 
               {/* Dropdown Menu */}
-              <div className="fixed right-4 mt-2 w-48 bg-white dark:bg-gray-800 shadow-xl border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[99999]" 
-                   style={{ 
-                     borderRadius: '12px', 
-                     borderColor: 'rgb(235, 235, 235)',
-                     top: '60px'
-                   }}>
-                <div className="p-3 border-b" style={{ borderColor: 'rgb(235, 235, 235)' }}>
+              <div
+                className="fixed right-4 mt-2 w-48 bg-white dark:bg-gray-800 shadow-xl border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[99999]"
+                style={{
+                  borderRadius: "12px",
+                  borderColor: "rgb(235, 235, 235)",
+                  top: "60px",
+                }}
+              >
+                <div
+                  className="p-3 border-b"
+                  style={{ borderColor: "rgb(235, 235, 235)" }}
+                >
                   <p className="text-sm font-medium text-gray-900 dark:text-white">
                     {user.user_metadata?.full_name || "User"}
                   </p>
@@ -1369,7 +1404,7 @@ export default function Playground() {
                   <button
                     onClick={() => signOut()}
                     className="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                    style={{ borderRadius: '6px' }}
+                    style={{ borderRadius: "6px" }}
                   >
                     Sign out
                   </button>
@@ -1380,14 +1415,17 @@ export default function Playground() {
             <button
               onClick={() => (window.location.href = "/login")}
               className="h-8 px-3 text-xs font-medium transition-all duration-200 text-white"
-              style={{ borderRadius: '6px', backgroundColor: '#171717', border: 'none' }}
+              style={{
+                borderRadius: "6px",
+                backgroundColor: "#171717",
+                border: "none",
+              }}
             >
               Sign in
             </button>
           )}
         </div>
       </header>
-
 
       {/* Main Content Layout - Theme Aware */}
       <div className="flex h-[calc(100vh-3.5rem)] relative">
@@ -1411,19 +1449,6 @@ export default function Playground() {
             themeClasses.bg.glass
           } flex flex-col transition-all duration-300 z-50 lg:z-auto`}
         >
-          {/* Sidebar Toggle Button */}
-          <button
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className="absolute -right-3 top-6 z-10 w-6 h-6 border transition-all duration-200 flex items-center justify-center bg-white hover:bg-gray-50 shadow-sm"
-            style={{ borderRadius: '6px', borderColor: 'rgb(235, 235, 235)' }}
-          >
-            {sidebarCollapsed ? (
-              <ChevronRight className="h-3 w-3" />
-            ) : (
-              <ChevronLeft className="h-3 w-3" />
-            )}
-          </button>
-
           {!sidebarCollapsed && (
             <>
               <div className={`p-4 pb-0 ${themeClasses.border.primary}`}>
@@ -1440,49 +1465,71 @@ export default function Playground() {
                   </button>
                 </div> */}
 
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button
-                      className="w-full flex items-center gap-2 px-3 py-2 transition-all duration-200 text-white justify-between"
-                      style={{ borderRadius: '6px', backgroundColor: '#171717', border: 'none' }}
-                    >
-                      <div className="flex items-center gap-2">
-                        <Plus className="h-3 w-3 text-white" />
-                        <span className="text-sm font-medium text-white">
+                <div className="flex items-center justify-between w-full">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button
+                        className="flex items-center gap-2 px-3 py-2 transition-all duration-200 text-white cursor-pointer justify-between"
+                        style={{
+                          borderRadius: "6px",
+                          backgroundColor: isDark ? "white" : "#171717",
+                          border: "none",
+                          color: isDark ? "#171717" : "white",
+                        }}
+                      >
+                        <span
+                          className={`text-sm font-medium ${
+                            isDark ? "text-gray-900" : "text-white"
+                          } whitespace-nowrap`}
+                        >
                           Add New...
                         </span>
-                      </div>
-                      <ChevronDown className="h-3 w-3 text-white" />
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="start"
-                    className="w-48"
-                    style={{ borderRadius: '6px' }}
+                        <ChevronDown
+                          className={`h-3 w-3 ${
+                            isDark ? "text-gray-900" : "text-white"
+                          }`}
+                        />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      align="start"
+                      className="w-48"
+                      style={{ borderRadius: "6px" }}
+                    >
+                      <DropdownMenuItem
+                        onClick={createNewTab}
+                        className="flex items-center gap-2"
+                      >
+                        <Plus className="h-4 w-4" />
+                        Create Request
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => setCreateCollectionDialogOpen(true)}
+                        className="flex items-center gap-2"
+                      >
+                        <FolderOpen className="h-4 w-4" />
+                        Create Collection
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => setCreateEnvironmentDialogOpen(true)}
+                        className="flex items-center gap-2"
+                      >
+                        <Globe className="h-4 w-4" />
+                        Create Environment
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+
+                  {/* Sidebar Toggle Icon */}
+                  <button
+                    onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                    className="p-2 transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                    style={{ borderRadius: "6px" }}
+                    title="Toggle Sidebar"
                   >
-                    <DropdownMenuItem
-                      onClick={createNewTab}
-                      className="flex items-center gap-2"
-                    >
-                      <Plus className="h-4 w-4" />
-                      Create Request
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => setCreateCollectionDialogOpen(true)}
-                      className="flex items-center gap-2"
-                    >
-                      <FolderOpen className="h-4 w-4" />
-                      Create Collection
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => setCreateEnvironmentDialogOpen(true)}
-                      className="flex items-center gap-2"
-                    >
-                      <Globe className="h-4 w-4" />
-                      Create Environment
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                    <PanelLeftClose className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                  </button>
+                </div>
 
                 {/* <div className="relative">
                   <Search
@@ -1535,9 +1582,9 @@ export default function Playground() {
                           <span
                             className={`text-xs font-medium ${themeClasses.text.tertiary}`}
                           >
-                            Your Collections
+                            Collections
                           </span>
-                          <button
+                          {/* <button
                             className={`p-1 rounded transition-all duration-200 ${themeClasses.button.ghost}`}
                             onClick={() => {
                               console.log(
@@ -1547,7 +1594,7 @@ export default function Playground() {
                             }}
                           >
                             <Plus className="h-3 w-3" />
-                          </button>
+                          </button> */}
                         </div>
 
                         <div className="space-y-1">
@@ -1650,7 +1697,9 @@ export default function Playground() {
                                       </DropdownMenuItem>
                                       <DropdownMenuItem
                                         onClick={() => {
-                                          setSelectedCollectionForDocs(collection.id);
+                                          setSelectedCollectionForDocs(
+                                            collection.id
+                                          );
                                           setDocsModalOpen(true);
                                         }}
                                         className="flex items-center gap-2"
@@ -2264,7 +2313,6 @@ export default function Playground() {
                       </>
                     )}
 
-
                     {/* Settings Content - Trigger Modal */}
                     {activeMenuTab === "settings" && (
                       <>
@@ -2458,35 +2506,97 @@ export default function Playground() {
 
           {/* Collapsed Sidebar Icons */}
           {sidebarCollapsed && (
-            <div className="p-3 flex flex-col items-center gap-2 mt-8">
-              {sidebarMenuItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = activeMenuTab === item.id;
+            <div className="p-3 flex flex-col items-center gap-3">
+              {/* Top buttons - Toggle and Create */}
+              <div className="flex flex-col gap-2 border-b border-gray-200 dark:border-gray-700 pb-3">
+                {/* Sidebar Toggle */}
+                <button
+                  onClick={() => setSidebarCollapsed(false)}
+                  className="w-10 h-10 rounded-lg transition-all duration-200 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                  title="Open Sidebar"
+                >
+                  <PanelLeftOpen className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                </button>
 
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => {
-                      setActiveMenuTab(item.id);
-                      setSidebarCollapsed(false);
-                    }}
-                    title={item.label}
-                    className={`w-10 h-10 rounded-lg transition-all duration-200 flex items-center justify-center ${
-                      isActive
-                        ? `${themeClasses.text.primary} ${
-                            isDark ? "bg-gray-800" : "bg-gray-100"
-                          }`
-                        : `${themeClasses.text.secondary} hover:${
-                            themeClasses.text.primary
-                          } hover:${
-                            isDark ? "bg-gray-800/30" : "bg-gray-100/50"
-                          }`
-                    }`}
+                {/* Create Button */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      className="w-10 h-10 rounded-lg transition-all duration-200 flex items-center justify-center cursor-pointer"
+                      style={{
+                        backgroundColor: isDark ? "white" : "#171717",
+                        border: "none",
+                      }}
+                      title="Add New..."
+                    >
+                      <Plus
+                        className={`h-4 w-4 ${
+                          isDark ? "text-gray-900" : "text-white"
+                        }`}
+                      />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="start"
+                    className="w-48 ml-2"
+                    style={{ borderRadius: "6px" }}
                   >
-                    <Icon className="h-4 w-4" />
-                  </button>
-                );
-              })}
+                    <DropdownMenuItem
+                      onClick={createNewTab}
+                      className="flex items-center gap-2"
+                    >
+                      <Plus className="h-4 w-4" />
+                      Create Request
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setCreateCollectionDialogOpen(true)}
+                      className="flex items-center gap-2"
+                    >
+                      <FolderOpen className="h-4 w-4" />
+                      Create Collection
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setCreateEnvironmentDialogOpen(true)}
+                      className="flex items-center gap-2"
+                    >
+                      <Globe className="h-4 w-4" />
+                      Create Environment
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+
+              {/* Menu items */}
+              <div className="flex flex-col gap-2">
+                {sidebarMenuItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = activeMenuTab === item.id;
+
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        setActiveMenuTab(item.id);
+                        setSidebarCollapsed(false);
+                      }}
+                      title={item.label}
+                      className={`w-10 h-10 rounded-lg transition-all duration-200 flex items-center justify-center ${
+                        isActive
+                          ? `${themeClasses.text.primary} ${
+                              isDark ? "bg-gray-800" : "bg-gray-100"
+                            }`
+                          : `${themeClasses.text.secondary} hover:${
+                              themeClasses.text.primary
+                            } hover:${
+                              isDark ? "bg-gray-800/30" : "bg-gray-100/50"
+                            }`
+                      }`}
+                    >
+                      <Icon className="h-4 w-4" />
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           )}
         </div>
@@ -2630,14 +2740,23 @@ export default function Playground() {
                       </button> */}
                       <button
                         className="h-8 text-xs px-3 transition-all duration-200 hidden sm:block"
-                        style={{ borderRadius: '6px', borderColor: 'rgb(235, 235, 235)', backgroundColor: '#fafafa', border: '1px solid rgb(235, 235, 235)' }}
+                        style={{
+                          borderRadius: "6px",
+                          borderColor: "rgb(235, 235, 235)",
+                          backgroundColor: "#fafafa",
+                          border: "1px solid rgb(235, 235, 235)",
+                        }}
                       >
                         Share
                       </button>
                       <button
                         onClick={handleSaveRequest}
                         className="h-8 text-xs px-3 transition-all duration-200 text-white"
-                        style={{ borderRadius: '6px', backgroundColor: '#171717', border: 'none' }}
+                        style={{
+                          borderRadius: "6px",
+                          backgroundColor: "#171717",
+                          border: "none",
+                        }}
                       >
                         {currentTab?.collectionRequestId ? "Update" : "Save"}
                       </button>
@@ -2731,7 +2850,10 @@ export default function Playground() {
                           <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
                             <div
                               className={`px-2 py-1 text-xs ${themeClasses.bg.secondary} ${themeClasses.text.tertiary} border`}
-                              style={{ borderRadius: '6px', borderColor: 'rgb(235, 235, 235)' }}
+                              style={{
+                                borderRadius: "6px",
+                                borderColor: "rgb(235, 235, 235)",
+                              }}
                               title={`Variables: ${variables
                                 .map((v) => v.replace(/\{\{|\}\}/g, ""))
                                 .join(", ")}`}
@@ -2787,18 +2909,17 @@ export default function Playground() {
                       ? "bg-gray-200 text-gray-500 cursor-not-allowed"
                       : "bg-black text-white hover:bg-gray-800"
                   }`}
-                  style={{ 
-                    borderRadius: '6px',
-                    border: 'none',
-                    backgroundColor: loading || !request.url ? '#f3f4f6' : '#171717',
-                    boxShadow: 'none'
+                  style={{
+                    borderRadius: "6px",
+                    border: "none",
+                    backgroundColor:
+                      loading || !request.url ? "#f3f4f6" : "#171717",
+                    boxShadow: "none",
                   }}
                 >
                   {loading ? (
                     <>
-                      <div
-                        className="animate-spin h-4 w-4 border-2 border-gray-400 border-t-transparent rounded-full"
-                      ></div>
+                      <div className="animate-spin h-4 w-4 border-2 border-gray-400 border-t-transparent rounded-full"></div>
                       Sending...
                     </>
                   ) : (
@@ -3497,12 +3618,15 @@ export default function Playground() {
       </Dialog>
 
       {/* Import/Export Modal */}
-      <Dialog open={showImportExportModal} onOpenChange={setShowImportExportModal}>
+      <Dialog
+        open={showImportExportModal}
+        onOpenChange={setShowImportExportModal}
+      >
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Import/Export Collections</DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-6">
             {/* Export Section */}
             <div className="space-y-3">
@@ -3513,21 +3637,26 @@ export default function Playground() {
               <Button
                 onClick={() => {
                   // Parse URL to extract components
-                  let urlParts = { protocol: 'https', host: [], path: [], query: [] };
+                  let urlParts = {
+                    protocol: "https",
+                    host: [],
+                    path: [],
+                    query: [],
+                  };
                   if (request.url) {
                     try {
                       const url = new URL(request.url);
-                      urlParts.protocol = url.protocol.replace(':', '');
-                      urlParts.host = url.hostname.split('.');
-                      urlParts.path = url.pathname.split('/').filter(p => p);
-                      
+                      urlParts.protocol = url.protocol.replace(":", "");
+                      urlParts.host = url.hostname.split(".");
+                      urlParts.path = url.pathname.split("/").filter((p) => p);
+
                       // Extract query parameters
                       url.searchParams.forEach((value, key) => {
                         urlParts.query.push({ key, value });
                       });
                     } catch (e) {
                       // Fallback for invalid URLs
-                      urlParts.host = ['localhost'];
+                      urlParts.host = ["localhost"];
                       urlParts.path = [];
                     }
                   }
@@ -3536,44 +3665,56 @@ export default function Playground() {
                     info: {
                       _postman_id: crypto.randomUUID(),
                       name: "API Playground Export",
-                      schema: "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-                      _exporter_id: "api-playground"
+                      schema:
+                        "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+                      _exporter_id: "api-playground",
                     },
-                    item: [{
-                      name: request.name || "Untitled Request",
-                      request: {
-                        method: request.method || "GET",
-                        header: Object.entries(request.headers || {}).map(([key, value]) => ({
-                          key,
-                          value,
-                          type: "text"
-                        })),
-                        body: request.body ? {
-                          mode: "raw",
-                          raw: request.body,
-                          options: {
-                            raw: {
-                              language: "json"
-                            }
-                          }
-                        } : undefined,
-                        url: {
-                          raw: request.url || "",
-                          protocol: urlParts.protocol,
-                          host: urlParts.host,
-                          path: urlParts.path,
-                          query: urlParts.query.length > 0 ? urlParts.query : undefined
-                        }
+                    item: [
+                      {
+                        name: request.name || "Untitled Request",
+                        request: {
+                          method: request.method || "GET",
+                          header: Object.entries(request.headers || {}).map(
+                            ([key, value]) => ({
+                              key,
+                              value,
+                              type: "text",
+                            })
+                          ),
+                          body: request.body
+                            ? {
+                                mode: "raw",
+                                raw: request.body,
+                                options: {
+                                  raw: {
+                                    language: "json",
+                                  },
+                                },
+                              }
+                            : undefined,
+                          url: {
+                            raw: request.url || "",
+                            protocol: urlParts.protocol,
+                            host: urlParts.host,
+                            path: urlParts.path,
+                            query:
+                              urlParts.query.length > 0
+                                ? urlParts.query
+                                : undefined,
+                          },
+                        },
+                        response: [],
                       },
-                      response: []
-                    }]
+                    ],
                   };
-                  
-                  const blob = new Blob([JSON.stringify(collection, null, 2)], { type: 'application/json' });
+
+                  const blob = new Blob([JSON.stringify(collection, null, 2)], {
+                    type: "application/json",
+                  });
                   const url = URL.createObjectURL(blob);
-                  const a = document.createElement('a');
+                  const a = document.createElement("a");
                   a.href = url;
-                  a.download = 'postman-collection.json';
+                  a.download = "postman-collection.json";
                   a.click();
                   URL.revokeObjectURL(url);
                 }}
@@ -3591,7 +3732,7 @@ export default function Playground() {
               <p className="text-xs text-gray-600 dark:text-gray-400">
                 Paste your Postman collection JSON or upload a file
               </p>
-              
+
               {/* File Upload */}
               <div className="space-y-2">
                 <input
@@ -3605,16 +3746,16 @@ export default function Playground() {
                         try {
                           const content = event.target?.result;
                           setImportData(content);
-                          setImportError('');
+                          setImportError("");
                         } catch (error) {
-                          setImportError('Error reading file');
+                          setImportError("Error reading file");
                         }
                       };
                       reader.readAsText(file);
                     }
                   }}
                   className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"
-                  style={{ borderRadius: '6px' }}
+                  style={{ borderRadius: "6px" }}
                 />
               </div>
 
@@ -3625,7 +3766,7 @@ export default function Playground() {
                   value={importData}
                   onChange={(e) => {
                     setImportData(e.target.value);
-                    setImportError('');
+                    setImportError("");
                   }}
                   placeholder="Paste your Postman collection JSON here..."
                   className="w-full h-32 p-3 text-sm border rounded-md font-mono resize-none"
@@ -3640,83 +3781,114 @@ export default function Playground() {
                 onClick={async () => {
                   try {
                     const collection = JSON.parse(importData);
-                    
+
                     // Validate basic Postman collection structure
                     if (!collection.info || !collection.item) {
-                      setImportError('Invalid Postman collection format');
+                      setImportError("Invalid Postman collection format");
                       return;
                     }
 
                     // Create a new collection with imported name and description
-                    const collectionName = collection.info.name || 'Imported Collection';
-                    const collectionDescription = collection.info.description || 'Imported from Postman';
-                    
-                    const newCollection = await createCollection(collectionName, collectionDescription, 'blue');
-                    
+                    const collectionName =
+                      collection.info.name || "Imported Collection";
+                    const collectionDescription =
+                      collection.info.description || "Imported from Postman";
+
+                    const newCollection = await createCollection(
+                      collectionName,
+                      collectionDescription,
+                      "blue"
+                    );
+
                     // Function to parse Postman request into our format
                     const parseRequest = (postmanItem) => {
                       if (!postmanItem.request) return null;
-                      
+
                       const request = postmanItem.request;
-                      
+
                       // Convert headers (V2.1 format)
                       const headers = {};
                       if (request.header && Array.isArray(request.header)) {
-                        request.header.forEach(h => {
-                          if (h.key && h.value && h.type !== 'disabled') {
+                        request.header.forEach((h) => {
+                          if (h.key && h.value && h.type !== "disabled") {
                             headers[h.key] = h.value;
                           }
                         });
                       }
 
                       // Build URL from V2.1 format
-                      let fullUrl = '';
-                      if (typeof request.url === 'string') {
+                      let fullUrl = "";
+                      if (typeof request.url === "string") {
                         fullUrl = request.url;
-                      } else if (request.url && typeof request.url === 'object') {
+                      } else if (
+                        request.url &&
+                        typeof request.url === "object"
+                      ) {
                         // Handle V2.1 URL object format
                         if (request.url.raw) {
                           fullUrl = request.url.raw;
                         } else {
                           // Construct URL from parts
-                          const protocol = request.url.protocol || 'https';
-                          const host = Array.isArray(request.url.host) ? request.url.host.join('.') : request.url.host || '';
-                          const path = Array.isArray(request.url.path) ? '/' + request.url.path.join('/') : request.url.path || '';
-                          
+                          const protocol = request.url.protocol || "https";
+                          const host = Array.isArray(request.url.host)
+                            ? request.url.host.join(".")
+                            : request.url.host || "";
+                          const path = Array.isArray(request.url.path)
+                            ? "/" + request.url.path.join("/")
+                            : request.url.path || "";
+
                           fullUrl = `${protocol}://${host}${path}`;
-                          
+
                           // Add query parameters
-                          if (request.url.query && Array.isArray(request.url.query)) {
+                          if (
+                            request.url.query &&
+                            Array.isArray(request.url.query)
+                          ) {
                             const queryParams = request.url.query
-                              .filter(q => q.key && q.value && !q.disabled)
-                              .map(q => `${encodeURIComponent(q.key)}=${encodeURIComponent(q.value)}`)
-                              .join('&');
-                            
+                              .filter((q) => q.key && q.value && !q.disabled)
+                              .map(
+                                (q) =>
+                                  `${encodeURIComponent(
+                                    q.key
+                                  )}=${encodeURIComponent(q.value)}`
+                              )
+                              .join("&");
+
                             if (queryParams) {
-                              fullUrl += '?' + queryParams;
+                              fullUrl += "?" + queryParams;
                             }
                           }
                         }
                       }
 
                       // Extract body content
-                      let bodyContent = '';
+                      let bodyContent = "";
                       if (request.body) {
-                        if (request.body.mode === 'raw' && request.body.raw) {
+                        if (request.body.mode === "raw" && request.body.raw) {
                           bodyContent = request.body.raw;
-                        } else if (request.body.mode === 'formdata' && request.body.formdata) {
+                        } else if (
+                          request.body.mode === "formdata" &&
+                          request.body.formdata
+                        ) {
                           // Convert form data to JSON representation
                           const formObj = {};
-                          request.body.formdata.forEach(item => {
-                            if (item.key && item.value && item.type !== 'file') {
+                          request.body.formdata.forEach((item) => {
+                            if (
+                              item.key &&
+                              item.value &&
+                              item.type !== "file"
+                            ) {
                               formObj[item.key] = item.value;
                             }
                           });
                           bodyContent = JSON.stringify(formObj, null, 2);
-                        } else if (request.body.mode === 'urlencoded' && request.body.urlencoded) {
+                        } else if (
+                          request.body.mode === "urlencoded" &&
+                          request.body.urlencoded
+                        ) {
                           // Convert URL encoded to JSON representation
                           const urlEncodedObj = {};
-                          request.body.urlencoded.forEach(item => {
+                          request.body.urlencoded.forEach((item) => {
                             if (item.key && item.value) {
                               urlEncodedObj[item.key] = item.value;
                             }
@@ -3726,12 +3898,12 @@ export default function Playground() {
                       }
 
                       return {
-                        name: postmanItem.name || 'Untitled Request',
-                        method: request.method || 'GET',
+                        name: postmanItem.name || "Untitled Request",
+                        method: request.method || "GET",
                         url: fullUrl,
                         headers,
                         body: bodyContent,
-                        description: postmanItem.description || ''
+                        description: postmanItem.description || "",
                       };
                     };
 
@@ -3745,7 +3917,10 @@ export default function Playground() {
                           // This is a request, parse and add it
                           const parsedRequest = parseRequest(item);
                           if (parsedRequest) {
-                            await addRequestToCollection(collectionId, parsedRequest);
+                            await addRequestToCollection(
+                              collectionId,
+                              parsedRequest
+                            );
                           }
                         }
                       }
@@ -3758,14 +3933,18 @@ export default function Playground() {
                     setActiveCollectionId(newCollection.id);
 
                     setShowImportExportModal(false);
-                    setImportData('');
-                    setImportError('');
-                    
+                    setImportData("");
+                    setImportError("");
+
                     // Show success message
-                    console.log(`Successfully imported collection: ${collectionName} with ${collection.item.length} items`);
+                    console.log(
+                      `Successfully imported collection: ${collectionName} with ${collection.item.length} items`
+                    );
                   } catch (error) {
-                    console.error('Import error:', error);
-                    setImportError('Failed to import collection: ' + error.message);
+                    console.error("Import error:", error);
+                    setImportError(
+                      "Failed to import collection: " + error.message
+                    );
                   }
                 }}
                 disabled={!importData.trim()}
