@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { 
   Plus, 
@@ -17,7 +18,10 @@ import {
   Grid3X3,
   List,
   ArrowUpDown,
-  Globe
+  Globe,
+  Zap,
+  Moon,
+  Sun
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -28,9 +32,68 @@ import { getThemeClasses } from '@/lib/theme'
 import { DocsProjects, DocsMetadata } from '@/lib/docs-storage'
 import DocGeneratorModal from '@/components/docs/DocGeneratorModal'
 
+function UserAvatar({ user, isDark }) {
+  const [imageLoaded, setImageLoaded] = useState(true);
+  const [imageSrc, setImageSrc] = useState(null);
+
+  useEffect(() => {
+    if (user?.user_metadata?.avatar_url) {
+      // Fix Google profile image URL by removing size parameter and adding referrer policy bypass
+      let avatarUrl = user.user_metadata.avatar_url;
+
+      // If it's a Google profile image, modify the URL for better compatibility
+      if (avatarUrl.includes("googleusercontent.com")) {
+        // Remove the size parameter (=s96-c) and replace with a larger size
+        avatarUrl = avatarUrl.replace(/=s\d+-c$/, "=s128-c");
+      }
+
+      setImageSrc(avatarUrl);
+      setImageLoaded(true);
+    }
+  }, [user]);
+
+  const getInitials = () => {
+    if (user?.user_metadata?.full_name) {
+      return user.user_metadata.full_name.charAt(0).toUpperCase();
+    }
+    if (user?.user_metadata?.name) {
+      return user.user_metadata.name.charAt(0).toUpperCase();
+    }
+    if (user?.email) {
+      return user.email.charAt(0).toUpperCase();
+    }
+    return "U";
+  };
+
+  if (imageLoaded && imageSrc) {
+    return (
+      <div className="w-8 h-8 rounded-full overflow-hidden cursor-pointer">
+        <Image
+          src={imageSrc}
+          alt="User avatar"
+          width={32}
+          height={32}
+          className="w-full h-full object-cover"
+          onError={() => setImageLoaded(false)}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={`w-8 h-8 rounded-full ${
+        isDark ? 'bg-gray-700 text-gray-300' : 'bg-gray-200 text-gray-700'
+      } flex items-center justify-center cursor-pointer text-sm font-medium`}
+    >
+      {getInitials()}
+    </div>
+  );
+}
+
 export default function DocsPage() {
-  const { isDark } = useTheme()
-  const { user } = useAuth()
+  const { isDark, toggleTheme } = useTheme()
+  const { user, signOut } = useAuth()
   const { collections, getCollectionsWithDocs } = useCollections()
   const themeClasses = getThemeClasses(isDark)
   const router = useRouter()
@@ -155,63 +218,112 @@ export default function DocsPage() {
       <header
         className={`border-b ${themeClasses.border.primary} ${themeClasses.bg.glass} h-14 flex items-center px-3 sm:px-6 transition-all duration-300 relative z-50`}
       >
-        <div className="flex items-center justify-between w-full min-w-0">
-          {/* Left Section - Logo and Navigation */}
-          <div className="flex items-center space-x-4 min-w-0 flex-shrink-0">
-            {/* Logo/Branding */}
-            <div className="flex items-center gap-3">
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                isDark ? 'bg-white/10' : 'bg-gray-900/10'
-              }`}>
-                <FileText className={`w-4 h-4 ${themeClasses.text.primary}`} />
-              </div>
-              <div className="hidden sm:block">
-                <h1 className={`text-lg font-semibold ${themeClasses.text.primary}`}>
-                  Documentation
-                </h1>
-              </div>
+        <div className="flex items-center space-x-2 sm:space-x-6 min-w-0 flex-shrink-0">
+          <div className="flex items-center space-x-2 sm:space-x-3">
+            <div
+              className="h-6 w-6 sm:h-8 sm:w-8 flex items-center justify-center"
+              style={{ borderRadius: "6px", backgroundColor: "#171717" }}
+            >
+              <Zap className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
             </div>
-            
-            {/* Quick Stats */}
-            <div className="hidden md:flex items-center gap-4 text-sm">
-              <span className={`${themeClasses.text.tertiary}`}>
-                {Object.keys(docsProjects).length} project{Object.keys(docsProjects).length !== 1 ? 's' : ''}
-              </span>
-              <span className={`${themeClasses.text.tertiary}`}>•</span>
-              <span className={`${themeClasses.text.tertiary}`}>
-                {Object.keys(collections).length} collection{Object.keys(collections).length !== 1 ? 's' : ''}
-              </span>
+            <h1 className="text-sm sm:text-lg font-bold tracking-tight text-gray-900 dark:text-white hidden sm:block">
+              Documentation
+            </h1>
+            <h1 className="text-sm font-bold tracking-tight text-gray-900 dark:text-white sm:hidden">
+              Docs
+            </h1>
+          </div>
+        </div>
+        <div className="flex items-center space-x-1 sm:space-x-3 ml-auto">
+          {/* Search Input */}
+          <div className="relative z-[99999] search-container">
+            <div className="transition-all duration-300 w-32 sm:w-40">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 z-10" />
+              <Input
+                placeholder="Find..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 py-1.5 text-sm focus:ring-0 focus:outline-none cursor-pointer transition-all duration-300"
+                style={{
+                  borderRadius: "6px",
+                  borderColor: "rgb(235, 235, 235)",
+                  backgroundColor: "white",
+                  border: "1px solid rgb(235, 235, 235)",
+                  boxShadow: "none",
+                }}
+              />
             </div>
           </div>
+          {/* Create Documentation Button */}
+          <Button
+            onClick={createNewDocumentation}
+            size="sm"
+            className={`${
+              isDark 
+                ? 'bg-white text-black hover:bg-gray-200' 
+                : 'bg-black text-white hover:bg-gray-800'
+            }`}
+            style={{ borderRadius: '6px' }}
+          >
+            <Plus className="h-4 w-4 mr-1" />
+            <span className="hidden sm:inline">New</span>
+          </Button>
 
-          {/* Right Section - Actions */}
-          <div className="flex items-center gap-2">
-            {/* Create Documentation Button */}
-            <Button
-              onClick={createNewDocumentation}
-              size="sm"
-              className={`${
-                isDark 
-                  ? 'bg-white text-black hover:bg-gray-200' 
-                  : 'bg-black text-white hover:bg-gray-800'
-              }`}
-              style={{ borderRadius: '6px' }}
-            >
-              <Plus className="h-4 w-4 mr-1" />
-              <span className="hidden sm:inline">New Documentation</span>
-              <span className="sm:hidden">New</span>
-            </Button>
+          {/* Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            className={`p-2 rounded-lg transition-all duration-200 ${
+              isDark 
+                ? 'hover:bg-gray-700 text-gray-300' 
+                : 'hover:bg-gray-100 text-gray-600'
+            }`}
+            style={{ borderRadius: '6px' }}
+          >
+            {isDark ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )}
+          </button>
 
-            {/* Settings/More Actions */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className={`px-2 ${themeClasses.text.tertiary} hover:${themeClasses.text.primary}`}
-              style={{ borderRadius: '6px' }}
-            >
-              <MoreVertical className="h-4 w-4" />
-            </Button>
-          </div>
+          {/* User Avatar/Auth Section */}
+          {user ? (
+            <div className="relative group">
+              <UserAvatar user={user} isDark={isDark} />
+              {/* Dropdown Menu */}
+              <div
+                className="fixed right-4 mt-2 w-48 bg-white dark:bg-gray-800 shadow-xl border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[99999]"
+                style={{
+                  borderRadius: "12px",
+                  borderColor: "rgb(235, 235, 235)",
+                  top: "60px",
+                }}
+              >
+                <div
+                  className="p-3 border-b"
+                  style={{ borderColor: "rgb(235, 235, 235)" }}
+                >
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">
+                    {user.user_metadata?.full_name || "User"}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                    {user.email}
+                  </p>
+                </div>
+                <div className="p-1">
+                  <button
+                    onClick={() => signOut()}
+                    className="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    style={{ borderRadius: "6px" }}
+                  >
+                    Sign out
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="h-8 w-8 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+          )}
         </div>
       </header>
 
@@ -253,25 +365,16 @@ export default function DocsPage() {
 
       {/* Toolbar */}
       <div className={`border-b ${themeClasses.border.primary}`}>
-        <div className="max-w-7xl mx-auto px-6 py-6">
-          <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
-            {/* Search */}
-            <div className="relative flex-1 max-w-md">
-              <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${themeClasses.text.tertiary}`} />
-              <Input
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search documentation..."
-                className={`pl-9 ${
-                  isDark 
-                    ? 'bg-gray-900 border-gray-700 text-white placeholder-gray-400' 
-                    : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                }`}
-                style={{ borderRadius: '6px' }}
-              />
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            {/* Left section - Stats or filters could go here */}
+            <div className="flex items-center gap-4">
+              <span className={`text-sm ${themeClasses.text.secondary}`}>
+                {filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''} found
+              </span>
             </div>
 
-            {/* Controls */}
+            {/* Right section - Controls */}
             <div className="flex items-center gap-2">
               {/* Sort */}
               <select
