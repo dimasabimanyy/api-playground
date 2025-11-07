@@ -175,6 +175,31 @@ export default function Playground() {
   );
   const [activeMenuTab, setActiveMenuTab] = useState("collections");
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchModalOpen, setSearchModalOpen] = useState(false);
+
+  // Handle search modal keyboard shortcuts and clicks
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && searchModalOpen) {
+        setSearchModalOpen(false);
+        setSearchQuery('');
+      }
+    };
+
+    const handleClickOutside = (e) => {
+      if (searchModalOpen && !e.target.closest('.search-container')) {
+        setSearchModalOpen(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('mousedown', handleClickOutside);
+    
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [searchModalOpen]);
   const [editingRequestName, setEditingRequestName] = useState(false);
   const [layoutMode, setLayoutMode] = useState("single"); // 'single' or 'split'
   const [requestPanelWidth, setRequestPanelWidth] = useState(50); // percentage
@@ -1182,7 +1207,7 @@ export default function Playground() {
     >
       {/* Header - Theme Aware */}
       <header
-        className={`border-b ${themeClasses.border.primary} ${themeClasses.bg.glass} h-14 flex items-center px-3 sm:px-6 transition-all duration-300`}
+        className={`border-b ${themeClasses.border.primary} ${themeClasses.bg.glass} h-14 flex items-center px-3 sm:px-6 transition-all duration-300 relative z-50`}
       >
         <div className="flex items-center space-x-2 sm:space-x-6 min-w-0 flex-shrink-0">
           {/* Mobile Hamburger Menu */}
@@ -1223,14 +1248,19 @@ export default function Playground() {
           </div>
         </div>
 
-        <div className="flex-1 flex justify-center max-w-xs sm:max-w-lg mx-2 sm:mx-auto">
-          <div className="relative w-full">
+        <div className={`flex-1 flex justify-center mx-2 sm:mx-auto transition-all duration-300 ${
+          searchModalOpen ? 'max-w-2xl' : 'max-w-xs sm:max-w-lg'
+        }`}>
+          <div className="relative w-full z-[99999] search-container">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 z-10" />
             <Input
-              placeholder="Search..."
+              placeholder={searchModalOpen ? "Search collections, requests, environments..." : "Find..."}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-9 text-sm focus:ring-0 focus:outline-none"
+              onFocus={() => setSearchModalOpen(true)}
+              className={`pl-10 text-sm focus:ring-0 focus:outline-none transition-all duration-300 ${
+                searchModalOpen ? 'h-12 text-base' : 'h-9 cursor-pointer'
+              }`}
               style={{ 
                 borderRadius: '6px', 
                 borderColor: 'rgb(235, 235, 235)', 
@@ -1239,6 +1269,34 @@ export default function Playground() {
                 boxShadow: 'none'
               }}
             />
+            
+            {/* Search Dropdown */}
+            {searchModalOpen && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white border shadow-lg max-h-96 overflow-y-auto z-[99999]" 
+                   style={{ borderRadius: '12px', borderColor: 'rgb(235, 235, 235)' }}>
+                {searchQuery.length > 0 ? (
+                  <div className="p-4">
+                    <p className="text-sm text-gray-500 mb-3">Search results for "{searchQuery}"</p>
+                    <div className="space-y-2">
+                      <div className="p-3 hover:bg-gray-50 cursor-pointer" style={{ borderRadius: '6px' }}>
+                        <div className="font-medium text-sm">Example Collection</div>
+                        <div className="text-xs text-gray-500">Collection • 5 requests</div>
+                      </div>
+                      <div className="p-3 hover:bg-gray-50 cursor-pointer" style={{ borderRadius: '6px' }}>
+                        <div className="font-medium text-sm">API Request Example</div>
+                        <div className="text-xs text-gray-500">Request • GET /api/users</div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-6 text-center text-gray-500">
+                    <Search className="h-6 w-6 mx-auto mb-2 opacity-40" />
+                    <p className="text-sm">Start typing to search...</p>
+                    <p className="text-xs text-gray-400 mt-1">Find collections, requests, and environments</p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
@@ -1263,7 +1321,7 @@ export default function Playground() {
               <UserAvatar user={user} isDark={isDark} />
 
               {/* Dropdown Menu */}
-              <div className="fixed right-4 mt-2 w-48 bg-white dark:bg-gray-800 shadow-xl border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[9999]" 
+              <div className="fixed right-4 mt-2 w-48 bg-white dark:bg-gray-800 shadow-xl border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[99999]" 
                    style={{ 
                      borderRadius: '12px', 
                      borderColor: 'rgb(235, 235, 235)',
@@ -1299,6 +1357,7 @@ export default function Playground() {
           )}
         </div>
       </header>
+
 
       {/* Main Content Layout - Theme Aware */}
       <div className="flex h-[calc(100vh-3.5rem)] relative">
