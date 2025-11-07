@@ -1248,59 +1248,59 @@ export default function Playground() {
           </div>
         </div>
 
-        <div className={`flex-1 flex justify-center mx-2 sm:mx-auto transition-all duration-300 ${
-          searchModalOpen ? 'max-w-2xl' : 'max-w-xs sm:max-w-lg'
-        }`}>
-          <div className="relative w-full z-[99999] search-container">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 z-10" />
-            <Input
-              placeholder={searchModalOpen ? "Search collections, requests, environments..." : "Find..."}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onFocus={() => setSearchModalOpen(true)}
-              className={`pl-10 text-sm focus:ring-0 focus:outline-none transition-all duration-300 ${
-                searchModalOpen ? 'h-12 text-base' : 'h-9 cursor-pointer'
-              }`}
-              style={{ 
-                borderRadius: '6px', 
-                borderColor: 'rgb(235, 235, 235)', 
-                backgroundColor: 'white',
-                border: '1px solid rgb(235, 235, 235)',
-                boxShadow: 'none'
-              }}
-            />
-            
-            {/* Search Dropdown */}
-            {searchModalOpen && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white border shadow-lg max-h-96 overflow-y-auto z-[99999]" 
-                   style={{ borderRadius: '12px', borderColor: 'rgb(235, 235, 235)' }}>
-                {searchQuery.length > 0 ? (
-                  <div className="p-4">
-                    <p className="text-sm text-gray-500 mb-3">Search results for "{searchQuery}"</p>
-                    <div className="space-y-2">
-                      <div className="p-3 hover:bg-gray-50 cursor-pointer" style={{ borderRadius: '6px' }}>
-                        <div className="font-medium text-sm">Example Collection</div>
-                        <div className="text-xs text-gray-500">Collection • 5 requests</div>
-                      </div>
-                      <div className="p-3 hover:bg-gray-50 cursor-pointer" style={{ borderRadius: '6px' }}>
-                        <div className="font-medium text-sm">API Request Example</div>
-                        <div className="text-xs text-gray-500">Request • GET /api/users</div>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="p-6 text-center text-gray-500">
-                    <Search className="h-6 w-6 mx-auto mb-2 opacity-40" />
-                    <p className="text-sm">Start typing to search...</p>
-                    <p className="text-xs text-gray-400 mt-1">Find collections, requests, and environments</p>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
 
         <div className="flex items-center space-x-1 sm:space-x-3 ml-auto">
+          {/* Search Input */}
+          <div className="relative z-[99999] search-container">
+            <div className={`transition-all duration-300 ${
+              searchModalOpen ? 'w-64 sm:w-80' : 'w-32 sm:w-40'
+            }`}>
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 z-10" />
+              <Input
+                placeholder={searchModalOpen ? "Search collections, requests, environments..." : "Find..."}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setSearchModalOpen(true)}
+                className="pl-10 h-9 text-sm focus:ring-0 focus:outline-none cursor-pointer transition-all duration-300"
+                style={{ 
+                  borderRadius: '6px', 
+                  borderColor: 'rgb(235, 235, 235)', 
+                  backgroundColor: 'white',
+                  border: '1px solid rgb(235, 235, 235)',
+                  boxShadow: 'none'
+                }}
+              />
+              
+              {/* Search Dropdown */}
+              {searchModalOpen && (
+                <div className="absolute top-full right-0 mt-2 w-80 bg-white border shadow-xs max-h-96 overflow-y-auto z-[99999]" 
+                     style={{ borderRadius: '6px', borderColor: 'rgb(235, 235, 235)' }}>
+                  {searchQuery.length > 0 ? (
+                    <div className="p-4">
+                      <p className="text-sm text-gray-500 mb-3">Search results for "{searchQuery}"</p>
+                      <div className="space-y-2">
+                        <div className="p-3 hover:bg-gray-50 cursor-pointer" style={{ borderRadius: '6px' }}>
+                          <div className="font-medium text-sm">Example Collection</div>
+                          <div className="text-xs text-gray-500">Collection • 5 requests</div>
+                        </div>
+                        <div className="p-3 hover:bg-gray-50 cursor-pointer" style={{ borderRadius: '6px' }}>
+                          <div className="font-medium text-sm">API Request Example</div>
+                          <div className="text-xs text-gray-500">Request • GET /api/users</div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="p-6 text-center text-gray-500">
+                      <Search className="h-6 w-6 mx-auto mb-2 opacity-40" />
+                      <p className="text-sm">Start typing to search...</p>
+                      <p className="text-xs text-gray-400 mt-1">Find collections, requests, and environments</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+
           <button
             onClick={toggleTheme}
             className="p-2 transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-800"
