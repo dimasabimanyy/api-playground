@@ -249,56 +249,26 @@ export default function ResponsePanel({ response, loading, request }) {
           <h3 className={`text-sm font-medium ${themeClasses.text.primary}`}>Response</h3>
         </div>
         <div className={`flex-1 flex items-center justify-center transition-colors duration-300 ${themeClasses.bg.primary}`}>
-          <div className="text-center space-y-8 max-w-md mx-auto px-6">
-            {/* Hero Icon */}
-            <div className="relative">
-              <div className={`w-24 h-24 flex items-center justify-center mx-auto border ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-gray-100 border-gray-200'}`}
-                   style={{ borderRadius: '12px' }}>
-                <div className={`w-12 h-12 flex items-center justify-center ${isDark ? 'bg-gray-700' : 'bg-gray-200'}`}
-                     style={{ borderRadius: '6px' }}>
-                  <div className={`w-6 h-6 border-2 border-dashed ${isDark ? 'border-gray-400' : 'border-gray-500'}`} 
-                       style={{ borderRadius: '6px' }} />
-                </div>
-              </div>
-              <div className={`absolute -top-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center ${isDark ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
-                <div className="w-2 h-2 rounded-full bg-gray-500 animate-pulse"></div>
+          <div className="text-center max-w-sm mx-auto px-6">
+            {/* Simple Icon */}
+            <div className="mb-6">
+              <div className={`w-12 h-12 flex items-center justify-center mx-auto ${isDark ? 'text-gray-600' : 'text-gray-400'}`}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="3"/>
+                  <path d="M12 1v6m0 6v6"/>
+                  <path d="m21 12-6 0m-6 0-6 0"/>
+                </svg>
               </div>
             </div>
             
-            {/* Welcome Content */}
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <h3 className={`text-xl font-semibold ${themeClasses.text.primary}`}>
-                  Start testing APIs
-                </h3>
-                <p className={`text-sm leading-relaxed ${themeClasses.text.secondary}`}>
-                  Enter an API endpoint in the request panel and click Send to see the response here. 
-                  Perfect for testing REST APIs, debugging responses, and exploring data.
-                </p>
-              </div>
-              
-              {/* Feature highlights */}
-              <div className="grid grid-cols-1 gap-3 mt-6">
-                <div className={`flex items-center gap-3 p-3 rounded ${isDark ? 'bg-gray-800/30' : 'bg-gray-50'}`}>
-                  <div className={`w-6 h-6 rounded flex items-center justify-center ${isDark ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-600'}`}>
-                    <div className="w-2 h-2 rounded-full bg-current"></div>
-                  </div>
-                  <span className={`text-sm ${themeClasses.text.secondary}`}>Real-time response preview</span>
-                </div>
-                <div className={`flex items-center gap-3 p-3 rounded ${isDark ? 'bg-gray-800/30' : 'bg-gray-50'}`}>
-                  <div className={`w-6 h-6 flex items-center justify-center ${isDark ? 'bg-gray-700 text-gray-400' : 'bg-gray-200 text-gray-600'}`}
-                       style={{ borderRadius: '6px' }}>
-                    <div className="w-2 h-2 rounded-full bg-current"></div>
-                  </div>
-                  <span className={`text-sm ${themeClasses.text.secondary}`}>Headers & body inspection</span>
-                </div>
-                <div className={`flex items-center gap-3 p-3 rounded ${isDark ? 'bg-gray-800/30' : 'bg-gray-50'}`}>
-                  <div className={`w-6 h-6 rounded flex items-center justify-center ${isDark ? 'bg-purple-500/20 text-purple-400' : 'bg-purple-100 text-purple-600'}`}>
-                    <div className="w-2 h-2 rounded-full bg-current"></div>
-                  </div>
-                  <span className={`text-sm ${themeClasses.text.secondary}`}>Export & share results</span>
-                </div>
-              </div>
+            {/* Clean Content */}
+            <div className="space-y-3">
+              <h3 className={`text-lg font-medium ${themeClasses.text.primary}`}>
+                Send a request
+              </h3>
+              <p className={`text-sm ${themeClasses.text.secondary}`}>
+                Enter a URL and click Send to see the response.
+              </p>
             </div>
           </div>
         </div>
