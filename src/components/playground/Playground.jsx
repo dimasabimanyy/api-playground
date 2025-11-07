@@ -612,18 +612,6 @@ export default function Playground() {
       description: "Manage variables like API keys, URLs, tokens",
     },
     {
-      id: "import-export",
-      icon: FileUp,
-      label: "Import/Export",
-      description: "Import and export collections",
-    },
-    {
-      id: "settings",
-      icon: Settings,
-      label: "Settings",
-      description: "User and app preferences",
-    },
-    {
       id: "trash",
       icon: Trash2,
       label: "Trash",
@@ -1263,7 +1251,7 @@ export default function Playground() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => setSearchModalOpen(true)}
-                className="pl-10 h-9 text-sm focus:ring-0 focus:outline-none cursor-pointer transition-all duration-300"
+                className="pl-10 py-1.5 text-sm focus:ring-0 focus:outline-none cursor-pointer transition-all duration-300"
                 style={{ 
                   borderRadius: '6px', 
                   borderColor: 'rgb(235, 235, 235)', 
@@ -1302,6 +1290,20 @@ export default function Playground() {
               )}
             </div>
           </div>
+
+          {/* Import/Export Button */}
+          <button
+            onClick={() => setShowImportExportModal(true)}
+            className="px-3 py-1.5 text-sm transition-all duration-200 hover:bg-gray-50 border cursor-pointer"
+            style={{ 
+              borderRadius: '6px', 
+              borderColor: 'rgb(235, 235, 235)',
+              backgroundColor: 'white'
+            }}
+            title="Import/Export Collections"
+          >
+            <span className="text-gray-600 text-sm font-medium">Import/Export</span>
+          </button>
 
           {/* Layout Toggle Button */}
           <button
@@ -1438,16 +1440,49 @@ export default function Playground() {
                   </button>
                 </div> */}
 
-                <button
-                  onClick={createNewTab}
-                  className="w-full flex items-center gap-2 px-3 py-2 transition-all duration-200 text-white"
-                  style={{ borderRadius: '6px', backgroundColor: '#171717', border: 'none' }}
-                >
-                  <Plus className="h-3 w-3 text-white" />
-                  <span className="text-sm font-medium text-white">
-                    New Request
-                  </span>
-                </button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      className="w-full flex items-center gap-2 px-3 py-2 transition-all duration-200 text-white justify-between"
+                      style={{ borderRadius: '6px', backgroundColor: '#171717', border: 'none' }}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Plus className="h-3 w-3 text-white" />
+                        <span className="text-sm font-medium text-white">
+                          Add New...
+                        </span>
+                      </div>
+                      <ChevronDown className="h-3 w-3 text-white" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="start"
+                    className="w-48"
+                    style={{ borderRadius: '6px' }}
+                  >
+                    <DropdownMenuItem
+                      onClick={createNewTab}
+                      className="flex items-center gap-2"
+                    >
+                      <Plus className="h-4 w-4" />
+                      Create Request
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setCreateCollectionDialogOpen(true)}
+                      className="flex items-center gap-2"
+                    >
+                      <FolderOpen className="h-4 w-4" />
+                      Create Collection
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setCreateEnvironmentDialogOpen(true)}
+                      className="flex items-center gap-2"
+                    >
+                      <Globe className="h-4 w-4" />
+                      Create Environment
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
 
                 {/* <div className="relative">
                   <Search
@@ -1471,13 +1506,7 @@ export default function Playground() {
                       return (
                         <button
                           key={item.id}
-                          onClick={() => {
-                            if (item.id === 'import-export') {
-                              setShowImportExportModal(true);
-                            } else {
-                              setActiveMenuTab(item.id);
-                            }
-                          }}
+                          onClick={() => setActiveMenuTab(item.id)}
                           className={`w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg transition-all duration-200 cursor-pointer ${
                             isActive
                               ? `${themeClasses.text.primary} ${
@@ -2438,12 +2467,8 @@ export default function Playground() {
                   <button
                     key={item.id}
                     onClick={() => {
-                      if (item.id === 'import-export') {
-                        setShowImportExportModal(true);
-                      } else {
-                        setActiveMenuTab(item.id);
-                        setSidebarCollapsed(false);
-                      }
+                      setActiveMenuTab(item.id);
+                      setSidebarCollapsed(false);
                     }}
                     title={item.label}
                     className={`w-10 h-10 rounded-lg transition-all duration-200 flex items-center justify-center ${

@@ -228,9 +228,9 @@ export default function ResponsePanel({ response, loading, request }) {
             {/* Loading indicator at bottom */}
             <div className="text-center">
               <div className="flex items-center justify-center gap-3">
-                <div className={`animate-pulse h-2 w-2 rounded-full ${isDark ? 'bg-blue-500' : 'bg-blue-600'}`}></div>
-                <div className={`animate-pulse h-2 w-2 rounded-full ${isDark ? 'bg-blue-500' : 'bg-blue-600'}`} style={{ animationDelay: '0.2s' }}></div>
-                <div className={`animate-pulse h-2 w-2 rounded-full ${isDark ? 'bg-blue-500' : 'bg-blue-600'}`} style={{ animationDelay: '0.4s' }}></div>
+                <div className="animate-pulse h-2 w-2 rounded-full bg-gray-400"></div>
+                <div className="animate-pulse h-2 w-2 rounded-full bg-gray-400" style={{ animationDelay: '0.2s' }}></div>
+                <div className="animate-pulse h-2 w-2 rounded-full bg-gray-400" style={{ animationDelay: '0.4s' }}></div>
               </div>
               <p className={`text-sm mt-3 ${themeClasses.text.tertiary}`}>
                 Processing your request...
@@ -252,13 +252,16 @@ export default function ResponsePanel({ response, loading, request }) {
           <div className="text-center space-y-8 max-w-md mx-auto px-6">
             {/* Hero Icon */}
             <div className="relative">
-              <div className={`w-24 h-24 rounded-2xl flex items-center justify-center mx-auto ${isDark ? 'bg-gradient-to-br from-blue-500/20 to-purple-600/20 border border-blue-500/20' : 'bg-gradient-to-br from-blue-50 to-purple-50 border border-blue-200'}`}>
-                <div className={`w-12 h-12 rounded flex items-center justify-center ${isDark ? 'bg-blue-500/30' : 'bg-blue-100'}`}>
-                  <div className={`w-6 h-6 border-2 border-dashed rounded ${isDark ? 'border-blue-400' : 'border-blue-500'}`} />
+              <div className={`w-24 h-24 flex items-center justify-center mx-auto border ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-gray-100 border-gray-200'}`}
+                   style={{ borderRadius: '12px' }}>
+                <div className={`w-12 h-12 flex items-center justify-center ${isDark ? 'bg-gray-700' : 'bg-gray-200'}`}
+                     style={{ borderRadius: '6px' }}>
+                  <div className={`w-6 h-6 border-2 border-dashed ${isDark ? 'border-gray-400' : 'border-gray-500'}`} 
+                       style={{ borderRadius: '6px' }} />
                 </div>
               </div>
               <div className={`absolute -top-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center ${isDark ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
-                <div className={`w-2 h-2 rounded-full ${isDark ? 'bg-blue-400' : 'bg-blue-500'} animate-pulse`}></div>
+                <div className="w-2 h-2 rounded-full bg-gray-500 animate-pulse"></div>
               </div>
             </div>
             
@@ -283,7 +286,8 @@ export default function ResponsePanel({ response, loading, request }) {
                   <span className={`text-sm ${themeClasses.text.secondary}`}>Real-time response preview</span>
                 </div>
                 <div className={`flex items-center gap-3 p-3 rounded ${isDark ? 'bg-gray-800/30' : 'bg-gray-50'}`}>
-                  <div className={`w-6 h-6 rounded flex items-center justify-center ${isDark ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-600'}`}>
+                  <div className={`w-6 h-6 flex items-center justify-center ${isDark ? 'bg-gray-700 text-gray-400' : 'bg-gray-200 text-gray-600'}`}
+                       style={{ borderRadius: '6px' }}>
                     <div className="w-2 h-2 rounded-full bg-current"></div>
                   </div>
                   <span className={`text-sm ${themeClasses.text.secondary}`}>Headers & body inspection</span>
@@ -366,9 +370,9 @@ export default function ResponsePanel({ response, loading, request }) {
                   relative text-xs py-2 rounded-none border-none bg-transparent
                   transition-all duration-200
                   ${themeClasses.tab.inactive}
-                  hover:bg-transparent hover:text-blue-500
-                  data-[state=active]:text-blue-500
-                  after:absolute after:bottom-[-1px] after:left-0 after:h-[2px] after:w-0 after:bg-blue-500 after:transition-all after:duration-300
+                  hover:bg-transparent hover:text-gray-900
+                  data-[state=active]:text-gray-900
+                  after:absolute after:bottom-[-1px] after:left-0 after:h-[2px] after:w-0 after:bg-gray-800 after:transition-all after:duration-300
                   data-[state=active]:after:w-full hover:after:w-full
                 `}
               >
@@ -380,20 +384,13 @@ export default function ResponsePanel({ response, loading, request }) {
                   relative text-xs py-2 rounded-none border-none bg-transparent
                   transition-all duration-200
                   ${themeClasses.tab.inactive}
-                  hover:bg-transparent hover:text-blue-500
-                  data-[state=active]:text-blue-500
-                  after:absolute after:bottom-[-1px] after:left-0 after:h-[2px] after:w-0 after:bg-blue-500 after:transition-all after:duration-300
+                  hover:bg-transparent hover:text-gray-900
+                  data-[state=active]:text-gray-900
+                  after:absolute after:bottom-[-1px] after:left-0 after:h-[2px] after:w-0 after:bg-gray-800 after:transition-all after:duration-300
                   data-[state=active]:after:w-full hover:after:w-full
                 `}
               >
                 Headers
-                {Object.keys(response.headers || {}).length > 0 && (
-                  <span
-                    className={`ml-1.5 text-xs px-1.5 py-0.5 rounded border ${themeClasses.status.info}`}
-                  >
-                    {Object.keys(response.headers || {}).length}
-                  </span>
-                )}
               </TabsTrigger>
             </TabsList>
             
@@ -446,7 +443,7 @@ export default function ResponsePanel({ response, loading, request }) {
                     onClick={() => setViewFormat(key)}
                     className={`text-xs px-3 py-1 rounded transition-all duration-200 ${
                       viewFormat === key 
-                        ? `${isDark ? 'bg-blue-600 text-white' : 'bg-blue-600 text-white'}` 
+                        ? `${isDark ? 'bg-gray-800 text-white' : 'bg-gray-800 text-white'}` 
                         : `${isDark ? 'text-gray-400 hover:text-white hover:bg-gray-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'}`
                     }`}
                   >
