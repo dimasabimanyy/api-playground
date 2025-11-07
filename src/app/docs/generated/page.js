@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import ModernTemplate from "@/components/docs/templates/ModernTemplate";
+import EditableModernTemplate from "@/components/docs/templates/EditableModernTemplate";
 import { Button } from "@/components/ui/button";
 import {
   Download,
@@ -124,13 +125,33 @@ export default function GeneratedDocsPage() {
   const searchParams = useSearchParams();
   const [docData, setDocData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [hasEnhancedData, setHasEnhancedData] = useState(false);
 
   useEffect(() => {
     // Parse URL parameters
     const template = searchParams.get('template') || 'modern';
     const collectionsParam = searchParams.get('collections') || '';
     const title = searchParams.get('title') || 'API Documentation';
+    const docId = searchParams.get('docId');
     
+    // Try to load enhanced docs data first
+    if (docId) {
+      try {
+        const storedData = sessionStorage.getItem(`docs_${docId}`);
+        if (storedData) {
+          const enhancedDocData = JSON.parse(storedData);
+          setDocData(enhancedDocData);
+          setHasEnhancedData(true);
+          setLoading(false);
+          return;
+        }
+      } catch (error) {
+        console.error('Failed to load enhanced docs data:', error);
+      }
+    }
+    
+    // Fallback to mock data if enhanced data is not available
     const selectedCollectionIds = collectionsParam.split(',').filter(Boolean);
     
     // Filter mock collections based on URL parameters
@@ -151,6 +172,12 @@ export default function GeneratedDocsPage() {
           includeAuth: true,
           groupByCollection: true,
           includeErrorCodes: true,
+        },
+        meta: {
+          generatedAt: new Date().toISOString(),
+          generator: 'API Playground',
+          totalEndpoints: selectedCollections.reduce((acc, col) => acc + (col.requests?.length || 0), 0),
+          totalCollections: selectedCollections.length,
         }
       });
       setLoading(false);
@@ -274,6 +301,16 @@ export default function GeneratedDocsPage() {
             </div>
             
             <div className="flex items-center gap-2">
+              {hasEnhancedData && (
+                <Button
+                  variant={isEditMode ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setIsEditMode(!isEditMode)}
+                >
+                  {isEditMode ? 'Preview' : 'Edit Docs'}
+                </Button>
+              )}
+              
               <Button
                 variant="outline"
                 size="sm"
@@ -303,7 +340,22 @@ export default function GeneratedDocsPage() {
       </div>
 
       {/* Documentation Content */}
-      <ModernTemplate docData={docData} />
+      {hasEnhancedData && isEditMode ? (
+        <EditableModernTemplate 
+          docData={docData} 
+          isEditMode={true}
+          onDataChange={(newData) => {
+            setDocData(newData);
+            // Update session storage with changes
+            const docId = searchParams.get('docId');
+            if (docId) {
+              sessionStorage.setItem(`docs_${docId}`, JSON.stringify(newData));
+            }
+          }}
+        />
+      ) : (
+        <ModernTemplate docData={docData} />
+      )}
     </div>
   );
 }

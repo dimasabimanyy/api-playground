@@ -161,6 +161,7 @@ export default function Playground() {
     saveToHistory,
     createCollection,
     deleteCollection,
+    getCollectionsWithDocs,
   } = useCollections();
   const themeClasses = getThemeClasses(isDark);
   // Request tabs state - will be restored from localStorage if available
@@ -3345,7 +3346,7 @@ export default function Playground() {
             setSelectedCollectionForDocs(null);
           }
         }}
-        collections={collections}
+        collections={getCollectionsWithDocs()}
         preSelectedCollectionId={selectedCollectionForDocs}
         onGenerate={(docData) => {
           console.log("Generated docs with data:", docData);

@@ -43,20 +43,31 @@ export class DocsGenerator {
   /**
    * Load collections with enhanced metadata
    */
-  async loadCollections() {
-    // In a real implementation, this would fetch from your collections context/API
-    // For now, we'll use a placeholder that integrates with existing data
-    
+  async loadCollections(collectionsData = null) {
     const collections = [];
     
     for (const collectionId of this.project.collections) {
       try {
-        // Get base collection data (from your existing collections context)
-        const baseCollection = await this.getBaseCollection(collectionId);
-        if (!baseCollection) continue;
+        // Get base collection data from collections context or passed data
+        const baseCollection = collectionsData 
+          ? collectionsData[collectionId]
+          : await this.getBaseCollection(collectionId);
+          
+        if (!baseCollection) {
+          this.errors.push(`Collection not found: ${collectionId}`);
+          continue;
+        }
         
         // Enhance with docs metadata
         const enhancedCollection = DocsMetadata.enhanceCollection(baseCollection);
+        
+        // Enhance requests if they exist
+        if (enhancedCollection.requests && Array.isArray(enhancedCollection.requests)) {
+          enhancedCollection.requests = enhancedCollection.requests.map(request =>
+            DocsMetadata.enhanceRequest(request)
+          );
+        }
+        
         collections.push(enhancedCollection);
         
       } catch (error) {
@@ -68,12 +79,55 @@ export class DocsGenerator {
   }
 
   /**
-   * Get base collection data (placeholder - replace with actual data source)
+   * Get base collection data (for future database integration)
    */
   async getBaseCollection(collectionId) {
-    // TODO: Integrate with your actual collections context
-    // For now, return null to indicate we need to connect to real data
+    // This would integrate with your collections API in the future
+    // For now, it's handled by passing collectionsData to loadCollections
     return null;
+  }
+
+  /**
+   * Static method to generate docs from collections context data
+   */
+  static async generateFromCollections(collectionsData, options = {}) {
+    // Create a temporary project for quick generation
+    const tempProject = {
+      id: 'temp-' + Date.now(),
+      name: options.title || 'API Documentation',
+      description: options.description || '',
+      version: options.version || '1.0.0',
+      collections: Object.keys(collectionsData),
+      settings: {
+        theme: {
+          name: options.theme || 'modern',
+          primaryColor: options.primaryColor || '#171717',
+          accentColor: options.accentColor || '#3b82f6',
+        },
+        organization: {
+          groupBy: options.groupBy || 'collection',
+          showToc: options.showToc !== false,
+          showSearch: options.showSearch !== false,
+          showTryItOut: options.showTryItOut !== false,
+          showCodeExamples: options.showCodeExamples !== false,
+          defaultLanguage: options.defaultLanguage || 'curl',
+        },
+        baseUrl: options.baseUrl || 'https://api.example.com',
+        ...options.customSettings,
+      },
+      customPages: options.customPages || [],
+      created: new Date().toISOString(),
+      updated: new Date().toISOString(),
+    };
+
+    // Create generator instance
+    const generator = new DocsGenerator('temp');
+    generator.project = tempProject;
+    
+    // Load collections directly from data
+    generator.collections = await generator.loadCollections(collectionsData);
+    
+    return generator.generate();
   }
 
   /**

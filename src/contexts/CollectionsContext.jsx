@@ -14,6 +14,7 @@ import {
   reorderRequests as reorderCollectionRequests,
   saveRequestToHistory
 } from '@/lib/supabase-collections';
+import { DocsMetadata } from '@/lib/docs-storage';
 
 const CollectionsContext = createContext({});
 
@@ -308,6 +309,54 @@ export function CollectionsProvider({ children }) {
     setError(null);
   };
 
+  /**
+   * Get collections enhanced with docs metadata
+   */
+  const getCollectionsWithDocs = () => {
+    const enhancedCollections = {};
+    Object.entries(collections).forEach(([id, collection]) => {
+      enhancedCollections[id] = DocsMetadata.enhanceCollection(collection);
+      
+      // Enhance requests if they exist
+      if (enhancedCollections[id].requests) {
+        enhancedCollections[id].requests = enhancedCollections[id].requests.map(request =>
+          DocsMetadata.enhanceRequest(request)
+        );
+      }
+    });
+    return enhancedCollections;
+  };
+
+  /**
+   * Get a single collection enhanced with docs metadata
+   */
+  const getCollectionWithDocs = (collectionId) => {
+    const collection = collections[collectionId];
+    if (!collection) return null;
+    
+    const enhanced = DocsMetadata.enhanceCollection(collection);
+    if (enhanced.requests) {
+      enhanced.requests = enhanced.requests.map(request =>
+        DocsMetadata.enhanceRequest(request)
+      );
+    }
+    return enhanced;
+  };
+
+  /**
+   * Update docs metadata for a collection
+   */
+  const updateCollectionDocs = (collectionId, docsData) => {
+    return DocsMetadata.saveCollection(collectionId, docsData);
+  };
+
+  /**
+   * Update docs metadata for a request
+   */
+  const updateRequestDocs = (requestId, docsData) => {
+    return DocsMetadata.saveRequest(requestId, docsData);
+  };
+
   const value = {
     // State
     collections,
@@ -326,6 +375,12 @@ export function CollectionsProvider({ children }) {
     searchRequests,
     reorderRequests,
     saveToHistory,
+    
+    // Docs-enhanced actions
+    getCollectionsWithDocs,
+    getCollectionWithDocs,
+    updateCollectionDocs,
+    updateRequestDocs,
     
     // Setters
     setActiveCollectionId,

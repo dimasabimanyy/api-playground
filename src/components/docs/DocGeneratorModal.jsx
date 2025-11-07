@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { getThemeClasses } from "@/lib/theme";
+import { DocsGenerator } from "@/lib/docs-generator";
 
 const templates = [
   {
@@ -123,22 +124,47 @@ export default function DocGeneratorModal({
   // Get selected collection object
   const selectedCollectionObject = selectedCollection ? collections[selectedCollection] : null;
 
-  const handleGenerateDocs = () => {
+  const handleGenerateDocs = async () => {
     if (!selectedCollection) return;
     
-    const docData = {
-      selectedCollections: [selectedCollection],
-      template: selectedTemplate,
-      customization,
-      collections: [selectedCollectionObject],
-    };
-    
-    if (onGenerate) {
-      onGenerate(docData);
+    try {
+      // Generate enhanced documentation using real collections data
+      const collectionsToGenerate = { [selectedCollection]: selectedCollectionObject };
+      
+      const docData = await DocsGenerator.generateFromCollections(collectionsToGenerate, {
+        title: customization.title,
+        description: customization.description,
+        baseUrl: customization.baseUrl,
+        theme: selectedTemplate,
+        showToc: true,
+        showSearch: true,
+        showTryItOut: true,
+        showCodeExamples: customization.includeExamples,
+        groupBy: customization.groupByCollection ? 'collection' : 'none',
+      });
+      
+      // Store generated docs data for the viewer page
+      const docId = `doc_${Date.now()}_${selectedCollection}`;
+      sessionStorage.setItem(`docs_${docId}`, JSON.stringify(docData));
+      
+      if (onGenerate) {
+        onGenerate({
+          selectedCollections: [selectedCollection],
+          template: selectedTemplate,
+          customization,
+          collections: [selectedCollectionObject],
+          enhancedData: docData,
+          docId,
+        });
+      }
+      
+      // Navigate to generated docs page with the enhanced data
+      window.open(`/docs/generated?docId=${docId}&template=${selectedTemplate}&collections=${selectedCollection}&title=${encodeURIComponent(customization.title)}`, '_blank');
+    } catch (error) {
+      console.error('Failed to generate documentation:', error);
+      // Fallback to old method if generation fails
+      window.open(`/docs/generated?template=${selectedTemplate}&collections=${selectedCollection}&title=${encodeURIComponent(customization.title)}`, '_blank');
     }
-    
-    // Navigate to generated docs page
-    window.open(`/docs/generated?template=${selectedTemplate}&collections=${selectedCollection}&title=${encodeURIComponent(customization.title)}`, '_blank');
   };
 
   return (
