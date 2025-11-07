@@ -1500,22 +1500,19 @@ export default function Playground() {
                         onClick={createNewTab}
                         className="flex items-center gap-2"
                       >
-                        <Plus className="h-4 w-4" />
-                        Create Request
+                        Request
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => setCreateCollectionDialogOpen(true)}
                         className="flex items-center gap-2"
                       >
-                        <FolderOpen className="h-4 w-4" />
-                        Create Collection
+                        Collection
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => setCreateEnvironmentDialogOpen(true)}
                         className="flex items-center gap-2"
                       >
-                        <Globe className="h-4 w-4" />
-                        Create Environment
+                        Environment
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -2545,22 +2542,19 @@ export default function Playground() {
                       onClick={createNewTab}
                       className="flex items-center gap-2"
                     >
-                      <Plus className="h-4 w-4" />
-                      Create Request
+                      Request
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() => setCreateCollectionDialogOpen(true)}
                       className="flex items-center gap-2"
                     >
-                      <FolderOpen className="h-4 w-4" />
-                      Create Collection
+                      Collection
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() => setCreateEnvironmentDialogOpen(true)}
                       className="flex items-center gap-2"
                     >
-                      <Globe className="h-4 w-4" />
-                      Create Environment
+                      Environment
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
