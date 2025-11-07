@@ -58,6 +58,8 @@ import {
   Download,
   FileUp,
   FileDown,
+  Columns,
+  SplitSquareHorizontal,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -1301,10 +1303,36 @@ export default function Playground() {
             </div>
           </div>
 
+          {/* Layout Toggle Button */}
+          <button
+            onClick={() =>
+              setLayoutMode(layoutMode === "single" ? "split" : "single")
+            }
+            className="p-2 transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-800 border cursor-pointer"
+            style={{ 
+              borderRadius: '50%', 
+              borderColor: 'rgb(235, 235, 235)' 
+            }}
+            title={
+              layoutMode === "single"
+                ? "Switch to split layout"
+                : "Switch to single column layout"
+            }
+          >
+            {layoutMode === "single" ? (
+              <SplitSquareHorizontal className="h-4 w-4" />
+            ) : (
+              <Columns className="h-4 w-4" />
+            )}
+          </button>
+
           <button
             onClick={toggleTheme}
-            className="p-2 transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-800"
-            style={{ borderRadius: '6px' }}
+            className="p-2 transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-800 border cursor-pointer"
+            style={{ 
+              borderRadius: '50%', 
+              borderColor: 'rgb(235, 235, 235)' 
+            }}
           >
             {isDark ? (
               <Sun className="h-4 w-4" />
