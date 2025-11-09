@@ -215,7 +215,7 @@ export default function DocsPage() {
   }
 
   return (
-    <div className={`min-h-screen ${themeClasses.bg.primary}`}>
+    <div className={`min-h-screen ${isDark ? themeClasses.bg.primary : 'bg-[#fafafa]'}`}>
       {/* Header - Theme Aware */}
       <header
         className={`border-b ${themeClasses.border.primary} ${themeClasses.bg.glass} h-14 flex items-center px-3 sm:px-6 transition-all duration-300 relative z-50`}
