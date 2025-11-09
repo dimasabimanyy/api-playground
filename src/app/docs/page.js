@@ -104,6 +104,7 @@ export default function DocsPage() {
   const [viewMode, setViewMode] = useState('grid') // 'grid' or 'list'
   const [sortBy, setSortBy] = useState('updated') // 'updated', 'created', 'name'
   const [showCreateModal, setShowCreateModal] = useState(false)
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false)
 
   // Load documentation projects
   useEffect(() => {
@@ -329,108 +330,170 @@ export default function DocsPage() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6">
-        {/* Hero Section */}
-        <div className="py-24 text-center">
-          <div className="max-w-2xl mx-auto">
-            <h1 className={`text-5xl font-bold tracking-tight ${themeClasses.text.primary} mb-6`}>
-              API Documentation
-            </h1>
-            <p className={`text-xl ${themeClasses.text.secondary} mb-12 leading-relaxed`}>
-              Create beautiful, interactive documentation from your API collections. Share with your team or publish to the world.
-            </p>
-            <div className="flex items-center justify-center gap-4">
-              <Button
-                onClick={createNewDocumentation}
-                size="lg"
-                className={`px-8 py-3 text-base font-medium ${
-                  isDark 
-                    ? 'bg-white text-black hover:bg-gray-100' 
-                    : 'bg-black text-white hover:bg-gray-800'
-                }`}
-                style={{ borderRadius: '8px' }}
-              >
-                Create Documentation
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="px-8 py-3 text-base"
-                style={{ borderRadius: '8px' }}
-              >
-                View Examples
-              </Button>
+        {/* Page Header */}
+        <div className="py-8">
+          <h1 className={`text-2xl font-semibold ${themeClasses.text.primary} mb-6`}>
+            Documentation
+          </h1>
+          
+          {/* Search and Controls */}
+          <div className="flex items-center gap-3">
+            {/* Search Input - Full Width */}
+            <div className="flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 z-10" />
+              <Input
+                placeholder="Find documentation..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 py-2.5 text-sm focus:ring-0 focus:outline-none"
+                style={{
+                  borderRadius: "6px",
+                  borderColor: isDark ? "rgb(55, 65, 81)" : "rgb(235, 235, 235)",
+                  backgroundColor: isDark ? "rgb(17, 24, 39)" : "white",
+                  border: `1px solid ${isDark ? "rgb(55, 65, 81)" : "rgb(235, 235, 235)"}`,
+                }}
+              />
             </div>
+            
+            {/* Filter Button */}
+            <div className="relative">
+              <Button
+                onClick={() => setShowFilterDropdown(!showFilterDropdown)}
+                variant="outline"
+                size="sm"
+                className={`px-3 py-2.5 ${
+                  isDark 
+                    ? 'bg-transparent border-gray-600 text-gray-300 hover:bg-gray-800' 
+                    : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+                }`}
+                style={{ borderRadius: '6px' }}
+              >
+                <Filter className="h-4 w-4" />
+              </Button>
+              
+              {/* Filter Dropdown */}
+              {showFilterDropdown && (
+                <div
+                  className={`absolute top-full mt-2 right-0 w-48 border rounded-xl shadow-xl z-50 ${
+                    isDark ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'
+                  }`}
+                  style={{ borderRadius: '12px' }}
+                >
+                  <div className="p-1">
+                    <div className={`px-3 py-2 text-xs font-medium ${themeClasses.text.tertiary} border-b ${
+                      isDark ? 'border-gray-700' : 'border-gray-200'
+                    }`}>
+                      Sort by
+                    </div>
+                    <button
+                      onClick={() => { setSortBy('updated'); setShowFilterDropdown(false); }}
+                      className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-colors flex items-center justify-between ${
+                        sortBy === 'updated'
+                          ? isDark ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-900'
+                          : isDark ? 'hover:bg-gray-700 text-gray-300' : 'hover:bg-gray-50 text-gray-700'
+                      }`}
+                    >
+                      Recently Updated
+                      {sortBy === 'updated' && <div className="w-1.5 h-1.5 rounded-full bg-current" />}
+                    </button>
+                    <button
+                      onClick={() => { setSortBy('created'); setShowFilterDropdown(false); }}
+                      className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-colors flex items-center justify-between ${
+                        sortBy === 'created'
+                          ? isDark ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-900'
+                          : isDark ? 'hover:bg-gray-700 text-gray-300' : 'hover:bg-gray-50 text-gray-700'
+                      }`}
+                    >
+                      Recently Created
+                      {sortBy === 'created' && <div className="w-1.5 h-1.5 rounded-full bg-current" />}
+                    </button>
+                    <button
+                      onClick={() => { setSortBy('name'); setShowFilterDropdown(false); }}
+                      className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-colors flex items-center justify-between ${
+                        sortBy === 'name'
+                          ? isDark ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-900'
+                          : isDark ? 'hover:bg-gray-700 text-gray-300' : 'hover:bg-gray-50 text-gray-700'
+                      }`}
+                    >
+                      Name A-Z
+                      {sortBy === 'name' && <div className="w-1.5 h-1.5 rounded-full bg-current" />}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* View Toggle */}
+            <div className={`flex items-center border rounded-md overflow-hidden ${
+              isDark ? 'border-gray-600' : 'border-gray-200'
+            }`} style={{ borderRadius: '6px' }}>
+              <button
+                onClick={() => setViewMode('grid')}
+                className={`p-2.5 transition-colors ${
+                  viewMode === 'grid'
+                    ? isDark ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-900'
+                    : isDark ? 'text-gray-400 hover:text-white hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                }`}
+              >
+                <Grid3X3 className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={`p-2.5 transition-colors border-l ${
+                  isDark ? 'border-gray-600' : 'border-gray-200'
+                } ${
+                  viewMode === 'list'
+                    ? isDark ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-900'
+                    : isDark ? 'text-gray-400 hover:text-white hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                }`}
+              >
+                <List className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Add New Button */}
+            <Button
+              onClick={createNewDocumentation}
+              size="sm"
+              className={`px-4 py-2.5 font-medium ${
+                isDark 
+                  ? 'bg-white text-black hover:bg-gray-200' 
+                  : 'bg-black text-white hover:bg-gray-800'
+              }`}
+              style={{ borderRadius: '6px' }}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add New
+            </Button>
           </div>
         </div>
 
         {filteredProjects.length === 0 && !searchQuery ? (
-          /* Empty state with examples */
-          <div className="pb-24">
-            <div className="text-center mb-16">
-              <h2 className={`text-3xl font-bold ${themeClasses.text.primary} mb-4`}>
-                Get started in seconds
-              </h2>
-              <p className={`text-lg ${themeClasses.text.secondary} max-w-2xl mx-auto`}>
-                Transform your API collections into professional documentation that your team and customers will love.
-              </p>
+          /* Empty state */
+          <div className="py-24 text-center">
+            <div className={`w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center ${
+              isDark ? 'bg-gray-800/50' : 'bg-gray-100'
+            }`}>
+              <FileText className={`h-8 w-8 ${themeClasses.text.tertiary}`} />
             </div>
-
-            {/* Feature Cards */}
-            <div className="grid md:grid-cols-3 gap-8 mb-16">
-              <div className={`p-8 rounded-xl border ${
-                isDark ? 'border-gray-800 bg-gray-900/50' : 'border-gray-200 bg-white'
+            <h3 className={`text-xl font-semibold ${themeClasses.text.primary} mb-3`}>
+              No documentation yet
+            </h3>
+            <p className={`${themeClasses.text.secondary} mb-8 max-w-md mx-auto`}>
+              Create your first documentation from your API collections.
+            </p>
+            <Button
+              onClick={createNewDocumentation}
+              className={`${
+                isDark 
+                  ? 'bg-white text-black hover:bg-gray-200' 
+                  : 'bg-black text-white hover:bg-gray-800'
               }`}
-                style={{ borderRadius: '16px' }}
-              >
-                <div className={`w-12 h-12 rounded-lg ${
-                  isDark ? 'bg-blue-500/20' : 'bg-blue-50'
-                } flex items-center justify-center mb-6`}>
-                  <Zap className={`h-6 w-6 ${isDark ? 'text-blue-400' : 'text-blue-600'}`} />
-                </div>
-                <h3 className={`text-xl font-semibold ${themeClasses.text.primary} mb-3`}>
-                  Auto-Generated
-                </h3>
-                <p className={`${themeClasses.text.secondary} leading-relaxed`}>
-                  Automatically generate documentation from your existing API collections with zero configuration.
-                </p>
-              </div>
-
-              <div className={`p-8 rounded-xl border ${
-                isDark ? 'border-gray-800 bg-gray-900/50' : 'border-gray-200 bg-white'
-              }`}
-                style={{ borderRadius: '16px' }}
-              >
-                <div className={`w-12 h-12 rounded-lg ${
-                  isDark ? 'bg-green-500/20' : 'bg-green-50'
-                } flex items-center justify-center mb-6`}>
-                  <Edit3 className={`h-6 w-6 ${isDark ? 'text-green-400' : 'text-green-600'}`} />
-                </div>
-                <h3 className={`text-xl font-semibold ${themeClasses.text.primary} mb-3`}>
-                  Fully Customizable
-                </h3>
-                <p className={`${themeClasses.text.secondary} leading-relaxed`}>
-                  Add descriptions, examples, and custom content with inline editing and real-time preview.
-                </p>
-              </div>
-
-              <div className={`p-8 rounded-xl border ${
-                isDark ? 'border-gray-800 bg-gray-900/50' : 'border-gray-200 bg-white'
-              }`}
-                style={{ borderRadius: '16px' }}
-              >
-                <div className={`w-12 h-12 rounded-lg ${
-                  isDark ? 'bg-purple-500/20' : 'bg-purple-50'
-                } flex items-center justify-center mb-6`}>
-                  <Globe className={`h-6 w-6 ${isDark ? 'text-purple-400' : 'text-purple-600'}`} />
-                </div>
-                <h3 className={`text-xl font-semibold ${themeClasses.text.primary} mb-3`}>
-                  Easy Sharing
-                </h3>
-                <p className={`${themeClasses.text.secondary} leading-relaxed`}>
-                  Export as HTML, OpenAPI, or Postman collections. Share with anyone, anywhere.
-                </p>
-              </div>
-            </div>
+              style={{ borderRadius: '6px' }}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Create Documentation
+            </Button>
           </div>
         ) : searchQuery && filteredProjects.length === 0 ? (
           /* Search no results */
@@ -471,63 +534,13 @@ export default function DocsPage() {
           </div>
         ) : (
           /* Documentation Projects */
-          <div className="py-12">
-            {/* Section Header */}
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <h2 className={`text-2xl font-semibold ${themeClasses.text.primary} mb-2`}>
-                  Your Documentation
-                </h2>
-                <p className={`${themeClasses.text.secondary}`}>
-                  {filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''}
-                  {searchQuery && ` matching "${searchQuery}"`}
-                </p>
-              </div>
-              
-              {/* View Controls */}
-              <div className="flex items-center gap-2">
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className={`text-sm px-3 py-2 border rounded-lg transition-colors ${
-                    isDark 
-                      ? 'bg-gray-900 border-gray-700 text-white' 
-                      : 'bg-white border-gray-200 text-gray-900'
-                  }`}
-                  style={{ borderRadius: '8px' }}
-                >
-                  <option value="updated">Recently Updated</option>
-                  <option value="created">Recently Created</option>
-                  <option value="name">Name A-Z</option>
-                </select>
-
-                <div className={`flex items-center border rounded-lg overflow-hidden ${
-                  isDark ? 'border-gray-700' : 'border-gray-200'
-                }`}>
-                  <button
-                    onClick={() => setViewMode('grid')}
-                    className={`p-3 transition-colors ${
-                      viewMode === 'grid'
-                        ? isDark ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-900'
-                        : isDark ? 'text-gray-400 hover:text-white hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                    }`}
-                  >
-                    <Grid3X3 className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={() => setViewMode('list')}
-                    className={`p-3 transition-colors border-l ${
-                      isDark ? 'border-gray-700' : 'border-gray-200'
-                    } ${
-                      viewMode === 'list'
-                        ? isDark ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-900'
-                        : isDark ? 'text-gray-400 hover:text-white hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                    }`}
-                  >
-                    <List className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
+          <div className="pb-12">
+            {/* Results Header */}
+            <div className="mb-6">
+              <p className={`text-sm ${themeClasses.text.secondary}`}>
+                {filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''}
+                {searchQuery && ` matching "${searchQuery}"`}
+              </p>
             </div>
 
             {/* Projects Grid/List */}
@@ -561,7 +574,7 @@ export default function DocsPage() {
         open={showCreateModal}
         onOpenChange={setShowCreateModal}
         collections={getCollectionsWithDocs()}
-        onGenerate={(docData) => {
+        onGenerate={() => {
           setShowCreateModal(false)
           loadDocsProjects()
         }}
