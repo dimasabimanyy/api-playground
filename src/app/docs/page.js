@@ -327,182 +327,234 @@ export default function DocsPage() {
         </div>
       </header>
 
-      {/* Sub-header with description and stats */}
-      <div className={`border-b ${themeClasses.border.primary} ${themeClasses.bg.glass}`}>
-        <div className="max-w-7xl mx-auto px-6 py-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="space-y-1">
-              <p className={`text-sm ${themeClasses.text.secondary}`}>
-                Create, manage, and share beautiful API documentation from your collections
-              </p>
-              <div className="flex items-center gap-4 text-xs">
-                <span className={`${themeClasses.text.tertiary}`}>
-                  Last updated: {Object.keys(docsProjects).length > 0 ? 'Today' : 'Never'}
-                </span>
-                <span className={`${themeClasses.text.tertiary}`}>•</span>
-                <span className={`${themeClasses.text.tertiary}`}>
-                  {Object.values(docsProjects).reduce((total, project) => {
-                    return total + (project.collections?.length || 0);
-                  }, 0)} collections documented
-                </span>
-              </div>
-            </div>
-            
-            {/* Quick Actions */}
-            <div className="hidden sm:flex items-center gap-2">
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-6">
+        {/* Hero Section */}
+        <div className="py-24 text-center">
+          <div className="max-w-2xl mx-auto">
+            <h1 className={`text-5xl font-bold tracking-tight ${themeClasses.text.primary} mb-6`}>
+              API Documentation
+            </h1>
+            <p className={`text-xl ${themeClasses.text.secondary} mb-12 leading-relaxed`}>
+              Create beautiful, interactive documentation from your API collections. Share with your team or publish to the world.
+            </p>
+            <div className="flex items-center justify-center gap-4">
+              <Button
+                onClick={createNewDocumentation}
+                size="lg"
+                className={`px-8 py-3 text-base font-medium ${
+                  isDark 
+                    ? 'bg-white text-black hover:bg-gray-100' 
+                    : 'bg-black text-white hover:bg-gray-800'
+                }`}
+                style={{ borderRadius: '8px' }}
+              >
+                Create Documentation
+              </Button>
               <Button
                 variant="outline"
-                size="sm"
-                style={{ borderRadius: '6px' }}
+                size="lg"
+                className="px-8 py-3 text-base"
+                style={{ borderRadius: '8px' }}
               >
-                <Globe className="h-3 w-3 mr-1" />
-                Browse Examples
+                View Examples
               </Button>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Toolbar */}
-      <div className={`border-b ${themeClasses.border.primary}`}>
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            {/* Left section - Stats or filters could go here */}
-            <div className="flex items-center gap-4">
-              <span className={`text-sm ${themeClasses.text.secondary}`}>
-                {filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''} found
-              </span>
+        {filteredProjects.length === 0 && !searchQuery ? (
+          /* Empty state with examples */
+          <div className="pb-24">
+            <div className="text-center mb-16">
+              <h2 className={`text-3xl font-bold ${themeClasses.text.primary} mb-4`}>
+                Get started in seconds
+              </h2>
+              <p className={`text-lg ${themeClasses.text.secondary} max-w-2xl mx-auto`}>
+                Transform your API collections into professional documentation that your team and customers will love.
+              </p>
             </div>
 
-            {/* Right section - Controls */}
-            <div className="flex items-center gap-2">
-              {/* Sort */}
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className={`text-sm px-3 py-2 border rounded transition-colors ${
-                  isDark 
-                    ? 'bg-gray-900 border-gray-700 text-white' 
-                    : 'bg-white border-gray-300 text-gray-900'
-                }`}
-                style={{ borderRadius: '6px' }}
-              >
-                <option value="updated">Recently Updated</option>
-                <option value="created">Recently Created</option>
-                <option value="name">Name A-Z</option>
-              </select>
-
-              {/* View Mode */}
-              <div className={`flex items-center border rounded ${
-                isDark ? 'border-gray-700' : 'border-gray-300'
+            {/* Feature Cards */}
+            <div className="grid md:grid-cols-3 gap-8 mb-16">
+              <div className={`p-8 rounded-xl border ${
+                isDark ? 'border-gray-800 bg-gray-900/50' : 'border-gray-200 bg-white'
               }`}
-                style={{ borderRadius: '6px' }}
+                style={{ borderRadius: '16px' }}
               >
-                <button
-                  onClick={() => setViewMode('grid')}
-                  className={`p-2 transition-colors ${
-                    viewMode === 'grid'
-                      ? isDark ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-900'
-                      : isDark ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  <Grid3X3 className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={() => setViewMode('list')}
-                  className={`p-2 transition-colors ${
-                    viewMode === 'list'
-                      ? isDark ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-900'
-                      : isDark ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  <List className="h-4 w-4" />
-                </button>
+                <div className={`w-12 h-12 rounded-lg ${
+                  isDark ? 'bg-blue-500/20' : 'bg-blue-50'
+                } flex items-center justify-center mb-6`}>
+                  <Zap className={`h-6 w-6 ${isDark ? 'text-blue-400' : 'text-blue-600'}`} />
+                </div>
+                <h3 className={`text-xl font-semibold ${themeClasses.text.primary} mb-3`}>
+                  Auto-Generated
+                </h3>
+                <p className={`${themeClasses.text.secondary} leading-relaxed`}>
+                  Automatically generate documentation from your existing API collections with zero configuration.
+                </p>
+              </div>
+
+              <div className={`p-8 rounded-xl border ${
+                isDark ? 'border-gray-800 bg-gray-900/50' : 'border-gray-200 bg-white'
+              }`}
+                style={{ borderRadius: '16px' }}
+              >
+                <div className={`w-12 h-12 rounded-lg ${
+                  isDark ? 'bg-green-500/20' : 'bg-green-50'
+                } flex items-center justify-center mb-6`}>
+                  <Edit3 className={`h-6 w-6 ${isDark ? 'text-green-400' : 'text-green-600'}`} />
+                </div>
+                <h3 className={`text-xl font-semibold ${themeClasses.text.primary} mb-3`}>
+                  Fully Customizable
+                </h3>
+                <p className={`${themeClasses.text.secondary} leading-relaxed`}>
+                  Add descriptions, examples, and custom content with inline editing and real-time preview.
+                </p>
+              </div>
+
+              <div className={`p-8 rounded-xl border ${
+                isDark ? 'border-gray-800 bg-gray-900/50' : 'border-gray-200 bg-white'
+              }`}
+                style={{ borderRadius: '16px' }}
+              >
+                <div className={`w-12 h-12 rounded-lg ${
+                  isDark ? 'bg-purple-500/20' : 'bg-purple-50'
+                } flex items-center justify-center mb-6`}>
+                  <Globe className={`h-6 w-6 ${isDark ? 'text-purple-400' : 'text-purple-600'}`} />
+                </div>
+                <h3 className={`text-xl font-semibold ${themeClasses.text.primary} mb-3`}>
+                  Easy Sharing
+                </h3>
+                <p className={`${themeClasses.text.secondary} leading-relaxed`}>
+                  Export as HTML, OpenAPI, or Postman collections. Share with anyone, anywhere.
+                </p>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="max-w-7xl mx-auto px-6 py-12">
-        {filteredProjects.length === 0 ? (
-          <div className="text-center py-24">
-            {searchQuery ? (
-              // No search results
-              <div className="max-w-md mx-auto">
-                <div className={`w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center ${
-                  isDark ? 'bg-gray-800/50' : 'bg-gray-100'
-                }`}>
-                  <Search className={`h-8 w-8 ${themeClasses.text.tertiary}`} />
-                </div>
-                <h3 className={`text-xl font-semibold ${themeClasses.text.primary} mb-3`}>
-                  No documentation found
-                </h3>
-                <p className={`${themeClasses.text.secondary} mb-6 leading-relaxed`}>
-                  No documentation projects match your search for "{searchQuery}". Try adjusting your search terms or create a new project.
-                </p>
+        ) : searchQuery && filteredProjects.length === 0 ? (
+          /* Search no results */
+          <div className="py-24 text-center">
+            <div className="max-w-md mx-auto">
+              <div className={`w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center ${
+                isDark ? 'bg-gray-800/50' : 'bg-gray-100'
+              }`}>
+                <Search className={`h-8 w-8 ${themeClasses.text.tertiary}`} />
+              </div>
+              <h3 className={`text-2xl font-semibold ${themeClasses.text.primary} mb-3`}>
+                No results for "{searchQuery}"
+              </h3>
+              <p className={`text-lg ${themeClasses.text.secondary} mb-8 leading-relaxed`}>
+                Try adjusting your search or create new documentation.
+              </p>
+              <div className="flex items-center justify-center gap-4">
                 <Button
                   onClick={() => setSearchQuery('')}
                   variant="outline"
-                  style={{ borderRadius: '6px' }}
+                  style={{ borderRadius: '8px' }}
                 >
                   Clear search
                 </Button>
-              </div>
-            ) : (
-              // No projects at all
-              <div className="max-w-md mx-auto">
-                <div className={`w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center ${
-                  isDark ? 'bg-gray-800/50' : 'bg-gray-100'
-                }`}>
-                  <FileText className={`h-8 w-8 ${themeClasses.text.tertiary}`} />
-                </div>
-                <h3 className={`text-xl font-semibold ${themeClasses.text.primary} mb-3`}>
-                  No documentation projects yet
-                </h3>
-                <p className={`${themeClasses.text.secondary} mb-8 leading-relaxed`}>
-                  Create your first documentation project from your API collections and start sharing beautiful, interactive documentation.
-                </p>
                 <Button
                   onClick={createNewDocumentation}
                   className={`${
                     isDark 
-                      ? 'bg-white text-black hover:bg-gray-200' 
+                      ? 'bg-white text-black hover:bg-gray-100' 
                       : 'bg-black text-white hover:bg-gray-800'
                   }`}
-                  style={{ borderRadius: '6px' }}
+                  style={{ borderRadius: '8px' }}
                 >
-                  <Plus className="h-4 w-4 mr-2" />
                   Create Documentation
                 </Button>
               </div>
-            )}
+            </div>
           </div>
         ) : (
-          // Projects grid/list
-          <div className={
-            viewMode === 'grid' 
-              ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
-              : 'space-y-4'
-          }>
-            {filteredProjects.map((project) => (
-              <ProjectCard
-                key={project.id}
-                project={project}
-                collections={collections}
-                viewMode={viewMode}
-                onView={() => viewDocumentation(project)}
-                onEdit={() => {/* TODO: Edit project */}}
-                onDuplicate={() => duplicateProject(project)}
-                onDelete={() => deleteProject(project)}
-                isDark={isDark}
-                themeClasses={themeClasses}
-              />
-            ))}
+          /* Documentation Projects */
+          <div className="py-12">
+            {/* Section Header */}
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h2 className={`text-2xl font-semibold ${themeClasses.text.primary} mb-2`}>
+                  Your Documentation
+                </h2>
+                <p className={`${themeClasses.text.secondary}`}>
+                  {filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''}
+                  {searchQuery && ` matching "${searchQuery}"`}
+                </p>
+              </div>
+              
+              {/* View Controls */}
+              <div className="flex items-center gap-2">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className={`text-sm px-3 py-2 border rounded-lg transition-colors ${
+                    isDark 
+                      ? 'bg-gray-900 border-gray-700 text-white' 
+                      : 'bg-white border-gray-200 text-gray-900'
+                  }`}
+                  style={{ borderRadius: '8px' }}
+                >
+                  <option value="updated">Recently Updated</option>
+                  <option value="created">Recently Created</option>
+                  <option value="name">Name A-Z</option>
+                </select>
+
+                <div className={`flex items-center border rounded-lg overflow-hidden ${
+                  isDark ? 'border-gray-700' : 'border-gray-200'
+                }`}>
+                  <button
+                    onClick={() => setViewMode('grid')}
+                    className={`p-3 transition-colors ${
+                      viewMode === 'grid'
+                        ? isDark ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-900'
+                        : isDark ? 'text-gray-400 hover:text-white hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                    }`}
+                  >
+                    <Grid3X3 className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => setViewMode('list')}
+                    className={`p-3 transition-colors border-l ${
+                      isDark ? 'border-gray-700' : 'border-gray-200'
+                    } ${
+                      viewMode === 'list'
+                        ? isDark ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-900'
+                        : isDark ? 'text-gray-400 hover:text-white hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                    }`}
+                  >
+                    <List className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Projects Grid/List */}
+            <div className={
+              viewMode === 'grid' 
+                ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
+                : 'space-y-3'
+            }>
+              {filteredProjects.map((project) => (
+                <ProjectCard
+                  key={project.id}
+                  project={project}
+                  collections={collections}
+                  viewMode={viewMode}
+                  onView={() => viewDocumentation(project)}
+                  onEdit={() => {/* TODO: Edit project */}}
+                  onDuplicate={() => duplicateProject(project)}
+                  onDelete={() => deleteProject(project)}
+                  isDark={isDark}
+                  themeClasses={themeClasses}
+                />
+              ))}
+            </div>
           </div>
         )}
       </div>
+      {/* End Main Content */}
 
       {/* Create Documentation Modal */}
       <DocGeneratorModal
@@ -558,17 +610,15 @@ function ProjectCard({
 
   if (viewMode === 'list') {
     return (
-      <div className={`border rounded-lg p-6 transition-colors hover:${
-        isDark ? 'bg-gray-800/30 border-gray-600' : 'bg-gray-50 border-gray-300'
-      } ${
-        isDark ? 'border-gray-700 bg-gray-900' : 'border-gray-200 bg-white'
+      <div className={`group border rounded-lg p-4 transition-all duration-200 hover:shadow-md ${
+        isDark ? 'border-gray-800 bg-gray-900/50 hover:border-gray-700 hover:bg-gray-900/80' : 'border-gray-200 bg-white hover:border-gray-300'
       }`}
         style={{ borderRadius: '12px' }}
       >
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-6 flex-1 min-w-0">
+          <div className="flex items-center gap-4 flex-1 min-w-0">
             <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-              isDark ? 'bg-gray-700/50 text-gray-300' : 'bg-gray-100 text-gray-600'
+              isDark ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-600'
             }`}
               style={{ borderRadius: '8px' }}
             >
@@ -576,7 +626,7 @@ function ProjectCard({
             </div>
             
             <div className="flex-1 min-w-0">
-              <h3 className={`font-semibold ${themeClasses.text.primary} truncate`}>
+              <h3 className={`font-semibold ${themeClasses.text.primary} truncate mb-1`}>
                 {project.name}
               </h3>
               <p className={`text-sm ${themeClasses.text.secondary} truncate`}>
@@ -584,13 +634,20 @@ function ProjectCard({
               </p>
             </div>
             
-            <div className="hidden md:flex items-center gap-8 text-sm">
-              <div className={`flex items-center gap-2 ${themeClasses.text.tertiary}`}>
-                <Calendar className="w-4 h-4" />
-                {formatDate(project.updated)}
-              </div>
-              <div className={`${themeClasses.text.tertiary}`}>
-                {getCollectionCount()} collections
+            <div className="hidden md:flex items-center gap-6">
+              <div className={`flex items-center gap-4 text-xs ${themeClasses.text.tertiary}`}>
+                <span className="flex items-center gap-1">
+                  <div className="w-1.5 h-1.5 rounded-full bg-current opacity-50"></div>
+                  {getCollectionCount()} collections
+                </span>
+                <span className="flex items-center gap-1">
+                  <div className="w-1.5 h-1.5 rounded-full bg-current opacity-50"></div>
+                  {getEndpointCount()} endpoints
+                </span>
+                <span className="flex items-center gap-1">
+                  <Calendar className="w-3 h-3 opacity-50" />
+                  {formatDate(project.updated)}
+                </span>
               </div>
             </div>
           </div>
@@ -599,54 +656,59 @@ function ProjectCard({
             <Button
               onClick={onView}
               size="sm"
-              variant="outline"
+              className={`${
+                isDark 
+                  ? 'bg-white text-black hover:bg-gray-100' 
+                  : 'bg-black text-white hover:bg-gray-800'
+              }`}
               style={{ borderRadius: '6px' }}
             >
-              <Eye className="w-3 h-3 mr-1" />
               View
             </Button>
             
-            <div className="relative">
+            <div className="relative opacity-0 group-hover:opacity-100 transition-opacity">
               <Button
                 onClick={() => setShowMenu(!showMenu)}
                 size="sm"
                 variant="ghost"
                 style={{ borderRadius: '6px' }}
               >
-                <MoreVertical className="w-3 h-3" />
+                <MoreVertical className="w-4 h-4" />
               </Button>
               
               {showMenu && (
-                <div className={`absolute right-0 top-8 z-10 w-48 border rounded-lg shadow-lg ${
+                <div className={`absolute right-0 top-10 z-20 w-48 border rounded-xl shadow-xl ${
                   isDark ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'
                 }`}
-                  style={{ borderRadius: '8px' }}
+                  style={{ borderRadius: '12px' }}
                 >
-                  <button
-                    onClick={() => { onEdit(); setShowMenu(false); }}
-                    className={`w-full text-left px-3 py-2 text-sm hover:${
-                      isDark ? 'bg-gray-700' : 'bg-gray-100'
-                    } flex items-center gap-2`}
-                  >
-                    <Edit3 className="w-3 h-3" />
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => { onDuplicate(); setShowMenu(false); }}
-                    className={`w-full text-left px-3 py-2 text-sm hover:${
-                      isDark ? 'bg-gray-700' : 'bg-gray-100'
-                    } flex items-center gap-2`}
-                  >
-                    <Copy className="w-3 h-3" />
-                    Duplicate
-                  </button>
-                  <button
-                    onClick={() => { onDelete(); setShowMenu(false); }}
-                    className="w-full text-left px-3 py-2 text-sm hover:bg-red-500/10 text-red-500 flex items-center gap-2"
-                  >
-                    <Trash2 className="w-3 h-3" />
-                    Delete
-                  </button>
+                  <div className="p-1">
+                    <button
+                      onClick={() => { onEdit(); setShowMenu(false); }}
+                      className={`w-full text-left px-3 py-2 text-sm rounded-lg hover:${
+                        isDark ? 'bg-gray-700' : 'bg-gray-100'
+                      } flex items-center gap-2 transition-colors`}
+                    >
+                      <Edit3 className="w-4 h-4" />
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => { onDuplicate(); setShowMenu(false); }}
+                      className={`w-full text-left px-3 py-2 text-sm rounded-lg hover:${
+                        isDark ? 'bg-gray-700' : 'bg-gray-100'
+                      } flex items-center gap-2 transition-colors`}
+                    >
+                      <Copy className="w-4 h-4" />
+                      Duplicate
+                    </button>
+                    <button
+                      onClick={() => { onDelete(); setShowMenu(false); }}
+                      className="w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-red-500/10 text-red-500 flex items-center gap-2 transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      Delete
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -658,63 +720,66 @@ function ProjectCard({
 
   // Grid view
   return (
-    <div className={`border rounded-lg transition-all duration-200 hover:shadow-lg ${
-      isDark ? 'border-gray-700 bg-gray-900 hover:border-gray-600' : 'border-gray-200 bg-white hover:border-gray-300'
+    <div className={`group border rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-gray-200/20 ${
+      isDark ? 'border-gray-800 bg-gray-900/50 hover:border-gray-700 hover:bg-gray-900' : 'border-gray-200 bg-white hover:border-gray-300'
     }`}
-      style={{ borderRadius: '12px' }}
+      style={{ borderRadius: '16px' }}
     >
-      <div className="p-8">
+      <div className="p-6">
         {/* Header */}
-        <div className="flex items-start justify-between mb-4">
+        <div className="flex items-start justify-between mb-6">
           <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-            isDark ? 'bg-gray-700/50 text-gray-300' : 'bg-gray-100 text-gray-600'
+            isDark ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-600'
           }`}
-            style={{ borderRadius: '8px' }}
+            style={{ borderRadius: '12px' }}
           >
             <FileText className="w-6 h-6" />
           </div>
           
-          <div className="relative">
+          <div className="relative opacity-0 group-hover:opacity-100 transition-opacity">
             <button
               onClick={() => setShowMenu(!showMenu)}
-              className={`p-1 rounded transition-colors hover:${
+              className={`p-2 rounded-lg transition-colors hover:${
                 isDark ? 'bg-gray-800' : 'bg-gray-100'
               }`}
+              style={{ borderRadius: '8px' }}
             >
               <MoreVertical className="w-4 h-4" />
             </button>
             
             {showMenu && (
-              <div className={`absolute right-0 top-8 z-10 w-48 border rounded-lg shadow-lg ${
+              <div className={`absolute right-0 top-10 z-20 w-48 border rounded-xl shadow-xl ${
                 isDark ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'
               }`}
-                style={{ borderRadius: '8px' }}
+                style={{ borderRadius: '12px' }}
               >
-                <button
-                  onClick={() => { onEdit(); setShowMenu(false); }}
-                  className={`w-full text-left px-3 py-2 text-sm hover:${
-                    isDark ? 'bg-gray-700' : 'bg-gray-100'
-                  } flex items-center gap-2`}
-                >
-                  <Edit3 className="w-3 h-3" />
-                  Edit
-                </button>
-                <button
-                  onClick={() => { onDuplicate(); setShowMenu(false); }}
-                  className={`w-full text-left px-3 py-2 text-sm hover:${
-                    isDark ? 'bg-gray-700' : 'bg-gray-100'
-                  } flex items-center gap-2`}
-                >
-                  <Copy className="w-3 h-3" />
-                  Duplicate
-                </button>
-                <button
-                  onClick={() => { onDelete(); setShowMenu(false); }}
-                  className="w-full text-left px-3 py-2 text-sm hover:bg-red-500/10 text-red-500 flex items-center gap-2"
-                >
-                  <Trash2 className="w-3 h-3" />
-                  Delete
-                </button>
+                <div className="p-1">
+                  <button
+                    onClick={() => { onEdit(); setShowMenu(false); }}
+                    className={`w-full text-left px-3 py-2 text-sm rounded-lg hover:${
+                      isDark ? 'bg-gray-700' : 'bg-gray-100'
+                    } flex items-center gap-2 transition-colors`}
+                  >
+                    <Edit3 className="w-4 h-4" />
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => { onDuplicate(); setShowMenu(false); }}
+                    className={`w-full text-left px-3 py-2 text-sm rounded-lg hover:${
+                      isDark ? 'bg-gray-700' : 'bg-gray-100'
+                    } flex items-center gap-2 transition-colors`}
+                  >
+                    <Copy className="w-4 h-4" />
+                    Duplicate
+                  </button>
+                  <button
+                    onClick={() => { onDelete(); setShowMenu(false); }}
+                    className="w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-red-500/10 text-red-500 flex items-center gap-2 transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Delete
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -722,7 +787,7 @@ function ProjectCard({
         
         {/* Content */}
         <div className="mb-6">
-          <h3 className={`text-xl font-semibold ${themeClasses.text.primary} mb-3 line-clamp-1`}>
+          <h3 className={`text-lg font-semibold ${themeClasses.text.primary} mb-2 line-clamp-1`}>
             {project.name}
           </h3>
           <p className={`text-sm ${themeClasses.text.secondary} line-clamp-2 leading-relaxed`}>
@@ -731,40 +796,34 @@ function ProjectCard({
         </div>
         
         {/* Stats */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-6 text-sm">
-            <span className={`${themeClasses.text.tertiary}`}>
-              {getCollectionCount()} collections
-            </span>
-            <span className={`${themeClasses.text.tertiary}`}>
-              {getEndpointCount()} endpoints
-            </span>
-          </div>
-          
-          <div className={`text-xs ${themeClasses.text.tertiary}`}>
-            Updated {formatDate(project.updated)}
-          </div>
+        <div className={`flex items-center gap-4 mb-6 text-xs ${themeClasses.text.tertiary}`}>
+          <span className="flex items-center gap-1">
+            <div className="w-1.5 h-1.5 rounded-full bg-current opacity-50"></div>
+            {getCollectionCount()} collections
+          </span>
+          <span className="flex items-center gap-1">
+            <div className="w-1.5 h-1.5 rounded-full bg-current opacity-50"></div>
+            {getEndpointCount()} endpoints
+          </span>
+          <span className="flex items-center gap-1 ml-auto">
+            <Calendar className="w-3 h-3 opacity-50" />
+            {formatDate(project.updated)}
+          </span>
         </div>
         
         {/* Actions */}
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <Button
             onClick={onView}
-            className="flex-1"
-            variant="outline"
+            className={`flex-1 ${
+              isDark 
+                ? 'bg-white text-black hover:bg-gray-100' 
+                : 'bg-black text-white hover:bg-gray-800'
+            }`}
             size="sm"
-            style={{ borderRadius: '6px' }}
+            style={{ borderRadius: '8px' }}
           >
-            <Eye className="w-3 h-3 mr-1" />
-            View
-          </Button>
-          <Button
-            onClick={onEdit}
-            size="sm"
-            variant="ghost"
-            style={{ borderRadius: '6px' }}
-          >
-            <Edit3 className="w-3 h-3" />
+            View Documentation
           </Button>
         </div>
       </div>
