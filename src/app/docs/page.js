@@ -31,6 +31,7 @@ import { useCollections } from '@/contexts/CollectionsContext'
 import { getThemeClasses } from '@/lib/theme'
 import { DocsProjects, DocsMetadata } from '@/lib/docs-storage'
 import DocGeneratorModal from '@/components/docs/DocGeneratorModal'
+import SearchInput from '@/components/ui/SearchInput'
 
 function UserAvatar({ user, isDark }) {
   const [imageLoaded, setImageLoaded] = useState(true);
@@ -237,38 +238,14 @@ export default function DocsPage() {
         </div>
         <div className="flex items-center space-x-1 sm:space-x-3 ml-auto">
           {/* Search Input */}
-          <div className="relative z-[99999] search-container">
-            <div className="transition-all duration-300 w-32 sm:w-40">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 z-10" />
-              <Input
-                placeholder="Find..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 py-1.5 text-sm focus:ring-0 focus:outline-none cursor-pointer transition-all duration-300"
-                style={{
-                  borderRadius: "6px",
-                  borderColor: "rgb(235, 235, 235)",
-                  backgroundColor: "white",
-                  border: "1px solid rgb(235, 235, 235)",
-                  boxShadow: "none",
-                }}
-              />
-            </div>
-          </div>
-          {/* Create Documentation Button */}
-          <Button
-            onClick={createNewDocumentation}
-            size="sm"
-            className={`${
-              isDark 
-                ? 'bg-white text-black hover:bg-gray-200' 
-                : 'bg-black text-white hover:bg-gray-800'
-            }`}
-            style={{ borderRadius: '6px' }}
-          >
-            <Plus className="h-4 w-4 mr-1" />
-            <span className="hidden sm:inline">New</span>
-          </Button>
+          <SearchInput
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Find..."
+            expandedPlaceholder="Find documentation..."
+            expandable={true}
+            isDark={isDark}
+          />
 
           {/* Theme Toggle */}
           <button
@@ -737,7 +714,7 @@ function ProjectCard({
     <div className={`group border rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-gray-200/20 ${
       isDark ? 'border-gray-800 bg-gray-900/50 hover:border-gray-700 hover:bg-gray-900' : 'border-gray-200 bg-white hover:border-gray-300'
     }`}
-      style={{ borderRadius: '16px' }}
+      style={{ borderRadius: '6px' }}
     >
       <div className="p-6">
         {/* Header - Icon, Title, URL, Menu in same row */}
