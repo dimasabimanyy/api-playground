@@ -332,25 +332,22 @@ export default function DocsPage() {
       <div className="max-w-7xl mx-auto px-6">
         {/* Page Header */}
         <div className="py-8">
-          <h1 className={`text-2xl font-semibold ${themeClasses.text.primary} mb-6`}>
-            Documentation
-          </h1>
-          
           {/* Search and Controls */}
           <div className="flex items-center gap-3">
             {/* Search Input - Full Width */}
-            <div className="flex-1">
+            <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 z-10" />
               <Input
                 placeholder="Find documentation..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 py-2.5 text-sm focus:ring-0 focus:outline-none"
+                className="pl-10 py-1.5 text-sm focus:ring-0 focus:outline-none cursor-pointer h-9"
                 style={{
                   borderRadius: "6px",
                   borderColor: isDark ? "rgb(55, 65, 81)" : "rgb(235, 235, 235)",
                   backgroundColor: isDark ? "rgb(17, 24, 39)" : "white",
                   border: `1px solid ${isDark ? "rgb(55, 65, 81)" : "rgb(235, 235, 235)"}`,
+                  boxShadow: "none",
                 }}
               />
             </div>
@@ -361,7 +358,7 @@ export default function DocsPage() {
                 onClick={() => setShowFilterDropdown(!showFilterDropdown)}
                 variant="outline"
                 size="sm"
-                className={`px-3 py-2.5 ${
+                className={`px-3 py-1.5 h-9 cursor-pointer ${
                   isDark 
                     ? 'bg-transparent border-gray-600 text-gray-300 hover:bg-gray-800' 
                     : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
@@ -424,12 +421,12 @@ export default function DocsPage() {
             </div>
 
             {/* View Toggle */}
-            <div className={`flex items-center border rounded-md overflow-hidden ${
+            <div className={`flex items-center border rounded-md overflow-hidden h-9 ${
               isDark ? 'border-gray-600' : 'border-gray-200'
             }`} style={{ borderRadius: '6px' }}>
               <button
                 onClick={() => setViewMode('grid')}
-                className={`p-2.5 transition-colors ${
+                className={`px-2.5 py-1.5 transition-colors cursor-pointer ${
                   viewMode === 'grid'
                     ? isDark ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-900'
                     : isDark ? 'text-gray-400 hover:text-white hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
@@ -439,7 +436,7 @@ export default function DocsPage() {
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`p-2.5 transition-colors border-l ${
+                className={`px-2.5 py-1.5 transition-colors border-l cursor-pointer ${
                   isDark ? 'border-gray-600' : 'border-gray-200'
                 } ${
                   viewMode === 'list'
@@ -455,7 +452,7 @@ export default function DocsPage() {
             <Button
               onClick={createNewDocumentation}
               size="sm"
-              className={`px-4 py-2.5 font-medium ${
+              className={`px-4 py-1.5 h-9 font-medium cursor-pointer ${
                 isDark 
                   ? 'bg-white text-black hover:bg-gray-200' 
                   : 'bg-black text-white hover:bg-gray-800'
@@ -547,8 +544,10 @@ export default function DocsPage() {
             <div className={
               viewMode === 'grid' 
                 ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
-                : 'space-y-3'
-            }>
+                : `border rounded-lg overflow-hidden ${isDark ? 'border-gray-800 bg-gray-900/50' : 'border-gray-200 bg-white'}`
+            }
+              style={viewMode === 'list' ? { borderRadius: '12px' } : undefined}
+            >
               {filteredProjects.map((project) => (
                 <ProjectCard
                   key={project.id}
@@ -623,10 +622,11 @@ function ProjectCard({
 
   if (viewMode === 'list') {
     return (
-      <div className={`group border rounded-lg p-4 transition-all duration-200 hover:shadow-md ${
-        isDark ? 'border-gray-800 bg-gray-900/50 hover:border-gray-700 hover:bg-gray-900/80' : 'border-gray-200 bg-white hover:border-gray-300'
+      <div className={`group p-4 transition-all duration-200 border-b last:border-b-0 ${
+        isDark 
+          ? 'border-gray-800 hover:bg-gray-800/30' 
+          : 'border-gray-200 hover:bg-gray-50'
       }`}
-        style={{ borderRadius: '12px' }}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4 flex-1 min-w-0">
@@ -669,7 +669,7 @@ function ProjectCard({
             <Button
               onClick={onView}
               size="sm"
-              className={`${
+              className={`cursor-pointer ${
                 isDark 
                   ? 'bg-white text-black hover:bg-gray-100' 
                   : 'bg-black text-white hover:bg-gray-800'
@@ -684,6 +684,7 @@ function ProjectCard({
                 onClick={() => setShowMenu(!showMenu)}
                 size="sm"
                 variant="ghost"
+                className="cursor-pointer"
                 style={{ borderRadius: '6px' }}
               >
                 <MoreVertical className="w-4 h-4" />
@@ -698,7 +699,7 @@ function ProjectCard({
                   <div className="p-1">
                     <button
                       onClick={() => { onEdit(); setShowMenu(false); }}
-                      className={`w-full text-left px-3 py-2 text-sm rounded-lg hover:${
+                      className={`w-full text-left px-3 py-2 text-sm rounded-lg cursor-pointer hover:${
                         isDark ? 'bg-gray-700' : 'bg-gray-100'
                       } flex items-center gap-2 transition-colors`}
                     >
@@ -707,7 +708,7 @@ function ProjectCard({
                     </button>
                     <button
                       onClick={() => { onDuplicate(); setShowMenu(false); }}
-                      className={`w-full text-left px-3 py-2 text-sm rounded-lg hover:${
+                      className={`w-full text-left px-3 py-2 text-sm rounded-lg cursor-pointer hover:${
                         isDark ? 'bg-gray-700' : 'bg-gray-100'
                       } flex items-center gap-2 transition-colors`}
                     >
@@ -716,7 +717,7 @@ function ProjectCard({
                     </button>
                     <button
                       onClick={() => { onDelete(); setShowMenu(false); }}
-                      className="w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-red-500/10 text-red-500 flex items-center gap-2 transition-colors"
+                      className="w-full text-left px-3 py-2 text-sm rounded-lg cursor-pointer hover:bg-red-500/10 text-red-500 flex items-center gap-2 transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
                       Delete
@@ -739,23 +740,32 @@ function ProjectCard({
       style={{ borderRadius: '16px' }}
     >
       <div className="p-6">
-        {/* Header */}
-        <div className="flex items-start justify-between mb-6">
-          <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
+        {/* Header - Icon, Title, URL, Menu in same row */}
+        <div className="flex items-center gap-3 mb-4">
+          <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
             isDark ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-600'
           }`}
-            style={{ borderRadius: '12px' }}
+            style={{ borderRadius: '8px' }}
           >
-            <FileText className="w-6 h-6" />
+            <FileText className="w-5 h-5" />
           </div>
           
-          <div className="relative opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="flex-1 min-w-0">
+            <h3 className={`text-base font-semibold ${themeClasses.text.primary} truncate`}>
+              {project.name}
+            </h3>
+            <p className={`text-xs ${themeClasses.text.tertiary} truncate`}>
+              docs.example.com/{project.name.toLowerCase().replace(/\s+/g, '-')}
+            </p>
+          </div>
+          
+          <div className="relative">
             <button
               onClick={() => setShowMenu(!showMenu)}
-              className={`p-2 rounded-lg transition-colors hover:${
+              className={`p-2 rounded-lg transition-colors cursor-pointer opacity-0 group-hover:opacity-100 hover:${
                 isDark ? 'bg-gray-800' : 'bg-gray-100'
               }`}
-              style={{ borderRadius: '8px' }}
+              style={{ borderRadius: '6px' }}
             >
               <MoreVertical className="w-4 h-4" />
             </button>
@@ -769,7 +779,7 @@ function ProjectCard({
                 <div className="p-1">
                   <button
                     onClick={() => { onEdit(); setShowMenu(false); }}
-                    className={`w-full text-left px-3 py-2 text-sm rounded-lg hover:${
+                    className={`w-full text-left px-3 py-2 text-sm rounded-lg cursor-pointer hover:${
                       isDark ? 'bg-gray-700' : 'bg-gray-100'
                     } flex items-center gap-2 transition-colors`}
                   >
@@ -778,7 +788,7 @@ function ProjectCard({
                   </button>
                   <button
                     onClick={() => { onDuplicate(); setShowMenu(false); }}
-                    className={`w-full text-left px-3 py-2 text-sm rounded-lg hover:${
+                    className={`w-full text-left px-3 py-2 text-sm rounded-lg cursor-pointer hover:${
                       isDark ? 'bg-gray-700' : 'bg-gray-100'
                     } flex items-center gap-2 transition-colors`}
                   >
@@ -787,7 +797,7 @@ function ProjectCard({
                   </button>
                   <button
                     onClick={() => { onDelete(); setShowMenu(false); }}
-                    className="w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-red-500/10 text-red-500 flex items-center gap-2 transition-colors"
+                    className="w-full text-left px-3 py-2 text-sm rounded-lg cursor-pointer hover:bg-red-500/10 text-red-500 flex items-center gap-2 transition-colors"
                   >
                     <Trash2 className="w-4 h-4" />
                     Delete
@@ -798,11 +808,8 @@ function ProjectCard({
           </div>
         </div>
         
-        {/* Content */}
-        <div className="mb-6">
-          <h3 className={`text-lg font-semibold ${themeClasses.text.primary} mb-2 line-clamp-1`}>
-            {project.name}
-          </h3>
+        {/* Description */}
+        <div className="mb-4">
           <p className={`text-sm ${themeClasses.text.secondary} line-clamp-2 leading-relaxed`}>
             {project.description || 'No description provided'}
           </p>
@@ -828,7 +835,7 @@ function ProjectCard({
         <div className="flex gap-3">
           <Button
             onClick={onView}
-            className={`flex-1 ${
+            className={`cursor-pointer ${
               isDark 
                 ? 'bg-white text-black hover:bg-gray-100' 
                 : 'bg-black text-white hover:bg-gray-800'
