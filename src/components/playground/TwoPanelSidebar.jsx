@@ -159,7 +159,7 @@ export default function TwoPanelSidebar({
   }
 
   return (
-    <div className="flex h-full">
+    <div className="flex h-full w-full min-w-0">
       {/* Left Navigation Panel */}
       <div className={`w-14 border-r ${themeClasses.border.primary} flex flex-col items-center py-4 gap-1`}>
         {/* Navigation Icons */}
@@ -199,7 +199,7 @@ export default function TwoPanelSidebar({
       </div>
 
       {/* Main Content Panel */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-w-0">
         {/* Header */}
         <div className={`p-4 border-b ${themeClasses.border.primary} flex items-center justify-between`}>
           <h2 className={`text-sm font-semibold ${themeClasses.text.primary}`}>
@@ -252,11 +252,16 @@ export default function TwoPanelSidebar({
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="p-4">
+        <div className="flex-1 overflow-y-auto min-w-0">
+          <div className="p-4 min-w-0">
             {/* Collections Content */}
             {activeMenuTab === "collections" && (
               <div className="space-y-1">
+                <div className="flex justify-between items-center mb-3">
+                  <span className={`text-xs font-medium ${themeClasses.text.tertiary}`}>
+                    Collections
+                  </span>
+                </div>
                 {Object.values(collections).map((collection) => {
                   const isExpanded = expandedCollections.has(collection.id);
                   return (
@@ -385,10 +390,10 @@ export default function TwoPanelSidebar({
                         onClick={() => loadRequest(item)}
                         className={`w-full text-left p-2 rounded-lg hover:${
                           isDark ? "bg-gray-800/30" : "bg-gray-100/50"
-                        } transition-all duration-200 group`}
+                        } transition-all duration-200 group min-w-0`}
                       >
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className={`text-xs font-mono px-1.5 py-0.5 rounded text-white ${
+                        <div className="flex items-center gap-2 mb-1 min-w-0">
+                          <span className={`text-xs font-mono px-1.5 py-0.5 rounded text-white flex-shrink-0 ${
                             item.method === 'GET' ? 'bg-green-600' :
                             item.method === 'POST' ? 'bg-blue-600' :
                             item.method === 'PUT' ? 'bg-yellow-600' :
@@ -396,11 +401,11 @@ export default function TwoPanelSidebar({
                           }`}>
                             {item.method}
                           </span>
-                          <span className={`text-xs ${themeClasses.text.tertiary}`}>
+                          <span className={`text-xs ${themeClasses.text.tertiary} flex-shrink-0`}>
                             {new Date(item.timestamp).toLocaleTimeString()}
                           </span>
                         </div>
-                        <div className={`text-sm ${themeClasses.text.primary} truncate`}>
+                        <div className={`text-sm ${themeClasses.text.primary} truncate min-w-0`}>
                           {item.url}
                         </div>
                       </button>
