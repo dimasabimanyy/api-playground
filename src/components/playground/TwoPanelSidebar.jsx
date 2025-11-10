@@ -174,19 +174,27 @@ export default function TwoPanelSidebar({
             const Icon = item.icon;
             const isActive = activeMenuTab === item.id && contentOpen;
             return (
-              <button
-                key={item.id}
-                onClick={() => onNavItemClick(item.id)}
-                className={`w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-200 cursor-pointer ${
-                  isActive
-                    ? `${themeClasses.text.primary} ${isDark ? "bg-gray-800" : "bg-gray-100"}`
-                    : `${themeClasses.text.secondary} hover:${themeClasses.text.primary} hover:${isDark ? "bg-gray-800/30" : "bg-gray-100/50"}`
-                }`}
-                title={item.label}
-                style={{ borderRadius: "6px" }}
-              >
-                <Icon className="h-4 w-4" />
-              </button>
+              <div key={item.id} className="relative group">
+                <button
+                  onClick={() => onNavItemClick(item.id)}
+                  className={`w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-200 cursor-pointer ${
+                    isActive
+                      ? `${themeClasses.text.primary} ${isDark ? "bg-gray-800" : "bg-gray-100"}`
+                      : `${themeClasses.text.secondary} hover:${themeClasses.text.primary} hover:${isDark ? "bg-gray-800/30" : "bg-gray-100/50"}`
+                  }`}
+                  style={{ borderRadius: "6px" }}
+                >
+                  <Icon className="h-4 w-4" />
+                </button>
+                {/* Tooltip */}
+                <div className={`absolute left-full ml-2 px-2 py-1 text-xs rounded whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 ${
+                  isDark 
+                    ? "bg-gray-100 text-gray-900" 
+                    : "bg-gray-900 text-white"
+                }`} style={{ top: '50%', transform: 'translateY(-50%)' }}>
+                  {item.label}
+                </div>
+              </div>
             );
           })}
         </div>
