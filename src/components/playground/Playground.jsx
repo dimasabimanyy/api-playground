@@ -179,6 +179,8 @@ export default function Playground() {
     typeof window !== "undefined" && window.innerWidth < 1024
   );
   const [activeMenuTab, setActiveMenuTab] = useState("collections");
+  const [sidebarContentWidth, setSidebarContentWidth] = useState(200); // Width of the content panel in pixels
+  const [isSidebarResizing, setIsSidebarResizing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchModalOpen, setSearchModalOpen] = useState(false);
 
@@ -248,6 +250,34 @@ export default function Playground() {
     setIsDragging(false);
   };
 
+  // Sidebar resize handlers
+  const handleSidebarResizeStart = (e) => {
+    setIsSidebarResizing(true);
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleSidebarResizeMove = useCallback(
+    (e) => {
+      if (isSidebarResizing) {
+        const sidebar = document.querySelector("[data-sidebar-container]");
+        if (sidebar) {
+          const sidebarRect = sidebar.getBoundingClientRect();
+          // Calculate new width: mouse position - sidebar left - navigation panel width (56px)
+          const newWidth = e.clientX - sidebarRect.left - 56;
+          // Apply constraints: min 150px, max 400px
+          const constrainedWidth = Math.min(Math.max(newWidth, 150), 400);
+          setSidebarContentWidth(constrainedWidth);
+        }
+      }
+    },
+    [isSidebarResizing]
+  );
+
+  const handleSidebarResizeEnd = () => {
+    setIsSidebarResizing(false);
+  };
+
   // Effect to handle mouse events (must be at top level)
   useEffect(() => {
     if (isDragging) {
@@ -259,6 +289,18 @@ export default function Playground() {
       };
     }
   }, [isDragging, handleMouseMove]);
+
+  // Effect to handle sidebar resize events
+  useEffect(() => {
+    if (isSidebarResizing) {
+      document.addEventListener("mousemove", handleSidebarResizeMove);
+      document.addEventListener("mouseup", handleSidebarResizeEnd);
+      return () => {
+        document.removeEventListener("mousemove", handleSidebarResizeMove);
+        document.removeEventListener("mouseup", handleSidebarResizeEnd);
+      };
+    }
+  }, [isSidebarResizing, handleSidebarResizeMove]);
 
   // Collections state
   const [expandedCollections, setExpandedCollections] = useState(
@@ -1441,15 +1483,23 @@ export default function Playground() {
         )}
 
         <div
-          className={`${sidebarCollapsed ? "w-16 lg:w-16" : "w-72 lg:w-72"} ${
+          data-sidebar-container
+          className={`${
+            sidebarCollapsed 
+              ? "w-16 lg:w-16" 
+              : `lg:w-[${56 + sidebarContentWidth}px]`
+          } ${
             sidebarCollapsed
               ? "-translate-x-full lg:translate-x-0"
               : "translate-x-0"
-          } fixed lg:relative top-[3.5rem] lg:top-0 left-0 h-[calc(100vh-3.5rem)] lg:h-full border-r ${
+          } w-72 fixed lg:relative top-[3.5rem] lg:top-0 left-0 h-[calc(100vh-3.5rem)] lg:h-full border-r ${
             themeClasses.border.primary
           } ${
             themeClasses.bg.glass
-          } transition-all duration-300 z-50 lg:z-auto`}
+          } ${
+            isSidebarResizing ? "" : "transition-all duration-300"
+          } z-50 lg:z-auto`}
+          style={!sidebarCollapsed ? { width: `${56 + sidebarContentWidth}px` } : {}}
         >
           <TwoPanelSidebar
             sidebarCollapsed={sidebarCollapsed}
@@ -1459,6 +1509,9 @@ export default function Playground() {
             sidebarMenuItems={sidebarMenuItems}
             activeMenuTab={activeMenuTab}
             setActiveMenuTab={setActiveMenuTab}
+            contentWidth={sidebarContentWidth}
+            onResizeStart={handleSidebarResizeStart}
+            isResizing={isSidebarResizing}
             collections={collections}
             expandedCollections={expandedCollections}
             toggleCollection={toggleCollection}

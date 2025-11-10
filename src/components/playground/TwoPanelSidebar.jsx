@@ -10,7 +10,8 @@ import {
   ChevronRight,
   Edit,
   Trash2,
-  MoreHorizontal 
+  MoreHorizontal,
+  GripVertical
 } from 'lucide-react'
 import {
   DropdownMenu,
@@ -44,7 +45,11 @@ export default function TwoPanelSidebar({
   setActiveTab,
   openTabs,
   setOpenTabs,
-  setCreateCollectionDialogOpen
+  setCreateCollectionDialogOpen,
+  // Resize props
+  contentWidth = 200,
+  onResizeStart,
+  isResizing
 }) {
   const createNewTab = () => {
     setNewRequestType("HTTP Request");
@@ -199,7 +204,10 @@ export default function TwoPanelSidebar({
       </div>
 
       {/* Main Content Panel */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div 
+        className="flex flex-col min-w-0" 
+        style={{ width: `${contentWidth}px` }}
+      >
         {/* Header */}
         <div className={`p-4 border-b ${themeClasses.border.primary} flex items-center justify-between`}>
           <h2 className={`text-sm font-semibold ${themeClasses.text.primary}`}>
@@ -422,6 +430,22 @@ export default function TwoPanelSidebar({
               </div>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* Resize Divider */}
+      <div
+        className={`w-px bg-gray-200 dark:bg-gray-700 hover:bg-blue-500 cursor-col-resize transition-colors duration-200 ${
+          isResizing ? "bg-blue-500" : ""
+        } relative group flex-shrink-0`}
+        onMouseDown={onResizeStart}
+        title="Resize sidebar"
+        style={{ minWidth: '1px' }}
+      >
+        {/* Wider hit area for easier dragging */}
+        <div className="absolute inset-y-0 -left-1 -right-1 hover:bg-blue-500/20" />
+        <div className="absolute inset-y-0 -left-2 -right-2 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+          <GripVertical className="h-4 w-4 text-gray-400" />
         </div>
       </div>
     </div>
