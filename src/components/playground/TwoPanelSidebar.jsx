@@ -379,9 +379,9 @@ export default function TwoPanelSidebar({
                         Clear all
                       </button>
                     </div>
-                    {history.slice(0, 50).map((item) => (
+                    {history.slice(0, 50).map((item, index) => (
                       <button
-                        key={`${item.timestamp}-${item.url}`}
+                        key={`${index}-${item.timestamp}-${item.url}`}
                         onClick={() => loadRequest(item)}
                         className={`w-full text-left p-2 rounded-lg hover:${
                           isDark ? "bg-gray-800/30" : "bg-gray-100/50"
