@@ -180,7 +180,7 @@ export default function Playground() {
   );
   const [activeMenuTab, setActiveMenuTab] = useState("collections");
   const [sidebarContentOpen, setSidebarContentOpen] = useState(true); // Track if sidebar content is visible
-  const [sidebarContentWidth, setSidebarContentWidth] = useState(200); // Width of the content panel in pixels
+  const [sidebarContentWidth, setSidebarContentWidth] = useState(280); // Width of the content panel in pixels
   const [isSidebarResizing, setIsSidebarResizing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchModalOpen, setSearchModalOpen] = useState(false);
