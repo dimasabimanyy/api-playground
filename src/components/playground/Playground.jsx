@@ -179,6 +179,7 @@ export default function Playground() {
     typeof window !== "undefined" && window.innerWidth < 1024
   );
   const [activeMenuTab, setActiveMenuTab] = useState("collections");
+  const [sidebarContentOpen, setSidebarContentOpen] = useState(true); // Track if sidebar content is visible
   const [sidebarContentWidth, setSidebarContentWidth] = useState(200); // Width of the content panel in pixels
   const [isSidebarResizing, setIsSidebarResizing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -276,6 +277,18 @@ export default function Playground() {
 
   const handleSidebarResizeEnd = () => {
     setIsSidebarResizing(false);
+  };
+
+  // Handle navigation item clicks with toggle behavior
+  const handleNavItemClick = (itemId) => {
+    if (activeMenuTab === itemId && sidebarContentOpen) {
+      // If clicking the same active tab and content is open, close it
+      setSidebarContentOpen(false);
+    } else {
+      // If clicking a different tab or content is closed, open/switch to it
+      setActiveMenuTab(itemId);
+      setSidebarContentOpen(true);
+    }
   };
 
   // Effect to handle mouse events (must be at top level)
@@ -1487,7 +1500,7 @@ export default function Playground() {
           className={`${
             sidebarCollapsed 
               ? "w-16 lg:w-16" 
-              : `lg:w-[${56 + sidebarContentWidth}px]`
+              : `lg:w-[${56 + (sidebarContentOpen ? sidebarContentWidth : 0)}px]`
           } ${
             sidebarCollapsed
               ? "-translate-x-full lg:translate-x-0"
@@ -1499,7 +1512,7 @@ export default function Playground() {
           } ${
             isSidebarResizing ? "" : "transition-all duration-300"
           } z-50 lg:z-auto`}
-          style={!sidebarCollapsed ? { width: `${56 + sidebarContentWidth}px` } : {}}
+          style={!sidebarCollapsed ? { width: `${56 + (sidebarContentOpen ? sidebarContentWidth : 0)}px` } : {}}
         >
           <TwoPanelSidebar
             sidebarCollapsed={sidebarCollapsed}
@@ -1508,7 +1521,8 @@ export default function Playground() {
             isDark={isDark}
             sidebarMenuItems={sidebarMenuItems}
             activeMenuTab={activeMenuTab}
-            setActiveMenuTab={setActiveMenuTab}
+            onNavItemClick={handleNavItemClick}
+            contentOpen={sidebarContentOpen}
             contentWidth={sidebarContentWidth}
             onResizeStart={handleSidebarResizeStart}
             isResizing={isSidebarResizing}
