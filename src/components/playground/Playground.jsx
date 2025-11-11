@@ -1569,19 +1569,235 @@ export default function Playground() {
           />
         </div>
 
-        {/* Main Content Area - Theme Aware Layout */}
+        {/* Main Content Area */}
         <div
-          data-layout-container
-          className={`flex-1 flex ${
-            layoutMode === "single" ? "flex-col" : "flex-col lg:flex-row"
-          } ${themeClasses.bg.primary} transition-colors duration-300 ${
-            isDragging
-              ? layoutMode === "single"
-                ? "cursor-row-resize"
-                : "cursor-col-resize"
-              : ""
-          }`}
+          className={`flex-1 flex flex-col ${
+            sidebarCollapsed ? "lg:ml-0" : "lg:ml-0"
+          } ml-0 lg:ml-0 w-full lg:w-auto`}
         >
+          {/* Request Tabs - Flat Design */}
+          <div
+            className={`${themeClasses.bg.glass} border-b ${themeClasses.border.primary}`}
+          >
+            <div className="flex items-center px-3 sm:px-6 py-0">
+              <div className="flex items-center overflow-x-auto scrollbar-hide">
+                {requestTabs.map((tab) => {
+                  const methodColors = getMethodColors(
+                    tab.request?.method || "GET",
+                    isDark
+                  );
+                  return (
+                    <div
+                      key={tab.id}
+                      className={`flex items-center gap-2 px-1 py-3 cursor-pointer min-w-0 group transition-all duration-200 border-b-2 ${
+                        tab.id === activeTabId
+                          ? `${themeClasses.text.primary} border-gray-800 dark:border-gray-400`
+                          : `${themeClasses.text.secondary} hover:${themeClasses.text.primary} border-transparent hover:border-gray-300`
+                      }`}
+                      onClick={() => setActiveTabId(tab.id)}
+                    >
+                      <div
+                        className={`px-1 py-0.5 rounded text-xs font-medium border ${methodColors.bg} ${methodColors.text} flex-shrink-0 text-[10px] leading-none`}
+                      >
+                        {tab.request?.method || "GET"}
+                      </div>
+                      <span
+                        className={`text-[12.5px] truncate min-w-0 max-w-32 ${
+                          tab.isModified ? "italic" : ""
+                        }`}
+                      >
+                        {tab.name || "Untitled"}
+                        {tab.isModified && (
+                          <span className={`${themeClasses.text.accent} ml-1`}>
+                            •
+                          </span>
+                        )}
+                      </span>
+                      {requestTabs.length > 1 && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            closeTab(tab.id);
+                          }}
+                          className={`h-4 w-4 opacity-0 group-hover:opacity-100 transition-all duration-200 rounded flex-shrink-0 flex items-center justify-center ${themeClasses.text.tertiary} hover:${themeClasses.text.primary}`}
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+                <button
+                  onClick={createNewTab}
+                  className={`h-8 w-8 transition-all duration-200 flex-shrink-0 flex items-center justify-center group ${themeClasses.button.ghost} ml-2`}
+                >
+                  <Plus className="h-3 w-3 group-hover:scale-110 transition-transform" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Request Name Header - Full Width */}
+          <div
+            className={`${themeClasses.border.primary} ${
+              isDark ? "bg-gray-900/20" : "bg-gray-50/50"
+            }`}
+          >
+            <div className="px-6 pt-4">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <div className="flex items-center gap-2 group flex-1 min-w-0">
+                    {editingRequestName ? (
+                      <input
+                        type="text"
+                        value={currentTab?.name || ""}
+                        onChange={(e) => setCurrentRequestName(e.target.value)}
+                        onBlur={() => setEditingRequestName(false)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            setEditingRequestName(false);
+                          }
+                        }}
+                        placeholder="Untitled Request"
+                        className={`text-sm font-medium bg-transparent border border-gray-300 rounded px-2 py-1 outline-none focus:border-gray-400 focus:ring-0 transition-colors duration-200 w-full ${themeClasses.text.primary}`}
+                        autoFocus
+                      />
+                    ) : (
+                      <>
+                        <span
+                          className={`text-sm font-medium ${themeClasses.text.primary} truncate`}
+                        >
+                          {currentTab?.name || "Untitled Request"}
+                        </span>
+                        <button
+                          onClick={() => setEditingRequestName(true)}
+                          className={`opacity-0 group-hover:opacity-100 p-1 rounded transition-all duration-200 flex-shrink-0 ${themeClasses.button.ghost}`}
+                        >
+                          <Pencil className="h-3 w-3" />
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  {!currentTab?.collectionRequestId && (
+                    <>
+                      <span
+                        className={`text-xs px-2 py-1 rounded-full border ${themeClasses.status.warning}`}
+                      >
+                        Unsaved
+                      </span>
+                      <button
+                        onClick={handleSaveRequest}
+                        className={`px-3 py-1.5 text-xs rounded text-white transition-all duration-200 hover:scale-105`}
+                        style={{
+                          backgroundColor: "#171717",
+                          border: "none",
+                        }}
+                      >
+                        {currentTab?.collectionRequestId ? "Update" : "Save"}
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Method + URL + Send Row - Full Width */}
+          <div className={`${themeClasses.border.primary}`}>
+            <div className="px-3 sm:px-6 py-3 sm:py-4">
+              <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3">
+                {/* METHOD SELECT + URL INPUT + ENVIRONMENT ROW */}
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                  {/* METHOD SELECT */}
+                  <div className="w-full sm:w-16 flex-shrink-0">
+                    <select
+                      value={request.method}
+                      onChange={(e) =>
+                        updateCurrentTab({
+                          request: { ...request, method: e.target.value },
+                        })
+                      }
+                      className={`h-10 sm:h-11 text-xs rounded backdrop-blur-sm ${
+                        isDark 
+                          ? 'bg-gray-800 border-gray-600 text-white' 
+                          : 'bg-white border-gray-300 text-gray-900'
+                      } focus:outline-none focus:ring-2 focus:ring-blue-500 px-2 w-full font-medium`}
+                    >
+                      {[
+                        "GET",
+                        "POST", 
+                        "PUT",
+                        "PATCH",
+                        "DELETE",
+                        "HEAD",
+                        "OPTIONS",
+                      ].map((method) => (
+                        <option key={method} value={method}>
+                          {method}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {/* URL INPUT with Variables */}
+                  <div className="flex-1 relative">
+                    <input
+                      type="text"
+                      placeholder="https://api.example.com/endpoint"
+                      value={request.url}
+                      onChange={(e) =>
+                        updateCurrentTab({
+                          request: { ...request, url: e.target.value },
+                        })
+                      }
+                      className={`h-10 sm:h-11 w-full text-sm rounded-md backdrop-blur-sm border ${
+                        isDark 
+                          ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400' 
+                          : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                      } focus:outline-none focus:ring-2 focus:ring-blue-500 px-3`}
+                    />
+                  </div>
+                </div>
+
+                {/* SEND BUTTON */}
+                <div className="flex items-center gap-2">
+                  <Button
+                    onClick={executeRequest}
+                    disabled={!request.url || loading}
+                    className={`h-10 sm:h-11 px-6 text-sm font-medium transition-all duration-200 ${
+                      loading 
+                        ? 'bg-gray-400 cursor-not-allowed' 
+                        : isDark ? 'bg-blue-600 hover:bg-blue-700' : 'bg-black hover:bg-gray-800'
+                    } text-white rounded-md`}
+                  >
+                    {loading ? (
+                      <div className="flex items-center gap-2">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Sending...
+                      </div>
+                    ) : (
+                      'Send'
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Request/Response Layout */}
+          <div
+            data-layout-container
+            className={`flex-1 flex ${
+              layoutMode === "single" ? "flex-col" : "flex-col lg:flex-row"
+            } ${themeClasses.bg.primary} transition-colors duration-300 ${
+              isDragging
+                ? layoutMode === "single"
+                  ? "cursor-row-resize"
+                  : "cursor-col-resize"
+                : ""
+            }`}
+          >
           {layoutMode === "split" ? (
             <>
               {/* Request Panel with dynamic width */}
@@ -2447,6 +2663,7 @@ export default function Playground() {
           </div>
         </DialogContent>
       </Dialog>
+    </div>
     </div>
   );
 }
