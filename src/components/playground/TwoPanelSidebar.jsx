@@ -167,25 +167,34 @@ export default function TwoPanelSidebar({
   return (
     <div className="flex h-full w-full min-w-0">
       {/* Left Navigation Panel */}
-      <div className={`w-14 border-r ${themeClasses.border.primary} flex flex-col items-center py-4 gap-1`}>
+      <div className={`min-w-20 border-r ${themeClasses.border.primary} flex flex-col items-center py-4 px-2 gap-1`}>
+
         {/* Navigation Icons */}
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-3">
           {sidebarMenuItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeMenuTab === item.id && contentOpen;
             return (
               <div key={item.id} className="relative group">
-                <button
-                  onClick={() => onNavItemClick(item.id)}
-                  className={`w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-200 cursor-pointer ${
-                    isActive
-                      ? `${themeClasses.text.primary} ${isDark ? "bg-gray-800" : "bg-gray-100"}`
-                      : `${themeClasses.text.secondary} hover:${themeClasses.text.primary} hover:${isDark ? "bg-gray-800/30" : "bg-gray-100/50"}`
-                  }`}
-                  style={{ borderRadius: "6px" }}
-                >
-                  <Icon className="h-4 w-4" />
-                </button>
+                <div className="flex flex-col items-center gap-1 cursor-pointer" onClick={() => onNavItemClick(item.id)}>
+                  <button
+                    className={`w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-200 cursor-pointer ${
+                      isActive
+                        ? `${themeClasses.text.primary} ${isDark ? "bg-gray-800" : "bg-gray-100"}`
+                        : `${themeClasses.text.secondary} hover:${themeClasses.text.primary} hover:${isDark ? "bg-gray-800/30" : "bg-gray-100/50"}`
+                    }`}
+                    style={{ borderRadius: "6px" }}
+                  >
+                    <Icon className="h-4 w-4" />
+                  </button>
+                  <span className={`text-xs transition-colors ${
+                    isActive 
+                      ? themeClasses.text.primary 
+                      : `${themeClasses.text.secondary} group-hover:${themeClasses.text.primary}`
+                  }`}>
+                    {item.label}
+                  </span>
+                </div>
                 {/* Tooltip */}
                 <div className={`absolute left-full ml-2 px-2 py-1 text-xs rounded whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 ${
                   isDark 
@@ -199,16 +208,68 @@ export default function TwoPanelSidebar({
           })}
         </div>
 
-        {/* Collapse Button */}
-        <div className="mt-auto">
-          <button
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className="w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
-            style={{ borderRadius: "6px" }}
-            title="Collapse Sidebar"
-          >
-            <PanelLeftClose className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-          </button>
+        {/* Bottom Actions */}
+        <div className="mt-auto space-y-3">
+          {/* Collapse Button */}
+          <div className="flex flex-col items-center gap-1 cursor-pointer group" onClick={() => setSidebarCollapsed(!sidebarCollapsed)}>
+            <button
+              className="w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+              style={{ borderRadius: "6px" }}
+              title="Collapse Sidebar"
+            >
+              <PanelLeftClose className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+            </button>
+            <span className={`text-xs ${themeClasses.text.secondary} group-hover:${themeClasses.text.primary} transition-colors`}>
+              Hide
+            </span>
+          </div>
+
+          {/* Create Button */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <div className="flex flex-col items-center gap-1 cursor-pointer group">
+                <button
+                  className="w-10 h-10 rounded-lg transition-all duration-200 flex items-center justify-center cursor-pointer"
+                  style={{
+                    backgroundColor: isDark ? "white" : "#171717",
+                    border: "none",
+                  }}
+                  title="Add New..."
+                >
+                  <Plus
+                    className={`h-4 w-4 ${
+                      isDark ? "text-gray-900" : "text-white"
+                    }`}
+                  />
+                </button>
+                <span className={`text-xs ${themeClasses.text.secondary} group-hover:${themeClasses.text.primary} transition-colors`}>
+                  New
+                </span>
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="start"
+              side="right"
+              className="w-48"
+              style={{ borderRadius: "6px" }}
+            >
+              <DropdownMenuItem
+                onClick={createNewTab}
+                className="flex items-center gap-2"
+              >
+                <Globe className="h-4 w-4" />
+                <span>HTTP Request</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => setCreateCollectionDialogOpen(true)}
+                className="flex items-center gap-2"
+              >
+                <FolderOpen className="h-4 w-4" />
+                <span>Collection</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
