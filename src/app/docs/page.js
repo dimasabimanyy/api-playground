@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import TwoPanelSidebar from '@/components/playground/TwoPanelSidebar'
 import { 
   Plus, 
   FileText, 
@@ -21,7 +22,10 @@ import {
   Globe,
   Zap,
   Moon,
-  Sun
+  Sun,
+  FolderOpen,
+  History,
+  BookOpen
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -99,6 +103,14 @@ export default function DocsPage() {
   const themeClasses = getThemeClasses(isDark)
   const router = useRouter()
 
+  // Sidebar state
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true)
+  const [activeMenuTab, setActiveMenuTab] = useState('documentation')
+  const [sidebarContentOpen, setSidebarContentOpen] = useState(false)
+  const [sidebarContentWidth, setSidebarContentWidth] = useState(280)
+  const [isSidebarResizing, setIsSidebarResizing] = useState(false)
+  const [expandedCollections, setExpandedCollections] = useState(new Set())
+
   const [docsProjects, setDocsProjects] = useState({})
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
@@ -106,6 +118,34 @@ export default function DocsPage() {
   const [sortBy, setSortBy] = useState('updated') // 'updated', 'created', 'name'
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [showFilterDropdown, setShowFilterDropdown] = useState(false)
+
+  // Sidebar menu items
+  const sidebarMenuItems = [
+    {
+      id: "collections",
+      icon: FolderOpen,
+      label: "Collections",
+      description: "Saved grouped requests",
+    },
+    {
+      id: "history",
+      icon: History,
+      label: "History",
+      description: "Past requests sent",
+    },
+    {
+      id: "environments",
+      icon: Globe,
+      label: "Environments",
+      description: "Manage variables like API keys, URLs, tokens",
+    },
+    {
+      id: "documentation",
+      icon: BookOpen,
+      label: "Docs",
+      description: "API Documentation",
+    },
+  ]
 
   // Load documentation projects
   useEffect(() => {
@@ -197,6 +237,39 @@ export default function DocsPage() {
     window.open(`/docs/generated?docId=${docId}&project=${project.id}`, '_blank')
   }
 
+  // Sidebar handlers
+  const handleNavItemClick = (itemId) => {
+    if (itemId === "documentation") {
+      // We're already on the docs page, just toggle sidebar
+      if (activeMenuTab === itemId && sidebarContentOpen) {
+        setSidebarContentOpen(false)
+      } else {
+        setActiveMenuTab(itemId)
+        setSidebarContentOpen(true)
+      }
+      return
+    }
+    
+    // Navigate to playground with specific tab
+    router.push(`/?tab=${itemId}`)
+  }
+
+  const toggleCollection = (collectionId) => {
+    setExpandedCollections(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(collectionId)) {
+        newSet.delete(collectionId)
+      } else {
+        newSet.add(collectionId)
+      }
+      return newSet
+    })
+  }
+
+  const handleSidebarResizeStart = () => {
+    setIsSidebarResizing(true)
+  }
+
   if (loading) {
     return (
       <div className={`min-h-screen ${themeClasses.bg.primary}`}>
@@ -215,11 +288,44 @@ export default function DocsPage() {
   }
 
   return (
-    <div className={`min-h-screen ${isDark ? themeClasses.bg.primary : 'bg-[#fafafa]'}`}>
-      {/* Header - Theme Aware */}
-      <header
-        className={`border-b ${themeClasses.border.primary} ${themeClasses.bg.glass} h-14 flex items-center px-3 sm:px-6 transition-all duration-300 relative z-50`}
-      >
+    <div className={`min-h-screen ${isDark ? themeClasses.bg.primary : 'bg-[#fafafa]'} flex`}>
+      {/* Sidebar */}
+      <TwoPanelSidebar
+        sidebarCollapsed={sidebarCollapsed}
+        setSidebarCollapsed={setSidebarCollapsed}
+        themeClasses={themeClasses}
+        isDark={isDark}
+        sidebarMenuItems={sidebarMenuItems}
+        activeMenuTab={activeMenuTab}
+        onNavItemClick={handleNavItemClick}
+        contentOpen={sidebarContentOpen}
+        collections={collections}
+        expandedCollections={expandedCollections}
+        toggleCollection={toggleCollection}
+        editingCollection={null}
+        setEditingCollection={() => {}}
+        updateCollection={() => {}}
+        deleteCollection={() => {}}
+        history={[]}
+        loadRequest={() => {}}
+        clearHistory={() => {}}
+        setNewRequestType={() => {}}
+        setRequest={() => {}}
+        setActiveTab={() => {}}
+        openTabs={[]}
+        setOpenTabs={() => {}}
+        setCreateCollectionDialogOpen={() => {}}
+        contentWidth={sidebarContentWidth}
+        onResizeStart={handleSidebarResizeStart}
+        isResizing={isSidebarResizing}
+      />
+
+      {/* Main Content */}
+      <div className="flex-1 min-w-0">
+        {/* Header - Theme Aware */}
+        <header
+          className={`border-b ${themeClasses.border.primary} ${themeClasses.bg.glass} h-14 flex items-center px-3 sm:px-6 transition-all duration-300 relative z-50`}
+        >
         <div className="flex items-center space-x-2 sm:space-x-6 min-w-0 flex-shrink-0">
           <div className="flex items-center space-x-2 sm:space-x-3">
             <div
@@ -303,10 +409,10 @@ export default function DocsPage() {
             <div className="h-8 w-8 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
           )}
         </div>
-      </header>
+        </header>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6">
+        {/* Page Content */}
+        <div className="max-w-7xl mx-auto px-6">
         {/* Page Header */}
         <div className="py-8">
           {/* Search and Controls */}
@@ -542,19 +648,21 @@ export default function DocsPage() {
             </div>
           </div>
         )}
+        </div>
+        {/* End Page Content */}
+
+        {/* Create Documentation Modal */}
+        <DocGeneratorModal
+          open={showCreateModal}
+          onOpenChange={setShowCreateModal}
+          collections={getCollectionsWithDocs()}
+          onGenerate={() => {
+            setShowCreateModal(false)
+            loadDocsProjects()
+          }}
+        />
       </div>
       {/* End Main Content */}
-
-      {/* Create Documentation Modal */}
-      <DocGeneratorModal
-        open={showCreateModal}
-        onOpenChange={setShowCreateModal}
-        collections={getCollectionsWithDocs()}
-        onGenerate={() => {
-          setShowCreateModal(false)
-          loadDocsProjects()
-        }}
-      />
     </div>
   )
 }
