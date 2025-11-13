@@ -74,157 +74,49 @@ export default function TwoPanelSidebar({
 
   if (sidebarCollapsed) {
     return (
-      <div className="p-3 flex flex-col items-center gap-3">
-        {/* Top buttons - Toggle and Create */}
-        <div className="flex flex-col gap-2 border-b border-gray-200 dark:border-gray-700 pb-3">
-          {/* Sidebar Toggle */}
-          <button
-            onClick={() => setSidebarCollapsed(false)}
-            className="w-10 h-10 rounded-lg transition-all duration-200 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
-            title="Open Sidebar"
-          >
-            <PanelLeftOpen className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-          </button>
-
-          {/* Create Button */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button
-                className="w-10 h-10 rounded-lg transition-all duration-200 flex items-center justify-center cursor-pointer"
-                style={{
-                  backgroundColor: isDark ? "white" : "#171717",
-                  border: "none",
-                }}
-                title="Add New..."
-              >
-                <Plus
-                  className={`h-4 w-4 ${
-                    isDark ? "text-gray-900" : "text-white"
-                  }`}
-                />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="start"
-              side="right"
-              className="w-48"
-              style={{ borderRadius: "6px" }}
-            >
-              <DropdownMenuItem
-                onClick={createNewTab}
-                className="flex items-center gap-2"
-              >
-                <Globe className="h-4 w-4" />
-                <span>HTTP Request</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => setCreateCollectionDialogOpen(true)}
-                className="flex items-center gap-2"
-              >
-                <FolderOpen className="h-4 w-4" />
-                <span>Collection</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+      <div className="w-20 p-3 flex flex-col items-center gap-3 flex-shrink-0">
 
         {/* Menu items */}
-        <div className="flex flex-col gap-2">
-          {sidebarMenuItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeMenuTab === item.id && contentOpen;
-
-            return (
-              <button
-                key={item.id}
-                onClick={() => {
-                  onNavItemClick(item.id);
-                  setSidebarCollapsed(false);
-                }}
-                title={item.label}
-                className={`w-10 h-10 rounded-lg transition-all duration-200 flex items-center justify-center ${
-                  isActive
-                    ? `${themeClasses.text.primary} ${
-                        isDark ? "bg-gray-800" : "bg-gray-100"
-                      }`
-                    : `${themeClasses.text.secondary} hover:${
-                        themeClasses.text.primary
-                      } hover:${
-                        isDark ? "bg-gray-800" : "bg-gray-100"
-                      }`
-                }`}
-              >
-                <Icon className="h-4 w-4" />
-              </button>
-            );
-          })}
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex h-full w-full min-w-0">
-      {/* Left Navigation Panel */}
-      <div className={`min-w-20 border-r ${themeClasses.border.primary} flex flex-col items-center py-4 px-2 gap-1`}>
-
-        {/* Navigation Icons */}
         <div className="flex flex-col gap-3">
           {sidebarMenuItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeMenuTab === item.id && contentOpen;
+
             return (
-              <div key={item.id} className="relative group">
-                <div className="flex flex-col items-center gap-1 cursor-pointer" onClick={() => onNavItemClick(item.id)}>
-                  <button
-                    className={`w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-200 cursor-pointer ${
-                      isActive
-                        ? `${themeClasses.text.primary} ${isDark ? "bg-gray-800" : "bg-gray-100"}`
-                        : `${themeClasses.text.secondary} hover:${themeClasses.text.primary} hover:${isDark ? "bg-gray-800/30" : "bg-gray-100/50"}`
-                    }`}
-                    style={{ borderRadius: "6px" }}
-                  >
-                    <Icon className="h-4 w-4" />
-                  </button>
-                  <span className={`text-xs transition-colors ${
-                    isActive 
-                      ? themeClasses.text.primary 
-                      : `${themeClasses.text.secondary} group-hover:${themeClasses.text.primary}`
-                  }`}>
-                    {item.label}
-                  </span>
-                </div>
-                {/* Tooltip */}
-                <div className={`absolute left-full ml-2 px-2 py-1 text-xs rounded whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 ${
-                  isDark 
-                    ? "bg-gray-100 text-gray-900" 
-                    : "bg-gray-900 text-white"
-                }`} style={{ top: '50%', transform: 'translateY(-50%)' }}>
+              <div key={item.id} className="flex flex-col items-center gap-1 cursor-pointer group" onClick={() => {
+                onNavItemClick(item.id);
+                setSidebarCollapsed(false);
+              }}>
+                <button
+                  title={item.label}
+                  className={`w-10 h-10 rounded-lg transition-all duration-200 flex items-center justify-center ${
+                    isActive
+                      ? `${themeClasses.text.primary} ${
+                          isDark ? "bg-gray-800" : "bg-gray-100"
+                        }`
+                      : `${themeClasses.text.secondary} hover:${
+                          themeClasses.text.primary
+                        } hover:${
+                          isDark ? "bg-gray-800" : "bg-gray-100"
+                        }`
+                  }`}
+                >
+                  <Icon className="h-4 w-4" />
+                </button>
+                <span className={`text-xs transition-colors ${
+                  isActive 
+                    ? themeClasses.text.primary 
+                    : `${themeClasses.text.secondary} group-hover:${themeClasses.text.primary}`
+                }`}>
                   {item.label}
-                </div>
+                </span>
               </div>
             );
           })}
         </div>
 
-        {/* Bottom Actions */}
-        <div className="mt-auto space-y-3">
-          {/* Collapse Button */}
-          <div className="flex flex-col items-center gap-1 cursor-pointer group" onClick={() => setSidebarCollapsed(!sidebarCollapsed)}>
-            <button
-              className="w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
-              style={{ borderRadius: "6px" }}
-              title="Collapse Sidebar"
-            >
-              <PanelLeftClose className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-            </button>
-            <span className={`text-xs ${themeClasses.text.secondary} group-hover:${themeClasses.text.primary} transition-colors`}>
-              Hide
-            </span>
-          </div>
-
-          {/* Create Button */}
+        {/* Create Button */}
+        <div className="mt-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <div className="flex flex-col items-center gap-1 cursor-pointer group">
@@ -271,6 +163,103 @@ export default function TwoPanelSidebar({
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex h-full w-full min-w-0">
+      {/* Left Navigation Panel */}
+      <div className={`border-r ${themeClasses.border.primary} flex flex-col items-center py-4 px-2 gap-1 flex-shrink-0`}>
+
+        {/* Navigation Icons */}
+        <div className="flex flex-col gap-3">
+          {sidebarMenuItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeMenuTab === item.id && contentOpen;
+            return (
+              <div key={item.id} className="relative group">
+                <div className="flex flex-col items-center gap-1 cursor-pointer" onClick={() => onNavItemClick(item.id)}>
+                  <button
+                    className={`w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-200 cursor-pointer ${
+                      isActive
+                        ? `${themeClasses.text.primary} ${isDark ? "bg-gray-800" : "bg-gray-100"}`
+                        : `${themeClasses.text.secondary} hover:${themeClasses.text.primary} hover:${isDark ? "bg-gray-800/30" : "bg-gray-100/50"}`
+                    }`}
+                    style={{ borderRadius: "6px" }}
+                  >
+                    <Icon className="h-4 w-4" />
+                  </button>
+                  <span className={`text-xs transition-colors ${
+                    isActive 
+                      ? themeClasses.text.primary 
+                      : `${themeClasses.text.secondary} group-hover:${themeClasses.text.primary}`
+                  }`}>
+                    {item.label}
+                  </span>
+                </div>
+                {/* Tooltip */}
+                <div className={`absolute left-full ml-2 px-2 py-1 text-xs rounded whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 ${
+                  isDark 
+                    ? "bg-gray-100 text-gray-900" 
+                    : "bg-gray-900 text-white"
+                }`} style={{ top: '50%', transform: 'translateY(-50%)' }}>
+                  {item.label}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Create Button */}
+        <div className="mt-4">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <div className="flex flex-col items-center gap-1 cursor-pointer group">
+                <button
+                  className="w-10 h-10 rounded-lg transition-all duration-200 flex items-center justify-center cursor-pointer"
+                  style={{
+                    backgroundColor: isDark ? "white" : "#171717",
+                    border: "none",
+                  }}
+                  title="Add New..."
+                >
+                  <Plus
+                    className={`h-4 w-4 ${
+                      isDark ? "text-gray-900" : "text-white"
+                    }`}
+                  />
+                </button>
+                <span className={`text-xs ${themeClasses.text.secondary} group-hover:${themeClasses.text.primary} transition-colors`}>
+                  New
+                </span>
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="start"
+              side="right"
+              className="w-48"
+              style={{ borderRadius: "6px" }}
+            >
+              <DropdownMenuItem
+                onClick={createNewTab}
+                className="flex items-center gap-2"
+              >
+                <Globe className="h-4 w-4" />
+                <span>HTTP Request</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => setCreateCollectionDialogOpen(true)}
+                className="flex items-center gap-2"
+              >
+                <FolderOpen className="h-4 w-4" />
+                <span>Collection</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
       </div>
 
       {/* Main Content Panel - Only show when content is open */}
