@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -280,7 +281,15 @@ export default function Playground() {
   };
 
   // Handle navigation item clicks with toggle behavior
+  const router = useRouter();
+
   const handleNavItemClick = (itemId) => {
+    if (itemId === "documentation") {
+      // Navigate to documentation page
+      router.push("/docs");
+      return;
+    }
+    
     if (activeMenuTab === itemId && sidebarContentOpen) {
       // If clicking the same active tab and content is open, close it
       setSidebarContentOpen(false);
@@ -669,6 +678,12 @@ export default function Playground() {
       icon: Globe,
       label: "Environments",
       description: "Manage variables like API keys, URLs, tokens",
+    },
+    {
+      id: "documentation",
+      icon: BookOpen,
+      label: "Docs",
+      description: "API Documentation",
     },
     {
       id: "trash",
