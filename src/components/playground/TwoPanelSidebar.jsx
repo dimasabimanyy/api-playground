@@ -418,18 +418,15 @@ export default function TwoPanelSidebar({
       {/* Resize Divider - Only show when content is open */}
       {contentOpen && (
         <div
-          className={`w-px dark:bg-gray-700 hover:bg-blue-500 cursor-col-resize transition-colors duration-200 ${
-            isResizing ? "bg-blue-500" : ""
-          } relative group flex-shrink-0`}
+          className="relative w-1 cursor-col-resize group"
           onMouseDown={onResizeStart}
           title="Resize sidebar"
-          style={{ width: "0px" }}
         >
-          {/* Wider hit area for easier dragging */}
-          <div className="absolute inset-y-0 -left-1 -right-1 hover:bg-blue-500/20" />
-          <div className="absolute inset-y-0 -left-2 -right-2 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-            <GripVertical className="h-4 w-4 text-gray-400" />
-          </div>
+          <div
+            className={`absolute left-1/2 transform -translate-x-1/2 w-px h-full dark:bg-gray-600 hover:bg-blue-500 ${
+              isResizing ? "bg-blue-500" : "transition-colors duration-200"
+            }`}
+          />
         </div>
       )}
     </div>
