@@ -20,6 +20,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import CreateNew from "../button/CreateNew";
 
 export default function TwoPanelSidebar({
   sidebarCollapsed,
@@ -74,99 +75,70 @@ export default function TwoPanelSidebar({
 
   if (sidebarCollapsed) {
     return (
-      <div className="w-20 p-3 flex flex-col items-center gap-3 flex-shrink-0">
-        {/* Menu items */}
-        <div className="flex flex-col gap-3">
+      <div
+        className={`border-r ${themeClasses.border.primary} flex flex-col items-center py-4 px-2 gap-1 flex-shrink-0`}
+      >
+        {/* Navigation Icons */}
+        <div className="flex flex-col gap-1">
           {sidebarMenuItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeMenuTab === item.id && contentOpen;
-
             return (
-              <div
-                key={item.id}
-                className={`flex flex-col items-center gap-1 cursor-pointer group p-1 rounded-lg transition-all duration-200 ${
-                  isActive
-                    ? `${isDark ? "bg-gray-800" : "bg-gray-100"}`
-                    : `hover:${isDark ? "bg-gray-800" : "bg-gray-100"}`
-                }`}
-                onClick={() => {
-                  onNavItemClick(item.id);
-                  setSidebarCollapsed(false);
-                }}
-              >
-                <button
-                  title={item.label}
-                  className={`w-10 h-10 rounded-lg transition-all duration-200 flex items-center justify-center ${
+              <div key={item.id} className="relative group">
+                <div
+                  className={`flex flex-col items-center gap-1 cursor-pointer rounded-lg transition-all duration-200 pt-3 pb-2 px-1 ${
                     isActive
-                      ? themeClasses.text.primary
-                      : `${themeClasses.text.secondary} group-hover:${themeClasses.text.primary}`
+                      ? `${isDark ? "bg-gray-800" : "bg-gray-100"}`
+                      : `hover:${isDark ? "bg-gray-800/30" : "bg-gray-100/50"}`
                   }`}
+                  onClick={() => onNavItemClick(item.id)}
                 >
-                  <Icon className="h-4 w-4" />
-                </button>
-                <span
-                  className={`text-[10px] transition-colors ${
-                    isActive
-                      ? themeClasses.text.primary
-                      : `${themeClasses.text.secondary} group-hover:${themeClasses.text.primary}`
+                  <button
+                    className={`flex items-center justify-center rounded-lg transition-all duration-200 cursor-pointer ${
+                      isActive
+                        ? themeClasses.text.primary
+                        : `${themeClasses.text.secondary} group-hover:${themeClasses.text.primary}`
+                    }`}
+                    style={{ borderRadius: "6px" }}
+                  >
+                    <Icon className="h-4 w-4" />
+                  </button>
+
+                  <span
+                    className={`text-[10px] transition-colors ${
+                      isActive
+                        ? themeClasses.text.primary
+                        : `${themeClasses.text.secondary} group-hover:${themeClasses.text.primary}`
+                    }`}
+                  >
+                    {item.label}
+                  </span>
+                </div>
+
+                {/* Tooltip */}
+                <div
+                  className={`absolute left-full ml-2 px-2 py-1 text-xs rounded whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 ${
+                    isDark
+                      ? "bg-gray-100 text-gray-900"
+                      : "bg-gray-900 text-white"
                   }`}
+                  style={{ top: "50%", transform: "translateY(-50%)" }}
                 >
                   {item.label}
-                </span>
+                </div>
               </div>
             );
           })}
         </div>
 
         {/* Create Button */}
-        <div className="mt-4">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <div className="flex flex-col items-center gap-1 cursor-pointer group p-1 rounded-lg transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800">
-                <button
-                  className="w-10 h-10 rounded-lg transition-all duration-200 flex items-center justify-center cursor-pointer"
-                  style={{
-                    backgroundColor: isDark ? "white" : "#171717",
-                    border: "none",
-                  }}
-                  title="Add New..."
-                >
-                  <Plus
-                    className={`h-4 w-4 ${
-                      isDark ? "text-gray-900" : "text-white"
-                    }`}
-                  />
-                </button>
-                <span
-                  className={`text-[10px] ${themeClasses.text.secondary} group-hover:${themeClasses.text.primary} transition-colors`}
-                >
-                  New
-                </span>
-              </div>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="start"
-              side="right"
-              className="w-48"
-              style={{ borderRadius: "6px" }}
-            >
-              <DropdownMenuItem
-                onClick={createNewTab}
-                className="flex items-center gap-2"
-              >
-                <Globe className="h-4 w-4" />
-                <span>HTTP Request</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => setCreateCollectionDialogOpen(true)}
-                className="flex items-center gap-2"
-              >
-                <FolderOpen className="h-4 w-4" />
-                <span>Collection</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+        <div>
+          <CreateNew
+            isDark={isDark}
+            themeClasses={themeClasses}
+            createNewTab={createNewTab}
+            setCreateCollectionDialogOpen={setCreateCollectionDialogOpen}
+          />
         </div>
       </div>
     );
@@ -233,53 +205,12 @@ export default function TwoPanelSidebar({
 
         {/* Create Button */}
         <div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <div className="flex flex-col items-center gap-1 cursor-pointer group p-1 rounded-lg transition-all duration-200">
-                <button
-                  className="w-10 h-10 rounded-lg transition-all duration-200 flex items-center justify-center cursor-pointer"
-                  style={{
-                    backgroundColor: isDark ? "white" : "#171717",
-                    border: "none",
-                  }}
-                  title="Add New..."
-                >
-                  <Plus
-                    className={`h-4 w-4 ${
-                      isDark ? "text-gray-900" : "text-white"
-                    }`}
-                  />
-                </button>
-                <span
-                  className={`text-[10px] ${themeClasses.text.secondary} group-hover:${themeClasses.text.primary} transition-colors`}
-                >
-                  New
-                </span>
-              </div>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="start"
-              side="right"
-              className="w-48"
-              style={{ borderRadius: "6px" }}
-            >
-              <DropdownMenuItem
-                onClick={createNewTab}
-                className="flex items-center gap-2"
-              >
-                <Globe className="h-4 w-4" />
-                <span>HTTP Request</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => setCreateCollectionDialogOpen(true)}
-                className="flex items-center gap-2"
-              >
-                <FolderOpen className="h-4 w-4" />
-                <span>Collection</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <CreateNew
+            isDark={isDark}
+            themeClasses={themeClasses}
+            createNewTab={createNewTab}
+            setCreateCollectionDialogOpen={setCreateCollectionDialogOpen}
+          />
         </div>
       </div>
 
@@ -289,67 +220,12 @@ export default function TwoPanelSidebar({
           className="flex flex-col min-w-0"
           style={{ width: `${contentWidth}px` }}
         >
-          {/* Header */}
-          {/* <div className={`p-4 border-b ${themeClasses.border.primary} flex items-center justify-between`}>
-          <h2 className={`text-sm font-semibold ${themeClasses.text.primary}`}>
-            {sidebarMenuItems.find(item => item.id === activeMenuTab)?.label}
-          </h2>
-          
-          {activeMenuTab === 'collections' && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button
-                  className="w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-200 cursor-pointer"
-                  style={{
-                    borderRadius: "6px",
-                    backgroundColor: isDark ? "white" : "#171717",
-                    border: "none",
-                    color: isDark ? "#171717" : "white",
-                  }}
-                  title="Create New"
-                >
-                  <Plus className="h-4 w-4" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="end"
-                className="w-56 border"
-                style={{
-                  borderRadius: "8px",
-                  borderColor: "rgb(235, 235, 235)",
-                }}
-              >
-                <DropdownMenuItem
-                  onClick={createNewTab}
-                  className="cursor-pointer flex items-center gap-2"
-                >
-                  <Globe className="h-4 w-4" />
-                  <span>HTTP Request</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => setCreateCollectionDialogOpen(true)}
-                  className="cursor-pointer flex items-center gap-2"
-                >
-                  <FolderOpen className="h-4 w-4" />
-                  <span>Collection</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
-        </div> */}
-
           {/* Content Area */}
           <div className="flex-1 overflow-y-auto min-w-0">
             <div className="p-2 min-w-0">
               {/* Collections Content */}
               {activeMenuTab === "collections" && (
                 <div className="space-y-1">
-                  {/* <div className="flex justify-between items-center mb-3">
-                  <span className={`text-xs font-medium ${themeClasses.text.tertiary}`}>
-                    Collections
-                  </span>
-                </div> */}
                   {Object.values(collections).map((collection) => {
                     const isExpanded = expandedCollections.has(collection.id);
                     return (
