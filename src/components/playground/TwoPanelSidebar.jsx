@@ -226,6 +226,35 @@ export default function TwoPanelSidebar({
               {/* Collections Content */}
               {activeMenuTab === "collections" && (
                 <div className="space-y-1">
+                  <div className="flex justify-between items-center mb-3">
+                    <span
+                      className={`text-xs font-medium ${themeClasses.text.tertiary}`}
+                    >
+                      Collections
+                    </span>
+
+                    <button
+                      // onClick={() => setShowImportExportModal(true)}
+                      className="h-6 px-2 bg-white transition-all duration-200 hover:bg-gray-100 border cursor-pointer flex items-center justify-center"
+                      style={{
+                        borderRadius: "6px",
+                        borderColor: "rgb(235, 235, 235)",
+                      }}
+                      title="Import/Export Collections"
+                    >
+                      <span className="text-gray-600 text-xs font-medium">
+                        Import
+                      </span>
+                    </button>
+
+                    {/* <button
+                      onClick={clearHistory}
+                      className={`text-xs ${themeClasses.text.tertiary} hover:${themeClasses.text.primary} transition-colors`}
+                    >
+                      Clear all
+                    </button> */}
+                  </div>
+
                   {Object.values(collections).map((collection) => {
                     const isExpanded = expandedCollections.has(collection.id);
                     return (

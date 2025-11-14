@@ -30,12 +30,13 @@ const CreateNew = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="flex flex-col items-center gap-1 cursor-pointer group p-1 rounded-lg transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+        <div className="flex flex-col items-center gap-1 cursor-pointer group p-1 transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800">
           <button
-            className="w-10 h-10 rounded-lg transition-all duration-200 flex items-center justify-center cursor-pointer"
+            className="w-10 h-10 transition-all duration-200 flex items-center justify-center cursor-pointer"
             style={{
               backgroundColor: isDark ? "white" : "#171717",
               border: "none",
+              borderRadius: "50%"
             }}
             title="Add New..."
           >

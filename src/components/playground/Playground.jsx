@@ -62,6 +62,7 @@ import {
   FileDown,
   Columns,
   SplitSquareHorizontal,
+  Import,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -289,7 +290,7 @@ export default function Playground() {
       router.push("/docs");
       return;
     }
-    
+
     if (activeMenuTab === itemId && sidebarContentOpen) {
       // If clicking the same active tab and content is open, close it
       setSidebarContentOpen(false);
@@ -1271,7 +1272,7 @@ export default function Playground() {
     >
       {/* Header - Theme Aware */}
       <header
-        className={`border-b ${themeClasses.border.primary} ${themeClasses.bg.glass} h-14 flex items-center px-3 sm:px-6 transition-all duration-300 relative z-50`}
+        className={`border-b ${themeClasses.border.primary} ${themeClasses.bg.glass} flex items-center px-3 py-2 sm:px-6 transition-all duration-300 relative z-50`}
       >
         <div className="flex items-center space-x-2 sm:space-x-6 min-w-0 flex-shrink-0">
           {/* Mobile Hamburger Menu */}
@@ -1297,12 +1298,12 @@ export default function Playground() {
 
           <div className="flex items-center space-x-2 sm:space-x-3">
             <div
-              className="h-6 w-6 sm:h-8 sm:w-8 flex items-center justify-center"
+              className="h-7 w-7 flex items-center justify-center"
               style={{ borderRadius: "6px", backgroundColor: "#171717" }}
             >
               <Zap className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
             </div>
-            <h1 className="text-sm sm:text-lg font-bold tracking-tight text-gray-900 dark:text-white hidden sm:block">
+            <h1 className="text-normal font-bold tracking-tight text-gray-900 dark:text-white hidden sm:block">
               API Playground
             </h1>
             <h1 className="text-sm font-bold tracking-tight text-gray-900 dark:text-white sm:hidden">
@@ -1395,17 +1396,13 @@ export default function Playground() {
           {/* Import/Export Button */}
           <button
             onClick={() => setShowImportExportModal(true)}
-            className="px-3 py-1.5 text-sm transition-all duration-200 hover:bg-gray-50 border cursor-pointer"
+            className="p-2 transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-800 border cursor-pointer"
             style={{
-              borderRadius: "6px",
+              borderRadius: "50%",
               borderColor: "rgb(235, 235, 235)",
-              backgroundColor: "white",
             }}
-            title="Import/Export Collections"
           >
-            <span className="text-gray-600 text-sm font-medium">
-              Import/Export
-            </span>
+            <Import className="h-4 w-4" />
           </button>
 
           {/* Layout Toggle Button */}
@@ -1513,21 +1510,29 @@ export default function Playground() {
         <div
           data-sidebar-container
           className={`${
-            sidebarCollapsed 
-              ? "w-16 lg:w-16" 
-              : `lg:w-[${90 + (sidebarContentOpen ? sidebarContentWidth : 0)}px]`
+            sidebarCollapsed
+              ? "w-16 lg:w-16"
+              : `lg:w-[${
+                  90 + (sidebarContentOpen ? sidebarContentWidth : 0)
+                }px]`
           } ${
             sidebarCollapsed
               ? "-translate-x-full lg:translate-x-0"
               : "translate-x-0"
           } w-72 fixed lg:relative top-[3.5rem] lg:top-0 left-0 h-[calc(100vh-3.5rem)] lg:h-full border-r ${
             themeClasses.border.primary
-          } ${
-            themeClasses.bg.glass
-          } ${
+          } ${themeClasses.bg.glass} ${
             isSidebarResizing ? "" : "transition-all duration-300"
           } z-50 lg:z-auto`}
-          style={!sidebarCollapsed ? { width: `${90 + (sidebarContentOpen ? sidebarContentWidth : 0)}px` } : {}}
+          style={
+            !sidebarCollapsed
+              ? {
+                  width: `${
+                    90 + (sidebarContentOpen ? sidebarContentWidth : 0)
+                  }px`,
+                }
+              : {}
+          }
         >
           <TwoPanelSidebar
             sidebarCollapsed={sidebarCollapsed}
@@ -1735,14 +1740,14 @@ export default function Playground() {
                         })
                       }
                       className={`h-10 sm:h-11 text-xs rounded backdrop-blur-sm ${
-                        isDark 
-                          ? 'bg-gray-800 border-gray-600 text-white' 
-                          : 'bg-white border-gray-300 text-gray-900'
+                        isDark
+                          ? "bg-gray-800 border-gray-600 text-white"
+                          : "bg-white border-gray-300 text-gray-900"
                       } focus:outline-none focus:ring-2 focus:ring-blue-500 px-2 w-full font-medium`}
                     >
                       {[
                         "GET",
-                        "POST", 
+                        "POST",
                         "PUT",
                         "PATCH",
                         "DELETE",
@@ -1767,9 +1772,9 @@ export default function Playground() {
                         })
                       }
                       className={`h-10 sm:h-11 w-full text-sm rounded-md backdrop-blur-sm border ${
-                        isDark 
-                          ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400' 
-                          : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                        isDark
+                          ? "bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+                          : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
                       } focus:outline-none focus:ring-2 focus:ring-blue-500 px-3`}
                     />
                   </div>
@@ -1781,9 +1786,11 @@ export default function Playground() {
                     onClick={executeRequest}
                     disabled={!request.url || loading}
                     className={`h-10 sm:h-11 px-6 text-sm font-medium transition-all duration-200 ${
-                      loading 
-                        ? 'bg-gray-400 cursor-not-allowed' 
-                        : isDark ? 'bg-blue-600 hover:bg-blue-700' : 'bg-black hover:bg-gray-800'
+                      loading
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : isDark
+                        ? "bg-blue-600 hover:bg-blue-700"
+                        : "bg-black hover:bg-gray-800"
                     } text-white rounded-md`}
                   >
                     {loading ? (
@@ -1792,7 +1799,7 @@ export default function Playground() {
                         Sending...
                       </div>
                     ) : (
-                      'Send'
+                      "Send"
                     )}
                   </Button>
                 </div>
@@ -1813,872 +1820,885 @@ export default function Playground() {
                 : ""
             }`}
           >
-          {layoutMode === "split" ? (
-            <>
-              {/* Request Panel with dynamic width */}
-              <div style={{ width: `${requestPanelWidth}%` }}>
-                <RequestPanel request={request} setRequest={setRequest} />
-              </div>
+            {layoutMode === "split" ? (
+              <>
+                {/* Request Panel with dynamic width */}
+                <div style={{ width: `${requestPanelWidth}%` }}>
+                  <RequestPanel request={request} setRequest={setRequest} />
+                </div>
 
-              {/* Horizontal Draggable Divider */}
-              <div
-                className={`bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 cursor-col-resize transition-colors duration-200 ${
-                  isDragging ? "bg-gray-300 dark:bg-gray-600" : ""
-                }`}
-                onMouseDown={handleMouseDown}
-                style={{ width: "2px" }}
-              >
+                {/* Horizontal Draggable Divider */}
                 <div
-                  className="w-full h-full flex items-center justify-center"
-                  style={{ height: "10px" }}
+                  className={`bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 cursor-col-resize transition-colors duration-200 ${
+                    isDragging ? "bg-gray-300 dark:bg-gray-600" : ""
+                  }`}
+                  onMouseDown={handleMouseDown}
+                  style={{ width: "2px" }}
                 >
-                  <GripVertical className="h-4 w-4 text-gray-400 opacity-0 hover:opacity-100 transition-opacity" />
+                  <div
+                    className="w-full h-full flex items-center justify-center"
+                    style={{ height: "10px" }}
+                  >
+                    <GripVertical className="h-4 w-4 text-gray-400 opacity-0 hover:opacity-100 transition-opacity" />
+                  </div>
                 </div>
-              </div>
 
-              {/* Response Panel with remaining width */}
-              <div style={{ width: `${100 - requestPanelWidth}%` }}>
-                <ResponsePanel
-                  response={response}
-                  loading={loading}
-                  request={request}
-                />
-              </div>
-            </>
-          ) : (
-            <>
-              {/* Request Panel with dynamic height */}
-              <div style={{ height: `${requestPanelHeight}%` }}>
-                <RequestPanel request={request} setRequest={setRequest} />
-              </div>
-
-              {/* Vertical Draggable Divider */}
-              <div
-                className={`bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 cursor-row-resize transition-colors duration-200 ${
-                  isDragging ? "bg-gray-300 dark:bg-gray-600" : ""
-                }`}
-                onMouseDown={handleMouseDown}
-                style={{ height: "2px" }}
-              >
-                <div className="w-full h-full flex items-center justify-center">
-                  <GripHorizontal className="h-4 w-4 text-gray-400 opacity-0 hover:opacity-100 transition-opacity" />
+                {/* Response Panel with remaining width */}
+                <div style={{ width: `${100 - requestPanelWidth}%` }}>
+                  <ResponsePanel
+                    response={response}
+                    loading={loading}
+                    request={request}
+                  />
                 </div>
-              </div>
+              </>
+            ) : (
+              <>
+                {/* Request Panel with dynamic height */}
+                <div style={{ height: `${requestPanelHeight}%` }}>
+                  <RequestPanel request={request} setRequest={setRequest} />
+                </div>
 
-              {/* Response Panel with remaining height */}
-              <div style={{ height: `${100 - requestPanelHeight}%` }}>
-                <ResponsePanel
-                  response={response}
-                  loading={loading}
-                  request={request}
-                />
-              </div>
-            </>
-          )}
+                {/* Vertical Draggable Divider */}
+                <div
+                  className={`bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 cursor-row-resize transition-colors duration-200 ${
+                    isDragging ? "bg-gray-300 dark:bg-gray-600" : ""
+                  }`}
+                  onMouseDown={handleMouseDown}
+                  style={{ height: "2px" }}
+                >
+                  <div className="w-full h-full flex items-center justify-center">
+                    <GripHorizontal className="h-4 w-4 text-gray-400 opacity-0 hover:opacity-100 transition-opacity" />
+                  </div>
+                </div>
+
+                {/* Response Panel with remaining height */}
+                <div style={{ height: `${100 - requestPanelHeight}%` }}>
+                  <ResponsePanel
+                    response={response}
+                    loading={loading}
+                    request={request}
+                  />
+                </div>
+              </>
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* Create Environment Dialog */}
-      <Dialog
-        open={createEnvironmentDialogOpen}
-        onOpenChange={setCreateEnvironmentDialogOpen}
-      >
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-base font-medium">
-              Create Environment
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3 pt-3">
-            <div>
-              <Input
-                placeholder="Environment name"
-                value={newEnvironmentName}
-                onChange={(e) => setNewEnvironmentName(e.target.value)}
-                className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
-                onKeyPress={(e) => {
-                  if (e.key === "Enter") {
-                    handleCreateEnvironment();
-                  }
-                }}
-              />
-            </div>
-            <div>
-              <Input
-                placeholder="Description (optional)"
-                value={newEnvironmentDescription}
-                onChange={(e) => setNewEnvironmentDescription(e.target.value)}
-                className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
-              />
-            </div>
-            <div className="flex justify-end gap-2 pt-1">
-              <Button
-                variant="outline"
-                onClick={() => setCreateEnvironmentDialogOpen(false)}
-                size="sm"
-                className="px-3 text-xs"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleCreateEnvironment}
-                size="sm"
-                className="px-3 text-xs"
-                disabled={!newEnvironmentName.trim()}
-              >
-                Create
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Add Variable Dialog */}
-      <Dialog
-        open={addVariableDialogOpen}
-        onOpenChange={setAddVariableDialogOpen}
-      >
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-base font-medium">
-              Add Variable
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3 pt-3">
-            <div>
-              <Input
-                placeholder="Variable key (e.g., API_KEY)"
-                value={newVariableKey}
-                onChange={(e) => setNewVariableKey(e.target.value)}
-                className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
-              />
-            </div>
-            <div>
-              <Input
-                placeholder="Variable value"
-                value={newVariableValue}
-                onChange={(e) => setNewVariableValue(e.target.value)}
-                className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
-                type={
-                  newVariableKey.toLowerCase().includes("key") ||
-                  newVariableKey.toLowerCase().includes("token") ||
-                  newVariableKey.toLowerCase().includes("secret")
-                    ? "password"
-                    : "text"
-                }
-              />
-            </div>
-            <div>
-              <Input
-                placeholder="Description (optional)"
-                value={newVariableDescription}
-                onChange={(e) => setNewVariableDescription(e.target.value)}
-                className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
-              />
-            </div>
-            <div className="flex justify-end gap-2 pt-1">
-              <Button
-                variant="outline"
-                onClick={() => setAddVariableDialogOpen(false)}
-                size="sm"
-                className="px-3 text-xs"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleSaveNewVariable}
-                size="sm"
-                className="px-3 text-xs"
-                disabled={!newVariableKey.trim()}
-              >
-                Add
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Edit Variable Dialog */}
-      <Dialog
-        open={editVariableDialogOpen}
-        onOpenChange={setEditVariableDialogOpen}
-      >
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-base font-medium">
-              Edit Variable
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3 pt-3">
-            <div>
-              <Input
-                placeholder="Variable key (e.g., API_KEY)"
-                value={newVariableKey}
-                onChange={(e) => setNewVariableKey(e.target.value)}
-                className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
-              />
-            </div>
-            <div>
-              <Input
-                placeholder="Variable value"
-                value={newVariableValue}
-                onChange={(e) => setNewVariableValue(e.target.value)}
-                className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
-                type={
-                  newVariableKey.toLowerCase().includes("key") ||
-                  newVariableKey.toLowerCase().includes("token") ||
-                  newVariableKey.toLowerCase().includes("secret")
-                    ? "password"
-                    : "text"
-                }
-              />
-            </div>
-            <div>
-              <Input
-                placeholder="Description (optional)"
-                value={newVariableDescription}
-                onChange={(e) => setNewVariableDescription(e.target.value)}
-                className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
-              />
-            </div>
-            <div className="flex justify-end gap-2 pt-1">
-              <Button
-                variant="outline"
-                onClick={() => setEditVariableDialogOpen(false)}
-                size="sm"
-                className="px-3 text-xs"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleSaveEditedVariable}
-                size="sm"
-                className="px-3 text-xs"
-                disabled={!newVariableKey.trim()}
-              >
-                Save
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Docs Generator Modal */}
-      <DocGeneratorModal
-        open={docsModalOpen}
-        onOpenChange={(open) => {
-          setDocsModalOpen(open);
-          if (!open) {
-            setSelectedCollectionForDocs(null);
-          }
-        }}
-        collections={getCollectionsWithDocs()}
-        preSelectedCollectionId={selectedCollectionForDocs}
-        onGenerate={(docData) => {
-          console.log("Generated docs with data:", docData);
-          setDocsModalOpen(false);
-          setSelectedCollectionForDocs(null);
-        }}
-      />
-
-      {/* Settings Modal */}
-      <Dialog open={settingsModalOpen} onOpenChange={setSettingsModalOpen}>
-        <DialogContent
-          className={`max-w-2xl max-h-[80vh] overflow-y-auto ${
-            isDark ? "bg-gray-900 border-gray-700" : "bg-white border-gray-200"
-          }`}
+        {/* Create Environment Dialog */}
+        <Dialog
+          open={createEnvironmentDialogOpen}
+          onOpenChange={setCreateEnvironmentDialogOpen}
         >
-          <DialogHeader>
-            <DialogTitle
-              className={`text-xl font-semibold ${themeClasses.text.primary}`}
-            >
-              Settings & Preferences
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-6">
-            {/* Appearance Section */}
-            <div>
-              <h3
-                className={`text-sm font-semibold mb-3 ${themeClasses.text.primary}`}
-              >
-                Appearance
-              </h3>
-              <div className="space-y-3">
-                <div className={`p-4 rounded-lg ${themeClasses.card.base}`}>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p
-                        className={`text-sm font-medium ${themeClasses.text.primary}`}
-                      >
-                        Theme
-                      </p>
-                      <p className={`text-xs ${themeClasses.text.tertiary}`}>
-                        Choose your preferred color scheme
-                      </p>
-                    </div>
-                    <button
-                      onClick={toggleTheme}
-                      className={`p-2 rounded transition-all duration-200 ${themeClasses.button.ghost}`}
-                    >
-                      {isDark ? (
-                        <Sun className="h-4 w-4" />
-                      ) : (
-                        <Moon className="h-4 w-4" />
-                      )}
-                    </button>
-                  </div>
-                </div>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-base font-medium">
+                Create Environment
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-3 pt-3">
+              <div>
+                <Input
+                  placeholder="Environment name"
+                  value={newEnvironmentName}
+                  onChange={(e) => setNewEnvironmentName(e.target.value)}
+                  className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") {
+                      handleCreateEnvironment();
+                    }
+                  }}
+                />
+              </div>
+              <div>
+                <Input
+                  placeholder="Description (optional)"
+                  value={newEnvironmentDescription}
+                  onChange={(e) => setNewEnvironmentDescription(e.target.value)}
+                  className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
+                />
+              </div>
+              <div className="flex justify-end gap-2 pt-1">
+                <Button
+                  variant="outline"
+                  onClick={() => setCreateEnvironmentDialogOpen(false)}
+                  size="sm"
+                  className="px-3 text-xs"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleCreateEnvironment}
+                  size="sm"
+                  className="px-3 text-xs"
+                  disabled={!newEnvironmentName.trim()}
+                >
+                  Create
+                </Button>
               </div>
             </div>
+          </DialogContent>
+        </Dialog>
 
-            {/* Editor Section */}
-            <div>
-              <h3
-                className={`text-sm font-semibold mb-3 ${themeClasses.text.primary}`}
-              >
-                Editor
-              </h3>
-              <div className="space-y-3">
-                <div className={`p-4 rounded-lg ${themeClasses.card.base}`}>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p
-                        className={`text-sm font-medium ${themeClasses.text.primary}`}
-                      >
-                        Font Size
-                      </p>
-                      <p className={`text-xs ${themeClasses.text.tertiary}`}>
-                        Adjust the editor font size
-                      </p>
-                    </div>
-                    <select
-                      className={`px-3 py-1 rounded text-sm ${themeClasses.input.base}`}
-                    >
-                      <option value="12">12px</option>
-                      <option value="14" selected>
-                        14px
-                      </option>
-                      <option value="16">16px</option>
-                    </select>
-                  </div>
-                </div>
-                <div className={`p-4 rounded-lg ${themeClasses.card.base}`}>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p
-                        className={`text-sm font-medium ${themeClasses.text.primary}`}
-                      >
-                        Auto-save
-                      </p>
-                      <p className={`text-xs ${themeClasses.text.tertiary}`}>
-                        Automatically save changes
-                      </p>
-                    </div>
-                    <button
-                      className={`w-10 h-6 rounded-full transition-colors ${
-                        isDark ? "bg-blue-600" : "bg-blue-500"
-                      } relative`}
-                    >
-                      <div className="w-4 h-4 bg-white rounded-full absolute top-1 right-1 transition-transform"></div>
-                    </button>
-                  </div>
-                </div>
+        {/* Add Variable Dialog */}
+        <Dialog
+          open={addVariableDialogOpen}
+          onOpenChange={setAddVariableDialogOpen}
+        >
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-base font-medium">
+                Add Variable
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-3 pt-3">
+              <div>
+                <Input
+                  placeholder="Variable key (e.g., API_KEY)"
+                  value={newVariableKey}
+                  onChange={(e) => setNewVariableKey(e.target.value)}
+                  className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
+                />
               </div>
-            </div>
-
-            {/* API Section */}
-            <div>
-              <h3
-                className={`text-sm font-semibold mb-3 ${themeClasses.text.primary}`}
-              >
-                API Defaults
-              </h3>
-              <div className="space-y-3">
-                <div className={`p-4 rounded-lg ${themeClasses.card.base}`}>
-                  <label
-                    className={`text-sm font-medium ${themeClasses.text.primary}`}
-                  >
-                    Default Base URL
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="https://api.example.com"
-                    className={`w-full mt-2 px-3 py-2 text-sm rounded ${themeClasses.input.base}`}
-                  />
-                </div>
-                <div className={`p-4 rounded-lg ${themeClasses.card.base}`}>
-                  <label
-                    className={`text-sm font-medium ${themeClasses.text.primary}`}
-                  >
-                    Request Timeout (ms)
-                  </label>
-                  <input
-                    type="number"
-                    placeholder="5000"
-                    className={`w-full mt-2 px-3 py-2 text-sm rounded ${themeClasses.input.base}`}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Create Collection Dialog */}
-      <Dialog
-        open={createCollectionDialogOpen}
-        onOpenChange={setCreateCollectionDialogOpen}
-      >
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-base font-medium">
-              Create Collection
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3 pt-3">
-            <div>
-              <Input
-                placeholder="Collection name"
-                value={newCollectionName}
-                onChange={(e) => setNewCollectionName(e.target.value)}
-                className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
-                disabled={creatingCollection}
-                onKeyPress={(e) => {
-                  if (e.key === "Enter") {
-                    handleCreateCollection();
+              <div>
+                <Input
+                  placeholder="Variable value"
+                  value={newVariableValue}
+                  onChange={(e) => setNewVariableValue(e.target.value)}
+                  className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
+                  type={
+                    newVariableKey.toLowerCase().includes("key") ||
+                    newVariableKey.toLowerCase().includes("token") ||
+                    newVariableKey.toLowerCase().includes("secret")
+                      ? "password"
+                      : "text"
                   }
-                }}
-              />
+                />
+              </div>
+              <div>
+                <Input
+                  placeholder="Description (optional)"
+                  value={newVariableDescription}
+                  onChange={(e) => setNewVariableDescription(e.target.value)}
+                  className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
+                />
+              </div>
+              <div className="flex justify-end gap-2 pt-1">
+                <Button
+                  variant="outline"
+                  onClick={() => setAddVariableDialogOpen(false)}
+                  size="sm"
+                  className="px-3 text-xs"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleSaveNewVariable}
+                  size="sm"
+                  className="px-3 text-xs"
+                  disabled={!newVariableKey.trim()}
+                >
+                  Add
+                </Button>
+              </div>
             </div>
-            <div className="flex justify-end gap-2 pt-1">
-              <Button
-                variant="outline"
-                onClick={() => setCreateCollectionDialogOpen(false)}
-                size="sm"
-                className="px-3 text-xs"
-                disabled={creatingCollection}
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleCreateCollection}
-                disabled={!newCollectionName.trim() || creatingCollection}
-                size="sm"
-                className="px-3 text-xs bg-black hover:bg-gray-800 text-white"
-              >
-                {creatingCollection ? (
-                  <>
-                    <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-                    Creating...
-                  </>
-                ) : (
-                  "Create"
-                )}
-              </Button>
+          </DialogContent>
+        </Dialog>
+
+        {/* Edit Variable Dialog */}
+        <Dialog
+          open={editVariableDialogOpen}
+          onOpenChange={setEditVariableDialogOpen}
+        >
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-base font-medium">
+                Edit Variable
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-3 pt-3">
+              <div>
+                <Input
+                  placeholder="Variable key (e.g., API_KEY)"
+                  value={newVariableKey}
+                  onChange={(e) => setNewVariableKey(e.target.value)}
+                  className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
+                />
+              </div>
+              <div>
+                <Input
+                  placeholder="Variable value"
+                  value={newVariableValue}
+                  onChange={(e) => setNewVariableValue(e.target.value)}
+                  className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
+                  type={
+                    newVariableKey.toLowerCase().includes("key") ||
+                    newVariableKey.toLowerCase().includes("token") ||
+                    newVariableKey.toLowerCase().includes("secret")
+                      ? "password"
+                      : "text"
+                  }
+                />
+              </div>
+              <div>
+                <Input
+                  placeholder="Description (optional)"
+                  value={newVariableDescription}
+                  onChange={(e) => setNewVariableDescription(e.target.value)}
+                  className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
+                />
+              </div>
+              <div className="flex justify-end gap-2 pt-1">
+                <Button
+                  variant="outline"
+                  onClick={() => setEditVariableDialogOpen(false)}
+                  size="sm"
+                  className="px-3 text-xs"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleSaveEditedVariable}
+                  size="sm"
+                  className="px-3 text-xs"
+                  disabled={!newVariableKey.trim()}
+                >
+                  Save
+                </Button>
+              </div>
             </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+          </DialogContent>
+        </Dialog>
 
-      {/* Save to Collection Modal */}
-      <Dialog
-        open={saveToCollectionModalOpen}
-        onOpenChange={setSaveToCollectionModalOpen}
-      >
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-base font-medium">
-              Save Request
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 pt-3">
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                Choose a collection to save this request to:
-              </p>
+        {/* Docs Generator Modal */}
+        <DocGeneratorModal
+          open={docsModalOpen}
+          onOpenChange={(open) => {
+            setDocsModalOpen(open);
+            if (!open) {
+              setSelectedCollectionForDocs(null);
+            }
+          }}
+          collections={getCollectionsWithDocs()}
+          preSelectedCollectionId={selectedCollectionForDocs}
+          onGenerate={(docData) => {
+            console.log("Generated docs with data:", docData);
+            setDocsModalOpen(false);
+            setSelectedCollectionForDocs(null);
+          }}
+        />
 
-              <div className="space-y-2 max-h-64 overflow-y-auto">
-                {Object.values(collections).map((collection) => (
-                  <button
-                    key={collection.id}
-                    onClick={() => handleSaveToCollection(collection.id)}
-                    className="w-full text-left p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="h-8 w-8 rounded bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-                        <FolderOpen className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                      </div>
+        {/* Settings Modal */}
+        <Dialog open={settingsModalOpen} onOpenChange={setSettingsModalOpen}>
+          <DialogContent
+            className={`max-w-2xl max-h-[80vh] overflow-y-auto ${
+              isDark
+                ? "bg-gray-900 border-gray-700"
+                : "bg-white border-gray-200"
+            }`}
+          >
+            <DialogHeader>
+              <DialogTitle
+                className={`text-xl font-semibold ${themeClasses.text.primary}`}
+              >
+                Settings & Preferences
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-6">
+              {/* Appearance Section */}
+              <div>
+                <h3
+                  className={`text-sm font-semibold mb-3 ${themeClasses.text.primary}`}
+                >
+                  Appearance
+                </h3>
+                <div className="space-y-3">
+                  <div className={`p-4 rounded-lg ${themeClasses.card.base}`}>
+                    <div className="flex items-center justify-between">
                       <div>
-                        <div className="font-medium text-gray-900 dark:text-gray-100">
-                          {collection.name}
-                        </div>
-                        {collection.description && (
-                          <div className="text-xs text-gray-500 dark:text-gray-400">
-                            {collection.description}
-                          </div>
-                        )}
+                        <p
+                          className={`text-sm font-medium ${themeClasses.text.primary}`}
+                        >
+                          Theme
+                        </p>
+                        <p className={`text-xs ${themeClasses.text.tertiary}`}>
+                          Choose your preferred color scheme
+                        </p>
                       </div>
+                      <button
+                        onClick={toggleTheme}
+                        className={`p-2 rounded transition-all duration-200 ${themeClasses.button.ghost}`}
+                      >
+                        {isDark ? (
+                          <Sun className="h-4 w-4" />
+                        ) : (
+                          <Moon className="h-4 w-4" />
+                        )}
+                      </button>
                     </div>
-                  </button>
-                ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Editor Section */}
+              <div>
+                <h3
+                  className={`text-sm font-semibold mb-3 ${themeClasses.text.primary}`}
+                >
+                  Editor
+                </h3>
+                <div className="space-y-3">
+                  <div className={`p-4 rounded-lg ${themeClasses.card.base}`}>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p
+                          className={`text-sm font-medium ${themeClasses.text.primary}`}
+                        >
+                          Font Size
+                        </p>
+                        <p className={`text-xs ${themeClasses.text.tertiary}`}>
+                          Adjust the editor font size
+                        </p>
+                      </div>
+                      <select
+                        className={`px-3 py-1 rounded text-sm ${themeClasses.input.base}`}
+                      >
+                        <option value="12">12px</option>
+                        <option value="14" selected>
+                          14px
+                        </option>
+                        <option value="16">16px</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className={`p-4 rounded-lg ${themeClasses.card.base}`}>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p
+                          className={`text-sm font-medium ${themeClasses.text.primary}`}
+                        >
+                          Auto-save
+                        </p>
+                        <p className={`text-xs ${themeClasses.text.tertiary}`}>
+                          Automatically save changes
+                        </p>
+                      </div>
+                      <button
+                        className={`w-10 h-6 rounded-full transition-colors ${
+                          isDark ? "bg-blue-600" : "bg-blue-500"
+                        } relative`}
+                      >
+                        <div className="w-4 h-4 bg-white rounded-full absolute top-1 right-1 transition-transform"></div>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* API Section */}
+              <div>
+                <h3
+                  className={`text-sm font-semibold mb-3 ${themeClasses.text.primary}`}
+                >
+                  API Defaults
+                </h3>
+                <div className="space-y-3">
+                  <div className={`p-4 rounded-lg ${themeClasses.card.base}`}>
+                    <label
+                      className={`text-sm font-medium ${themeClasses.text.primary}`}
+                    >
+                      Default Base URL
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="https://api.example.com"
+                      className={`w-full mt-2 px-3 py-2 text-sm rounded ${themeClasses.input.base}`}
+                    />
+                  </div>
+                  <div className={`p-4 rounded-lg ${themeClasses.card.base}`}>
+                    <label
+                      className={`text-sm font-medium ${themeClasses.text.primary}`}
+                    >
+                      Request Timeout (ms)
+                    </label>
+                    <input
+                      type="number"
+                      placeholder="5000"
+                      className={`w-full mt-2 px-3 py-2 text-sm rounded ${themeClasses.input.base}`}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
+          </DialogContent>
+        </Dialog>
 
-            <div className="flex justify-end gap-2 pt-2 border-t border-gray-200 dark:border-gray-700">
-              <Button
-                variant="outline"
-                onClick={() => setSaveToCollectionModalOpen(false)}
-                size="sm"
-                className="px-3 text-xs"
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Import/Export Modal */}
-      <Dialog
-        open={showImportExportModal}
-        onOpenChange={setShowImportExportModal}
-      >
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Import/Export Collections</DialogTitle>
-          </DialogHeader>
-
-          <div className="space-y-6">
-            {/* Export Section */}
-            <div className="space-y-3">
-              <h3 className="text-sm font-medium">Export Current Request</h3>
-              <p className="text-xs text-gray-600 dark:text-gray-400">
-                Export your current request as a Postman collection
-              </p>
-              <Button
-                onClick={() => {
-                  // Parse URL to extract components
-                  let urlParts = {
-                    protocol: "https",
-                    host: [],
-                    path: [],
-                    query: [],
-                  };
-                  if (request.url) {
-                    try {
-                      const url = new URL(request.url);
-                      urlParts.protocol = url.protocol.replace(":", "");
-                      urlParts.host = url.hostname.split(".");
-                      urlParts.path = url.pathname.split("/").filter((p) => p);
-
-                      // Extract query parameters
-                      url.searchParams.forEach((value, key) => {
-                        urlParts.query.push({ key, value });
-                      });
-                    } catch (e) {
-                      // Fallback for invalid URLs
-                      urlParts.host = ["localhost"];
-                      urlParts.path = [];
-                    }
-                  }
-
-                  const collection = {
-                    info: {
-                      _postman_id: crypto.randomUUID(),
-                      name: "API Playground Export",
-                      schema:
-                        "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-                      _exporter_id: "api-playground",
-                    },
-                    item: [
-                      {
-                        name: request.name || "Untitled Request",
-                        request: {
-                          method: request.method || "GET",
-                          header: Object.entries(request.headers || {}).map(
-                            ([key, value]) => ({
-                              key,
-                              value,
-                              type: "text",
-                            })
-                          ),
-                          body: request.body
-                            ? {
-                                mode: "raw",
-                                raw: request.body,
-                                options: {
-                                  raw: {
-                                    language: "json",
-                                  },
-                                },
-                              }
-                            : undefined,
-                          url: {
-                            raw: request.url || "",
-                            protocol: urlParts.protocol,
-                            host: urlParts.host,
-                            path: urlParts.path,
-                            query:
-                              urlParts.query.length > 0
-                                ? urlParts.query
-                                : undefined,
-                          },
-                        },
-                        response: [],
-                      },
-                    ],
-                  };
-
-                  const blob = new Blob([JSON.stringify(collection, null, 2)], {
-                    type: "application/json",
-                  });
-                  const url = URL.createObjectURL(blob);
-                  const a = document.createElement("a");
-                  a.href = url;
-                  a.download = "postman-collection.json";
-                  a.click();
-                  URL.revokeObjectURL(url);
-                }}
-                variant="outline"
-                className="w-full"
-              >
-                <Download className="h-4 w-4 mr-2" />
-                Export as Postman Collection
-              </Button>
-            </div>
-
-            {/* Import Section */}
-            <div className="space-y-3">
-              <h3 className="text-sm font-medium">Import Postman Collection</h3>
-              <p className="text-xs text-gray-600 dark:text-gray-400">
-                Paste your Postman collection JSON or upload a file
-              </p>
-
-              {/* File Upload */}
-              <div className="space-y-2">
-                <input
-                  type="file"
-                  accept=".json"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      const reader = new FileReader();
-                      reader.onload = (event) => {
-                        try {
-                          const content = event.target?.result;
-                          setImportData(content);
-                          setImportError("");
-                        } catch (error) {
-                          setImportError("Error reading file");
-                        }
-                      };
-                      reader.readAsText(file);
+        {/* Create Collection Dialog */}
+        <Dialog
+          open={createCollectionDialogOpen}
+          onOpenChange={setCreateCollectionDialogOpen}
+        >
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-base font-medium">
+                Create Collection
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-3 pt-3">
+              <div>
+                <Input
+                  placeholder="Collection name"
+                  value={newCollectionName}
+                  onChange={(e) => setNewCollectionName(e.target.value)}
+                  className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
+                  disabled={creatingCollection}
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") {
+                      handleCreateCollection();
                     }
                   }}
-                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"
-                  style={{ borderRadius: "6px" }}
                 />
               </div>
+              <div className="flex justify-end gap-2 pt-1">
+                <Button
+                  variant="outline"
+                  onClick={() => setCreateCollectionDialogOpen(false)}
+                  size="sm"
+                  className="px-3 text-xs"
+                  disabled={creatingCollection}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleCreateCollection}
+                  disabled={!newCollectionName.trim() || creatingCollection}
+                  size="sm"
+                  className="px-3 text-xs bg-black hover:bg-gray-800 text-white"
+                >
+                  {creatingCollection ? (
+                    <>
+                      <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                      Creating...
+                    </>
+                  ) : (
+                    "Create"
+                  )}
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
 
-              {/* JSON Textarea */}
-              <div className="space-y-2">
-                <label className="text-xs font-medium">Or paste JSON:</label>
-                <textarea
-                  value={importData}
-                  onChange={(e) => {
-                    setImportData(e.target.value);
-                    setImportError("");
-                  }}
-                  placeholder="Paste your Postman collection JSON here..."
-                  className="w-full h-32 p-3 text-sm border rounded-md font-mono resize-none"
-                />
+        {/* Save to Collection Modal */}
+        <Dialog
+          open={saveToCollectionModalOpen}
+          onOpenChange={setSaveToCollectionModalOpen}
+        >
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-base font-medium">
+                Save Request
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 pt-3">
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                  Choose a collection to save this request to:
+                </p>
+
+                <div className="space-y-2 max-h-64 overflow-y-auto">
+                  {Object.values(collections).map((collection) => (
+                    <button
+                      key={collection.id}
+                      onClick={() => handleSaveToCollection(collection.id)}
+                      className="w-full text-left p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="h-8 w-8 rounded bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+                          <FolderOpen className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                        </div>
+                        <div>
+                          <div className="font-medium text-gray-900 dark:text-gray-100">
+                            {collection.name}
+                          </div>
+                          {collection.description && (
+                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                              {collection.description}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
               </div>
 
-              {importError && (
-                <p className="text-xs text-red-600">{importError}</p>
-              )}
+              <div className="flex justify-end gap-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+                <Button
+                  variant="outline"
+                  onClick={() => setSaveToCollectionModalOpen(false)}
+                  size="sm"
+                  className="px-3 text-xs"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
 
-              <Button
-                onClick={async () => {
-                  try {
-                    const collection = JSON.parse(importData);
+        {/* Import/Export Modal */}
+        <Dialog
+          open={showImportExportModal}
+          onOpenChange={setShowImportExportModal}
+        >
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Import/Export Collections</DialogTitle>
+            </DialogHeader>
 
-                    // Validate basic Postman collection structure
-                    if (!collection.info || !collection.item) {
-                      setImportError("Invalid Postman collection format");
-                      return;
-                    }
+            <div className="space-y-6">
+              {/* Export Section */}
+              <div className="space-y-3">
+                <h3 className="text-sm font-medium">Export Current Request</h3>
+                <p className="text-xs text-gray-600 dark:text-gray-400">
+                  Export your current request as a Postman collection
+                </p>
+                <Button
+                  onClick={() => {
+                    // Parse URL to extract components
+                    let urlParts = {
+                      protocol: "https",
+                      host: [],
+                      path: [],
+                      query: [],
+                    };
+                    if (request.url) {
+                      try {
+                        const url = new URL(request.url);
+                        urlParts.protocol = url.protocol.replace(":", "");
+                        urlParts.host = url.hostname.split(".");
+                        urlParts.path = url.pathname
+                          .split("/")
+                          .filter((p) => p);
 
-                    // Create a new collection with imported name and description
-                    const collectionName =
-                      collection.info.name || "Imported Collection";
-                    const collectionDescription =
-                      collection.info.description || "Imported from Postman";
-
-                    const newCollection = await createCollection(
-                      collectionName,
-                      collectionDescription,
-                      "blue"
-                    );
-
-                    // Function to parse Postman request into our format
-                    const parseRequest = (postmanItem) => {
-                      if (!postmanItem.request) return null;
-
-                      const request = postmanItem.request;
-
-                      // Convert headers (V2.1 format)
-                      const headers = {};
-                      if (request.header && Array.isArray(request.header)) {
-                        request.header.forEach((h) => {
-                          if (h.key && h.value && h.type !== "disabled") {
-                            headers[h.key] = h.value;
-                          }
+                        // Extract query parameters
+                        url.searchParams.forEach((value, key) => {
+                          urlParts.query.push({ key, value });
                         });
+                      } catch (e) {
+                        // Fallback for invalid URLs
+                        urlParts.host = ["localhost"];
+                        urlParts.path = [];
                       }
+                    }
 
-                      // Build URL from V2.1 format
-                      let fullUrl = "";
-                      if (typeof request.url === "string") {
-                        fullUrl = request.url;
-                      } else if (
-                        request.url &&
-                        typeof request.url === "object"
-                      ) {
-                        // Handle V2.1 URL object format
-                        if (request.url.raw) {
-                          fullUrl = request.url.raw;
-                        } else {
-                          // Construct URL from parts
-                          const protocol = request.url.protocol || "https";
-                          const host = Array.isArray(request.url.host)
-                            ? request.url.host.join(".")
-                            : request.url.host || "";
-                          const path = Array.isArray(request.url.path)
-                            ? "/" + request.url.path.join("/")
-                            : request.url.path || "";
-
-                          fullUrl = `${protocol}://${host}${path}`;
-
-                          // Add query parameters
-                          if (
-                            request.url.query &&
-                            Array.isArray(request.url.query)
-                          ) {
-                            const queryParams = request.url.query
-                              .filter((q) => q.key && q.value && !q.disabled)
-                              .map(
-                                (q) =>
-                                  `${encodeURIComponent(
-                                    q.key
-                                  )}=${encodeURIComponent(q.value)}`
-                              )
-                              .join("&");
-
-                            if (queryParams) {
-                              fullUrl += "?" + queryParams;
-                            }
-                          }
-                        }
-                      }
-
-                      // Extract body content
-                      let bodyContent = "";
-                      if (request.body) {
-                        if (request.body.mode === "raw" && request.body.raw) {
-                          bodyContent = request.body.raw;
-                        } else if (
-                          request.body.mode === "formdata" &&
-                          request.body.formdata
-                        ) {
-                          // Convert form data to JSON representation
-                          const formObj = {};
-                          request.body.formdata.forEach((item) => {
-                            if (
-                              item.key &&
-                              item.value &&
-                              item.type !== "file"
-                            ) {
-                              formObj[item.key] = item.value;
-                            }
-                          });
-                          bodyContent = JSON.stringify(formObj, null, 2);
-                        } else if (
-                          request.body.mode === "urlencoded" &&
-                          request.body.urlencoded
-                        ) {
-                          // Convert URL encoded to JSON representation
-                          const urlEncodedObj = {};
-                          request.body.urlencoded.forEach((item) => {
-                            if (item.key && item.value) {
-                              urlEncodedObj[item.key] = item.value;
-                            }
-                          });
-                          bodyContent = JSON.stringify(urlEncodedObj, null, 2);
-                        }
-                      }
-
-                      return {
-                        name: postmanItem.name || "Untitled Request",
-                        method: request.method || "GET",
-                        url: fullUrl,
-                        headers,
-                        body: bodyContent,
-                        description: postmanItem.description || "",
-                      };
+                    const collection = {
+                      info: {
+                        _postman_id: crypto.randomUUID(),
+                        name: "API Playground Export",
+                        schema:
+                          "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+                        _exporter_id: "api-playground",
+                      },
+                      item: [
+                        {
+                          name: request.name || "Untitled Request",
+                          request: {
+                            method: request.method || "GET",
+                            header: Object.entries(request.headers || {}).map(
+                              ([key, value]) => ({
+                                key,
+                                value,
+                                type: "text",
+                              })
+                            ),
+                            body: request.body
+                              ? {
+                                  mode: "raw",
+                                  raw: request.body,
+                                  options: {
+                                    raw: {
+                                      language: "json",
+                                    },
+                                  },
+                                }
+                              : undefined,
+                            url: {
+                              raw: request.url || "",
+                              protocol: urlParts.protocol,
+                              host: urlParts.host,
+                              path: urlParts.path,
+                              query:
+                                urlParts.query.length > 0
+                                  ? urlParts.query
+                                  : undefined,
+                            },
+                          },
+                          response: [],
+                        },
+                      ],
                     };
 
-                    // Process all items in the collection (including nested folders)
-                    const processItems = async (items, collectionId) => {
-                      for (const item of items) {
-                        if (item.item && Array.isArray(item.item)) {
-                          // This is a folder, process its items recursively
-                          await processItems(item.item, collectionId);
-                        } else if (item.request) {
-                          // This is a request, parse and add it
-                          const parsedRequest = parseRequest(item);
-                          if (parsedRequest) {
-                            await addRequestToCollection(
-                              collectionId,
-                              parsedRequest
+                    const blob = new Blob(
+                      [JSON.stringify(collection, null, 2)],
+                      {
+                        type: "application/json",
+                      }
+                    );
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = "postman-collection.json";
+                    a.click();
+                    URL.revokeObjectURL(url);
+                  }}
+                  variant="outline"
+                  className="w-full"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Export as Postman Collection
+                </Button>
+              </div>
+
+              {/* Import Section */}
+              <div className="space-y-3">
+                <h3 className="text-sm font-medium">
+                  Import Postman Collection
+                </h3>
+                <p className="text-xs text-gray-600 dark:text-gray-400">
+                  Paste your Postman collection JSON or upload a file
+                </p>
+
+                {/* File Upload */}
+                <div className="space-y-2">
+                  <input
+                    type="file"
+                    accept=".json"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                          try {
+                            const content = event.target?.result;
+                            setImportData(content);
+                            setImportError("");
+                          } catch (error) {
+                            setImportError("Error reading file");
+                          }
+                        };
+                        reader.readAsText(file);
+                      }
+                    }}
+                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"
+                    style={{ borderRadius: "6px" }}
+                  />
+                </div>
+
+                {/* JSON Textarea */}
+                <div className="space-y-2">
+                  <label className="text-xs font-medium">Or paste JSON:</label>
+                  <textarea
+                    value={importData}
+                    onChange={(e) => {
+                      setImportData(e.target.value);
+                      setImportError("");
+                    }}
+                    placeholder="Paste your Postman collection JSON here..."
+                    className="w-full h-32 p-3 text-sm border rounded-md font-mono resize-none"
+                  />
+                </div>
+
+                {importError && (
+                  <p className="text-xs text-red-600">{importError}</p>
+                )}
+
+                <Button
+                  onClick={async () => {
+                    try {
+                      const collection = JSON.parse(importData);
+
+                      // Validate basic Postman collection structure
+                      if (!collection.info || !collection.item) {
+                        setImportError("Invalid Postman collection format");
+                        return;
+                      }
+
+                      // Create a new collection with imported name and description
+                      const collectionName =
+                        collection.info.name || "Imported Collection";
+                      const collectionDescription =
+                        collection.info.description || "Imported from Postman";
+
+                      const newCollection = await createCollection(
+                        collectionName,
+                        collectionDescription,
+                        "blue"
+                      );
+
+                      // Function to parse Postman request into our format
+                      const parseRequest = (postmanItem) => {
+                        if (!postmanItem.request) return null;
+
+                        const request = postmanItem.request;
+
+                        // Convert headers (V2.1 format)
+                        const headers = {};
+                        if (request.header && Array.isArray(request.header)) {
+                          request.header.forEach((h) => {
+                            if (h.key && h.value && h.type !== "disabled") {
+                              headers[h.key] = h.value;
+                            }
+                          });
+                        }
+
+                        // Build URL from V2.1 format
+                        let fullUrl = "";
+                        if (typeof request.url === "string") {
+                          fullUrl = request.url;
+                        } else if (
+                          request.url &&
+                          typeof request.url === "object"
+                        ) {
+                          // Handle V2.1 URL object format
+                          if (request.url.raw) {
+                            fullUrl = request.url.raw;
+                          } else {
+                            // Construct URL from parts
+                            const protocol = request.url.protocol || "https";
+                            const host = Array.isArray(request.url.host)
+                              ? request.url.host.join(".")
+                              : request.url.host || "";
+                            const path = Array.isArray(request.url.path)
+                              ? "/" + request.url.path.join("/")
+                              : request.url.path || "";
+
+                            fullUrl = `${protocol}://${host}${path}`;
+
+                            // Add query parameters
+                            if (
+                              request.url.query &&
+                              Array.isArray(request.url.query)
+                            ) {
+                              const queryParams = request.url.query
+                                .filter((q) => q.key && q.value && !q.disabled)
+                                .map(
+                                  (q) =>
+                                    `${encodeURIComponent(
+                                      q.key
+                                    )}=${encodeURIComponent(q.value)}`
+                                )
+                                .join("&");
+
+                              if (queryParams) {
+                                fullUrl += "?" + queryParams;
+                              }
+                            }
+                          }
+                        }
+
+                        // Extract body content
+                        let bodyContent = "";
+                        if (request.body) {
+                          if (request.body.mode === "raw" && request.body.raw) {
+                            bodyContent = request.body.raw;
+                          } else if (
+                            request.body.mode === "formdata" &&
+                            request.body.formdata
+                          ) {
+                            // Convert form data to JSON representation
+                            const formObj = {};
+                            request.body.formdata.forEach((item) => {
+                              if (
+                                item.key &&
+                                item.value &&
+                                item.type !== "file"
+                              ) {
+                                formObj[item.key] = item.value;
+                              }
+                            });
+                            bodyContent = JSON.stringify(formObj, null, 2);
+                          } else if (
+                            request.body.mode === "urlencoded" &&
+                            request.body.urlencoded
+                          ) {
+                            // Convert URL encoded to JSON representation
+                            const urlEncodedObj = {};
+                            request.body.urlencoded.forEach((item) => {
+                              if (item.key && item.value) {
+                                urlEncodedObj[item.key] = item.value;
+                              }
+                            });
+                            bodyContent = JSON.stringify(
+                              urlEncodedObj,
+                              null,
+                              2
                             );
                           }
                         }
-                      }
-                    };
 
-                    // Process all items in the collection
-                    await processItems(collection.item, newCollection.id);
+                        return {
+                          name: postmanItem.name || "Untitled Request",
+                          method: request.method || "GET",
+                          url: fullUrl,
+                          headers,
+                          body: bodyContent,
+                          description: postmanItem.description || "",
+                        };
+                      };
 
-                    // Set the imported collection as active
-                    setActiveCollectionId(newCollection.id);
+                      // Process all items in the collection (including nested folders)
+                      const processItems = async (items, collectionId) => {
+                        for (const item of items) {
+                          if (item.item && Array.isArray(item.item)) {
+                            // This is a folder, process its items recursively
+                            await processItems(item.item, collectionId);
+                          } else if (item.request) {
+                            // This is a request, parse and add it
+                            const parsedRequest = parseRequest(item);
+                            if (parsedRequest) {
+                              await addRequestToCollection(
+                                collectionId,
+                                parsedRequest
+                              );
+                            }
+                          }
+                        }
+                      };
 
-                    setShowImportExportModal(false);
-                    setImportData("");
-                    setImportError("");
+                      // Process all items in the collection
+                      await processItems(collection.item, newCollection.id);
 
-                    // Show success message
-                    console.log(
-                      `Successfully imported collection: ${collectionName} with ${collection.item.length} items`
-                    );
-                  } catch (error) {
-                    console.error("Import error:", error);
-                    setImportError(
-                      "Failed to import collection: " + error.message
-                    );
-                  }
-                }}
-                disabled={!importData.trim()}
-                className="w-full"
-              >
-                <Upload className="h-4 w-4 mr-2" />
-                Import Collection
-              </Button>
+                      // Set the imported collection as active
+                      setActiveCollectionId(newCollection.id);
+
+                      setShowImportExportModal(false);
+                      setImportData("");
+                      setImportError("");
+
+                      // Show success message
+                      console.log(
+                        `Successfully imported collection: ${collectionName} with ${collection.item.length} items`
+                      );
+                    } catch (error) {
+                      console.error("Import error:", error);
+                      setImportError(
+                        "Failed to import collection: " + error.message
+                      );
+                    }
+                  }}
+                  disabled={!importData.trim()}
+                  className="w-full"
+                >
+                  <Upload className="h-4 w-4 mr-2" />
+                  Import Collection
+                </Button>
+              </div>
             </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </div>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 }
