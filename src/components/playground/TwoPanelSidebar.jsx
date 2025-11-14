@@ -418,12 +418,12 @@ export default function TwoPanelSidebar({
       {/* Resize Divider - Only show when content is open */}
       {contentOpen && (
         <div
-          className={`w-px bg-gray-200 dark:bg-gray-700 hover:bg-blue-500 cursor-col-resize transition-colors duration-200 ${
+          className={`w-px dark:bg-gray-700 hover:bg-blue-500 cursor-col-resize transition-colors duration-200 ${
             isResizing ? "bg-blue-500" : ""
           } relative group flex-shrink-0`}
           onMouseDown={onResizeStart}
           title="Resize sidebar"
-          style={{ minWidth: "1px" }}
+          style={{ width: "0px" }}
         >
           {/* Wider hit area for easier dragging */}
           <div className="absolute inset-y-0 -left-1 -right-1 hover:bg-blue-500/20" />
