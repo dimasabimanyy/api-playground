@@ -265,8 +265,8 @@ export default function Playground() {
         const sidebar = document.querySelector("[data-sidebar-container]");
         if (sidebar) {
           const sidebarRect = sidebar.getBoundingClientRect();
-          // Calculate new width: mouse position - sidebar left - navigation panel width (56px)
-          const newWidth = e.clientX - sidebarRect.left - 56;
+          // Calculate new width: mouse position - sidebar left - navigation panel width (100px)
+          const newWidth = e.clientX - sidebarRect.left - 100;
           // Apply constraints: min 150px, max 400px
           const constrainedWidth = Math.min(Math.max(newWidth, 150), 400);
           setSidebarContentWidth(constrainedWidth);
@@ -1515,7 +1515,7 @@ export default function Playground() {
           className={`${
             sidebarCollapsed 
               ? "w-16 lg:w-16" 
-              : `lg:w-[${56 + (sidebarContentOpen ? sidebarContentWidth : 0)}px]`
+              : `lg:w-[${90 + (sidebarContentOpen ? sidebarContentWidth : 0)}px]`
           } ${
             sidebarCollapsed
               ? "-translate-x-full lg:translate-x-0"
@@ -1527,7 +1527,7 @@ export default function Playground() {
           } ${
             isSidebarResizing ? "" : "transition-all duration-300"
           } z-50 lg:z-auto`}
-          style={!sidebarCollapsed ? { width: `${56 + (sidebarContentOpen ? sidebarContentWidth : 0)}px` } : {}}
+          style={!sidebarCollapsed ? { width: `${90 + (sidebarContentOpen ? sidebarContentWidth : 0)}px` } : {}}
         >
           <TwoPanelSidebar
             sidebarCollapsed={sidebarCollapsed}

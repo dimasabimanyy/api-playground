@@ -261,7 +261,7 @@ export default function Sidebar({
           <DropdownMenuContent
             align="start"
             side="right"
-            className="w-56 border"
+            className="w-90 border"
             style={{
               borderRadius: "8px",
               borderColor: "rgb(235, 235, 235)",
