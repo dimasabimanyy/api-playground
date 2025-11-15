@@ -54,8 +54,6 @@ import {
   MoreHorizontal,
   FileText,
   Edit,
-  GripVertical,
-  GripHorizontal,
   Upload,
   Download,
   FileUp,
@@ -218,8 +216,6 @@ export default function Playground() {
   const [requestPanelWidth, setRequestPanelWidth] = useState(50); // percentage
   const [requestPanelHeight, setRequestPanelHeight] = useState(35); // percentage for single column
   const [isDragging, setIsDragging] = useState(false);
-  const [showImportModal, setShowImportModal] = useState(false);
-  const [showExportModal, setShowExportModal] = useState(false);
 
   // Drag handling functions for resizable panels (must be at top level)
   const handleMouseDown = (e) => {
@@ -1036,18 +1032,20 @@ export default function Playground() {
 
   // Function to get breadcrumb path for current request
   const getBreadcrumbPath = () => {
-    const currentTab = requestTabs.find(tab => tab.id === activeTabId);
+    const currentTab = requestTabs.find((tab) => tab.id === activeTabId);
     if (!currentTab?.collectionRequestId) {
       return null;
     }
 
     // Find the collection that contains this request
     for (const [collectionId, collection] of Object.entries(collections)) {
-      const request = collection.requests?.find(req => req.id === currentTab.collectionRequestId);
+      const request = collection.requests?.find(
+        (req) => req.id === currentTab.collectionRequestId
+      );
       if (request) {
         return {
           collection: collection.name,
-          request: request.name || currentTab.name
+          request: request.name || currentTab.name,
         };
       }
     }
@@ -1415,31 +1413,6 @@ export default function Playground() {
             </div>
           </div>
 
-          {/* Import/Export Dropdown */}
-          {/* <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button
-                className="p-2 transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-800 border cursor-pointer"
-                style={{
-                  borderRadius: "50%",
-                  borderColor: "rgb(235, 235, 235)",
-                }}
-              >
-                <Import className="h-4 w-4" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setShowImportModal(true)}>
-                <Upload className="h-4 w-4 mr-2" />
-                Import Collection
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setShowExportModal(true)}>
-                <Download className="h-4 w-4 mr-2" />
-                Export Request
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu> */}
-
           {/* Layout Toggle Button */}
           <button
             onClick={() =>
@@ -1718,7 +1691,9 @@ export default function Playground() {
                           <input
                             type="text"
                             value={currentTab?.name || ""}
-                            onChange={(e) => setCurrentRequestName(e.target.value)}
+                            onChange={(e) =>
+                              setCurrentRequestName(e.target.value)
+                            }
                             onBlur={() => setEditingRequestName(false)}
                             onKeyDown={(e) => {
                               if (e.key === "Enter") {
@@ -1887,18 +1862,17 @@ export default function Playground() {
 
                 {/* Horizontal Draggable Divider */}
                 <div
-                  className={`bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 cursor-col-resize transition-colors duration-200 ${
-                    isDragging ? "bg-gray-300 dark:bg-gray-600" : ""
-                  }`}
+                  className="relative w-1 cursor-col-resize group"
                   onMouseDown={handleMouseDown}
-                  style={{ width: "2px" }}
+                  title="Resize panels"
                 >
                   <div
-                    className="w-full h-full flex items-center justify-center"
-                    style={{ height: "10px" }}
-                  >
-                    <GripVertical className="h-4 w-4 text-gray-400 opacity-0 hover:opacity-100 transition-opacity" />
-                  </div>
+                    className={`absolute left-1/2 transform -translate-x-1/2 w-px h-full bg-gray-300 dark:bg-gray-600 hover:bg-blue-500 ${
+                      isDragging
+                        ? "bg-blue-500"
+                        : "transition-colors duration-200"
+                    }`}
+                  />
                 </div>
 
                 {/* Response Panel with remaining width */}
@@ -1919,15 +1893,17 @@ export default function Playground() {
 
                 {/* Vertical Draggable Divider */}
                 <div
-                  className={`bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 cursor-row-resize transition-colors duration-200 ${
-                    isDragging ? "bg-gray-300 dark:bg-gray-600" : ""
-                  }`}
+                  className="relative h-1 cursor-row-resize group"
                   onMouseDown={handleMouseDown}
-                  style={{ height: "2px" }}
+                  title="Resize panels"
                 >
-                  <div className="w-full h-full flex items-center justify-center">
-                    <GripHorizontal className="h-4 w-4 text-gray-400 opacity-0 hover:opacity-100 transition-opacity" />
-                  </div>
+                  <div
+                    className={`absolute top-1/2 transform -translate-y-1/2 w-full h-px bg-gray-300 dark:bg-gray-600 hover:bg-blue-500 ${
+                      isDragging
+                        ? "bg-blue-500"
+                        : "transition-colors duration-200"
+                    }`}
+                  />
                 </div>
 
                 {/* Response Panel with remaining height */}
@@ -2404,19 +2380,6 @@ export default function Playground() {
             </div>
           </DialogContent>
         </Dialog>
-
-        {/* Import Modal */}
-        <ImportModal
-          open={showImportModal}
-          onOpenChange={setShowImportModal}
-        />
-
-        {/* Export Modal */}
-        <ExportModal
-          open={showExportModal}
-          onOpenChange={setShowExportModal}
-          request={request}
-        />
       </div>
     </div>
   );

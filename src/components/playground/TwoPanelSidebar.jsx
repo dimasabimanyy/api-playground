@@ -256,7 +256,7 @@ export default function TwoPanelSidebar({
           >
             {/* Content Area */}
             <div className="flex-1 overflow-y-auto min-w-0">
-              <div className="p-2 min-w-0">
+              <div className="py-4 px-2 min-w-0">
                 {/* Collections Content */}
                 {activeMenuTab === "collections" && (
                   <div className="space-y-1">
