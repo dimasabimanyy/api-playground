@@ -22,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import CreateNew from "../button/CreateNew";
+import ImportModal from "../modals/ImportModal";
 
 export default function TwoPanelSidebar({
   sidebarCollapsed,
@@ -54,6 +55,7 @@ export default function TwoPanelSidebar({
   onResizeStart,
   isResizing,
 }) {
+  const [showImportModal, setShowImportModal] = useState(false);
 
   const createNewTab = () => {
     setNewRequestType("HTTP Request");
@@ -239,7 +241,7 @@ export default function TwoPanelSidebar({
                       </span>
 
                       <button
-                        // onClick={() => setShowImportExportModal(true)}
+                        onClick={() => setShowImportModal(true)}
                         className="h-6 px-2 bg-white transition-all duration-200 hover:bg-gray-100 border cursor-pointer flex items-center justify-center"
                         style={{
                           borderRadius: "6px",
@@ -468,6 +470,8 @@ export default function TwoPanelSidebar({
           </div>
         )}
       </div>
+
+      <ImportModal open={showImportModal} onOpenChange={setShowImportModal} />
     </>
   );
 }
