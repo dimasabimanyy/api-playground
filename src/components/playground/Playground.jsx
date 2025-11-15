@@ -1034,6 +1034,26 @@ export default function Playground() {
     updateCurrentTab({ name, isModified: true });
   };
 
+  // Function to get breadcrumb path for current request
+  const getBreadcrumbPath = () => {
+    const currentTab = requestTabs.find(tab => tab.id === activeTabId);
+    if (!currentTab?.collectionRequestId) {
+      return null;
+    }
+
+    // Find the collection that contains this request
+    for (const [collectionId, collection] of Object.entries(collections)) {
+      const request = collection.requests?.find(req => req.id === currentTab.collectionRequestId);
+      if (request) {
+        return {
+          collection: collection.name,
+          request: request.name || currentTab.name
+        };
+      }
+    }
+    return null;
+  };
+
   // Auto-save request changes to collection
   const saveCurrentRequestToCollection = async () => {
     const currentTab = requestTabs.find((tab) => tab.id === activeTabId);
@@ -1683,36 +1703,58 @@ export default function Playground() {
               <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <div className="flex items-center gap-2 group flex-1 min-w-0">
-                    {editingRequestName ? (
-                      <input
-                        type="text"
-                        value={currentTab?.name || ""}
-                        onChange={(e) => setCurrentRequestName(e.target.value)}
-                        onBlur={() => setEditingRequestName(false)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            setEditingRequestName(false);
-                          }
-                        }}
-                        placeholder="Untitled Request"
-                        className={`text-sm font-medium bg-transparent border border-gray-300 rounded px-2 py-1 outline-none focus:border-gray-400 focus:ring-0 transition-colors duration-200 w-full ${themeClasses.text.primary}`}
-                        autoFocus
-                      />
-                    ) : (
-                      <>
-                        <span
-                          className={`text-sm font-medium ${themeClasses.text.primary} truncate`}
-                        >
-                          {currentTab?.name || "Untitled Request"}
-                        </span>
-                        <button
-                          onClick={() => setEditingRequestName(true)}
-                          className={`opacity-0 group-hover:opacity-100 p-1 rounded transition-all duration-200 flex-shrink-0 ${themeClasses.button.ghost}`}
-                        >
-                          <Pencil className="h-3 w-3" />
-                        </button>
-                      </>
-                    )}
+                    {(() => {
+                      const breadcrumb = getBreadcrumbPath();
+                      return editingRequestName ? (
+                        <div className="flex items-center gap-1 flex-1 min-w-0">
+                          {breadcrumb && (
+                            <>
+                              <span className="text-sm text-gray-500 dark:text-gray-400 flex-shrink-0">
+                                {breadcrumb.collection}
+                              </span>
+                              <ChevronRight className="h-3 w-3 text-gray-400 flex-shrink-0" />
+                            </>
+                          )}
+                          <input
+                            type="text"
+                            value={currentTab?.name || ""}
+                            onChange={(e) => setCurrentRequestName(e.target.value)}
+                            onBlur={() => setEditingRequestName(false)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                setEditingRequestName(false);
+                              }
+                            }}
+                            placeholder="Untitled Request"
+                            className={`text-sm font-medium bg-transparent border border-gray-300 rounded px-2 py-1 outline-none focus:border-gray-400 focus:ring-0 transition-colors duration-200 flex-1 min-w-0 ${themeClasses.text.primary}`}
+                            autoFocus
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-1 flex-1 min-w-0">
+                          {breadcrumb && (
+                            <>
+                              <span className="text-sm text-gray-500 dark:text-gray-400 flex-shrink-0">
+                                {breadcrumb.collection}
+                              </span>
+                              <ChevronRight className="h-3 w-3 text-gray-400 flex-shrink-0" />
+                            </>
+                          )}
+                          <span
+                            className={`text-sm font-medium ${themeClasses.text.primary} truncate cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 px-1 py-0.5 rounded transition-colors`}
+                            onClick={() => setEditingRequestName(true)}
+                          >
+                            {currentTab?.name || "Untitled Request"}
+                          </span>
+                          <button
+                            onClick={() => setEditingRequestName(true)}
+                            className={`opacity-0 group-hover:opacity-100 p-1 rounded transition-all duration-200 flex-shrink-0 ${themeClasses.button.ghost}`}
+                          >
+                            <Pencil className="h-3 w-3" />
+                          </button>
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
