@@ -34,6 +34,7 @@ export default function TwoPanelSidebar({
   onNavItemClick,
   contentOpen = true,
   collections,
+  collectionsLoading,
   expandedCollections,
   toggleCollection,
   editingCollection,
@@ -56,6 +57,32 @@ export default function TwoPanelSidebar({
   isResizing,
 }) {
   const [showImportModal, setShowImportModal] = useState(false);
+
+  // Skeleton loading component
+  const CollectionSkeleton = () => (
+    <div className="space-y-2">
+      {/* Collection header skeleton 1 */}
+      <div className="flex items-center gap-2 py-1 px-1">
+        <div className="w-3 h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+        <div className="flex-1 h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+        <div className="w-3 h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+      </div>
+      
+      {/* Collection header skeleton 2 */}
+      <div className="flex items-center gap-2 py-1 px-1">
+        <div className="w-3 h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+        <div className="flex-1 h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-3/4"></div>
+        <div className="w-3 h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+      </div>
+
+      {/* Collection header skeleton 3 */}
+      <div className="flex items-center gap-2 py-1 px-1">
+        <div className="w-3 h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+        <div className="flex-1 h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-4/5"></div>
+        <div className="w-3 h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+      </div>
+    </div>
+  );
 
   const createNewTab = () => {
     setNewRequestType("HTTP Request");
@@ -253,16 +280,12 @@ export default function TwoPanelSidebar({
                           Import
                         </span>
                       </button>
-
-                      {/* <button
-                      onClick={clearHistory}
-                      className={`text-xs ${themeClasses.text.tertiary} hover:${themeClasses.text.primary} transition-colors`}
-                    >
-                      Clear all
-                    </button> */}
                     </div>
 
-                    {Object.values(collections).map((collection) => {
+                    {collectionsLoading ? (
+                      <CollectionSkeleton />
+                    ) : (
+                      Object.values(collections).map((collection) => {
                       const isExpanded = expandedCollections.has(collection.id);
                       return (
                         <div key={collection.id} className="space-y-1">
@@ -370,7 +393,7 @@ export default function TwoPanelSidebar({
                           )}
                         </div>
                       );
-                    })}
+                    }))}
                   </div>
                 )}
 

@@ -168,6 +168,7 @@ export default function Playground() {
     createCollection,
     deleteCollection,
     getCollectionsWithDocs,
+    loading: collectionsLoading,
   } = useCollections();
   const themeClasses = getThemeClasses(isDark);
   // Request tabs state - will be restored from localStorage if available
@@ -1561,6 +1562,7 @@ export default function Playground() {
             onResizeStart={handleSidebarResizeStart}
             isResizing={isSidebarResizing}
             collections={collections}
+            collectionsLoading={collectionsLoading}
             expandedCollections={expandedCollections}
             toggleCollection={toggleCollection}
             editingCollection={editingCollection}
