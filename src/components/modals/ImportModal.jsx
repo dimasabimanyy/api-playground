@@ -8,102 +8,23 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Download, Upload } from "lucide-react";
+import { Upload, FileUp } from "lucide-react";
+import { useCollections } from "@/contexts/CollectionsContext";
 
-export default function ImportExportModal({
+export default function ImportModal({
   open,
   onOpenChange,
-  request,
-  createCollection,
-  addRequestToCollection,
-  setActiveCollectionId,
 }) {
+  const { createCollection, addRequestToCollection, setActiveCollectionId } = useCollections();
   const [importData, setImportData] = useState("");
   const [importError, setImportError] = useState("");
-
-  const handleExport = () => {
-    // Parse URL to extract components
-    let urlParts = {
-      protocol: "https",
-      host: [],
-      path: [],
-      query: [],
-    };
-    if (request.url) {
-      try {
-        const url = new URL(request.url);
-        urlParts.protocol = url.protocol.replace(":", "");
-        urlParts.host = url.hostname.split(".");
-        urlParts.path = url.pathname.split("/").filter((p) => p);
-
-        // Extract query parameters
-        url.searchParams.forEach((value, key) => {
-          urlParts.query.push({ key, value });
-        });
-      } catch (e) {
-        // Fallback for invalid URLs
-        urlParts.host = ["localhost"];
-        urlParts.path = [];
-      }
-    }
-
-    const collection = {
-      info: {
-        _postman_id: crypto.randomUUID(),
-        name: "API Playground Export",
-        schema:
-          "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-        _exporter_id: "api-playground",
-      },
-      item: [
-        {
-          name: request.name || "Untitled Request",
-          request: {
-            method: request.method || "GET",
-            header: Object.entries(request.headers || {}).map(
-              ([key, value]) => ({
-                key,
-                value,
-                type: "text",
-              })
-            ),
-            body: request.body
-              ? {
-                  mode: "raw",
-                  raw: request.body,
-                  options: {
-                    raw: {
-                      language: "json",
-                    },
-                  },
-                }
-              : undefined,
-            url: {
-              raw: request.url || "",
-              protocol: urlParts.protocol,
-              host: urlParts.host,
-              path: urlParts.path,
-              query: urlParts.query.length > 0 ? urlParts.query : undefined,
-            },
-          },
-          response: [],
-        },
-      ],
-    };
-
-    const blob = new Blob([JSON.stringify(collection, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "postman-collection.json";
-    a.click();
-    URL.revokeObjectURL(url);
-  };
+  const [isImporting, setIsImporting] = useState(false);
 
   const handleImport = async () => {
     try {
+      setIsImporting(true);
+      setImportError("");
+      
       const collection = JSON.parse(importData);
 
       // Validate basic Postman collection structure
@@ -254,6 +175,25 @@ export default function ImportExportModal({
     } catch (error) {
       console.error("Import error:", error);
       setImportError("Failed to import collection: " + error.message);
+    } finally {
+      setIsImporting(false);
+    }
+  };
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const content = event.target?.result;
+          setImportData(content);
+          setImportError("");
+        } catch (error) {
+          setImportError("Error reading file");
+        }
+      };
+      reader.readAsText(file);
     }
   };
 
@@ -261,80 +201,83 @@ export default function ImportExportModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Import/Export Collections</DialogTitle>
+          <DialogTitle>Import Postman Collection</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6">
-          {/* Export Section */}
-          <div className="space-y-3">
-            <h3 className="text-sm font-medium">Export Current Request</h3>
-            <p className="text-xs text-gray-600 dark:text-gray-400">
-              Export your current request as a Postman collection
+          <div className="text-center">
+            <div className="mx-auto w-12 h-12 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mb-3">
+              <Upload className="h-6 w-6 text-green-600 dark:text-green-400" />
+            </div>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Upload a Postman collection JSON file or paste the JSON content below
             </p>
-            <Button onClick={handleExport} variant="outline" className="w-full">
-              <Download className="h-4 w-4 mr-2" />
-              Export as Postman Collection
-            </Button>
           </div>
 
-          {/* Import Section */}
+          {/* File Upload */}
           <div className="space-y-3">
-            <h3 className="text-sm font-medium">Import Postman Collection</h3>
-            <p className="text-xs text-gray-600 dark:text-gray-400">
-              Paste your Postman collection JSON or upload a file
-            </p>
-
-            {/* File Upload */}
-            <div className="space-y-2">
-              <input
-                type="file"
-                accept=".json"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                      try {
-                        const content = event.target?.result;
-                        setImportData(content);
-                        setImportError("");
-                      } catch (error) {
-                        setImportError("Error reading file");
-                      }
-                    };
-                    reader.readAsText(file);
-                  }
-                }}
-                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"
-                style={{ borderRadius: "6px" }}
-              />
+            <label className="block text-sm font-medium">Upload File</label>
+            <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center hover:border-gray-400 dark:hover:border-gray-500 transition-colors">
+              <FileUp className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+              <div className="space-y-2">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Choose a Postman collection file
+                </p>
+                <input
+                  type="file"
+                  accept=".json"
+                  onChange={handleFileUpload}
+                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-gray-100 dark:file:bg-gray-700 file:text-gray-700 dark:file:text-gray-300 hover:file:bg-gray-200 dark:hover:file:bg-gray-600 file:rounded-md"
+                />
+              </div>
             </div>
+          </div>
 
-            {/* JSON Textarea */}
-            <div className="space-y-2">
-              <label className="text-xs font-medium">Or paste JSON:</label>
-              <textarea
-                value={importData}
-                onChange={(e) => {
-                  setImportData(e.target.value);
-                  setImportError("");
-                }}
-                placeholder="Paste your Postman collection JSON here..."
-                className="w-full h-32 p-3 text-sm border rounded-md font-mono resize-none"
-              />
+          {/* JSON Textarea */}
+          <div className="space-y-3">
+            <label className="block text-sm font-medium">Or paste JSON content</label>
+            <textarea
+              value={importData}
+              onChange={(e) => {
+                setImportData(e.target.value);
+                setImportError("");
+              }}
+              placeholder="Paste your Postman collection JSON here..."
+              className="w-full h-40 p-3 text-sm border rounded-md font-mono resize-none dark:bg-gray-800 dark:border-gray-600"
+            />
+          </div>
+
+          {importError && (
+            <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
+              <p className="text-sm text-red-600 dark:text-red-400">{importError}</p>
             </div>
+          )}
 
-            {importError && (
-              <p className="text-xs text-red-600">{importError}</p>
-            )}
-
+          <div className="flex gap-3">
             <Button
               onClick={handleImport}
-              disabled={!importData.trim()}
-              className="w-full"
+              disabled={!importData.trim() || isImporting}
+              className="flex-1"
             >
-              <Upload className="h-4 w-4 mr-2" />
-              Import Collection
+              {isImporting ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Importing...
+                </>
+              ) : (
+                <>
+                  <Upload className="h-4 w-4 mr-2" />
+                  Import Collection
+                </>
+              )}
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              onClick={() => onOpenChange(false)}
+              disabled={isImporting}
+            >
+              Cancel
             </Button>
           </div>
         </div>
