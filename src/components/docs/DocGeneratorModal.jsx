@@ -214,7 +214,7 @@ export default function DocGeneratorModal({
         
         <div className="space-y-8">
           {/* Collection Selection with Input Display */}
-          <div className="space-y-3">
+          <div className="mb-5">
             <label className={`text-sm font-medium ${themeClasses.text.primary}`}>
               Select Collection
             </label>
@@ -335,7 +335,7 @@ export default function DocGeneratorModal({
           </div>
 
           {/* Template Selection */}
-          <div className="space-y-3">
+          <div className="mb-8">
             <div>
               <label className={`text-sm font-medium ${themeClasses.text.primary}`}>
                 Choose Style
