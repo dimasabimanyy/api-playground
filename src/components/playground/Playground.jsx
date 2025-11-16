@@ -1762,9 +1762,16 @@ export default function Playground() {
             <div className="px-3 sm:px-6 py-3 sm:py-4">
               <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3">
                 {/* METHOD SELECT + URL INPUT + ENVIRONMENT ROW */}
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 flex-1 min-w-0">
-                  {/* METHOD SELECT */}
-                  <div className="w-full sm:w-16 flex-shrink-0">
+                <div className="flex-1 min-w-0">
+                  {/* Unified Method + URL Input */}
+                  <div className={`flex h-10 sm:h-11 rounded-md border backdrop-blur-sm overflow-hidden ${
+                    isDark
+                      ? "bg-gray-800 border-gray-600"
+                      : "bg-white border-gray-300"
+                  } focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent transition-all`}
+                  style={{ borderRadius: "6px" }}
+                  >
+                    {/* METHOD SELECT */}
                     <select
                       value={request.method}
                       onChange={(e) =>
@@ -1772,11 +1779,10 @@ export default function Playground() {
                           request: { ...request, method: e.target.value },
                         })
                       }
-                      className={`h-10 sm:h-11 text-xs rounded backdrop-blur-sm ${
-                        isDark
-                          ? "bg-gray-800 border-gray-600 text-white"
-                          : "bg-white border-gray-300 text-gray-900"
-                      } focus:outline-none focus:ring-2 focus:ring-blue-500 px-2 w-full font-medium`}
+                      className={`text-xs font-medium px-3 bg-transparent outline-none ${
+                        isDark ? "text-white" : "text-gray-900"
+                      }`}
+                      style={{ minWidth: "80px" }}
                     >
                       {[
                         "GET",
@@ -1792,9 +1798,13 @@ export default function Playground() {
                         </option>
                       ))}
                     </select>
-                  </div>
-                  {/* URL INPUT with Variables */}
-                  <div className="flex-1 relative">
+                    
+                    {/* Divider */}
+                    <div className={`w-px h-6 self-center rounded-full ${
+                      isDark ? "bg-gray-600" : "bg-gray-300"
+                    }`}></div>
+                    
+                    {/* URL INPUT */}
                     <input
                       type="text"
                       placeholder="https://api.example.com/endpoint"
@@ -1804,11 +1814,11 @@ export default function Playground() {
                           request: { ...request, url: e.target.value },
                         })
                       }
-                      className={`h-10 sm:h-11 w-full text-sm rounded-md backdrop-blur-sm border ${
+                      className={`flex-1 text-sm px-3 bg-transparent outline-none ${
                         isDark
-                          ? "bg-gray-800 border-gray-600 text-white placeholder-gray-400"
-                          : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
-                      } focus:outline-none focus:ring-2 focus:ring-blue-500 px-3`}
+                          ? "text-white placeholder-gray-400"
+                          : "text-gray-900 placeholder-gray-500"
+                      }`}
                     />
                   </div>
                 </div>
