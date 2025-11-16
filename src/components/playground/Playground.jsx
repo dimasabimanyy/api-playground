@@ -1228,7 +1228,7 @@ export default function Playground() {
       className={`min-h-screen transition-colors duration-300 ${themeClasses.bg.primary} ${themeClasses.text.primary}`}
     >
       {/* Header - Theme Aware */}
-      <DashboardHeader layoutMode={layoutMode} setLayoutMode={setLayoutMode}  />
+      <DashboardHeader layoutMode={layoutMode} setLayoutMode={setLayoutMode} />
 
       {/* Main Content Layout - Theme Aware */}
       <div className="flex h-[calc(100vh-3.5rem)] relative">
@@ -1427,7 +1427,12 @@ export default function Playground() {
                             }}
                             placeholder="Untitled Request"
                             className={`text-sm font-medium bg-transparent border-none outline-none px-1 py-0.5 min-w-0 ${themeClasses.text.primary}`}
-                            style={{ width: `${Math.max(currentTab?.name?.length || 15, 15)}ch` }}
+                            style={{
+                              width: `${Math.max(
+                                currentTab?.name?.length || 15,
+                                15
+                              )}ch`,
+                            }}
                             autoFocus
                           />
                         </div>
@@ -1490,12 +1495,13 @@ export default function Playground() {
                 {/* METHOD SELECT + URL INPUT + ENVIRONMENT ROW */}
                 <div className="flex-1 min-w-0">
                   {/* Unified Method + URL Input */}
-                  <div className={`flex h-10 sm:h-11 rounded-md border backdrop-blur-sm overflow-hidden ${
-                    isDark
-                      ? "bg-gray-800 border-gray-600"
-                      : "bg-white border-gray-300"
-                  } focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent transition-all`}
-                  style={{ borderRadius: "6px" }}
+                  <div
+                    className={`flex h-10 sm:h-11 rounded-md border backdrop-blur-sm overflow-hidden ${
+                      isDark
+                        ? "bg-gray-800 border-gray-600"
+                        : "bg-white border-gray-300"
+                    } focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent transition-all`}
+                    style={{ borderRadius: "6px" }}
                   >
                     {/* METHOD SELECT */}
                     <select
@@ -1524,12 +1530,14 @@ export default function Playground() {
                         </option>
                       ))}
                     </select>
-                    
+
                     {/* Divider */}
-                    <div className={`w-px h-6 self-center rounded-full ${
-                      isDark ? "bg-gray-600" : "bg-gray-300"
-                    }`}></div>
-                    
+                    <div
+                      className={`w-px h-6 self-center rounded-full ${
+                        isDark ? "bg-gray-600" : "bg-gray-300"
+                      }`}
+                    ></div>
+
                     {/* URL INPUT */}
                     <input
                       type="text"

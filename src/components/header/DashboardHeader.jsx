@@ -174,27 +174,29 @@ const DashboardHeader = ({ layoutMode, setLayoutMode }) => {
         </div>
 
         {/* Layout Toggle Button */}
-        <button
-          onClick={() =>
-            setLayoutMode(layoutMode === "single" ? "split" : "single")
-          }
-          className="p-2 transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-800 border cursor-pointer"
-          style={{
-            borderRadius: "50%",
-            borderColor: "rgb(235, 235, 235)",
-          }}
-          title={
-            layoutMode === "single"
-              ? "Switch to split layout"
-              : "Switch to single column layout"
-          }
-        >
-          {layoutMode === "single" ? (
-            <SplitSquareHorizontal className="h-4 w-4" />
-          ) : (
-            <Columns className="h-4 w-4" />
-          )}
-        </button>
+        {setLayoutMode && (
+          <button
+            onClick={() =>
+              setLayoutMode(layoutMode === "single" ? "split" : "single")
+            }
+            className="p-2 transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-800 border cursor-pointer"
+            style={{
+              borderRadius: "50%",
+              borderColor: "rgb(235, 235, 235)",
+            }}
+            title={
+              layoutMode === "single"
+                ? "Switch to split layout"
+                : "Switch to single column layout"
+            }
+          >
+            {layoutMode === "single" ? (
+              <SplitSquareHorizontal className="h-4 w-4" />
+            ) : (
+              <Columns className="h-4 w-4" />
+            )}
+          </button>
+        )}
 
         <button
           onClick={toggleTheme}
