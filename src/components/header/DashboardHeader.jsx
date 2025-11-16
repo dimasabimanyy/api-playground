@@ -11,7 +11,7 @@ import {
   Zap,
   Search,
 } from "lucide-react";
-import UserAvatar from "../profile/UserAvatar";
+import UserAvatar from "@/components/profile/UserAvatar";
 import { Input } from "@/components/ui/input";
 
 const DashboardHeader = ({ layoutMode, setLayoutMode }) => {

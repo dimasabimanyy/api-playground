@@ -89,6 +89,7 @@ import SearchInput from "@/components/ui/SearchInput";
 import ImportModal from "@/components/modals/ImportModal";
 import ExportModal from "@/components/modals/ExportModal";
 import DashboardHeader from "../header/DashboardHeader";
+import { sidebarMenuItems } from "@/config/sidebar";
 
 export default function Playground() {
   const { toggleTheme, isDark } = useTheme();
@@ -594,40 +595,6 @@ export default function Playground() {
   };
 
   // Environment management functions
-
-  // Sidebar menu items
-  const sidebarMenuItems = [
-    {
-      id: "collections",
-      icon: FolderOpen,
-      label: "Collections",
-      description: "Saved grouped requests",
-    },
-    {
-      id: "history",
-      icon: History,
-      label: "History",
-      description: "Past requests sent",
-    },
-    {
-      id: "environments",
-      icon: Globe,
-      label: "Environments",
-      description: "Manage variables like API keys, URLs, tokens",
-    },
-    {
-      id: "documentation",
-      icon: BookOpen,
-      label: "Docs",
-      description: "API Documentation",
-    },
-    {
-      id: "trash",
-      icon: Trash2,
-      label: "Trash",
-      description: "Deleted or outdated requests",
-    },
-  ];
 
   // Helper functions for tab management
   const getCurrentTab = () => requestTabs.find((tab) => tab.id === activeTabId);
