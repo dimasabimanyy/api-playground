@@ -1701,7 +1701,8 @@ export default function Playground() {
                               }
                             }}
                             placeholder="Untitled Request"
-                            className={`text-sm font-medium bg-transparent border border-gray-300 rounded px-2 py-1 outline-none focus:border-gray-400 focus:ring-0 transition-colors duration-200 flex-1 min-w-0 ${themeClasses.text.primary}`}
+                            className={`text-sm font-medium bg-transparent border-none outline-none px-1 py-0.5 min-w-0 ${themeClasses.text.primary}`}
+                            style={{ width: `${Math.max(currentTab?.name?.length || 15, 15)}ch` }}
                             autoFocus
                           />
                         </div>
