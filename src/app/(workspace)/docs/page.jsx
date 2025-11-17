@@ -322,424 +322,317 @@ export default function DocsPage() {
 
   return (
     <>
+      {/* Main Content Area */}
       <div
-        className={`min-h-screen transition-colors duration-300 ${themeClasses.bg.primary} ${themeClasses.text.primary}`}
+        className={`flex-1 flex flex-col ${
+          sidebarCollapsed ? "lg:ml-0" : "lg:ml-0"
+        } ml-0 lg:ml-0 w-full lg:w-auto`}
       >
-        {/* Header - Theme Aware */}
-        <DashboardHeader />
-
-        {/* Main Content Layout - Theme Aware */}
-        <div className="flex h-[calc(100vh-3.5rem)] relative">
-          {/* Mobile Sidebar Overlay */}
-          {!sidebarCollapsed && (
-            <div
-              className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-              onClick={() => setSidebarCollapsed(true)}
-            />
-          )}
-
-          <div
-            data-sidebar-container
-            className={`${
-              sidebarCollapsed
-                ? "w-16 lg:w-16"
-                : `lg:w-[${
-                    90 + (sidebarContentOpen ? sidebarContentWidth : 0)
-                  }px]`
-            } ${
-              sidebarCollapsed
-                ? "-translate-x-full lg:translate-x-0"
-                : "translate-x-0"
-            } w-72 fixed lg:relative top-[3.5rem] lg:top-0 left-0 h-[calc(100vh-3.5rem)] lg:h-full border-r ${
-              themeClasses.border.primary
-            } ${themeClasses.bg.glass} ${
-              isSidebarResizing ? "" : "transition-all duration-300"
-            } z-50 lg:z-auto`}
-            style={
-              !sidebarCollapsed
-                ? {
-                    width: `${
-                      90 + (sidebarContentOpen ? sidebarContentWidth : 0)
-                    }px`,
-                  }
-                : {}
-            }
-          >
-            <TwoPanelSidebar
-              sidebarCollapsed={sidebarCollapsed}
-              setSidebarCollapsed={setSidebarCollapsed}
-              themeClasses={themeClasses}
-              isDark={isDark}
-              sidebarMenuItems={sidebarMenuItems}
-              activeMenuTab={activeMenuTab}
-              onNavItemClick={handleNavItemClick}
-              contentOpen={sidebarContentOpen}
-              contentWidth={sidebarContentWidth}
-              onResizeStart={handleSidebarResizeStart}
-              isResizing={isSidebarResizing}
-              collections={collections}
-              collectionsLoading={collectionsLoading}
-              expandedCollections={expandedCollections}
-              toggleCollection={toggleCollection}
-              // editingCollection={editingCollection}
-              // setEditingCollection={setEditingCollection}
-              updateCollection={(collectionId, updates) => {
-                // Handle collection update
-                console.log("Updating collection:", collectionId, updates);
-              }}
-              // history={filteredHistoryItems}
-              // loadRequest={(request) => {
-              //   // Handle loading request from history/collections
-              //   const newTabId = Date.now().toString();
-              //   const newTab = {
-              //     id: newTabId,
-              //     name: request.name || "Untitled Request",
-              //     request: {
-              //       method: request.method || "GET",
-              //       url: request.url || "",
-              //       headers: request.headers || {},
-              //       body: request.body || "",
-              //     },
-              //     response: null,
-              //     loading: false,
-              //     collectionRequestId: request.id || null,
-              //     isModified: false,
-              //   };
-              //   setRequestTabs((prev) => [...prev, newTab]);
-              //   setActiveTabId(newTabId);
-              // }}
-              // clearHistory={clearHistory}
-              // setNewRequestType={(type) => {
-              //   console.log("Setting new request type:", type);
-              // }}
-              // setRequest={setRequest}
-              // setActiveTab={setActiveTabId}
-              // openTabs={requestTabs}
-              // setOpenTabs={setRequestTabs}
-              // setCreateCollectionDialogOpen={setCreateCollectionDialogOpen}
-            />
-          </div>
-
-          {/* Main Content Area */}
-          <div
-            className={`flex-1 flex flex-col ${
-              sidebarCollapsed ? "lg:ml-0" : "lg:ml-0"
-            } ml-0 lg:ml-0 w-full lg:w-auto`}
-          >
-            {/* Page Header */}
-            <div className="py-8">
-              {/* Search and Controls */}
-              <div className="flex items-center gap-3">
-                {/* Search Input - Full Width */}
-                <div className="flex-1 relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 z-10" />
-                  <Input
-                    placeholder="Find documentation..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 py-1.5 text-sm focus:ring-0 focus:outline-none cursor-pointer h-9"
-                    style={{
-                      borderRadius: "6px",
-                      borderColor: isDark
-                        ? "rgb(55, 65, 81)"
-                        : "rgb(235, 235, 235)",
-                      backgroundColor: isDark ? "rgb(17, 24, 39)" : "white",
-                      border: `1px solid ${
-                        isDark ? "rgb(55, 65, 81)" : "rgb(235, 235, 235)"
-                      }`,
-                      boxShadow: "none",
-                    }}
-                  />
-                </div>
-
-                {/* Filter Button */}
-                <div className="relative">
-                  <Button
-                    onClick={() => setShowFilterDropdown(!showFilterDropdown)}
-                    variant="outline"
-                    size="sm"
-                    className={`px-3 py-1.5 h-9 cursor-pointer ${
-                      isDark
-                        ? "bg-transparent border-gray-600 text-gray-300 hover:bg-gray-800"
-                        : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
-                    }`}
-                    style={{ borderRadius: "6px" }}
-                  >
-                    <Filter className="h-4 w-4" />
-                  </Button>
-
-                  {/* Filter Dropdown */}
-                  {showFilterDropdown && (
-                    <div
-                      className={`absolute top-full mt-2 right-0 w-48 border rounded-xl shadow-xl z-50 ${
-                        isDark
-                          ? "border-gray-700 bg-gray-800"
-                          : "border-gray-200 bg-white"
-                      }`}
-                      style={{ borderRadius: "12px" }}
-                    >
-                      <div className="p-1">
-                        <div
-                          className={`px-3 py-2 text-xs font-medium ${
-                            themeClasses.text.tertiary
-                          } border-b ${
-                            isDark ? "border-gray-700" : "border-gray-200"
-                          }`}
-                        >
-                          Sort by
-                        </div>
-                        <button
-                          onClick={() => {
-                            setSortBy("updated");
-                            setShowFilterDropdown(false);
-                          }}
-                          className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-colors flex items-center justify-between ${
-                            sortBy === "updated"
-                              ? isDark
-                                ? "bg-gray-700 text-white"
-                                : "bg-gray-100 text-gray-900"
-                              : isDark
-                              ? "hover:bg-gray-700 text-gray-300"
-                              : "hover:bg-gray-50 text-gray-700"
-                          }`}
-                        >
-                          Recently Updated
-                          {sortBy === "updated" && (
-                            <div className="w-1.5 h-1.5 rounded-full bg-current" />
-                          )}
-                        </button>
-                        <button
-                          onClick={() => {
-                            setSortBy("created");
-                            setShowFilterDropdown(false);
-                          }}
-                          className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-colors flex items-center justify-between ${
-                            sortBy === "created"
-                              ? isDark
-                                ? "bg-gray-700 text-white"
-                                : "bg-gray-100 text-gray-900"
-                              : isDark
-                              ? "hover:bg-gray-700 text-gray-300"
-                              : "hover:bg-gray-50 text-gray-700"
-                          }`}
-                        >
-                          Recently Created
-                          {sortBy === "created" && (
-                            <div className="w-1.5 h-1.5 rounded-full bg-current" />
-                          )}
-                        </button>
-                        <button
-                          onClick={() => {
-                            setSortBy("name");
-                            setShowFilterDropdown(false);
-                          }}
-                          className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-colors flex items-center justify-between ${
-                            sortBy === "name"
-                              ? isDark
-                                ? "bg-gray-700 text-white"
-                                : "bg-gray-100 text-gray-900"
-                              : isDark
-                              ? "hover:bg-gray-700 text-gray-300"
-                              : "hover:bg-gray-50 text-gray-700"
-                          }`}
-                        >
-                          Name A-Z
-                          {sortBy === "name" && (
-                            <div className="w-1.5 h-1.5 rounded-full bg-current" />
-                          )}
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* View Toggle */}
-                <div
-                  className={`flex items-center border rounded-md overflow-hidden h-9 ${
-                    isDark ? "border-gray-600" : "border-gray-200"
-                  }`}
-                  style={{ borderRadius: "6px" }}
-                >
-                  <button
-                    onClick={() => setViewMode("grid")}
-                    className={`px-2.5 py-1.5 transition-colors cursor-pointer ${
-                      viewMode === "grid"
-                        ? isDark
-                          ? "bg-gray-700 text-white"
-                          : "bg-gray-100 text-gray-900"
-                        : isDark
-                        ? "text-gray-400 hover:text-white hover:bg-gray-800"
-                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                    }`}
-                  >
-                    <Grid3X3 className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={() => setViewMode("list")}
-                    className={`px-2.5 py-1.5 transition-colors border-l cursor-pointer ${
-                      isDark ? "border-gray-600" : "border-gray-200"
-                    } ${
-                      viewMode === "list"
-                        ? isDark
-                          ? "bg-gray-700 text-white"
-                          : "bg-gray-100 text-gray-900"
-                        : isDark
-                        ? "text-gray-400 hover:text-white hover:bg-gray-800"
-                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                    }`}
-                  >
-                    <List className="h-4 w-4" />
-                  </button>
-                </div>
-
-                {/* Add New Button */}
-                <Button
-                  onClick={createNewDocumentation}
-                  size="sm"
-                  className={`px-4 py-1.5 h-9 font-medium cursor-pointer ${
-                    isDark
-                      ? "bg-white text-black hover:bg-gray-200"
-                      : "bg-black text-white hover:bg-gray-800"
-                  }`}
-                  style={{ borderRadius: "6px" }}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add New
-                </Button>
-              </div>
+        {/* Page Header */}
+        <div className="py-8">
+          {/* Search and Controls */}
+          <div className="flex items-center gap-3">
+            {/* Search Input - Full Width */}
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 z-10" />
+              <Input
+                placeholder="Find documentation..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 py-1.5 text-sm focus:ring-0 focus:outline-none cursor-pointer h-9"
+                style={{
+                  borderRadius: "6px",
+                  borderColor: isDark
+                    ? "rgb(55, 65, 81)"
+                    : "rgb(235, 235, 235)",
+                  backgroundColor: isDark ? "rgb(17, 24, 39)" : "white",
+                  border: `1px solid ${
+                    isDark ? "rgb(55, 65, 81)" : "rgb(235, 235, 235)"
+                  }`,
+                  boxShadow: "none",
+                }}
+              />
             </div>
 
-            {filteredProjects.length === 0 && !searchQuery ? (
-              /* Empty state */
-              <div className="py-24 text-center">
+            {/* Filter Button */}
+            <div className="relative">
+              <Button
+                onClick={() => setShowFilterDropdown(!showFilterDropdown)}
+                variant="outline"
+                size="sm"
+                className={`px-3 py-1.5 h-9 cursor-pointer ${
+                  isDark
+                    ? "bg-transparent border-gray-600 text-gray-300 hover:bg-gray-800"
+                    : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
+                }`}
+                style={{ borderRadius: "6px" }}
+              >
+                <Filter className="h-4 w-4" />
+              </Button>
+
+              {/* Filter Dropdown */}
+              {showFilterDropdown && (
                 <div
-                  className={`w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center ${
-                    isDark ? "bg-gray-800/50" : "bg-gray-100"
+                  className={`absolute top-full mt-2 right-0 w-48 border rounded-xl shadow-xl z-50 ${
+                    isDark
+                      ? "border-gray-700 bg-gray-800"
+                      : "border-gray-200 bg-white"
                   }`}
+                  style={{ borderRadius: "12px" }}
                 >
-                  <FileText
-                    className={`h-8 w-8 ${themeClasses.text.tertiary}`}
-                  />
+                  <div className="p-1">
+                    <div
+                      className={`px-3 py-2 text-xs font-medium ${
+                        themeClasses.text.tertiary
+                      } border-b ${
+                        isDark ? "border-gray-700" : "border-gray-200"
+                      }`}
+                    >
+                      Sort by
+                    </div>
+                    <button
+                      onClick={() => {
+                        setSortBy("updated");
+                        setShowFilterDropdown(false);
+                      }}
+                      className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-colors flex items-center justify-between ${
+                        sortBy === "updated"
+                          ? isDark
+                            ? "bg-gray-700 text-white"
+                            : "bg-gray-100 text-gray-900"
+                          : isDark
+                          ? "hover:bg-gray-700 text-gray-300"
+                          : "hover:bg-gray-50 text-gray-700"
+                      }`}
+                    >
+                      Recently Updated
+                      {sortBy === "updated" && (
+                        <div className="w-1.5 h-1.5 rounded-full bg-current" />
+                      )}
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSortBy("created");
+                        setShowFilterDropdown(false);
+                      }}
+                      className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-colors flex items-center justify-between ${
+                        sortBy === "created"
+                          ? isDark
+                            ? "bg-gray-700 text-white"
+                            : "bg-gray-100 text-gray-900"
+                          : isDark
+                          ? "hover:bg-gray-700 text-gray-300"
+                          : "hover:bg-gray-50 text-gray-700"
+                      }`}
+                    >
+                      Recently Created
+                      {sortBy === "created" && (
+                        <div className="w-1.5 h-1.5 rounded-full bg-current" />
+                      )}
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSortBy("name");
+                        setShowFilterDropdown(false);
+                      }}
+                      className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-colors flex items-center justify-between ${
+                        sortBy === "name"
+                          ? isDark
+                            ? "bg-gray-700 text-white"
+                            : "bg-gray-100 text-gray-900"
+                          : isDark
+                          ? "hover:bg-gray-700 text-gray-300"
+                          : "hover:bg-gray-50 text-gray-700"
+                      }`}
+                    >
+                      Name A-Z
+                      {sortBy === "name" && (
+                        <div className="w-1.5 h-1.5 rounded-full bg-current" />
+                      )}
+                    </button>
+                  </div>
                 </div>
-                <h3
-                  className={`text-xl font-semibold ${themeClasses.text.primary} mb-3`}
+              )}
+            </div>
+
+            {/* View Toggle */}
+            <div
+              className={`flex items-center border rounded-md overflow-hidden h-9 ${
+                isDark ? "border-gray-600" : "border-gray-200"
+              }`}
+              style={{ borderRadius: "6px" }}
+            >
+              <button
+                onClick={() => setViewMode("grid")}
+                className={`px-2.5 py-1.5 transition-colors cursor-pointer ${
+                  viewMode === "grid"
+                    ? isDark
+                      ? "bg-gray-700 text-white"
+                      : "bg-gray-100 text-gray-900"
+                    : isDark
+                    ? "text-gray-400 hover:text-white hover:bg-gray-800"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                }`}
+              >
+                <Grid3X3 className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => setViewMode("list")}
+                className={`px-2.5 py-1.5 transition-colors border-l cursor-pointer ${
+                  isDark ? "border-gray-600" : "border-gray-200"
+                } ${
+                  viewMode === "list"
+                    ? isDark
+                      ? "bg-gray-700 text-white"
+                      : "bg-gray-100 text-gray-900"
+                    : isDark
+                    ? "text-gray-400 hover:text-white hover:bg-gray-800"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                }`}
+              >
+                <List className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Add New Button */}
+            <Button
+              onClick={createNewDocumentation}
+              size="sm"
+              className={`px-4 py-1.5 h-9 font-medium cursor-pointer ${
+                isDark
+                  ? "bg-white text-black hover:bg-gray-200"
+                  : "bg-black text-white hover:bg-gray-800"
+              }`}
+              style={{ borderRadius: "6px" }}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add New
+            </Button>
+          </div>
+        </div>
+
+        {filteredProjects.length === 0 && !searchQuery ? (
+          /* Empty state */
+          <div className="py-24 text-center">
+            <div
+              className={`w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center ${
+                isDark ? "bg-gray-800/50" : "bg-gray-100"
+              }`}
+            >
+              <FileText className={`h-8 w-8 ${themeClasses.text.tertiary}`} />
+            </div>
+            <h3
+              className={`text-xl font-semibold ${themeClasses.text.primary} mb-3`}
+            >
+              No documentation yet
+            </h3>
+            <p
+              className={`${themeClasses.text.secondary} mb-8 max-w-md mx-auto`}
+            >
+              Create your first documentation from your API collections.
+            </p>
+            <Button
+              onClick={createNewDocumentation}
+              className={`${
+                isDark
+                  ? "bg-white text-black hover:bg-gray-200"
+                  : "bg-black text-white hover:bg-gray-800"
+              }`}
+              style={{ borderRadius: "6px" }}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Create Documentation
+            </Button>
+          </div>
+        ) : searchQuery && filteredProjects.length === 0 ? (
+          /* Search no results */
+          <div className="py-24 text-center">
+            <div className="max-w-md mx-auto">
+              <div
+                className={`w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center ${
+                  isDark ? "bg-gray-800/50" : "bg-gray-100"
+                }`}
+              >
+                <Search className={`h-8 w-8 ${themeClasses.text.tertiary}`} />
+              </div>
+              <h3
+                className={`text-2xl font-semibold ${themeClasses.text.primary} mb-3`}
+              >
+                No results for "{searchQuery}"
+              </h3>
+              <p
+                className={`text-lg ${themeClasses.text.secondary} mb-8 leading-relaxed`}
+              >
+                Try adjusting your search or create new documentation.
+              </p>
+              <div className="flex items-center justify-center gap-4">
+                <Button
+                  onClick={() => setSearchQuery("")}
+                  variant="outline"
+                  style={{ borderRadius: "8px" }}
                 >
-                  No documentation yet
-                </h3>
-                <p
-                  className={`${themeClasses.text.secondary} mb-8 max-w-md mx-auto`}
-                >
-                  Create your first documentation from your API collections.
-                </p>
+                  Clear search
+                </Button>
                 <Button
                   onClick={createNewDocumentation}
                   className={`${
                     isDark
-                      ? "bg-white text-black hover:bg-gray-200"
+                      ? "bg-white text-black hover:bg-gray-100"
                       : "bg-black text-white hover:bg-gray-800"
                   }`}
-                  style={{ borderRadius: "6px" }}
+                  style={{ borderRadius: "8px" }}
                 >
-                  <Plus className="h-4 w-4 mr-2" />
                   Create Documentation
                 </Button>
               </div>
-            ) : searchQuery && filteredProjects.length === 0 ? (
-              /* Search no results */
-              <div className="py-24 text-center">
-                <div className="max-w-md mx-auto">
-                  <div
-                    className={`w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center ${
-                      isDark ? "bg-gray-800/50" : "bg-gray-100"
-                    }`}
-                  >
-                    <Search
-                      className={`h-8 w-8 ${themeClasses.text.tertiary}`}
-                    />
-                  </div>
-                  <h3
-                    className={`text-2xl font-semibold ${themeClasses.text.primary} mb-3`}
-                  >
-                    No results for "{searchQuery}"
-                  </h3>
-                  <p
-                    className={`text-lg ${themeClasses.text.secondary} mb-8 leading-relaxed`}
-                  >
-                    Try adjusting your search or create new documentation.
-                  </p>
-                  <div className="flex items-center justify-center gap-4">
-                    <Button
-                      onClick={() => setSearchQuery("")}
-                      variant="outline"
-                      style={{ borderRadius: "8px" }}
-                    >
-                      Clear search
-                    </Button>
-                    <Button
-                      onClick={createNewDocumentation}
-                      className={`${
-                        isDark
-                          ? "bg-white text-black hover:bg-gray-100"
-                          : "bg-black text-white hover:bg-gray-800"
-                      }`}
-                      style={{ borderRadius: "8px" }}
-                    >
-                      Create Documentation
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              /* Documentation Projects */
-              <div className="pb-12">
-                {/* Results Header */}
-                <div className="mb-6">
-                  <p className={`text-sm ${themeClasses.text.secondary}`}>
-                    {filteredProjects.length} project
-                    {filteredProjects.length !== 1 ? "s" : ""}
-                    {searchQuery && ` matching "${searchQuery}"`}
-                  </p>
-                </div>
-
-                {/* Projects Grid/List */}
-                <div
-                  className={
-                    viewMode === "grid"
-                      ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-                      : `border rounded-lg overflow-hidden ${
-                          isDark
-                            ? "border-gray-800 bg-gray-900/50"
-                            : "border-gray-200 bg-white"
-                        }`
-                  }
-                  style={
-                    viewMode === "list" ? { borderRadius: "12px" } : undefined
-                  }
-                >
-                  {filteredProjects.map((project) => (
-                    <ProjectCard
-                      key={project.id}
-                      project={project}
-                      collections={collections}
-                      viewMode={viewMode}
-                      onView={() => viewDocumentation(project)}
-                      onEdit={() => {
-                        /* TODO: Edit project */
-                      }}
-                      onDuplicate={() => duplicateProject(project)}
-                      onDelete={() => deleteProject(project)}
-                      isDark={isDark}
-                      themeClasses={themeClasses}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
+            </div>
           </div>
-          {/* End Page Content */}
-        </div>
-        {/* End Main Content */}
+        ) : (
+          /* Documentation Projects */
+          <div className="pb-12">
+            {/* Results Header */}
+            <div className="mb-6">
+              <p className={`text-sm ${themeClasses.text.secondary}`}>
+                {filteredProjects.length} project
+                {filteredProjects.length !== 1 ? "s" : ""}
+                {searchQuery && ` matching "${searchQuery}"`}
+              </p>
+            </div>
+
+            {/* Projects Grid/List */}
+            <div
+              className={
+                viewMode === "grid"
+                  ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                  : `border rounded-lg overflow-hidden ${
+                      isDark
+                        ? "border-gray-800 bg-gray-900/50"
+                        : "border-gray-200 bg-white"
+                    }`
+              }
+              style={viewMode === "list" ? { borderRadius: "12px" } : undefined}
+            >
+              {filteredProjects.map((project) => (
+                <ProjectCard
+                  key={project.id}
+                  project={project}
+                  collections={collections}
+                  viewMode={viewMode}
+                  onView={() => viewDocumentation(project)}
+                  onEdit={() => {
+                    /* TODO: Edit project */
+                  }}
+                  onDuplicate={() => duplicateProject(project)}
+                  onDelete={() => deleteProject(project)}
+                  isDark={isDark}
+                  themeClasses={themeClasses}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
+      {/* End Page Content */}
       {/* Create Documentation Modal */}
       <DocGeneratorModal
         open={showCreateModal}

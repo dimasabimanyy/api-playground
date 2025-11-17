@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Plus,
   FolderOpen,
@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import CreateNew from "../button/CreateNew";
 import ImportModal from "../modals/ImportModal";
+import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 
 export default function TwoPanelSidebar({
   sidebarCollapsed,
@@ -33,6 +35,7 @@ export default function TwoPanelSidebar({
   activeMenuTab,
   onNavItemClick,
   contentOpen = true,
+  setContentOpen = () => {},
   collections,
   collectionsLoading,
   expandedCollections,
@@ -56,7 +59,16 @@ export default function TwoPanelSidebar({
   onResizeStart,
   isResizing,
 }) {
+  const pathname = usePathname();
   const [showImportModal, setShowImportModal] = useState(false);
+
+  console.log("pathname: ", pathname);
+
+  useEffect(() => {
+    if (pathname === "/docs") {
+      setContentOpen(false);
+    }
+  }, [pathname]);
 
   // Skeleton loading component
   const CollectionSkeleton = () => (
@@ -67,7 +79,7 @@ export default function TwoPanelSidebar({
         <div className="flex-1 h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
         <div className="w-3 h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
       </div>
-      
+
       {/* Collection header skeleton 2 */}
       <div className="flex items-center gap-2 py-1 px-1">
         <div className="w-3 h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
@@ -104,76 +116,76 @@ export default function TwoPanelSidebar({
     }
   };
 
-  if (sidebarCollapsed) {
-    return (
-      <div
-        className={`border-r ${themeClasses.border.primary} flex flex-col items-center py-4 px-2 gap-1 flex-shrink-0`}
-      >
-        {/* Navigation Icons */}
-        <div className="flex flex-col gap-1">
-          {sidebarMenuItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeMenuTab === item.id && contentOpen;
-            return (
-              <div key={item.id} className="relative group">
-                <div
-                  className={`flex flex-col items-center gap-1 cursor-pointer rounded-lg transition-all duration-200 pt-3 pb-2 px-1 ${
-                    isActive
-                      ? `${isDark ? "bg-gray-800" : "bg-gray-100"}`
-                      : `hover:${isDark ? "bg-gray-800/30" : "bg-gray-100/50"}`
-                  }`}
-                  onClick={() => onNavItemClick(item.id)}
-                >
-                  <button
-                    className={`flex items-center justify-center rounded-lg transition-all duration-200 cursor-pointer ${
-                      isActive
-                        ? themeClasses.text.primary
-                        : `${themeClasses.text.secondary} group-hover:${themeClasses.text.primary}`
-                    }`}
-                    style={{ borderRadius: "6px" }}
-                  >
-                    <Icon className="h-4 w-4" />
-                  </button>
+  // if (sidebarCollapsed) {
+  //   return (
+  //     <div
+  //       className={`border-r ${themeClasses.border.primary} flex flex-col items-center py-4 px-2 gap-1 flex-shrink-0`}
+  //     >
+  //       {/* Navigation Icons */}
+  //       <div className="flex flex-col gap-1">
+  //         {sidebarMenuItems.map((item) => {
+  //           const Icon = item.icon;
+  //           const isActive = activeMenuTab === item.id && contentOpen;
+  //           return (
+  //             <div key={item.id} className="relative group">
+  //               <div
+  //                 className={`flex flex-col items-center gap-1 cursor-pointer rounded-lg transition-all duration-200 pt-3 pb-2 px-1 ${
+  //                   isActive
+  //                     ? `${isDark ? "bg-gray-800" : "bg-gray-100"}`
+  //                     : `hover:${isDark ? "bg-gray-800/30" : "bg-gray-100/50"}`
+  //                 }`}
+  //                 onClick={() => onNavItemClick(item.id)}
+  //               >
+  //                 <button
+  //                   className={`flex items-center justify-center rounded-lg transition-all duration-200 cursor-pointer ${
+  //                     isActive
+  //                       ? themeClasses.text.primary
+  //                       : `${themeClasses.text.secondary} group-hover:${themeClasses.text.primary}`
+  //                   }`}
+  //                   style={{ borderRadius: "6px" }}
+  //                 >
+  //                   <Icon className="h-4 w-4" />
+  //                 </button>
 
-                  <span
-                    className={`text-[10px] transition-colors ${
-                      isActive
-                        ? themeClasses.text.primary
-                        : `${themeClasses.text.secondary} group-hover:${themeClasses.text.primary}`
-                    }`}
-                  >
-                    {item.label}
-                  </span>
-                </div>
+  //                 <span
+  //                   className={`text-[10px] transition-colors ${
+  //                     isActive
+  //                       ? themeClasses.text.primary
+  //                       : `${themeClasses.text.secondary} group-hover:${themeClasses.text.primary}`
+  //                   }`}
+  //                 >
+  //                   {item.label}
+  //                 </span>
+  //               </div>
 
-                {/* Tooltip */}
-                <div
-                  className={`absolute left-full ml-2 px-2 py-1 text-xs rounded whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 ${
-                    isDark
-                      ? "bg-gray-100 text-gray-900"
-                      : "bg-gray-900 text-white"
-                  }`}
-                  style={{ top: "50%", transform: "translateY(-50%)" }}
-                >
-                  {item.label}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+  //               {/* Tooltip */}
+  //               <div
+  //                 className={`absolute left-full ml-2 px-2 py-1 text-xs rounded whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 ${
+  //                   isDark
+  //                     ? "bg-gray-100 text-gray-900"
+  //                     : "bg-gray-900 text-white"
+  //                 }`}
+  //                 style={{ top: "50%", transform: "translateY(-50%)" }}
+  //               >
+  //                 {item.label}
+  //               </div>
+  //             </div>
+  //           );
+  //         })}
+  //       </div>
 
-        {/* Create Button */}
-        <div>
-          <CreateNew
-            isDark={isDark}
-            themeClasses={themeClasses}
-            createNewTab={createNewTab}
-            setCreateCollectionDialogOpen={setCreateCollectionDialogOpen}
-          />
-        </div>
-      </div>
-    );
-  }
+  //       {/* Create Button */}
+  //       <div>
+  //         <CreateNew
+  //           isDark={isDark}
+  //           themeClasses={themeClasses}
+  //           createNewTab={createNewTab}
+  //           setCreateCollectionDialogOpen={setCreateCollectionDialogOpen}
+  //         />
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <>
@@ -286,114 +298,119 @@ export default function TwoPanelSidebar({
                       <CollectionSkeleton />
                     ) : (
                       Object.values(collections).map((collection) => {
-                      const isExpanded = expandedCollections.has(collection.id);
-                      return (
-                        <div key={collection.id} className="space-y-1">
-                          {/* Collection Header */}
-                          <div
-                            className={`group relative flex items-center gap-2 py-1 transition-all duration-200 cursor-pointer hover:${
-                              isDark ? "bg-gray-800/30" : "bg-gray-100/50"
-                            } rounded-lg`}
-                            onClick={() => toggleCollection(collection.id)}
-                          >
-                            {/* Expand/Collapse Chevron */}
-                            <button className="p-0.5 rounded transition-all duration-200">
-                              <ChevronDown
-                                className={`h-3 w-3 transition-transform duration-200 cursor-pointer ${
-                                  isExpanded ? "rotate-0" : "-rotate-90"
-                                } ${themeClasses.text.tertiary}`}
-                              />
-                            </button>
-
-                            {/* Collection Name */}
-                            <div className="flex-1 min-w-0">
-                              {editingCollection === collection.id ? (
-                                <input
-                                  type="text"
-                                  defaultValue={collection.name}
-                                  onBlur={() => setEditingCollection(null)}
-                                  onKeyDown={(e) => {
-                                    if (e.key === "Enter")
-                                      setEditingCollection(null);
-                                  }}
-                                  className={`w-full bg-transparent text-sm font-medium ${themeClasses.text.primary} border-none outline-none`}
+                        const isExpanded = expandedCollections.has(
+                          collection.id
+                        );
+                        return (
+                          <div key={collection.id} className="space-y-1">
+                            {/* Collection Header */}
+                            <div
+                              className={`group relative flex items-center gap-2 py-1 transition-all duration-200 cursor-pointer hover:${
+                                isDark ? "bg-gray-800/30" : "bg-gray-100/50"
+                              } rounded-lg`}
+                              onClick={() => toggleCollection(collection.id)}
+                            >
+                              {/* Expand/Collapse Chevron */}
+                              <button className="p-0.5 rounded transition-all duration-200">
+                                <ChevronDown
+                                  className={`h-3 w-3 transition-transform duration-200 cursor-pointer ${
+                                    isExpanded ? "rotate-0" : "-rotate-90"
+                                  } ${themeClasses.text.tertiary}`}
                                 />
-                              ) : (
-                                <span
-                                  className={`text-sm font-medium ${themeClasses.text.primary} truncate block`}
-                                >
-                                  {collection.name}
-                                </span>
-                              )}
-                            </div>
+                              </button>
 
-                            {/* Collection Options */}
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <button
-                                  className={`p-1 rounded transition-all duration-200 opacity-0 group-hover:opacity-100 hover:${
-                                    isDark ? "bg-gray-700" : "bg-gray-200"
-                                  }`}
-                                >
-                                  <MoreHorizontal className="h-3 w-3" />
-                                </button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem
-                                  onClick={() =>
-                                    setEditingCollection(collection.id)
-                                  }
-                                >
-                                  <Edit className="h-3 w-3 mr-2" />
-                                  Rename
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  onClick={() =>
-                                    deleteCollection(collection.id)
-                                  }
-                                  className="text-red-600"
-                                >
-                                  <Trash2 className="h-3 w-3 mr-2" />
-                                  Delete
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </div>
-
-                          {/* Collection Requests */}
-                          {isExpanded && (
-                            <div className="ml-6 space-y-0.5">
-                              {collection.requests?.map((request) => (
-                                <button
-                                  key={request.id}
-                                  onClick={() => loadRequest(request)}
-                                  className={`w-full text-left px-2 py-1 text-sm rounded transition-all duration-200 hover:${
-                                    isDark ? "bg-gray-800/30" : "bg-gray-100/50"
-                                  } ${themeClasses.text.secondary} truncate`}
-                                >
+                              {/* Collection Name */}
+                              <div className="flex-1 min-w-0">
+                                {editingCollection === collection.id ? (
+                                  <input
+                                    type="text"
+                                    defaultValue={collection.name}
+                                    onBlur={() => setEditingCollection(null)}
+                                    onKeyDown={(e) => {
+                                      if (e.key === "Enter")
+                                        setEditingCollection(null);
+                                    }}
+                                    className={`w-full bg-transparent text-sm font-medium ${themeClasses.text.primary} border-none outline-none`}
+                                  />
+                                ) : (
                                   <span
-                                    className={`inline-block w-12 text-xs font-mono ${
-                                      request.method === "GET"
-                                        ? "text-green-600"
-                                        : request.method === "POST"
-                                        ? "text-blue-600"
-                                        : request.method === "PUT"
-                                        ? "text-yellow-600"
-                                        : request.method === "DELETE"
-                                        ? "text-red-600"
-                                        : "text-gray-500"
+                                    className={`text-sm font-medium ${themeClasses.text.primary} truncate block`}
+                                  >
+                                    {collection.name}
+                                  </span>
+                                )}
+                              </div>
+
+                              {/* Collection Options */}
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <button
+                                    className={`p-1 rounded transition-all duration-200 opacity-0 group-hover:opacity-100 hover:${
+                                      isDark ? "bg-gray-700" : "bg-gray-200"
                                     }`}
                                   >
-                                    {request.method}
-                                  </span>
-                                  {request.name || "Untitled Request"}
-                                </button>
-                              ))}
+                                    <MoreHorizontal className="h-3 w-3" />
+                                  </button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuItem
+                                    onClick={() =>
+                                      setEditingCollection(collection.id)
+                                    }
+                                  >
+                                    <Edit className="h-3 w-3 mr-2" />
+                                    Rename
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    onClick={() =>
+                                      deleteCollection(collection.id)
+                                    }
+                                    className="text-red-600"
+                                  >
+                                    <Trash2 className="h-3 w-3 mr-2" />
+                                    Delete
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
                             </div>
-                          )}
-                        </div>
-                      );
-                    }))}
+
+                            {/* Collection Requests */}
+                            {isExpanded && (
+                              <div className="ml-6 space-y-0.5">
+                                {collection.requests?.map((request) => (
+                                  <button
+                                    key={request.id}
+                                    onClick={() => loadRequest(request)}
+                                    className={`w-full text-left px-2 py-1 text-sm rounded transition-all duration-200 hover:${
+                                      isDark
+                                        ? "bg-gray-800/30"
+                                        : "bg-gray-100/50"
+                                    } ${themeClasses.text.secondary} truncate`}
+                                  >
+                                    <span
+                                      className={`inline-block w-12 text-xs font-mono ${
+                                        request.method === "GET"
+                                          ? "text-green-600"
+                                          : request.method === "POST"
+                                          ? "text-blue-600"
+                                          : request.method === "PUT"
+                                          ? "text-yellow-600"
+                                          : request.method === "DELETE"
+                                          ? "text-red-600"
+                                          : "text-gray-500"
+                                      }`}
+                                    >
+                                      {request.method}
+                                    </span>
+                                    {request.name || "Untitled Request"}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })
+                    )}
                   </div>
                 )}
 

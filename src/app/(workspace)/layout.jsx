@@ -1230,6 +1230,7 @@ const layout = ({ children }) => {
               activeMenuTab={activeMenuTab}
               onNavItemClick={handleNavItemClick}
               contentOpen={sidebarContentOpen}
+              setContentOpen={setSidebarContentOpen}
               contentWidth={sidebarContentWidth}
               onResizeStart={handleSidebarResizeStart}
               isResizing={isSidebarResizing}
