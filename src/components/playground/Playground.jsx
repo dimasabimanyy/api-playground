@@ -88,6 +88,12 @@ import DocGeneratorModal from "@/components/docs/DocGeneratorModal";
 import SearchInput from "@/components/ui/SearchInput";
 import ImportModal from "@/components/modals/ImportModal";
 import ExportModal from "@/components/modals/ExportModal";
+import CreateEnvironmentModal from "@/components/modals/CreateEnvironmentModal";
+import AddVariableModal from "@/components/modals/AddVariableModal";
+import EditVariableModal from "@/components/modals/EditVariableModal";
+import SettingsModal from "@/components/modals/SettingsModal";
+import CreateCollectionModal from "@/components/modals/CreateCollectionModal";
+import SaveToCollectionModal from "@/components/modals/SaveToCollectionModal";
 import DashboardHeader from "../header/DashboardHeader";
 import { sidebarMenuItems } from "@/config/sidebar";
 
@@ -275,8 +281,6 @@ export default function Playground() {
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
   const [createCollectionDialogOpen, setCreateCollectionDialogOpen] =
     useState(false);
-  const [newCollectionName, setNewCollectionName] = useState("");
-  const [creatingCollection, setCreatingCollection] = useState(false);
   const [saveToCollectionModalOpen, setSaveToCollectionModalOpen] =
     useState(false);
   const [pendingRequestToSave, setPendingRequestToSave] = useState(null);
@@ -296,15 +300,10 @@ export default function Playground() {
     });
   };
 
-  const handleCreateEnvironment = async () => {
-    if (!newEnvironmentName.trim()) return;
-
+  const handleCreateEnvironment = async ({ name, description }) => {
     try {
-      const newEnv = createEnvironment(newEnvironmentName, []);
+      const newEnv = createEnvironment(name, []);
       setEnvironments((prev) => ({ ...prev, [newEnv.id]: newEnv }));
-      setCreateEnvironmentDialogOpen(false);
-      setNewEnvironmentName("");
-      setNewEnvironmentDescription("");
       setNewEnvironmentColor("blue");
     } catch (error) {
       console.error("Failed to create environment:", error);
@@ -330,68 +329,28 @@ export default function Playground() {
 
   const handleAddVariable = (envId) => {
     setSelectedEnvironmentForVariable(envId);
-    setNewVariableKey("");
-    setNewVariableValue("");
-    setNewVariableDescription("");
     setAddVariableDialogOpen(true);
   };
 
   const handleEditVariable = (envId, variableIndex, variable) => {
     setSelectedEnvironmentForVariable(envId);
     setSelectedVariableIndex(variableIndex);
-    setNewVariableKey(variable.key);
-    setNewVariableValue(variable.value);
-    setNewVariableDescription(variable.description || "");
     setEditVariableDialogOpen(true);
   };
 
-  const handleSaveNewVariable = async () => {
-    if (!newVariableKey.trim() || !selectedEnvironmentForVariable) return;
-
+  const handleSaveNewVariable = async (envId, variable) => {
     try {
-      const updatedEnv = addVariableToEnvironment(
-        selectedEnvironmentForVariable,
-        {
-          key: newVariableKey,
-          value: newVariableValue,
-          description: newVariableDescription,
-        }
-      );
-
+      const updatedEnv = addVariableToEnvironment(envId, variable);
       setEnvironments((prev) => ({ ...prev, [updatedEnv.id]: updatedEnv }));
-      setAddVariableDialogOpen(false);
-      setNewVariableKey("");
-      setNewVariableValue("");
-      setNewVariableDescription("");
     } catch (error) {
       console.error("Failed to add variable:", error);
     }
   };
 
-  const handleSaveEditedVariable = async () => {
-    if (
-      !newVariableKey.trim() ||
-      selectedVariableIndex === null ||
-      !selectedEnvironmentForVariable
-    )
-      return;
-
+  const handleSaveEditedVariable = async (envId, variableIndex, variable) => {
     try {
-      const updatedEnv = updateVariableInEnvironment(
-        selectedEnvironmentForVariable,
-        selectedVariableIndex,
-        {
-          key: newVariableKey,
-          value: newVariableValue,
-          description: newVariableDescription,
-        }
-      );
-
+      const updatedEnv = updateVariableInEnvironment(envId, variableIndex, variable);
       setEnvironments((prev) => ({ ...prev, [updatedEnv.id]: updatedEnv }));
-      setEditVariableDialogOpen(false);
-      setNewVariableKey("");
-      setNewVariableValue("");
-      setNewVariableDescription("");
       setSelectedVariableIndex(null);
     } catch (error) {
       console.error("Failed to update variable:", error);
@@ -548,13 +507,7 @@ export default function Playground() {
   const [selectedEnvironmentForVariable, setSelectedEnvironmentForVariable] =
     useState(null);
   const [selectedVariableIndex, setSelectedVariableIndex] = useState(null);
-  const [newEnvironmentName, setNewEnvironmentName] = useState("");
-  const [newEnvironmentDescription, setNewEnvironmentDescription] =
-    useState("");
   const [newEnvironmentColor, setNewEnvironmentColor] = useState("blue");
-  const [newVariableKey, setNewVariableKey] = useState("");
-  const [newVariableValue, setNewVariableValue] = useState("");
-  const [newVariableDescription, setNewVariableDescription] = useState("");
 
   // Load environments on mount
   useEffect(() => {
@@ -769,19 +722,12 @@ export default function Playground() {
     }
   };
 
-  const handleCreateCollection = async () => {
-    if (!newCollectionName.trim()) return;
-
-    setCreatingCollection(true);
+  const handleCreateCollection = async (collectionName) => {
     try {
-      console.log("Creating collection:", newCollectionName);
-      await createCollection(newCollectionName, "", "blue");
-      setCreateCollectionDialogOpen(false);
-      setNewCollectionName("");
+      console.log("Creating collection:", collectionName);
+      await createCollection(collectionName, "", "blue");
     } catch (err) {
       console.error("Failed to create collection:", err);
-    } finally {
-      setCreatingCollection(false);
     }
   };
 
@@ -1533,189 +1479,29 @@ export default function Playground() {
       </div>
 
       {/* Create Environment Dialog */}
-      <Dialog
+      <CreateEnvironmentModal
         open={createEnvironmentDialogOpen}
         onOpenChange={setCreateEnvironmentDialogOpen}
-      >
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-base font-medium">
-              Create Environment
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3 pt-3">
-            <div>
-              <Input
-                placeholder="Environment name"
-                value={newEnvironmentName}
-                onChange={(e) => setNewEnvironmentName(e.target.value)}
-                className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
-                onKeyPress={(e) => {
-                  if (e.key === "Enter") {
-                    handleCreateEnvironment();
-                  }
-                }}
-              />
-            </div>
-            <div>
-              <Input
-                placeholder="Description (optional)"
-                value={newEnvironmentDescription}
-                onChange={(e) => setNewEnvironmentDescription(e.target.value)}
-                className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
-              />
-            </div>
-            <div className="flex justify-end gap-2 pt-1">
-              <Button
-                variant="outline"
-                onClick={() => setCreateEnvironmentDialogOpen(false)}
-                size="sm"
-                className="px-3 text-xs"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleCreateEnvironment}
-                size="sm"
-                className="px-3 text-xs"
-                disabled={!newEnvironmentName.trim()}
-              >
-                Create
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+        onCreateEnvironment={handleCreateEnvironment}
+      />
 
       {/* Add Variable Dialog */}
-      <Dialog
+      <AddVariableModal
         open={addVariableDialogOpen}
         onOpenChange={setAddVariableDialogOpen}
-      >
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-base font-medium">
-              Add Variable
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3 pt-3">
-            <div>
-              <Input
-                placeholder="Variable key (e.g., API_KEY)"
-                value={newVariableKey}
-                onChange={(e) => setNewVariableKey(e.target.value)}
-                className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
-              />
-            </div>
-            <div>
-              <Input
-                placeholder="Variable value"
-                value={newVariableValue}
-                onChange={(e) => setNewVariableValue(e.target.value)}
-                className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
-                type={
-                  newVariableKey.toLowerCase().includes("key") ||
-                  newVariableKey.toLowerCase().includes("token") ||
-                  newVariableKey.toLowerCase().includes("secret")
-                    ? "password"
-                    : "text"
-                }
-              />
-            </div>
-            <div>
-              <Input
-                placeholder="Description (optional)"
-                value={newVariableDescription}
-                onChange={(e) => setNewVariableDescription(e.target.value)}
-                className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
-              />
-            </div>
-            <div className="flex justify-end gap-2 pt-1">
-              <Button
-                variant="outline"
-                onClick={() => setAddVariableDialogOpen(false)}
-                size="sm"
-                className="px-3 text-xs"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleSaveNewVariable}
-                size="sm"
-                className="px-3 text-xs"
-                disabled={!newVariableKey.trim()}
-              >
-                Add
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+        onAddVariable={handleSaveNewVariable}
+        environmentId={selectedEnvironmentForVariable}
+      />
 
       {/* Edit Variable Dialog */}
-      <Dialog
+      <EditVariableModal
         open={editVariableDialogOpen}
         onOpenChange={setEditVariableDialogOpen}
-      >
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-base font-medium">
-              Edit Variable
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3 pt-3">
-            <div>
-              <Input
-                placeholder="Variable key (e.g., API_KEY)"
-                value={newVariableKey}
-                onChange={(e) => setNewVariableKey(e.target.value)}
-                className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
-              />
-            </div>
-            <div>
-              <Input
-                placeholder="Variable value"
-                value={newVariableValue}
-                onChange={(e) => setNewVariableValue(e.target.value)}
-                className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
-                type={
-                  newVariableKey.toLowerCase().includes("key") ||
-                  newVariableKey.toLowerCase().includes("token") ||
-                  newVariableKey.toLowerCase().includes("secret")
-                    ? "password"
-                    : "text"
-                }
-              />
-            </div>
-            <div>
-              <Input
-                placeholder="Description (optional)"
-                value={newVariableDescription}
-                onChange={(e) => setNewVariableDescription(e.target.value)}
-                className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
-              />
-            </div>
-            <div className="flex justify-end gap-2 pt-1">
-              <Button
-                variant="outline"
-                onClick={() => setEditVariableDialogOpen(false)}
-                size="sm"
-                className="px-3 text-xs"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleSaveEditedVariable}
-                size="sm"
-                className="px-3 text-xs"
-                disabled={!newVariableKey.trim()}
-              >
-                Save
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+        onEditVariable={handleSaveEditedVariable}
+        environmentId={selectedEnvironmentForVariable}
+        variableIndex={selectedVariableIndex}
+        variable={environments[selectedEnvironmentForVariable]?.variables?.[selectedVariableIndex]}
+      />
 
       {/* Docs Generator Modal */}
       <DocGeneratorModal
@@ -1736,261 +1522,25 @@ export default function Playground() {
       />
 
       {/* Settings Modal */}
-      <Dialog open={settingsModalOpen} onOpenChange={setSettingsModalOpen}>
-        <DialogContent
-          className={`max-w-2xl max-h-[80vh] overflow-y-auto ${
-            isDark ? "bg-gray-900 border-gray-700" : "bg-white border-gray-200"
-          }`}
-        >
-          <DialogHeader>
-            <DialogTitle
-              className={`text-xl font-semibold ${themeClasses.text.primary}`}
-            >
-              Settings & Preferences
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-6">
-            {/* Appearance Section */}
-            <div>
-              <h3
-                className={`text-sm font-semibold mb-3 ${themeClasses.text.primary}`}
-              >
-                Appearance
-              </h3>
-              <div className="space-y-3">
-                <div className={`p-4 rounded-lg ${themeClasses.card.base}`}>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p
-                        className={`text-sm font-medium ${themeClasses.text.primary}`}
-                      >
-                        Theme
-                      </p>
-                      <p className={`text-xs ${themeClasses.text.tertiary}`}>
-                        Choose your preferred color scheme
-                      </p>
-                    </div>
-                    <button
-                      onClick={toggleTheme}
-                      className={`p-2 rounded transition-all duration-200 ${themeClasses.button.ghost}`}
-                    >
-                      {isDark ? (
-                        <Sun className="h-4 w-4" />
-                      ) : (
-                        <Moon className="h-4 w-4" />
-                      )}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Editor Section */}
-            <div>
-              <h3
-                className={`text-sm font-semibold mb-3 ${themeClasses.text.primary}`}
-              >
-                Editor
-              </h3>
-              <div className="space-y-3">
-                <div className={`p-4 rounded-lg ${themeClasses.card.base}`}>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p
-                        className={`text-sm font-medium ${themeClasses.text.primary}`}
-                      >
-                        Font Size
-                      </p>
-                      <p className={`text-xs ${themeClasses.text.tertiary}`}>
-                        Adjust the editor font size
-                      </p>
-                    </div>
-                    <select
-                      className={`px-3 py-1 rounded text-sm ${themeClasses.input.base}`}
-                    >
-                      <option value="12">12px</option>
-                      <option value="14" selected>
-                        14px
-                      </option>
-                      <option value="16">16px</option>
-                    </select>
-                  </div>
-                </div>
-                <div className={`p-4 rounded-lg ${themeClasses.card.base}`}>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p
-                        className={`text-sm font-medium ${themeClasses.text.primary}`}
-                      >
-                        Auto-save
-                      </p>
-                      <p className={`text-xs ${themeClasses.text.tertiary}`}>
-                        Automatically save changes
-                      </p>
-                    </div>
-                    <button
-                      className={`w-10 h-6 rounded-full transition-colors ${
-                        isDark ? "bg-blue-600" : "bg-blue-500"
-                      } relative`}
-                    >
-                      <div className="w-4 h-4 bg-white rounded-full absolute top-1 right-1 transition-transform"></div>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* API Section */}
-            <div>
-              <h3
-                className={`text-sm font-semibold mb-3 ${themeClasses.text.primary}`}
-              >
-                API Defaults
-              </h3>
-              <div className="space-y-3">
-                <div className={`p-4 rounded-lg ${themeClasses.card.base}`}>
-                  <label
-                    className={`text-sm font-medium ${themeClasses.text.primary}`}
-                  >
-                    Default Base URL
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="https://api.example.com"
-                    className={`w-full mt-2 px-3 py-2 text-sm rounded ${themeClasses.input.base}`}
-                  />
-                </div>
-                <div className={`p-4 rounded-lg ${themeClasses.card.base}`}>
-                  <label
-                    className={`text-sm font-medium ${themeClasses.text.primary}`}
-                  >
-                    Request Timeout (ms)
-                  </label>
-                  <input
-                    type="number"
-                    placeholder="5000"
-                    className={`w-full mt-2 px-3 py-2 text-sm rounded ${themeClasses.input.base}`}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <SettingsModal
+        open={settingsModalOpen}
+        onOpenChange={setSettingsModalOpen}
+      />
 
       {/* Create Collection Dialog */}
-      <Dialog
+      <CreateCollectionModal
         open={createCollectionDialogOpen}
         onOpenChange={setCreateCollectionDialogOpen}
-      >
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-base font-medium">
-              Create Collection
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3 pt-3">
-            <div>
-              <Input
-                placeholder="Collection name"
-                value={newCollectionName}
-                onChange={(e) => setNewCollectionName(e.target.value)}
-                className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
-                disabled={creatingCollection}
-                onKeyPress={(e) => {
-                  if (e.key === "Enter") {
-                    handleCreateCollection();
-                  }
-                }}
-              />
-            </div>
-            <div className="flex justify-end gap-2 pt-1">
-              <Button
-                variant="outline"
-                onClick={() => setCreateCollectionDialogOpen(false)}
-                size="sm"
-                className="px-3 text-xs"
-                disabled={creatingCollection}
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleCreateCollection}
-                disabled={!newCollectionName.trim() || creatingCollection}
-                size="sm"
-                className="px-3 text-xs bg-black hover:bg-gray-800 text-white"
-              >
-                {creatingCollection ? (
-                  <>
-                    <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-                    Creating...
-                  </>
-                ) : (
-                  "Create"
-                )}
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+        onCreateCollection={handleCreateCollection}
+      />
 
       {/* Save to Collection Modal */}
-      <Dialog
+      <SaveToCollectionModal
         open={saveToCollectionModalOpen}
         onOpenChange={setSaveToCollectionModalOpen}
-      >
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-base font-medium">
-              Save Request
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 pt-3">
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                Choose a collection to save this request to:
-              </p>
-
-              <div className="space-y-2 max-h-64 overflow-y-auto">
-                {Object.values(collections).map((collection) => (
-                  <button
-                    key={collection.id}
-                    onClick={() => handleSaveToCollection(collection.id)}
-                    className="w-full text-left p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="h-8 w-8 rounded bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-                        <FolderOpen className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                      </div>
-                      <div>
-                        <div className="font-medium text-gray-900 dark:text-gray-100">
-                          {collection.name}
-                        </div>
-                        {collection.description && (
-                          <div className="text-xs text-gray-500 dark:text-gray-400">
-                            {collection.description}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-2 pt-2 border-t border-gray-200 dark:border-gray-700">
-              <Button
-                variant="outline"
-                onClick={() => setSaveToCollectionModalOpen(false)}
-                size="sm"
-                className="px-3 text-xs"
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+        collections={collections}
+        onSaveToCollection={handleSaveToCollection}
+      />
     </>
   );
 }
