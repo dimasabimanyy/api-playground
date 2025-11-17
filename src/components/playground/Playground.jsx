@@ -1191,907 +1191,806 @@ export default function Playground() {
   }
 
   return (
-    <div
-      className={`min-h-screen transition-colors duration-300 ${themeClasses.bg.primary} ${themeClasses.text.primary}`}
-    >
-      {/* Header - Theme Aware */}
-      <DashboardHeader layoutMode={layoutMode} setLayoutMode={setLayoutMode} />
-
-      {/* Main Content Layout - Theme Aware */}
-      <div className="flex h-[calc(100vh-3.5rem)] relative">
-        {/* Mobile Sidebar Overlay */}
-        {!sidebarCollapsed && (
-          <div
-            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-            onClick={() => setSidebarCollapsed(true)}
-          />
-        )}
-
+    <>
+      {/* Main Content Area */}
+      <div
+        className={`flex-1 flex flex-col ${
+          sidebarCollapsed ? "lg:ml-0" : "lg:ml-0"
+        } ml-0 lg:ml-0 w-full lg:w-auto`}
+      >
+        {/* Request Tabs - Flat Design */}
         <div
-          data-sidebar-container
-          className={`${
-            sidebarCollapsed
-              ? "w-16 lg:w-16"
-              : `lg:w-[${
-                  90 + (sidebarContentOpen ? sidebarContentWidth : 0)
-                }px]`
-          } ${
-            sidebarCollapsed
-              ? "-translate-x-full lg:translate-x-0"
-              : "translate-x-0"
-          } w-72 fixed lg:relative top-[3.5rem] lg:top-0 left-0 h-[calc(100vh-3.5rem)] lg:h-full border-r ${
-            themeClasses.border.primary
-          } ${themeClasses.bg.glass} ${
-            isSidebarResizing ? "" : "transition-all duration-300"
-          } z-50 lg:z-auto`}
-          style={
-            !sidebarCollapsed
-              ? {
-                  width: `${
-                    90 + (sidebarContentOpen ? sidebarContentWidth : 0)
-                  }px`,
-                }
-              : {}
-          }
+          className={`${themeClasses.bg.glass} border-b ${themeClasses.border.primary}`}
         >
-          <TwoPanelSidebar
-            sidebarCollapsed={sidebarCollapsed}
-            setSidebarCollapsed={setSidebarCollapsed}
-            themeClasses={themeClasses}
-            isDark={isDark}
-            sidebarMenuItems={sidebarMenuItems}
-            activeMenuTab={activeMenuTab}
-            onNavItemClick={handleNavItemClick}
-            contentOpen={sidebarContentOpen}
-            contentWidth={sidebarContentWidth}
-            onResizeStart={handleSidebarResizeStart}
-            isResizing={isSidebarResizing}
-            collections={collections}
-            collectionsLoading={collectionsLoading}
-            expandedCollections={expandedCollections}
-            toggleCollection={toggleCollection}
-            editingCollection={editingCollection}
-            setEditingCollection={setEditingCollection}
-            updateCollection={(collectionId, updates) => {
-              // Handle collection update
-              console.log("Updating collection:", collectionId, updates);
-            }}
-            deleteCollection={handleDeleteCollection}
-            history={filteredHistoryItems}
-            loadRequest={(request) => {
-              // Handle loading request from history/collections
-              const newTabId = Date.now().toString();
-              const newTab = {
-                id: newTabId,
-                name: request.name || "Untitled Request",
-                request: {
-                  method: request.method || "GET",
-                  url: request.url || "",
-                  headers: request.headers || {},
-                  body: request.body || "",
-                },
-                response: null,
-                loading: false,
-                collectionRequestId: request.id || null,
-                isModified: false,
-              };
-              setRequestTabs((prev) => [...prev, newTab]);
-              setActiveTabId(newTabId);
-            }}
-            clearHistory={clearHistory}
-            setNewRequestType={(type) => {
-              console.log("Setting new request type:", type);
-            }}
-            setRequest={setRequest}
-            setActiveTab={setActiveTabId}
-            openTabs={requestTabs}
-            setOpenTabs={setRequestTabs}
-            setCreateCollectionDialogOpen={setCreateCollectionDialogOpen}
-          />
+          <div className="flex items-center px-3 sm:px-6 py-0">
+            <div className="flex items-center overflow-x-auto scrollbar-hide">
+              {requestTabs.map((tab) => {
+                const methodColors = getMethodColors(
+                  tab.request?.method || "GET",
+                  isDark
+                );
+                return (
+                  <div
+                    key={tab.id}
+                    className={`flex items-center gap-2 px-1 py-3 cursor-pointer min-w-0 group transition-all duration-200 border-b-2 ${
+                      tab.id === activeTabId
+                        ? `${themeClasses.text.primary} border-gray-800 dark:border-gray-400`
+                        : `${themeClasses.text.secondary} hover:${themeClasses.text.primary} border-transparent hover:border-gray-300`
+                    }`}
+                    onClick={() => setActiveTabId(tab.id)}
+                  >
+                    <div
+                      className={`px-1 py-0.5 rounded text-xs font-medium border ${methodColors.bg} ${methodColors.text} flex-shrink-0 text-[10px] leading-none`}
+                    >
+                      {tab.request?.method || "GET"}
+                    </div>
+                    <span
+                      className={`text-[12.5px] truncate min-w-0 max-w-32 ${
+                        tab.isModified ? "italic" : ""
+                      }`}
+                    >
+                      {tab.name || "Untitled"}
+                      {tab.isModified && (
+                        <span className={`${themeClasses.text.accent} ml-1`}>
+                          •
+                        </span>
+                      )}
+                    </span>
+                    {requestTabs.length > 1 && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          closeTab(tab.id);
+                        }}
+                        className={`h-4 w-4 opacity-0 group-hover:opacity-100 transition-all duration-200 rounded flex-shrink-0 flex items-center justify-center ${themeClasses.text.tertiary} hover:${themeClasses.text.primary}`}
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+              <button
+                onClick={createNewTab}
+                className={`h-8 w-8 transition-all duration-200 flex-shrink-0 flex items-center justify-center group ${themeClasses.button.ghost} ml-2`}
+              >
+                <Plus className="h-3 w-3 group-hover:scale-110 transition-transform" />
+              </button>
+            </div>
+          </div>
         </div>
 
-        {/* Main Content Area */}
+        {/* Request Name Header - Full Width */}
         <div
-          className={`flex-1 flex flex-col ${
-            sidebarCollapsed ? "lg:ml-0" : "lg:ml-0"
-          } ml-0 lg:ml-0 w-full lg:w-auto`}
+          className={`${themeClasses.border.primary} ${
+            isDark ? "bg-gray-900/20" : "bg-gray-50/50"
+          }`}
         >
-          {/* Request Tabs - Flat Design */}
-          <div
-            className={`${themeClasses.bg.glass} border-b ${themeClasses.border.primary}`}
-          >
-            <div className="flex items-center px-3 sm:px-6 py-0">
-              <div className="flex items-center overflow-x-auto scrollbar-hide">
-                {requestTabs.map((tab) => {
-                  const methodColors = getMethodColors(
-                    tab.request?.method || "GET",
-                    isDark
-                  );
-                  return (
-                    <div
-                      key={tab.id}
-                      className={`flex items-center gap-2 px-1 py-3 cursor-pointer min-w-0 group transition-all duration-200 border-b-2 ${
-                        tab.id === activeTabId
-                          ? `${themeClasses.text.primary} border-gray-800 dark:border-gray-400`
-                          : `${themeClasses.text.secondary} hover:${themeClasses.text.primary} border-transparent hover:border-gray-300`
-                      }`}
-                      onClick={() => setActiveTabId(tab.id)}
-                    >
-                      <div
-                        className={`px-1 py-0.5 rounded text-xs font-medium border ${methodColors.bg} ${methodColors.text} flex-shrink-0 text-[10px] leading-none`}
-                      >
-                        {tab.request?.method || "GET"}
-                      </div>
-                      <span
-                        className={`text-[12.5px] truncate min-w-0 max-w-32 ${
-                          tab.isModified ? "italic" : ""
-                        }`}
-                      >
-                        {tab.name || "Untitled"}
-                        {tab.isModified && (
-                          <span className={`${themeClasses.text.accent} ml-1`}>
-                            •
-                          </span>
+          <div className="px-6 pt-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <div className="flex items-center gap-2 group flex-1 min-w-0">
+                  {(() => {
+                    const breadcrumb = getBreadcrumbPath();
+                    return editingRequestName ? (
+                      <div className="flex items-center gap-1 flex-1 min-w-0">
+                        {breadcrumb && (
+                          <>
+                            <span className="text-sm text-gray-500 dark:text-gray-400 flex-shrink-0">
+                              {breadcrumb.collection}
+                            </span>
+                            <ChevronRight className="h-3 w-3 text-gray-400 flex-shrink-0" />
+                          </>
                         )}
-                      </span>
-                      {requestTabs.length > 1 && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            closeTab(tab.id);
-                          }}
-                          className={`h-4 w-4 opacity-0 group-hover:opacity-100 transition-all duration-200 rounded flex-shrink-0 flex items-center justify-center ${themeClasses.text.tertiary} hover:${themeClasses.text.primary}`}
-                        >
-                          <X className="h-3 w-3" />
-                        </button>
-                      )}
-                    </div>
-                  );
-                })}
-                <button
-                  onClick={createNewTab}
-                  className={`h-8 w-8 transition-all duration-200 flex-shrink-0 flex items-center justify-center group ${themeClasses.button.ghost} ml-2`}
-                >
-                  <Plus className="h-3 w-3 group-hover:scale-110 transition-transform" />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Request Name Header - Full Width */}
-          <div
-            className={`${themeClasses.border.primary} ${
-              isDark ? "bg-gray-900/20" : "bg-gray-50/50"
-            }`}
-          >
-            <div className="px-6 pt-4">
-              <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                <div className="flex items-center gap-3 flex-1 min-w-0">
-                  <div className="flex items-center gap-2 group flex-1 min-w-0">
-                    {(() => {
-                      const breadcrumb = getBreadcrumbPath();
-                      return editingRequestName ? (
-                        <div className="flex items-center gap-1 flex-1 min-w-0">
-                          {breadcrumb && (
-                            <>
-                              <span className="text-sm text-gray-500 dark:text-gray-400 flex-shrink-0">
-                                {breadcrumb.collection}
-                              </span>
-                              <ChevronRight className="h-3 w-3 text-gray-400 flex-shrink-0" />
-                            </>
-                          )}
-                          <input
-                            type="text"
-                            value={currentTab?.name || ""}
-                            onChange={(e) =>
-                              setCurrentRequestName(e.target.value)
+                        <input
+                          type="text"
+                          value={currentTab?.name || ""}
+                          onChange={(e) =>
+                            setCurrentRequestName(e.target.value)
+                          }
+                          onBlur={() => setEditingRequestName(false)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              setEditingRequestName(false);
                             }
-                            onBlur={() => setEditingRequestName(false)}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") {
-                                setEditingRequestName(false);
-                              }
-                            }}
-                            placeholder="Untitled Request"
-                            className={`text-sm font-medium bg-transparent border-none outline-none px-1 py-0.5 min-w-0 ${themeClasses.text.primary}`}
-                            style={{
-                              width: `${Math.max(
-                                currentTab?.name?.length || 15,
-                                15
-                              )}ch`,
-                            }}
-                            autoFocus
-                          />
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-1 flex-1 min-w-0">
-                          {breadcrumb && (
-                            <>
-                              <span className="text-sm text-gray-500 dark:text-gray-400 flex-shrink-0">
-                                {breadcrumb.collection}
-                              </span>
-                              <ChevronRight className="h-3 w-3 text-gray-400 flex-shrink-0" />
-                            </>
-                          )}
-                          <span
-                            className={`text-sm font-medium ${themeClasses.text.primary} truncate cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 px-1 py-0.5 rounded transition-colors`}
-                            onClick={() => setEditingRequestName(true)}
-                          >
-                            {currentTab?.name || "Untitled Request"}
-                          </span>
-                          <button
-                            onClick={() => setEditingRequestName(true)}
-                            className={`opacity-0 group-hover:opacity-100 p-1 rounded transition-all duration-200 flex-shrink-0 ${themeClasses.button.ghost}`}
-                          >
-                            <Pencil className="h-3 w-3" />
-                          </button>
-                        </div>
-                      );
-                    })()}
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  {!currentTab?.collectionRequestId && (
-                    <>
-                      <span
-                        className={`text-xs px-2 py-1 rounded-full border ${themeClasses.status.warning}`}
-                      >
-                        Unsaved
-                      </span>
-                      <button
-                        onClick={handleSaveRequest}
-                        className={`px-3 py-1.5 text-xs rounded text-white transition-all duration-200 hover:scale-105`}
-                        style={{
-                          backgroundColor: "#171717",
-                          border: "none",
-                        }}
-                      >
-                        {currentTab?.collectionRequestId ? "Update" : "Save"}
-                      </button>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Method + URL + Send Row - Full Width */}
-          <div className={`${themeClasses.border.primary}`}>
-            <div className="px-3 sm:px-6 py-3 sm:py-4">
-              <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3">
-                {/* METHOD SELECT + URL INPUT + ENVIRONMENT ROW */}
-                <div className="flex-1 min-w-0">
-                  {/* Unified Method + URL Input */}
-                  <div
-                    className={`flex h-10 sm:h-11 rounded-md border backdrop-blur-sm overflow-hidden ${
-                      isDark
-                        ? "bg-gray-800 border-gray-600"
-                        : "bg-white border-gray-300"
-                    } focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent transition-all`}
-                    style={{ borderRadius: "6px" }}
-                  >
-                    {/* METHOD SELECT */}
-                    <select
-                      value={request.method}
-                      onChange={(e) =>
-                        updateCurrentTab({
-                          request: { ...request, method: e.target.value },
-                        })
-                      }
-                      className={`text-xs font-medium px-3 bg-transparent outline-none ${
-                        isDark ? "text-white" : "text-gray-900"
-                      }`}
-                      style={{ minWidth: "80px" }}
-                    >
-                      {[
-                        "GET",
-                        "POST",
-                        "PUT",
-                        "PATCH",
-                        "DELETE",
-                        "HEAD",
-                        "OPTIONS",
-                      ].map((method) => (
-                        <option key={method} value={method}>
-                          {method}
-                        </option>
-                      ))}
-                    </select>
-
-                    {/* Divider */}
-                    <div
-                      className={`w-px h-6 self-center rounded-full ${
-                        isDark ? "bg-gray-600" : "bg-gray-300"
-                      }`}
-                    ></div>
-
-                    {/* URL INPUT */}
-                    <input
-                      type="text"
-                      placeholder="https://api.example.com/endpoint"
-                      value={request.url}
-                      onChange={(e) =>
-                        updateCurrentTab({
-                          request: { ...request, url: e.target.value },
-                        })
-                      }
-                      className={`flex-1 text-sm px-3 bg-transparent outline-none ${
-                        isDark
-                          ? "text-white placeholder-gray-400"
-                          : "text-gray-900 placeholder-gray-500"
-                      }`}
-                    />
-                  </div>
-                </div>
-
-                {/* SEND BUTTON */}
-                <div className="flex items-center gap-2">
-                  <Button
-                    onClick={executeRequest}
-                    disabled={!request.url || loading}
-                    className={`h-10 sm:h-11 px-6 text-sm font-medium transition-all duration-200 ${
-                      loading
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : isDark
-                        ? "bg-blue-600 hover:bg-blue-700"
-                        : "bg-black hover:bg-gray-800"
-                    } text-white rounded-md`}
-                  >
-                    {loading ? (
-                      <div className="flex items-center gap-2">
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        Sending...
+                          }}
+                          placeholder="Untitled Request"
+                          className={`text-sm font-medium bg-transparent border-none outline-none px-1 py-0.5 min-w-0 ${themeClasses.text.primary}`}
+                          style={{
+                            width: `${Math.max(
+                              currentTab?.name?.length || 15,
+                              15
+                            )}ch`,
+                          }}
+                          autoFocus
+                        />
                       </div>
                     ) : (
-                      "Send"
-                    )}
-                  </Button>
+                      <div className="flex items-center gap-1 flex-1 min-w-0">
+                        {breadcrumb && (
+                          <>
+                            <span className="text-sm text-gray-500 dark:text-gray-400 flex-shrink-0">
+                              {breadcrumb.collection}
+                            </span>
+                            <ChevronRight className="h-3 w-3 text-gray-400 flex-shrink-0" />
+                          </>
+                        )}
+                        <span
+                          className={`text-sm font-medium ${themeClasses.text.primary} truncate cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 px-1 py-0.5 rounded transition-colors`}
+                          onClick={() => setEditingRequestName(true)}
+                        >
+                          {currentTab?.name || "Untitled Request"}
+                        </span>
+                        <button
+                          onClick={() => setEditingRequestName(true)}
+                          className={`opacity-0 group-hover:opacity-100 p-1 rounded transition-all duration-200 flex-shrink-0 ${themeClasses.button.ghost}`}
+                        >
+                          <Pencil className="h-3 w-3" />
+                        </button>
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
+              <div className="flex items-center gap-2">
+                {!currentTab?.collectionRequestId && (
+                  <>
+                    <span
+                      className={`text-xs px-2 py-1 rounded-full border ${themeClasses.status.warning}`}
+                    >
+                      Unsaved
+                    </span>
+                    <button
+                      onClick={handleSaveRequest}
+                      className={`px-3 py-1.5 text-xs rounded text-white transition-all duration-200 hover:scale-105`}
+                      style={{
+                        backgroundColor: "#171717",
+                        border: "none",
+                      }}
+                    >
+                      {currentTab?.collectionRequestId ? "Update" : "Save"}
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
-          </div>
-
-          {/* Request/Response Layout */}
-          <div
-            data-layout-container
-            className={`flex-1 flex ${
-              layoutMode === "single" ? "flex-col" : "flex-col lg:flex-row"
-            } ${themeClasses.bg.primary} transition-colors duration-300 ${
-              isDragging
-                ? layoutMode === "single"
-                  ? "cursor-row-resize"
-                  : "cursor-col-resize"
-                : ""
-            }`}
-          >
-            {layoutMode === "split" ? (
-              <>
-                {/* Request Panel with dynamic width */}
-                <div style={{ width: `${requestPanelWidth}%` }}>
-                  <RequestPanel request={request} setRequest={setRequest} />
-                </div>
-
-                {/* Horizontal Draggable Divider */}
-                <div
-                  className="relative w-1 cursor-col-resize group"
-                  onMouseDown={handleMouseDown}
-                  title="Resize panels"
-                >
-                  <div
-                    className={`absolute left-1/2 transform -translate-x-1/2 w-px h-full bg-gray-300 dark:bg-gray-600 hover:bg-blue-500 ${
-                      isDragging
-                        ? "bg-blue-500"
-                        : "transition-colors duration-200"
-                    }`}
-                  />
-                </div>
-
-                {/* Response Panel with remaining width */}
-                <div style={{ width: `${100 - requestPanelWidth}%` }}>
-                  <ResponsePanel
-                    response={response}
-                    loading={loading}
-                    request={request}
-                  />
-                </div>
-              </>
-            ) : (
-              <>
-                {/* Request Panel with dynamic height */}
-                <div style={{ height: `${requestPanelHeight}%` }}>
-                  <RequestPanel request={request} setRequest={setRequest} />
-                </div>
-
-                {/* Vertical Draggable Divider */}
-                <div
-                  className="relative h-1 cursor-row-resize group"
-                  onMouseDown={handleMouseDown}
-                  title="Resize panels"
-                >
-                  <div
-                    className={`absolute top-1/2 transform -translate-y-1/2 w-full h-px bg-gray-300 dark:bg-gray-600 hover:bg-blue-500 ${
-                      isDragging
-                        ? "bg-blue-500"
-                        : "transition-colors duration-200"
-                    }`}
-                  />
-                </div>
-
-                {/* Response Panel with remaining height */}
-                <div style={{ height: `${100 - requestPanelHeight}%` }}>
-                  <ResponsePanel
-                    response={response}
-                    loading={loading}
-                    request={request}
-                  />
-                </div>
-              </>
-            )}
           </div>
         </div>
 
-        {/* Create Environment Dialog */}
-        <Dialog
-          open={createEnvironmentDialogOpen}
-          onOpenChange={setCreateEnvironmentDialogOpen}
-        >
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle className="text-base font-medium">
-                Create Environment
-              </DialogTitle>
-            </DialogHeader>
-            <div className="space-y-3 pt-3">
-              <div>
-                <Input
-                  placeholder="Environment name"
-                  value={newEnvironmentName}
-                  onChange={(e) => setNewEnvironmentName(e.target.value)}
-                  className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
-                  onKeyPress={(e) => {
-                    if (e.key === "Enter") {
-                      handleCreateEnvironment();
+        {/* Method + URL + Send Row - Full Width */}
+        <div className={`${themeClasses.border.primary}`}>
+          <div className="px-3 sm:px-6 py-3 sm:py-4">
+            <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3">
+              {/* METHOD SELECT + URL INPUT + ENVIRONMENT ROW */}
+              <div className="flex-1 min-w-0">
+                {/* Unified Method + URL Input */}
+                <div
+                  className={`flex h-10 sm:h-11 rounded-md border backdrop-blur-sm overflow-hidden ${
+                    isDark
+                      ? "bg-gray-800 border-gray-600"
+                      : "bg-white border-gray-300"
+                  } focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent transition-all`}
+                  style={{ borderRadius: "6px" }}
+                >
+                  {/* METHOD SELECT */}
+                  <select
+                    value={request.method}
+                    onChange={(e) =>
+                      updateCurrentTab({
+                        request: { ...request, method: e.target.value },
+                      })
                     }
-                  }}
-                />
-              </div>
-              <div>
-                <Input
-                  placeholder="Description (optional)"
-                  value={newEnvironmentDescription}
-                  onChange={(e) => setNewEnvironmentDescription(e.target.value)}
-                  className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
-                />
-              </div>
-              <div className="flex justify-end gap-2 pt-1">
-                <Button
-                  variant="outline"
-                  onClick={() => setCreateEnvironmentDialogOpen(false)}
-                  size="sm"
-                  className="px-3 text-xs"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleCreateEnvironment}
-                  size="sm"
-                  className="px-3 text-xs"
-                  disabled={!newEnvironmentName.trim()}
-                >
-                  Create
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
+                    className={`text-xs font-medium px-3 bg-transparent outline-none ${
+                      isDark ? "text-white" : "text-gray-900"
+                    }`}
+                    style={{ minWidth: "80px" }}
+                  >
+                    {[
+                      "GET",
+                      "POST",
+                      "PUT",
+                      "PATCH",
+                      "DELETE",
+                      "HEAD",
+                      "OPTIONS",
+                    ].map((method) => (
+                      <option key={method} value={method}>
+                        {method}
+                      </option>
+                    ))}
+                  </select>
 
-        {/* Add Variable Dialog */}
-        <Dialog
-          open={addVariableDialogOpen}
-          onOpenChange={setAddVariableDialogOpen}
-        >
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle className="text-base font-medium">
-                Add Variable
-              </DialogTitle>
-            </DialogHeader>
-            <div className="space-y-3 pt-3">
-              <div>
-                <Input
-                  placeholder="Variable key (e.g., API_KEY)"
-                  value={newVariableKey}
-                  onChange={(e) => setNewVariableKey(e.target.value)}
-                  className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
-                />
-              </div>
-              <div>
-                <Input
-                  placeholder="Variable value"
-                  value={newVariableValue}
-                  onChange={(e) => setNewVariableValue(e.target.value)}
-                  className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
-                  type={
-                    newVariableKey.toLowerCase().includes("key") ||
-                    newVariableKey.toLowerCase().includes("token") ||
-                    newVariableKey.toLowerCase().includes("secret")
-                      ? "password"
-                      : "text"
-                  }
-                />
-              </div>
-              <div>
-                <Input
-                  placeholder="Description (optional)"
-                  value={newVariableDescription}
-                  onChange={(e) => setNewVariableDescription(e.target.value)}
-                  className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
-                />
-              </div>
-              <div className="flex justify-end gap-2 pt-1">
-                <Button
-                  variant="outline"
-                  onClick={() => setAddVariableDialogOpen(false)}
-                  size="sm"
-                  className="px-3 text-xs"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleSaveNewVariable}
-                  size="sm"
-                  className="px-3 text-xs"
-                  disabled={!newVariableKey.trim()}
-                >
-                  Add
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
+                  {/* Divider */}
+                  <div
+                    className={`w-px h-6 self-center rounded-full ${
+                      isDark ? "bg-gray-600" : "bg-gray-300"
+                    }`}
+                  ></div>
 
-        {/* Edit Variable Dialog */}
-        <Dialog
-          open={editVariableDialogOpen}
-          onOpenChange={setEditVariableDialogOpen}
-        >
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle className="text-base font-medium">
-                Edit Variable
-              </DialogTitle>
-            </DialogHeader>
-            <div className="space-y-3 pt-3">
-              <div>
-                <Input
-                  placeholder="Variable key (e.g., API_KEY)"
-                  value={newVariableKey}
-                  onChange={(e) => setNewVariableKey(e.target.value)}
-                  className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
-                />
-              </div>
-              <div>
-                <Input
-                  placeholder="Variable value"
-                  value={newVariableValue}
-                  onChange={(e) => setNewVariableValue(e.target.value)}
-                  className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
-                  type={
-                    newVariableKey.toLowerCase().includes("key") ||
-                    newVariableKey.toLowerCase().includes("token") ||
-                    newVariableKey.toLowerCase().includes("secret")
-                      ? "password"
-                      : "text"
-                  }
-                />
-              </div>
-              <div>
-                <Input
-                  placeholder="Description (optional)"
-                  value={newVariableDescription}
-                  onChange={(e) => setNewVariableDescription(e.target.value)}
-                  className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
-                />
-              </div>
-              <div className="flex justify-end gap-2 pt-1">
-                <Button
-                  variant="outline"
-                  onClick={() => setEditVariableDialogOpen(false)}
-                  size="sm"
-                  className="px-3 text-xs"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleSaveEditedVariable}
-                  size="sm"
-                  className="px-3 text-xs"
-                  disabled={!newVariableKey.trim()}
-                >
-                  Save
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-
-        {/* Docs Generator Modal */}
-        <DocGeneratorModal
-          open={docsModalOpen}
-          onOpenChange={(open) => {
-            setDocsModalOpen(open);
-            if (!open) {
-              setSelectedCollectionForDocs(null);
-            }
-          }}
-          collections={getCollectionsWithDocs()}
-          preSelectedCollectionId={selectedCollectionForDocs}
-          onGenerate={(docData) => {
-            console.log("Generated docs with data:", docData);
-            setDocsModalOpen(false);
-            setSelectedCollectionForDocs(null);
-          }}
-        />
-
-        {/* Settings Modal */}
-        <Dialog open={settingsModalOpen} onOpenChange={setSettingsModalOpen}>
-          <DialogContent
-            className={`max-w-2xl max-h-[80vh] overflow-y-auto ${
-              isDark
-                ? "bg-gray-900 border-gray-700"
-                : "bg-white border-gray-200"
-            }`}
-          >
-            <DialogHeader>
-              <DialogTitle
-                className={`text-xl font-semibold ${themeClasses.text.primary}`}
-              >
-                Settings & Preferences
-              </DialogTitle>
-            </DialogHeader>
-            <div className="space-y-6">
-              {/* Appearance Section */}
-              <div>
-                <h3
-                  className={`text-sm font-semibold mb-3 ${themeClasses.text.primary}`}
-                >
-                  Appearance
-                </h3>
-                <div className="space-y-3">
-                  <div className={`p-4 rounded-lg ${themeClasses.card.base}`}>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p
-                          className={`text-sm font-medium ${themeClasses.text.primary}`}
-                        >
-                          Theme
-                        </p>
-                        <p className={`text-xs ${themeClasses.text.tertiary}`}>
-                          Choose your preferred color scheme
-                        </p>
-                      </div>
-                      <button
-                        onClick={toggleTheme}
-                        className={`p-2 rounded transition-all duration-200 ${themeClasses.button.ghost}`}
-                      >
-                        {isDark ? (
-                          <Sun className="h-4 w-4" />
-                        ) : (
-                          <Moon className="h-4 w-4" />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Editor Section */}
-              <div>
-                <h3
-                  className={`text-sm font-semibold mb-3 ${themeClasses.text.primary}`}
-                >
-                  Editor
-                </h3>
-                <div className="space-y-3">
-                  <div className={`p-4 rounded-lg ${themeClasses.card.base}`}>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p
-                          className={`text-sm font-medium ${themeClasses.text.primary}`}
-                        >
-                          Font Size
-                        </p>
-                        <p className={`text-xs ${themeClasses.text.tertiary}`}>
-                          Adjust the editor font size
-                        </p>
-                      </div>
-                      <select
-                        className={`px-3 py-1 rounded text-sm ${themeClasses.input.base}`}
-                      >
-                        <option value="12">12px</option>
-                        <option value="14" selected>
-                          14px
-                        </option>
-                        <option value="16">16px</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div className={`p-4 rounded-lg ${themeClasses.card.base}`}>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p
-                          className={`text-sm font-medium ${themeClasses.text.primary}`}
-                        >
-                          Auto-save
-                        </p>
-                        <p className={`text-xs ${themeClasses.text.tertiary}`}>
-                          Automatically save changes
-                        </p>
-                      </div>
-                      <button
-                        className={`w-10 h-6 rounded-full transition-colors ${
-                          isDark ? "bg-blue-600" : "bg-blue-500"
-                        } relative`}
-                      >
-                        <div className="w-4 h-4 bg-white rounded-full absolute top-1 right-1 transition-transform"></div>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* API Section */}
-              <div>
-                <h3
-                  className={`text-sm font-semibold mb-3 ${themeClasses.text.primary}`}
-                >
-                  API Defaults
-                </h3>
-                <div className="space-y-3">
-                  <div className={`p-4 rounded-lg ${themeClasses.card.base}`}>
-                    <label
-                      className={`text-sm font-medium ${themeClasses.text.primary}`}
-                    >
-                      Default Base URL
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="https://api.example.com"
-                      className={`w-full mt-2 px-3 py-2 text-sm rounded ${themeClasses.input.base}`}
-                    />
-                  </div>
-                  <div className={`p-4 rounded-lg ${themeClasses.card.base}`}>
-                    <label
-                      className={`text-sm font-medium ${themeClasses.text.primary}`}
-                    >
-                      Request Timeout (ms)
-                    </label>
-                    <input
-                      type="number"
-                      placeholder="5000"
-                      className={`w-full mt-2 px-3 py-2 text-sm rounded ${themeClasses.input.base}`}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-
-        {/* Create Collection Dialog */}
-        <Dialog
-          open={createCollectionDialogOpen}
-          onOpenChange={setCreateCollectionDialogOpen}
-        >
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle className="text-base font-medium">
-                Create Collection
-              </DialogTitle>
-            </DialogHeader>
-            <div className="space-y-3 pt-3">
-              <div>
-                <Input
-                  placeholder="Collection name"
-                  value={newCollectionName}
-                  onChange={(e) => setNewCollectionName(e.target.value)}
-                  className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
-                  disabled={creatingCollection}
-                  onKeyPress={(e) => {
-                    if (e.key === "Enter") {
-                      handleCreateCollection();
+                  {/* URL INPUT */}
+                  <input
+                    type="text"
+                    placeholder="https://api.example.com/endpoint"
+                    value={request.url}
+                    onChange={(e) =>
+                      updateCurrentTab({
+                        request: { ...request, url: e.target.value },
+                      })
                     }
-                  }}
-                />
+                    className={`flex-1 text-sm px-3 bg-transparent outline-none ${
+                      isDark
+                        ? "text-white placeholder-gray-400"
+                        : "text-gray-900 placeholder-gray-500"
+                    }`}
+                  />
+                </div>
               </div>
-              <div className="flex justify-end gap-2 pt-1">
+
+              {/* SEND BUTTON */}
+              <div className="flex items-center gap-2">
                 <Button
-                  variant="outline"
-                  onClick={() => setCreateCollectionDialogOpen(false)}
-                  size="sm"
-                  className="px-3 text-xs"
-                  disabled={creatingCollection}
+                  onClick={executeRequest}
+                  disabled={!request.url || loading}
+                  className={`h-10 sm:h-11 px-6 text-sm font-medium transition-all duration-200 ${
+                    loading
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : isDark
+                      ? "bg-blue-600 hover:bg-blue-700"
+                      : "bg-black hover:bg-gray-800"
+                  } text-white rounded-md`}
                 >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleCreateCollection}
-                  disabled={!newCollectionName.trim() || creatingCollection}
-                  size="sm"
-                  className="px-3 text-xs bg-black hover:bg-gray-800 text-white"
-                >
-                  {creatingCollection ? (
-                    <>
-                      <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-                      Creating...
-                    </>
+                  {loading ? (
+                    <div className="flex items-center gap-2">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Sending...
+                    </div>
                   ) : (
-                    "Create"
+                    "Send"
                   )}
                 </Button>
               </div>
             </div>
-          </DialogContent>
-        </Dialog>
+          </div>
+        </div>
 
-        {/* Save to Collection Modal */}
-        <Dialog
-          open={saveToCollectionModalOpen}
-          onOpenChange={setSaveToCollectionModalOpen}
+        {/* Request/Response Layout */}
+        <div
+          data-layout-container
+          className={`flex-1 flex ${
+            layoutMode === "single" ? "flex-col" : "flex-col lg:flex-row"
+          } ${themeClasses.bg.primary} transition-colors duration-300 ${
+            isDragging
+              ? layoutMode === "single"
+                ? "cursor-row-resize"
+                : "cursor-col-resize"
+              : ""
+          }`}
         >
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle className="text-base font-medium">
-                Save Request
-              </DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 pt-3">
-              <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                  Choose a collection to save this request to:
-                </p>
+          {layoutMode === "split" ? (
+            <>
+              {/* Request Panel with dynamic width */}
+              <div style={{ width: `${requestPanelWidth}%` }}>
+                <RequestPanel request={request} setRequest={setRequest} />
+              </div>
 
-                <div className="space-y-2 max-h-64 overflow-y-auto">
-                  {Object.values(collections).map((collection) => (
+              {/* Horizontal Draggable Divider */}
+              <div
+                className="relative w-1 cursor-col-resize group"
+                onMouseDown={handleMouseDown}
+                title="Resize panels"
+              >
+                <div
+                  className={`absolute left-1/2 transform -translate-x-1/2 w-px h-full bg-gray-300 dark:bg-gray-600 hover:bg-blue-500 ${
+                    isDragging
+                      ? "bg-blue-500"
+                      : "transition-colors duration-200"
+                  }`}
+                />
+              </div>
+
+              {/* Response Panel with remaining width */}
+              <div style={{ width: `${100 - requestPanelWidth}%` }}>
+                <ResponsePanel
+                  response={response}
+                  loading={loading}
+                  request={request}
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Request Panel with dynamic height */}
+              <div style={{ height: `${requestPanelHeight}%` }}>
+                <RequestPanel request={request} setRequest={setRequest} />
+              </div>
+
+              {/* Vertical Draggable Divider */}
+              <div
+                className="relative h-1 cursor-row-resize group"
+                onMouseDown={handleMouseDown}
+                title="Resize panels"
+              >
+                <div
+                  className={`absolute top-1/2 transform -translate-y-1/2 w-full h-px bg-gray-300 dark:bg-gray-600 hover:bg-blue-500 ${
+                    isDragging
+                      ? "bg-blue-500"
+                      : "transition-colors duration-200"
+                  }`}
+                />
+              </div>
+
+              {/* Response Panel with remaining height */}
+              <div style={{ height: `${100 - requestPanelHeight}%` }}>
+                <ResponsePanel
+                  response={response}
+                  loading={loading}
+                  request={request}
+                />
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Create Environment Dialog */}
+      <Dialog
+        open={createEnvironmentDialogOpen}
+        onOpenChange={setCreateEnvironmentDialogOpen}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-base font-medium">
+              Create Environment
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 pt-3">
+            <div>
+              <Input
+                placeholder="Environment name"
+                value={newEnvironmentName}
+                onChange={(e) => setNewEnvironmentName(e.target.value)}
+                className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") {
+                    handleCreateEnvironment();
+                  }
+                }}
+              />
+            </div>
+            <div>
+              <Input
+                placeholder="Description (optional)"
+                value={newEnvironmentDescription}
+                onChange={(e) => setNewEnvironmentDescription(e.target.value)}
+                className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
+              />
+            </div>
+            <div className="flex justify-end gap-2 pt-1">
+              <Button
+                variant="outline"
+                onClick={() => setCreateEnvironmentDialogOpen(false)}
+                size="sm"
+                className="px-3 text-xs"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleCreateEnvironment}
+                size="sm"
+                className="px-3 text-xs"
+                disabled={!newEnvironmentName.trim()}
+              >
+                Create
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Variable Dialog */}
+      <Dialog
+        open={addVariableDialogOpen}
+        onOpenChange={setAddVariableDialogOpen}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-base font-medium">
+              Add Variable
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 pt-3">
+            <div>
+              <Input
+                placeholder="Variable key (e.g., API_KEY)"
+                value={newVariableKey}
+                onChange={(e) => setNewVariableKey(e.target.value)}
+                className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
+              />
+            </div>
+            <div>
+              <Input
+                placeholder="Variable value"
+                value={newVariableValue}
+                onChange={(e) => setNewVariableValue(e.target.value)}
+                className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
+                type={
+                  newVariableKey.toLowerCase().includes("key") ||
+                  newVariableKey.toLowerCase().includes("token") ||
+                  newVariableKey.toLowerCase().includes("secret")
+                    ? "password"
+                    : "text"
+                }
+              />
+            </div>
+            <div>
+              <Input
+                placeholder="Description (optional)"
+                value={newVariableDescription}
+                onChange={(e) => setNewVariableDescription(e.target.value)}
+                className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
+              />
+            </div>
+            <div className="flex justify-end gap-2 pt-1">
+              <Button
+                variant="outline"
+                onClick={() => setAddVariableDialogOpen(false)}
+                size="sm"
+                className="px-3 text-xs"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSaveNewVariable}
+                size="sm"
+                className="px-3 text-xs"
+                disabled={!newVariableKey.trim()}
+              >
+                Add
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Variable Dialog */}
+      <Dialog
+        open={editVariableDialogOpen}
+        onOpenChange={setEditVariableDialogOpen}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-base font-medium">
+              Edit Variable
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 pt-3">
+            <div>
+              <Input
+                placeholder="Variable key (e.g., API_KEY)"
+                value={newVariableKey}
+                onChange={(e) => setNewVariableKey(e.target.value)}
+                className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
+              />
+            </div>
+            <div>
+              <Input
+                placeholder="Variable value"
+                value={newVariableValue}
+                onChange={(e) => setNewVariableValue(e.target.value)}
+                className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
+                type={
+                  newVariableKey.toLowerCase().includes("key") ||
+                  newVariableKey.toLowerCase().includes("token") ||
+                  newVariableKey.toLowerCase().includes("secret")
+                    ? "password"
+                    : "text"
+                }
+              />
+            </div>
+            <div>
+              <Input
+                placeholder="Description (optional)"
+                value={newVariableDescription}
+                onChange={(e) => setNewVariableDescription(e.target.value)}
+                className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
+              />
+            </div>
+            <div className="flex justify-end gap-2 pt-1">
+              <Button
+                variant="outline"
+                onClick={() => setEditVariableDialogOpen(false)}
+                size="sm"
+                className="px-3 text-xs"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSaveEditedVariable}
+                size="sm"
+                className="px-3 text-xs"
+                disabled={!newVariableKey.trim()}
+              >
+                Save
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Docs Generator Modal */}
+      <DocGeneratorModal
+        open={docsModalOpen}
+        onOpenChange={(open) => {
+          setDocsModalOpen(open);
+          if (!open) {
+            setSelectedCollectionForDocs(null);
+          }
+        }}
+        collections={getCollectionsWithDocs()}
+        preSelectedCollectionId={selectedCollectionForDocs}
+        onGenerate={(docData) => {
+          console.log("Generated docs with data:", docData);
+          setDocsModalOpen(false);
+          setSelectedCollectionForDocs(null);
+        }}
+      />
+
+      {/* Settings Modal */}
+      <Dialog open={settingsModalOpen} onOpenChange={setSettingsModalOpen}>
+        <DialogContent
+          className={`max-w-2xl max-h-[80vh] overflow-y-auto ${
+            isDark ? "bg-gray-900 border-gray-700" : "bg-white border-gray-200"
+          }`}
+        >
+          <DialogHeader>
+            <DialogTitle
+              className={`text-xl font-semibold ${themeClasses.text.primary}`}
+            >
+              Settings & Preferences
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6">
+            {/* Appearance Section */}
+            <div>
+              <h3
+                className={`text-sm font-semibold mb-3 ${themeClasses.text.primary}`}
+              >
+                Appearance
+              </h3>
+              <div className="space-y-3">
+                <div className={`p-4 rounded-lg ${themeClasses.card.base}`}>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p
+                        className={`text-sm font-medium ${themeClasses.text.primary}`}
+                      >
+                        Theme
+                      </p>
+                      <p className={`text-xs ${themeClasses.text.tertiary}`}>
+                        Choose your preferred color scheme
+                      </p>
+                    </div>
                     <button
-                      key={collection.id}
-                      onClick={() => handleSaveToCollection(collection.id)}
-                      className="w-full text-left p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                      onClick={toggleTheme}
+                      className={`p-2 rounded transition-all duration-200 ${themeClasses.button.ghost}`}
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="h-8 w-8 rounded bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-                          <FolderOpen className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                        </div>
-                        <div>
-                          <div className="font-medium text-gray-900 dark:text-gray-100">
-                            {collection.name}
-                          </div>
-                          {collection.description && (
-                            <div className="text-xs text-gray-500 dark:text-gray-400">
-                              {collection.description}
-                            </div>
-                          )}
-                        </div>
-                      </div>
+                      {isDark ? (
+                        <Sun className="h-4 w-4" />
+                      ) : (
+                        <Moon className="h-4 w-4" />
+                      )}
                     </button>
-                  ))}
+                  </div>
                 </div>
               </div>
+            </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-gray-200 dark:border-gray-700">
-                <Button
-                  variant="outline"
-                  onClick={() => setSaveToCollectionModalOpen(false)}
-                  size="sm"
-                  className="px-3 text-xs"
-                >
-                  Cancel
-                </Button>
+            {/* Editor Section */}
+            <div>
+              <h3
+                className={`text-sm font-semibold mb-3 ${themeClasses.text.primary}`}
+              >
+                Editor
+              </h3>
+              <div className="space-y-3">
+                <div className={`p-4 rounded-lg ${themeClasses.card.base}`}>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p
+                        className={`text-sm font-medium ${themeClasses.text.primary}`}
+                      >
+                        Font Size
+                      </p>
+                      <p className={`text-xs ${themeClasses.text.tertiary}`}>
+                        Adjust the editor font size
+                      </p>
+                    </div>
+                    <select
+                      className={`px-3 py-1 rounded text-sm ${themeClasses.input.base}`}
+                    >
+                      <option value="12">12px</option>
+                      <option value="14" selected>
+                        14px
+                      </option>
+                      <option value="16">16px</option>
+                    </select>
+                  </div>
+                </div>
+                <div className={`p-4 rounded-lg ${themeClasses.card.base}`}>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p
+                        className={`text-sm font-medium ${themeClasses.text.primary}`}
+                      >
+                        Auto-save
+                      </p>
+                      <p className={`text-xs ${themeClasses.text.tertiary}`}>
+                        Automatically save changes
+                      </p>
+                    </div>
+                    <button
+                      className={`w-10 h-6 rounded-full transition-colors ${
+                        isDark ? "bg-blue-600" : "bg-blue-500"
+                      } relative`}
+                    >
+                      <div className="w-4 h-4 bg-white rounded-full absolute top-1 right-1 transition-transform"></div>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
-          </DialogContent>
-        </Dialog>
-      </div>
-    </div>
+
+            {/* API Section */}
+            <div>
+              <h3
+                className={`text-sm font-semibold mb-3 ${themeClasses.text.primary}`}
+              >
+                API Defaults
+              </h3>
+              <div className="space-y-3">
+                <div className={`p-4 rounded-lg ${themeClasses.card.base}`}>
+                  <label
+                    className={`text-sm font-medium ${themeClasses.text.primary}`}
+                  >
+                    Default Base URL
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="https://api.example.com"
+                    className={`w-full mt-2 px-3 py-2 text-sm rounded ${themeClasses.input.base}`}
+                  />
+                </div>
+                <div className={`p-4 rounded-lg ${themeClasses.card.base}`}>
+                  <label
+                    className={`text-sm font-medium ${themeClasses.text.primary}`}
+                  >
+                    Request Timeout (ms)
+                  </label>
+                  <input
+                    type="number"
+                    placeholder="5000"
+                    className={`w-full mt-2 px-3 py-2 text-sm rounded ${themeClasses.input.base}`}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Create Collection Dialog */}
+      <Dialog
+        open={createCollectionDialogOpen}
+        onOpenChange={setCreateCollectionDialogOpen}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-base font-medium">
+              Create Collection
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 pt-3">
+            <div>
+              <Input
+                placeholder="Collection name"
+                value={newCollectionName}
+                onChange={(e) => setNewCollectionName(e.target.value)}
+                className="h-8 text-sm border-gray-200 focus:border-gray-300 focus:ring-0"
+                disabled={creatingCollection}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") {
+                    handleCreateCollection();
+                  }
+                }}
+              />
+            </div>
+            <div className="flex justify-end gap-2 pt-1">
+              <Button
+                variant="outline"
+                onClick={() => setCreateCollectionDialogOpen(false)}
+                size="sm"
+                className="px-3 text-xs"
+                disabled={creatingCollection}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleCreateCollection}
+                disabled={!newCollectionName.trim() || creatingCollection}
+                size="sm"
+                className="px-3 text-xs bg-black hover:bg-gray-800 text-white"
+              >
+                {creatingCollection ? (
+                  <>
+                    <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  "Create"
+                )}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Save to Collection Modal */}
+      <Dialog
+        open={saveToCollectionModalOpen}
+        onOpenChange={setSaveToCollectionModalOpen}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-base font-medium">
+              Save Request
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-3">
+            <div>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                Choose a collection to save this request to:
+              </p>
+
+              <div className="space-y-2 max-h-64 overflow-y-auto">
+                {Object.values(collections).map((collection) => (
+                  <button
+                    key={collection.id}
+                    onClick={() => handleSaveToCollection(collection.id)}
+                    className="w-full text-left p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="h-8 w-8 rounded bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+                        <FolderOpen className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                      </div>
+                      <div>
+                        <div className="font-medium text-gray-900 dark:text-gray-100">
+                          {collection.name}
+                        </div>
+                        {collection.description && (
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                            {collection.description}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+              <Button
+                variant="outline"
+                onClick={() => setSaveToCollectionModalOpen(false)}
+                size="sm"
+                className="px-3 text-xs"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
