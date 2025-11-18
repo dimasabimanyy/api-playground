@@ -332,17 +332,17 @@ export default function ResponsePanel({ response, loading, request }) {
       {/* Response Content - Theme Aware */}
       <div className={`flex-1 overflow-hidden transition-colors duration-300 ${themeClasses.bg.primary}`}>
         <Tabs defaultValue="body" className="w-full h-full flex flex-col">
-          <div className={`${themeClasses.border.primary} flex justify-between items-center px-4 pt-2`}>
+          <div className={`${themeClasses.border.primary} flex justify-between items-center px-4`}>
             <TabsList className="flex h-8 bg-transparent p-0 border-none gap-6">
               <TabsTrigger
                 value="body"
                 className={`
-                  relative text-xs py-2 rounded-none border-none bg-transparent
+                  relative text-xs py-[.7rem] rounded-none border-none bg-transparent
                   transition-all duration-200
                   ${themeClasses.tab.inactive}
                   hover:bg-transparent hover:text-gray-900
                   data-[state=active]:text-gray-900
-                  after:absolute after:bottom-[-1px] after:left-0 after:h-[2px] after:w-0 after:bg-gray-800 after:transition-all after:duration-300
+                  after:absolute after:bottom-[-1px] after:left-0 after:h-[1.5px] after:w-0 after:bg-gray-800 after:transition-all after:duration-300
                   data-[state=active]:after:w-full hover:after:w-full
                 `}
               >
@@ -351,12 +351,12 @@ export default function ResponsePanel({ response, loading, request }) {
               <TabsTrigger
                 value="headers"
                 className={`
-                  relative text-xs py-2 rounded-none border-none bg-transparent
+                  relative text-xs py-[.7rem] rounded-none border-none bg-transparent
                   transition-all duration-200
                   ${themeClasses.tab.inactive}
                   hover:bg-transparent hover:text-gray-900
                   data-[state=active]:text-gray-900
-                  after:absolute after:bottom-[-1px] after:left-0 after:h-[2px] after:w-0 after:bg-gray-800 after:transition-all after:duration-300
+                  after:absolute after:bottom-[-1px] after:left-0 after:h-[1.5px] after:w-0 after:bg-gray-800 after:transition-all after:duration-300
                   data-[state=active]:after:w-full hover:after:w-full
                 `}
               >
@@ -380,13 +380,15 @@ export default function ResponsePanel({ response, loading, request }) {
               
               <div className="flex items-center gap-1">
                 {request && <CodeGenerationPanel request={request} />}
+
                 <button
                   onClick={() => copyToClipboard(formatResponseData(response.data))}
-                  className={`p-1.5 rounded-md transition-all duration-200 ${isDark ? 'text-gray-400 hover:text-gray-200 hover:bg-gray-800/50' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'}`}
+                  className={`p-1.5 rounded-md transition-all duration-200 ${isDark ? 'text-gray-400 hover:text-gray-200 hover:bg-gray-800/50' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100 cursor-pointer'}`}
                   title="Copy response"
                 >
                   <Copy className="h-3.5 w-3.5" />
                 </button>
+
                 <button 
                   onClick={downloadResponse}
                   className={`p-1.5 rounded-md transition-all duration-200 ${isDark ? 'text-gray-400 hover:text-gray-200 hover:bg-gray-800/50' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'}`}
