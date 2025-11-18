@@ -121,7 +121,7 @@ export default function TwoPanelSidebar({
       <div className="flex h-full w-full min-w-0">
         {/* Left Navigation Panel */}
         <div
-          className={`border-r ${themeClasses.border.primary} flex flex-col items-center py-4 px-2 gap-1 flex-shrink-0 ${themeClasses.bg.bold}]`}
+          className={`border-r ${themeClasses.border.primary} flex flex-col items-center py-4 px-2 gap-1 flex-shrink-0 ${themeClasses.bg.bold}`}
         >
           {/* Navigation Icons */}
           <div className="flex flex-col gap-1">

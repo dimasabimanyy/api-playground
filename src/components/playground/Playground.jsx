@@ -1213,9 +1213,7 @@ export default function Playground() {
 
         {/* Request Name Header - Full Width */}
         <div
-          className={`${themeClasses.border.primary} ${
-            isDark ? "bg-gray-900/20" : "bg-gray-50/50"
-          }`}
+          className={`${themeClasses.border.primary}`}
         >
           <div className="px-4 pt-4 pb-1">
             <div className="flex flex-col sm:flex-row sm:items-center gap-3">
