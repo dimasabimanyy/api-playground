@@ -87,7 +87,6 @@ import SearchInput from "@/components/ui/SearchInput";
 import ImportModal from "@/components/modals/ImportModal";
 import ExportModal from "@/components/modals/ExportModal";
 import DashboardHeader from "@/components/header/DashboardHeader";
-import { sidebarMenuItems } from "@/config/sidebar";
 
 const layout = ({ children }) => {
   const { toggleTheme, isDark } = useTheme();
@@ -218,11 +217,14 @@ const layout = ({ children }) => {
   // Handle navigation item clicks with toggle behavior
   const router = useRouter();
 
-  const handleNavItemClick = (itemId) => {
+  const handleNavItemClick = (itemId, currentPath) => {
     if (itemId === "documentation") {
       // Navigate to documentation page
       router.push("/docs");
       return;
+    } else if (currentPath === "/docs" && itemId !== "documentation") {
+      // Navigate to playground page
+      router.push("/playground");
     }
 
     if (activeMenuTab === itemId && sidebarContentOpen) {
@@ -1226,7 +1228,6 @@ const layout = ({ children }) => {
               setSidebarCollapsed={setSidebarCollapsed}
               themeClasses={themeClasses}
               isDark={isDark}
-              sidebarMenuItems={sidebarMenuItems}
               activeMenuTab={activeMenuTab}
               onNavItemClick={handleNavItemClick}
               contentOpen={sidebarContentOpen}

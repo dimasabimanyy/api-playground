@@ -25,13 +25,13 @@ import CreateNew from "../button/CreateNew";
 import ImportModal from "../modals/ImportModal";
 import { useRouter } from "next/router";
 import { usePathname } from "next/navigation";
+import { sidebarMenuItems } from "@/config/sidebar";
 
 export default function TwoPanelSidebar({
   sidebarCollapsed,
   setSidebarCollapsed,
   themeClasses,
   isDark,
-  sidebarMenuItems,
   activeMenuTab,
   onNavItemClick,
   contentOpen = true,
@@ -209,7 +209,7 @@ export default function TwoPanelSidebar({
                             isDark ? "bg-gray-800/30" : "bg-gray-100/50"
                           }`
                     }`}
-                    onClick={() => onNavItemClick(item.id)}
+                    onClick={() => onNavItemClick(item.id, pathname)}
                   >
                     <button
                       className={`flex items-center justify-center rounded-lg transition-all duration-200 cursor-pointer ${
@@ -232,18 +232,6 @@ export default function TwoPanelSidebar({
                       {item.label}
                     </span>
                   </div>
-
-                  {/* Tooltip */}
-                  {/* <div
-                  className={`absolute left-full ml-2 px-2 py-1 text-xs rounded whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 ${
-                    isDark
-                      ? "bg-gray-100 text-gray-900"
-                      : "bg-gray-900 text-white"
-                  }`}
-                  style={{ top: "50%", transform: "translateY(-50%)" }}
-                >
-                  {item.label}
-                </div> */}
                 </div>
               );
             })}
