@@ -96,9 +96,7 @@ const DashboardHeader = ({ layoutMode, setLayoutMode }) => {
         {/* Search Input */}
         <div className="relative z-[99999] search-container">
           <div
-            className={`transition-all duration-300 ${
-              searchModalOpen ? "w-64 sm:w-80" : "w-32 sm:w-40"
-            }`}
+            className={`transition-all duration-200 w-80`}
           >
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 z-10" />
             <Input
@@ -110,7 +108,7 @@ const DashboardHeader = ({ layoutMode, setLayoutMode }) => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => setSearchModalOpen(true)}
-              className="pl-10 py-1.5 text-sm focus:ring-0 focus:outline-none cursor-pointer transition-all duration-300"
+              className="h-[2.2rem] pl-10 py-0 text-vs focus:ring-0 focus:outline-none cursor-pointer transition-all duration-300"
               style={{
                 borderRadius: "6px",
                 borderColor: "rgb(235, 235, 235)",
@@ -179,7 +177,7 @@ const DashboardHeader = ({ layoutMode, setLayoutMode }) => {
             onClick={() =>
               setLayoutMode(layoutMode === "single" ? "split" : "single")
             }
-            className="p-2 transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-800 border cursor-pointer"
+            className="p-[.5rem] transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-800 border cursor-pointer"
             style={{
               borderRadius: "50%",
               borderColor: "rgb(235, 235, 235)",
@@ -200,7 +198,7 @@ const DashboardHeader = ({ layoutMode, setLayoutMode }) => {
 
         <button
           onClick={toggleTheme}
-          className="p-2 transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-800 border cursor-pointer"
+          className="p-[.5rem] transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-800 border cursor-pointer"
           style={{
             borderRadius: "50%",
             borderColor: "rgb(235, 235, 235)",

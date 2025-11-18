@@ -193,7 +193,7 @@ export default function RequestPanel({
                     <input
                       type="text"
                       placeholder="Key"
-                      className={`w-full h-9 px-3 text-sm border ${
+                      className={`w-full h-9 px-3 text-vs border ${
                         isDark ? "bg-transparent" : "bg-white"
                       } ${themeClasses.text.primary} placeholder:${
                         themeClasses.text.tertiary
@@ -215,7 +215,7 @@ export default function RequestPanel({
                       <input
                         type="text"
                         placeholder="1"
-                        className={`flex-1 h-9 px-3 text-sm rounded border ${
+                        className={`flex-1 h-9 px-3 text-vs rounded border ${
                           isDark ? "bg-transparent" : "bg-white"
                         } ${themeClasses.text.primary} placeholder:${
                           themeClasses.text.tertiary
@@ -255,7 +255,7 @@ export default function RequestPanel({
                       placeholder="Content-Type"
                       value={newHeaderKey}
                       onChange={(e) => setNewHeaderKey(e.target.value)}
-                      className={`w-full h-9 px-3 text-sm rounded border ${
+                      className={`w-full h-9 px-3 text-vs rounded border ${
                         isDark ? "bg-transparent" : "bg-white"
                       } ${themeClasses.text.primary} placeholder:${
                         themeClasses.text.tertiary
@@ -274,7 +274,7 @@ export default function RequestPanel({
                         placeholder="application/json"
                         value={newHeaderValue}
                         onChange={(e) => setNewHeaderValue(e.target.value)}
-                        className={`flex-1 h-9 px-3 text-sm rounded border ${
+                        className={`flex-1 h-9 px-3 text-vs rounded border ${
                           isDark ? "bg-transparent" : "bg-white"
                         } ${themeClasses.text.primary} placeholder:${
                           themeClasses.text.tertiary
@@ -321,7 +321,7 @@ export default function RequestPanel({
                           Key
                         </span>
                         <p
-                          className={`text-sm font-mono ${themeClasses.text.primary} break-all`}
+                          className={`text-vs font-mono ${themeClasses.text.primary} break-all`}
                         >
                           {key}
                         </p>
@@ -334,7 +334,7 @@ export default function RequestPanel({
                             Value
                           </span>
                           <p
-                            className={`text-sm font-mono ${themeClasses.text.secondary} break-all`}
+                            className={`text-vs font-mono ${themeClasses.text.secondary} break-all`}
                           >
                             {value}
                           </p>
@@ -363,7 +363,7 @@ export default function RequestPanel({
               {/* Body Configuration */}
               <div className="space-y-3">
                 {/* <div className="flex items-center justify-between">
-                  <h4 className={`text-sm font-medium ${themeClasses.text.primary}`}>Request Body</h4>
+                  <h4 className={`text-vs font-medium ${themeClasses.text.primary}`}>Request Body</h4>
                   {safeRequest.body && (
                     <span className={`text-xs px-2 py-1 rounded-full ${isDark ? 'bg-gray-800/60 text-gray-400' : 'bg-gray-100 text-gray-600'}`}>
                       {new Blob([safeRequest.body]).size} bytes
@@ -467,7 +467,7 @@ export default function RequestPanel({
                   <select
                     value={authType}
                     onChange={(e) => setAuthType(e.target.value)}
-                    className={`w-full h-9 px-3 text-sm rounded border ${
+                    className={`w-full h-9 px-3 text-vs rounded border ${
                       isDark ? "bg-transparent" : "bg-white"
                     } ${
                       themeClasses.text.primary
@@ -495,7 +495,7 @@ export default function RequestPanel({
                           placeholder="Enter your bearer token"
                           value={bearerToken}
                           onChange={(e) => setBearerToken(e.target.value)}
-                          className={`w-full h-9 px-3 pr-10 text-sm rounded border ${
+                          className={`w-full h-9 px-3 pr-10 text-vs rounded border ${
                             isDark ? "bg-transparent" : "bg-white"
                           } ${themeClasses.text.primary} placeholder:${
                             themeClasses.text.tertiary
@@ -529,7 +529,7 @@ export default function RequestPanel({
                         placeholder="X-API-Key"
                         value={apiKeyHeader}
                         onChange={(e) => setApiKeyHeader(e.target.value)}
-                        className={`w-full h-9 px-3 text-sm rounded border ${
+                        className={`w-full h-9 px-3 text-vs rounded border ${
                           isDark ? "bg-transparent" : "bg-white"
                         } ${themeClasses.text.primary} placeholder:${
                           themeClasses.text.tertiary
@@ -547,7 +547,7 @@ export default function RequestPanel({
                         placeholder="API key value"
                         value={apiKeyValue}
                         onChange={(e) => setApiKeyValue(e.target.value)}
-                        className={`w-full h-9 px-3 text-sm rounded border ${
+                        className={`w-full h-9 px-3 text-vs rounded border ${
                           isDark ? "bg-transparent" : "bg-white"
                         } ${themeClasses.text.primary} placeholder:${
                           themeClasses.text.tertiary
@@ -569,7 +569,7 @@ export default function RequestPanel({
                         placeholder="Username"
                         value={basicUsername}
                         onChange={(e) => setBasicUsername(e.target.value)}
-                        className={`w-full h-9 px-3 text-sm rounded border ${
+                        className={`w-full h-9 px-3 text-vs rounded border ${
                           isDark ? "bg-transparent" : "bg-white"
                         } ${themeClasses.text.primary} placeholder:${
                           themeClasses.text.tertiary
@@ -587,7 +587,7 @@ export default function RequestPanel({
                         placeholder="Password"
                         value={basicPassword}
                         onChange={(e) => setBasicPassword(e.target.value)}
-                        className={`w-full h-9 px-3 text-sm rounded border ${
+                        className={`w-full h-9 px-3 text-vs rounded border ${
                           isDark ? "bg-transparent" : "bg-white"
                         } ${themeClasses.text.primary} placeholder:${
                           themeClasses.text.tertiary
