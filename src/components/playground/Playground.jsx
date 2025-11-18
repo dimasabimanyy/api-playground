@@ -1217,7 +1217,7 @@ export default function Playground() {
             isDark ? "bg-gray-900/20" : "bg-gray-50/50"
           }`}
         >
-          <div className="px-4 pt-3">
+          <div className="px-4 pt-4 pb-1">
             <div className="flex flex-col sm:flex-row sm:items-center gap-3">
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <div className="flex items-center gap-2 group flex-1 min-w-0">
@@ -1227,7 +1227,7 @@ export default function Playground() {
                       <div className="flex items-center gap-1 flex-1 min-w-0">
                         {breadcrumb && (
                           <>
-                            <span className="text-sm text-gray-500 dark:text-gray-400 flex-shrink-0">
+                            <span className="text-vs text-gray-500 dark:text-gray-400 flex-shrink-0">
                               {breadcrumb.collection}
                             </span>
                             <ChevronRight className="h-3 w-3 text-gray-400 flex-shrink-0" />
@@ -1246,7 +1246,7 @@ export default function Playground() {
                             }
                           }}
                           placeholder="Untitled Request"
-                          className={`text-sm font-medium bg-transparent border-none outline-none px-1 py-0.5 min-w-0 ${themeClasses.text.primary}`}
+                          className={`text-vs font-medium bg-transparent border-none outline-none px-1 py-0.5 min-w-0 ${themeClasses.text.primary}`}
                           style={{
                             width: `${Math.max(
                               currentTab?.name?.length || 15,
@@ -1311,7 +1311,7 @@ export default function Playground() {
         {/* Method + URL + Send Row - Full Width */}
         <div className={`${themeClasses.border.primary}`}>
           <div className="px-3 py-3">
-            <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3">
+            <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-2">
               {/* METHOD SELECT + URL INPUT + ENVIRONMENT ROW */}
               <div className="flex-1 min-w-0">
                 {/* Unified Method + URL Input */}
@@ -1319,8 +1319,8 @@ export default function Playground() {
                   className={`flex h-10 sm:h-11 rounded-md border backdrop-blur-sm overflow-hidden ${
                     isDark
                       ? "bg-gray-800 border-gray-600"
-                      : "bg-white border-gray-300"
-                  } focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent transition-all`}
+                      : "bg-white border-gray-400"
+                  } focus-within:ring-2 focus-within:ring-dark-500 focus-within:border-transparent transition-all`}
                   style={{ borderRadius: "6px" }}
                 >
                   {/* METHOD SELECT */}
@@ -1368,7 +1368,7 @@ export default function Playground() {
                         request: { ...request, url: e.target.value },
                       })
                     }
-                    className={`flex-1 text-sm px-3 bg-transparent outline-none ${
+                    className={`flex-1 text-[.8rem] px-3 bg-transparent outline-none ${
                       isDark
                         ? "text-white placeholder-gray-400"
                         : "text-gray-900 placeholder-gray-500"
@@ -1388,7 +1388,8 @@ export default function Playground() {
                       : isDark
                       ? "bg-blue-600 hover:bg-blue-700"
                       : "bg-black hover:bg-gray-800"
-                  } text-white rounded-md`}
+                  } text-white cursor-pointer`}
+                  style={{ borderRadius: "6px" }}
                 >
                   {loading ? (
                     <div className="flex items-center gap-2">
