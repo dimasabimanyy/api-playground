@@ -113,10 +113,10 @@ export default function RequestPanel({
         className={`flex-1 overflow-y-auto transition-colors duration-300 ${themeClasses.bg.primary}`}
       >
         {/* Request Configuration Tabs - Theme Aware */}
-        <div>
+        <div className="mt-3">
           <Tabs defaultValue="headers" className="w-full">
-            <div className="flex justify-between items-center px-6">
-              <TabsList className="flex h-8 bg-transparent p-0 border-none gap-6">
+            <div className="flex justify-between items-center px-2">
+              <TabsList className="flex h-8 bg-transparent p-0 border-none gap-4">
                 {[
                   { value: "params", label: "Params" },
                   {
@@ -144,12 +144,13 @@ export default function RequestPanel({
           ${themeClasses.tab.inactive}
           hover:bg-transparent hover:text-gray-900
           data-[state=active]:text-gray-900
-          after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-gray-800 after:transition-all after:duration-300
+          after:absolute after:bottom-0 after:left-0 after:h-[1.5px] after:w-0 after:bg-gray-800 after:transition-all after:duration-300
           data-[state=active]:after:w-full hover:after:w-full
         `}
                     style={{ borderRadius: "0" }}
                   >
                     {label}
+
                     {count > 0 && (
                       <span
                         className={`ml-1.5 text-xs px-1.5 py-0.5 rounded border ${themeClasses.status.info}`}
@@ -157,6 +158,7 @@ export default function RequestPanel({
                         {count}
                       </span>
                     )}
+
                     {dot && (
                       <div
                         className={`ml-1.5 h-2 w-2 rounded-full ${
@@ -176,7 +178,7 @@ export default function RequestPanel({
 
             <TabsContent
               value="params"
-              className="px-6 py-3 h-full flex flex-col space-y-4"
+              className="px-4 h-full flex flex-col space-y-4"
             >
               {/* Add Parameter Section */}
               <div className="space-y-3">
@@ -236,7 +238,7 @@ export default function RequestPanel({
 
             <TabsContent
               value="headers"
-              className="px-6 py-3 h-full flex flex-col space-y-4"
+              className="px-4 h-full flex flex-col space-y-4"
             >
               {/* Add Header Section */}
               <div className="space-y-3">
@@ -356,7 +358,7 @@ export default function RequestPanel({
 
             <TabsContent
               value="body"
-              className="px-6 py-3 h-full flex flex-col space-y-4"
+              className="px-4 h-full flex flex-col space-y-4"
             >
               {/* Body Configuration */}
               <div className="space-y-3">
@@ -452,7 +454,7 @@ export default function RequestPanel({
 
             <TabsContent
               value="auth"
-              className="px-6 py-3 h-full flex flex-col space-y-4"
+              className="px-4 h-full flex flex-col space-y-4"
             >
               <div className="space-y-3">
                 {/* Auth Type Select - Simplified */}
