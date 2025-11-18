@@ -9,31 +9,31 @@ import { getThemeClasses } from "@/lib/theme";
 import Editor from "@monaco-editor/react";
 
 export default function RequestPanel({
-  request = { method: 'GET', url: '', headers: {}, body: '' },
+  request = { method: "GET", url: "", headers: {}, body: "" },
   setRequest,
 }) {
   // Ensure request always has the required properties
   const safeRequest = {
-    method: 'GET',
-    url: '',
+    method: "GET",
+    url: "",
     headers: {},
-    body: '',
-    ...request
+    body: "",
+    ...request,
   };
   const { isDark } = useTheme();
   const themeClasses = getThemeClasses(isDark);
   const [newHeaderKey, setNewHeaderKey] = useState("");
   const [newHeaderValue, setNewHeaderValue] = useState("");
-  
+
   // Simple authentication state
-  const [authType, setAuthType] = useState('none');
-  const [bearerToken, setBearerToken] = useState('');
+  const [authType, setAuthType] = useState("none");
+  const [bearerToken, setBearerToken] = useState("");
   const [showBearerToken, setShowBearerToken] = useState(true);
-  const [contentType, setContentType] = useState('json');
-  const [apiKeyHeader, setApiKeyHeader] = useState('X-API-Key');
-  const [apiKeyValue, setApiKeyValue] = useState('');
-  const [basicUsername, setBasicUsername] = useState('');
-  const [basicPassword, setBasicPassword] = useState('');
+  const [contentType, setContentType] = useState("json");
+  const [apiKeyHeader, setApiKeyHeader] = useState("X-API-Key");
+  const [apiKeyValue, setApiKeyValue] = useState("");
+  const [basicUsername, setBasicUsername] = useState("");
+  const [basicPassword, setBasicPassword] = useState("");
 
   const updateRequest = (field, value) => {
     const updatedRequest = { ...safeRequest, [field]: value };
@@ -55,47 +55,55 @@ export default function RequestPanel({
     const { [key]: removed, ...rest } = safeRequest.headers || {};
     updateRequest("headers", rest);
   };
-  
+
   // Simple authentication functions
   const applyAuthentication = () => {
     let updatedHeaders = { ...safeRequest.headers };
-    
+
     // Clean up any existing auth headers
-    delete updatedHeaders['Authorization'];
-    delete updatedHeaders['X-API-Key'];
-    delete updatedHeaders['API-Key'];
+    delete updatedHeaders["Authorization"];
+    delete updatedHeaders["X-API-Key"];
+    delete updatedHeaders["API-Key"];
     delete updatedHeaders[apiKeyHeader]; // Remove custom API key header
-    
+
     // Apply authentication based on type
     switch (authType) {
-      case 'bearer':
+      case "bearer":
         if (bearerToken.trim()) {
-          updatedHeaders['Authorization'] = `Bearer ${bearerToken.trim()}`;
+          updatedHeaders["Authorization"] = `Bearer ${bearerToken.trim()}`;
         }
         break;
-        
-      case 'api-key':
+
+      case "api-key":
         if (apiKeyHeader.trim() && apiKeyValue.trim()) {
           updatedHeaders[apiKeyHeader.trim()] = apiKeyValue.trim();
         }
         break;
-        
-      case 'basic':
+
+      case "basic":
         if (basicUsername.trim() && basicPassword.trim()) {
-          const credentials = btoa(`${basicUsername.trim()}:${basicPassword.trim()}`);
-          updatedHeaders['Authorization'] = `Basic ${credentials}`;
+          const credentials = btoa(
+            `${basicUsername.trim()}:${basicPassword.trim()}`
+          );
+          updatedHeaders["Authorization"] = `Basic ${credentials}`;
         }
         break;
     }
-    
-    updateRequest('headers', updatedHeaders);
+
+    updateRequest("headers", updatedHeaders);
   };
-  
+
   // Auto-apply authentication when values change
   useEffect(() => {
     applyAuthentication();
-  }, [authType, bearerToken, apiKeyHeader, apiKeyValue, basicUsername, basicPassword]);
-
+  }, [
+    authType,
+    bearerToken,
+    apiKeyHeader,
+    apiKeyValue,
+    basicUsername,
+    basicPassword,
+  ]);
 
   return (
     <div
@@ -121,10 +129,10 @@ export default function RequestPanel({
                     label: "Body",
                     dot: !!safeRequest.body,
                   },
-                  { 
-                    value: "auth", 
+                  {
+                    value: "auth",
                     label: "Authorization",
-                    dot: authType !== 'none'
+                    dot: authType !== "none",
                   },
                 ].map(({ value, label, count, dot }) => (
                   <TabsTrigger
@@ -139,7 +147,7 @@ export default function RequestPanel({
           after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-gray-800 after:transition-all after:duration-300
           data-[state=active]:after:w-full hover:after:w-full
         `}
-                    style={{ borderRadius: '0' }}
+                    style={{ borderRadius: "0" }}
                   >
                     {label}
                     {count > 0 && (
@@ -159,48 +167,64 @@ export default function RequestPanel({
                   </TabsTrigger>
                 ))}
               </TabsList>
-              
+
               {/* Right side space for future features */}
               <div className="flex items-center gap-2">
                 {/* Future content can go here */}
               </div>
             </div>
 
-            <TabsContent value="params" className="px-6 py-3 h-full flex flex-col space-y-4">
+            <TabsContent
+              value="params"
+              className="px-6 py-3 h-full flex flex-col space-y-4"
+            >
               {/* Add Parameter Section */}
               <div className="space-y-3">
-                {/* <div className="flex items-center justify-end">
-                  <h4 className={`text-sm font-medium ${themeClasses.text.primary}`}>Query Parameters</h4>
-                  <span className={`text-xs px-2 py-1 rounded-full ${isDark ? 'bg-gray-800/60 text-gray-400' : 'bg-gray-100 text-gray-600'}`}>
-                    0 parameters
-                  </span>
-                </div> */}
-                
                 {/* Parameter Input - Simplified Vercel Style */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <label className={`text-xs font-medium ${themeClasses.text.secondary}`}>Key</label>
+                    <label
+                      className={`text-xs font-medium ${themeClasses.text.secondary}`}
+                    >
+                      Key
+                    </label>
                     <input
                       type="text"
                       placeholder="Key"
-                      className={`w-full h-9 px-3 text-sm border ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none transition-all`}
-                      style={{ 
-                        borderRadius: '6px', 
-                        borderColor: 'rgb(235, 235, 235)',
-                        backgroundColor: isDark ? 'transparent' : '#fafafa'
+                      className={`w-full h-9 px-3 text-sm border ${
+                        isDark ? "bg-transparent" : "bg-white"
+                      } ${themeClasses.text.primary} placeholder:${
+                        themeClasses.text.tertiary
+                      } focus:outline-none transition-all`}
+                      style={{
+                        borderRadius: "6px",
+                        borderColor: "rgb(235, 235, 235)",
+                        backgroundColor: isDark ? "transparent" : "#fafafa",
                       }}
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className={`text-xs font-medium ${themeClasses.text.secondary}`}>Value</label>
+                    <label
+                      className={`text-xs font-medium ${themeClasses.text.secondary}`}
+                    >
+                      Value
+                    </label>
                     <div className="flex gap-2">
                       <input
                         type="text"
                         placeholder="1"
-                        className={`flex-1 h-9 px-3 text-sm rounded border ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none transition-all`}
+                        className={`flex-1 h-9 px-3 text-sm rounded border ${
+                          isDark ? "bg-transparent" : "bg-white"
+                        } ${themeClasses.text.primary} placeholder:${
+                          themeClasses.text.tertiary
+                        } focus:outline-none transition-all`}
                       />
                       <button
-                        className={`h-9 w-9 rounded border flex items-center justify-center transition-all duration-200 ${isDark ? 'text-gray-400 hover:text-white hover:bg-gray-800' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}`}
+                        className={`h-9 w-9 rounded border flex items-center justify-center transition-all duration-200 ${
+                          isDark
+                            ? "text-gray-400 hover:text-white hover:bg-gray-800"
+                            : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                        }`}
                       >
                         <Plus className="h-4 w-4" />
                       </button>
@@ -208,48 +232,67 @@ export default function RequestPanel({
                   </div>
                 </div>
               </div>
-
             </TabsContent>
 
-            <TabsContent value="headers" className="px-6 py-3 h-full flex flex-col space-y-4">
+            <TabsContent
+              value="headers"
+              className="px-6 py-3 h-full flex flex-col space-y-4"
+            >
               {/* Add Header Section */}
               <div className="space-y-3">
-                {/* <div className="flex items-center justify-between">
-                  <h4 className={`text-sm font-medium ${themeClasses.text.primary}`}>Request Headers</h4>
-                  <span className={`text-xs px-2 py-1 rounded-full ${isDark ? 'bg-gray-800/60 text-gray-400' : 'bg-gray-100 text-gray-600'}`}>
-                    {Object.keys(safeRequest.headers || {}).length} headers
-                  </span>
-                </div> */}
-                
                 {/* Header Input - Simplified Vercel Style */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <label className={`text-xs font-medium ${themeClasses.text.secondary}`}>Key</label>
+                    <label
+                      className={`text-xs font-medium ${themeClasses.text.secondary}`}
+                    >
+                      Key
+                    </label>
                     <input
                       type="text"
                       placeholder="Content-Type"
                       value={newHeaderKey}
                       onChange={(e) => setNewHeaderKey(e.target.value)}
-                      className={`w-full h-9 px-3 text-sm rounded border ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none transition-all`}
+                      className={`w-full h-9 px-3 text-sm rounded border ${
+                        isDark ? "bg-transparent" : "bg-white"
+                      } ${themeClasses.text.primary} placeholder:${
+                        themeClasses.text.tertiary
+                      } focus:outline-none transition-all`}
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className={`text-xs font-medium ${themeClasses.text.secondary}`}>Value</label>
+                    <label
+                      className={`text-xs font-medium ${themeClasses.text.secondary}`}
+                    >
+                      Value
+                    </label>
                     <div className="flex gap-2">
                       <input
                         type="text"
                         placeholder="application/json"
                         value={newHeaderValue}
                         onChange={(e) => setNewHeaderValue(e.target.value)}
-                        className={`flex-1 h-9 px-3 text-sm rounded border ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none transition-all`}
+                        className={`flex-1 h-9 px-3 text-sm rounded border ${
+                          isDark ? "bg-transparent" : "bg-white"
+                        } ${themeClasses.text.primary} placeholder:${
+                          themeClasses.text.tertiary
+                        } focus:outline-none transition-all`}
                       />
                       <button
                         onClick={addHeader}
                         disabled={!newHeaderKey || !newHeaderValue}
                         className={`h-9 w-9 rounded border flex items-center justify-center transition-all duration-200 ${
                           newHeaderKey && newHeaderValue
-                            ? `${isDark ? 'text-gray-400 hover:text-white hover:bg-gray-800' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}`
-                            : `${isDark ? 'text-gray-600 cursor-not-allowed' : 'text-gray-400 cursor-not-allowed'}`
+                            ? `${
+                                isDark
+                                  ? "text-gray-400 hover:text-white hover:bg-gray-800"
+                                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                              }`
+                            : `${
+                                isDark
+                                  ? "text-gray-600 cursor-not-allowed"
+                                  : "text-gray-400 cursor-not-allowed"
+                              }`
                         }`}
                       >
                         <Plus className="h-4 w-4" />
@@ -261,34 +304,60 @@ export default function RequestPanel({
 
               {/* Headers List - Simplified */}
               <div className="flex-1 space-y-3 overflow-y-auto">
-                {Object.entries(safeRequest.headers || {}).map(([key, value]) => (
-                  <div
-                    key={key}
-                    className={`grid grid-cols-1 md:grid-cols-2 gap-3 p-3 rounded border group hover:${isDark ? 'bg-gray-900/20' : 'bg-gray-50'} transition-all`}
-                  >
-                    <div className="space-y-1">
-                      <span className={`text-xs font-medium ${themeClasses.text.secondary}`}>Key</span>
-                      <p className={`text-sm font-mono ${themeClasses.text.primary} break-all`}>{key}</p>
-                    </div>
-                    <div className="space-y-1 flex justify-between items-start">
-                      <div className="flex-1">
-                        <span className={`text-xs font-medium ${themeClasses.text.secondary}`}>Value</span>
-                        <p className={`text-sm font-mono ${themeClasses.text.secondary} break-all`}>{value}</p>
+                {Object.entries(safeRequest.headers || {}).map(
+                  ([key, value]) => (
+                    <div
+                      key={key}
+                      className={`grid grid-cols-1 md:grid-cols-2 gap-3 p-3 rounded border group hover:${
+                        isDark ? "bg-gray-900/20" : "bg-gray-50"
+                      } transition-all`}
+                    >
+                      <div className="space-y-1">
+                        <span
+                          className={`text-xs font-medium ${themeClasses.text.secondary}`}
+                        >
+                          Key
+                        </span>
+                        <p
+                          className={`text-sm font-mono ${themeClasses.text.primary} break-all`}
+                        >
+                          {key}
+                        </p>
                       </div>
-                      <button
-                        onClick={() => removeHeader(key)}
-                        className={`opacity-0 group-hover:opacity-100 p-1 rounded transition-all duration-200 ${themeClasses.text.tertiary} hover:text-red-500 ${isDark ? 'hover:bg-red-500/20' : 'hover:bg-red-100'}`}
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
+                      <div className="space-y-1 flex justify-between items-start">
+                        <div className="flex-1">
+                          <span
+                            className={`text-xs font-medium ${themeClasses.text.secondary}`}
+                          >
+                            Value
+                          </span>
+                          <p
+                            className={`text-sm font-mono ${themeClasses.text.secondary} break-all`}
+                          >
+                            {value}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => removeHeader(key)}
+                          className={`opacity-0 group-hover:opacity-100 p-1 rounded transition-all duration-200 ${
+                            themeClasses.text.tertiary
+                          } hover:text-red-500 ${
+                            isDark ? "hover:bg-red-500/20" : "hover:bg-red-100"
+                          }`}
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
-                
+                  )
+                )}
               </div>
             </TabsContent>
 
-            <TabsContent value="body" className="px-6 py-3 h-full flex flex-col space-y-4">
+            <TabsContent
+              value="body"
+              className="px-6 py-3 h-full flex flex-col space-y-4"
+            >
               {/* Body Configuration */}
               <div className="space-y-3">
                 {/* <div className="flex items-center justify-between">
@@ -299,39 +368,56 @@ export default function RequestPanel({
                     </span>
                   )}
                 </div> */}
-                
+
                 {/* Content Type Radio Buttons - Postman Style */}
                 <div className="flex items-center gap-4">
                   {[
-                    { value: 'json', label: 'JSON' },
-                    { value: 'text', label: 'Text' },
-                    { value: 'xml', label: 'XML' },
-                    { value: 'form', label: 'Form' }
+                    { value: "json", label: "JSON" },
+                    { value: "text", label: "Text" },
+                    { value: "xml", label: "XML" },
+                    { value: "form", label: "Form" },
                   ].map(({ value, label }) => (
-                    <label key={value} className="flex items-center gap-1.5 cursor-pointer">
+                    <label
+                      key={value}
+                      className="flex items-center gap-1.5 cursor-pointer"
+                    >
                       <input
                         type="radio"
                         name="contentType"
                         value={value}
                         checked={contentType === value}
                         onChange={(e) => setContentType(e.target.value)}
-                        className={`w-3 h-3 text-blue-600 ${isDark ? 'bg-transparent border-gray-600' : 'bg-white border-gray-300'} focus:ring-blue-500 focus:ring-1`}
+                        className={`w-3 h-3 text-blue-600 ${
+                          isDark
+                            ? "bg-transparent border-gray-600"
+                            : "bg-white border-gray-300"
+                        } focus:ring-blue-500 focus:ring-1`}
                       />
-                      <span className={`text-xs ${themeClasses.text.primary}`}>{label}</span>
+                      <span className={`text-xs ${themeClasses.text.primary}`}>
+                        {label}
+                      </span>
                     </label>
                   ))}
                 </div>
               </div>
-              
+
               {/* Body Editor - Monaco Code Editor */}
               <div className="flex-1 flex flex-col">
-                <div className={`flex-1 min-h-[300px] rounded border overflow-hidden`}>
+                <div
+                  className={`flex-1 min-h-[300px] rounded border overflow-hidden`}
+                >
                   <Editor
                     height="300px"
-                    language={contentType === 'json' ? 'json' : contentType === 'xml' ? 'xml' : 'plaintext'}
-                    value={safeRequest.body || ''}
-                    onChange={(value) => updateRequest("body", value || '')}
-                    theme={isDark ? 'vs-dark' : 'light'}
+                    language={
+                      contentType === "json"
+                        ? "json"
+                        : contentType === "xml"
+                        ? "xml"
+                        : "plaintext"
+                    }
+                    value={safeRequest.body || ""}
+                    onChange={(value) => updateRequest("body", value || "")}
+                    theme={isDark ? "vs-dark" : "light"}
                     options={{
                       minimap: { enabled: false },
                       scrollBeyondLastLine: false,
@@ -339,42 +425,51 @@ export default function RequestPanel({
                       lineHeight: 20,
                       tabSize: 2,
                       insertSpaces: true,
-                      wordWrap: 'on',
+                      wordWrap: "on",
                       automaticLayout: true,
                       formatOnPaste: true,
                       formatOnType: true,
                       suggest: {
                         showKeywords: false,
                         showSnippets: false,
-                        showWords: false
+                        showWords: false,
                       },
                       quickSuggestions: false,
                       parameterHints: { enabled: false },
                       hover: { enabled: false },
                       contextmenu: false,
-                      lineNumbers: 'on',
+                      lineNumbers: "on",
                       glyphMargin: false,
                       folding: false,
                       selectOnLineNumbers: false,
-                      matchBrackets: 'always',
-                      autoIndent: 'full'
+                      matchBrackets: "always",
+                      autoIndent: "full",
                     }}
                   />
                 </div>
               </div>
             </TabsContent>
 
-            <TabsContent value="auth" className="px-6 py-3 h-full flex flex-col space-y-4">
+            <TabsContent
+              value="auth"
+              className="px-6 py-3 h-full flex flex-col space-y-4"
+            >
               <div className="space-y-3">
                 {/* Auth Type Select - Simplified */}
                 <div className="space-y-1.5">
-                  <label className={`text-xs font-medium ${themeClasses.text.secondary}`}>
+                  <label
+                    className={`text-xs font-medium ${themeClasses.text.secondary}`}
+                  >
                     Authentication Type
                   </label>
                   <select
                     value={authType}
                     onChange={(e) => setAuthType(e.target.value)}
-                    className={`w-full h-9 px-3 text-sm rounded border ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} focus:outline-none transition-all`}
+                    className={`w-full h-9 px-3 text-sm rounded border ${
+                      isDark ? "bg-transparent" : "bg-white"
+                    } ${
+                      themeClasses.text.primary
+                    } focus:outline-none transition-all`}
                   >
                     <option value="none">No Authentication</option>
                     <option value="bearer">Bearer Token</option>
@@ -384,17 +479,25 @@ export default function RequestPanel({
                 </div>
 
                 {/* Auth Forms - Simplified */}
-                {authType === 'bearer' && (
+                {authType === "bearer" && (
                   <div className="space-y-2">
                     <div className="space-y-1.5">
-                      <label className={`text-xs font-medium ${themeClasses.text.secondary}`}>Bearer Token</label>
+                      <label
+                        className={`text-xs font-medium ${themeClasses.text.secondary}`}
+                      >
+                        Bearer Token
+                      </label>
                       <div className="relative">
                         <input
                           type={showBearerToken ? "text" : "password"}
                           placeholder="Enter your bearer token"
                           value={bearerToken}
                           onChange={(e) => setBearerToken(e.target.value)}
-                          className={`w-full h-9 px-3 pr-10 text-sm rounded border ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none transition-all`}
+                          className={`w-full h-9 px-3 pr-10 text-sm rounded border ${
+                            isDark ? "bg-transparent" : "bg-white"
+                          } ${themeClasses.text.primary} placeholder:${
+                            themeClasses.text.tertiary
+                          } focus:outline-none transition-all`}
                         />
                         <button
                           type="button"
@@ -412,54 +515,85 @@ export default function RequestPanel({
                   </div>
                 )}
 
-                {authType === 'api-key' && (
+                {authType === "api-key" && (
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">
-                      <label className={`text-xs font-medium ${themeClasses.text.secondary}`}>Header Name</label>
+                      <label
+                        className={`text-xs font-medium ${themeClasses.text.secondary}`}
+                      >
+                        Header Name
+                      </label>
                       <input
                         placeholder="X-API-Key"
                         value={apiKeyHeader}
                         onChange={(e) => setApiKeyHeader(e.target.value)}
-                        className={`w-full h-9 px-3 text-sm rounded border ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none transition-all`}
+                        className={`w-full h-9 px-3 text-sm rounded border ${
+                          isDark ? "bg-transparent" : "bg-white"
+                        } ${themeClasses.text.primary} placeholder:${
+                          themeClasses.text.tertiary
+                        } focus:outline-none transition-all`}
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className={`text-xs font-medium ${themeClasses.text.secondary}`}>API Key</label>
+                      <label
+                        className={`text-xs font-medium ${themeClasses.text.secondary}`}
+                      >
+                        API Key
+                      </label>
                       <input
                         type="password"
                         placeholder="API key value"
                         value={apiKeyValue}
                         onChange={(e) => setApiKeyValue(e.target.value)}
-                        className={`w-full h-9 px-3 text-sm rounded border ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none transition-all`}
+                        className={`w-full h-9 px-3 text-sm rounded border ${
+                          isDark ? "bg-transparent" : "bg-white"
+                        } ${themeClasses.text.primary} placeholder:${
+                          themeClasses.text.tertiary
+                        } focus:outline-none transition-all`}
                       />
                     </div>
                   </div>
                 )}
 
-                {authType === 'basic' && (
+                {authType === "basic" && (
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">
-                      <label className={`text-xs font-medium ${themeClasses.text.secondary}`}>Username</label>
+                      <label
+                        className={`text-xs font-medium ${themeClasses.text.secondary}`}
+                      >
+                        Username
+                      </label>
                       <input
                         placeholder="Username"
                         value={basicUsername}
                         onChange={(e) => setBasicUsername(e.target.value)}
-                        className={`w-full h-9 px-3 text-sm rounded border ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none transition-all`}
+                        className={`w-full h-9 px-3 text-sm rounded border ${
+                          isDark ? "bg-transparent" : "bg-white"
+                        } ${themeClasses.text.primary} placeholder:${
+                          themeClasses.text.tertiary
+                        } focus:outline-none transition-all`}
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className={`text-xs font-medium ${themeClasses.text.secondary}`}>Password</label>
+                      <label
+                        className={`text-xs font-medium ${themeClasses.text.secondary}`}
+                      >
+                        Password
+                      </label>
                       <input
                         type="password"
                         placeholder="Password"
                         value={basicPassword}
                         onChange={(e) => setBasicPassword(e.target.value)}
-                        className={`w-full h-9 px-3 text-sm rounded border ${isDark ? 'bg-transparent' : 'bg-white'} ${themeClasses.text.primary} placeholder:${themeClasses.text.tertiary} focus:outline-none transition-all`}
+                        className={`w-full h-9 px-3 text-sm rounded border ${
+                          isDark ? "bg-transparent" : "bg-white"
+                        } ${themeClasses.text.primary} placeholder:${
+                          themeClasses.text.tertiary
+                        } focus:outline-none transition-all`}
                       />
                     </div>
                   </div>
                 )}
-
               </div>
             </TabsContent>
           </Tabs>

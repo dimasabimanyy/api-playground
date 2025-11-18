@@ -349,7 +349,11 @@ export default function Playground() {
 
   const handleSaveEditedVariable = async (envId, variableIndex, variable) => {
     try {
-      const updatedEnv = updateVariableInEnvironment(envId, variableIndex, variable);
+      const updatedEnv = updateVariableInEnvironment(
+        envId,
+        variableIndex,
+        variable
+      );
       setEnvironments((prev) => ({ ...prev, [updatedEnv.id]: updatedEnv }));
       setSelectedVariableIndex(null);
     } catch (error) {
@@ -1158,7 +1162,7 @@ export default function Playground() {
                 return (
                   <div
                     key={tab.id}
-                    className={`flex items-center gap-2 px-1 py-3 cursor-pointer min-w-0 group transition-all duration-200 border-b-2 ${
+                    className={`flex items-center gap-1 px-1 py-3 cursor-pointer min-w-0 group transition-all duration-200 border-b-2 ${
                       tab.id === activeTabId
                         ? `${themeClasses.text.primary} border-gray-800 dark:border-gray-400`
                         : `${themeClasses.text.secondary} hover:${themeClasses.text.primary} border-transparent hover:border-gray-300`
@@ -1166,12 +1170,13 @@ export default function Playground() {
                     onClick={() => setActiveTabId(tab.id)}
                   >
                     <div
-                      className={`px-1 py-0.5 rounded text-xs font-medium border ${methodColors.bg} ${methodColors.text} flex-shrink-0 text-[10px] leading-none`}
+                      className={`font-medium ${methodColors.text} flex-shrink-0 text-[0.65rem] leading-none italic tracking-tight`}
                     >
                       {tab.request?.method || "GET"}
                     </div>
+
                     <span
-                      className={`text-[12.5px] truncate min-w-0 max-w-32 ${
+                      className={`text-[0.75rem] truncate min-w-0 max-w-32 ${
                         tab.isModified ? "italic" : ""
                       }`}
                     >
@@ -1188,7 +1193,7 @@ export default function Playground() {
                           e.stopPropagation();
                           closeTab(tab.id);
                         }}
-                        className={`h-4 w-4 opacity-0 group-hover:opacity-100 transition-all duration-200 rounded flex-shrink-0 flex items-center justify-center ${themeClasses.text.tertiary} hover:${themeClasses.text.primary}`}
+                        className={`cursor-pointer h-4 w-4 opacity-0 group-hover:opacity-100 transition-all duration-200 rounded flex-shrink-0 flex items-center justify-center ${themeClasses.text.tertiary} hover:${themeClasses.text.primary}`}
                       >
                         <X className="h-3 w-3" />
                       </button>
@@ -1500,7 +1505,11 @@ export default function Playground() {
         onEditVariable={handleSaveEditedVariable}
         environmentId={selectedEnvironmentForVariable}
         variableIndex={selectedVariableIndex}
-        variable={environments[selectedEnvironmentForVariable]?.variables?.[selectedVariableIndex]}
+        variable={
+          environments[selectedEnvironmentForVariable]?.variables?.[
+            selectedVariableIndex
+          ]
+        }
       />
 
       {/* Docs Generator Modal */}
