@@ -1426,7 +1426,7 @@ export default function Playground() {
                 title="Resize panels"
               >
                 <div
-                  className={`absolute left-1/2 transform -translate-x-1/2 w-px h-full bg-gray-300 dark:bg-gray-600 hover:bg-blue-500 ${
+                  className={`absolute left-1/2 transform -translate-x-1/2 w-px h-full bg-gray-200/60 dark:bg-gray-600 hover:bg-blue-500 ${
                     isDragging
                       ? "bg-blue-500"
                       : "transition-colors duration-200"
@@ -1457,7 +1457,7 @@ export default function Playground() {
                 title="Resize panels"
               >
                 <div
-                  className={`absolute top-1/2 transform -translate-y-1/2 w-full h-px bg-gray-300 dark:bg-gray-600 hover:bg-blue-500 ${
+                  className={`absolute top-1/2 transform -translate-y-1/2 w-full h-px bg-gray-200/60 dark:bg-gray-600 hover:bg-blue-500 ${
                     isDragging
                       ? "bg-blue-500"
                       : "transition-colors duration-200"

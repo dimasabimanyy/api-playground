@@ -326,7 +326,7 @@ export default function DocsPage() {
       <div
         className={`flex-1 flex flex-col ${
           sidebarCollapsed ? "lg:ml-0" : "lg:ml-0"
-        } ml-0 lg:ml-0 w-full lg:w-auto`}
+        } ml-0 lg:ml-0 w-full lg:w-auto px-6`}
       >
         {/* Page Header */}
         <div className="py-8">
