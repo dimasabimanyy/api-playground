@@ -1152,7 +1152,7 @@ export default function Playground() {
         <div
           className={`${themeClasses.bg.glass} border-b ${themeClasses.border.primary}`}
         >
-          <div className="flex items-center px-3 sm:px-6 py-0">
+          <div className="flex items-center px-2 py-0">
             <div className="flex items-center overflow-x-auto scrollbar-hide">
               {requestTabs.map((tab) => {
                 const methodColors = getMethodColors(
@@ -1162,7 +1162,7 @@ export default function Playground() {
                 return (
                   <div
                     key={tab.id}
-                    className={`flex items-center gap-1 px-1 py-3 cursor-pointer min-w-0 group transition-all duration-200 border-b-2 ${
+                    className={`flex items-center gap-1 px-1 py-[.7rem] cursor-pointer min-w-0 group transition-all duration-200 border-b-[1.5px] ${
                       tab.id === activeTabId
                         ? `${themeClasses.text.primary} border-gray-800 dark:border-gray-400`
                         : `${themeClasses.text.secondary} hover:${themeClasses.text.primary} border-transparent hover:border-gray-300`
@@ -1217,7 +1217,7 @@ export default function Playground() {
             isDark ? "bg-gray-900/20" : "bg-gray-50/50"
           }`}
         >
-          <div className="px-6 pt-4">
+          <div className="px-4 pt-3">
             <div className="flex flex-col sm:flex-row sm:items-center gap-3">
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <div className="flex items-center gap-2 group flex-1 min-w-0">
@@ -1260,14 +1260,14 @@ export default function Playground() {
                       <div className="flex items-center gap-1 flex-1 min-w-0">
                         {breadcrumb && (
                           <>
-                            <span className="text-sm text-gray-500 dark:text-gray-400 flex-shrink-0">
+                            <span className="text-vs text-gray-500 dark:text-gray-400 flex-shrink-0">
                               {breadcrumb.collection}
                             </span>
                             <ChevronRight className="h-3 w-3 text-gray-400 flex-shrink-0" />
                           </>
                         )}
                         <span
-                          className={`text-sm font-medium ${themeClasses.text.primary} truncate cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 px-1 py-0.5 rounded transition-colors`}
+                          className={`text-vs font-medium ${themeClasses.text.primary} truncate cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 px-1 py-0.5 rounded transition-colors`}
                           onClick={() => setEditingRequestName(true)}
                         >
                           {currentTab?.name || "Untitled Request"}
@@ -1310,7 +1310,7 @@ export default function Playground() {
 
         {/* Method + URL + Send Row - Full Width */}
         <div className={`${themeClasses.border.primary}`}>
-          <div className="px-3 sm:px-6 py-3 sm:py-4">
+          <div className="px-3 py-3">
             <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3">
               {/* METHOD SELECT + URL INPUT + ENVIRONMENT ROW */}
               <div className="flex-1 min-w-0">
