@@ -115,84 +115,13 @@ export default function TwoPanelSidebar({
       setOpenTabs((prev) => [...prev, newRequest]);
     }
   };
-
-  // if (sidebarCollapsed) {
-  //   return (
-  //     <div
-  //       className={`border-r ${themeClasses.border.primary} flex flex-col items-center py-4 px-2 gap-1 flex-shrink-0`}
-  //     >
-  //       {/* Navigation Icons */}
-  //       <div className="flex flex-col gap-1">
-  //         {sidebarMenuItems.map((item) => {
-  //           const Icon = item.icon;
-  //           const isActive = activeMenuTab === item.id && contentOpen;
-  //           return (
-  //             <div key={item.id} className="relative group">
-  //               <div
-  //                 className={`flex flex-col items-center gap-1 cursor-pointer rounded-lg transition-all duration-200 pt-3 pb-2 px-1 ${
-  //                   isActive
-  //                     ? `${isDark ? "bg-gray-800" : "bg-gray-100"}`
-  //                     : `hover:${isDark ? "bg-gray-800/30" : "bg-gray-100/50"}`
-  //                 }`}
-  //                 onClick={() => onNavItemClick(item.id)}
-  //               >
-  //                 <button
-  //                   className={`flex items-center justify-center rounded-lg transition-all duration-200 cursor-pointer ${
-  //                     isActive
-  //                       ? themeClasses.text.primary
-  //                       : `${themeClasses.text.secondary} group-hover:${themeClasses.text.primary}`
-  //                   }`}
-  //                   style={{ borderRadius: "6px" }}
-  //                 >
-  //                   <Icon className="h-4 w-4" />
-  //                 </button>
-
-  //                 <span
-  //                   className={`text-[10px] transition-colors ${
-  //                     isActive
-  //                       ? themeClasses.text.primary
-  //                       : `${themeClasses.text.secondary} group-hover:${themeClasses.text.primary}`
-  //                   }`}
-  //                 >
-  //                   {item.label}
-  //                 </span>
-  //               </div>
-
-  //               {/* Tooltip */}
-  //               <div
-  //                 className={`absolute left-full ml-2 px-2 py-1 text-xs rounded whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 ${
-  //                   isDark
-  //                     ? "bg-gray-100 text-gray-900"
-  //                     : "bg-gray-900 text-white"
-  //                 }`}
-  //                 style={{ top: "50%", transform: "translateY(-50%)" }}
-  //               >
-  //                 {item.label}
-  //               </div>
-  //             </div>
-  //           );
-  //         })}
-  //       </div>
-
-  //       {/* Create Button */}
-  //       <div>
-  //         <CreateNew
-  //           isDark={isDark}
-  //           themeClasses={themeClasses}
-  //           createNewTab={createNewTab}
-  //           setCreateCollectionDialogOpen={setCreateCollectionDialogOpen}
-  //         />
-  //       </div>
-  //     </div>
-  //   );
-  // }
-
+  
   return (
     <>
       <div className="flex h-full w-full min-w-0">
         {/* Left Navigation Panel */}
         <div
-          className={`border-r ${themeClasses.border.primary} flex flex-col items-center py-4 px-2 gap-1 flex-shrink-0`}
+          className={`border-r ${themeClasses.border.primary} flex flex-col items-center py-4 px-2 gap-1 flex-shrink-0 ${themeClasses.bg.bold}]`}
         >
           {/* Navigation Icons */}
           <div className="flex flex-col gap-1">
@@ -262,7 +191,7 @@ export default function TwoPanelSidebar({
                   <div className="space-y-1">
                     <div className="flex justify-between items-center mb-3">
                       <span
-                        className={`text-xs font-medium ${themeClasses.text.tertiary}`}
+                        className={`text-xs font-medium ${themeClasses.text.primary}`}
                       >
                         Collections
                       </span>
@@ -318,11 +247,11 @@ export default function TwoPanelSidebar({
                                       if (e.key === "Enter")
                                         setEditingCollection(null);
                                     }}
-                                    className={`w-full bg-transparent text-sm font-medium ${themeClasses.text.primary} border-none outline-none`}
+                                    className={`w-full bg-transparent text-vs ${themeClasses.text.primary} border-none outline-none`}
                                   />
                                 ) : (
                                   <span
-                                    className={`text-sm font-medium ${themeClasses.text.primary} truncate block`}
+                                    className={`text-vs ${themeClasses.text.primary} truncate block`}
                                   >
                                     {collection.name}
                                   </span>
@@ -369,11 +298,11 @@ export default function TwoPanelSidebar({
                                   <button
                                     key={request.id}
                                     onClick={() => loadRequest(request)}
-                                    className={`w-full text-left px-2 py-1 text-sm rounded transition-all duration-200 hover:${
+                                    className={`w-full text-left px-2 py-1 text-vs rounded transition-all duration-200 hover:${
                                       isDark
                                         ? "bg-gray-800/30"
                                         : "bg-gray-100/50"
-                                    } ${themeClasses.text.secondary} truncate`}
+                                    } ${themeClasses.text.secondary} truncate cursor-pointer`}
                                   >
                                     <span
                                       className={`inline-block w-12 text-xs font-mono ${

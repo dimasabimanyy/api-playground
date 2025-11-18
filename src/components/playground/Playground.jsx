@@ -1146,7 +1146,7 @@ export default function Playground() {
       <div
         className={`flex-1 flex flex-col ${
           sidebarCollapsed ? "lg:ml-0" : "lg:ml-0"
-        } ml-0 lg:ml-0 w-full lg:w-auto`}
+      } ml-0 lg:ml-0 w-full lg:w-auto`}
       >
         {/* Request Tabs - Flat Design */}
         <div
