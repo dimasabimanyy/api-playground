@@ -115,7 +115,7 @@ export default function TwoPanelSidebar({
       setOpenTabs((prev) => [...prev, newRequest]);
     }
   };
-  
+
   return (
     <>
       <div className="flex h-full w-full min-w-0">
@@ -152,11 +152,17 @@ export default function TwoPanelSidebar({
                     </button>
 
                     <span
-                      className={`text-[10px] transition-colors ${
+                      // className={`text-[11px] transition-colors ${
+                      //   isActive
+                      //     ? themeClasses.text.primary
+                      //     : `${themeClasses.text.secondary} group-hover:${themeClasses.text.primary}`
+                      // }`}
+                      className={`text-[.7rem] transition-colors ${
                         isActive
                           ? themeClasses.text.primary
                           : `${themeClasses.text.secondary} group-hover:${themeClasses.text.primary}`
                       }`}
+                      style={{ color: "rgb(102, 102, 102)" }}
                     >
                       {item.label}
                     </span>
@@ -302,7 +308,9 @@ export default function TwoPanelSidebar({
                                       isDark
                                         ? "bg-gray-800/30"
                                         : "bg-gray-100/50"
-                                    } ${themeClasses.text.secondary} truncate cursor-pointer`}
+                                    } ${
+                                      themeClasses.text.secondary
+                                    } truncate cursor-pointer`}
                                   >
                                     <span
                                       className={`inline-block w-12 text-xs font-mono ${

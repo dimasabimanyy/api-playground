@@ -353,20 +353,19 @@ export default function DocDetailPage() {
                 className={`${themeClasses.button.outline}`}
                 disabled={!generatePublicUrl()}
                 style={{
-                  borderRadius: "6px"
+                  borderRadius: "6px",
                 }}
               >
                 Copy URL
               </Button>
-              <Button
+              {/* <Button
                 onClick={viewDocumentation}
                 variant="outline"
                 size="sm"
                 className={`${themeClasses.button.secondary}`}
               >
-                <Eye className="w-4 h-4 mr-2" />
                 View Docs
-              </Button>
+              </Button> */}
               <Button
                 onClick={() => window.open(generatePublicUrl(), "_blank")}
                 className={`${
@@ -377,11 +376,10 @@ export default function DocDetailPage() {
                 size="sm"
                 disabled={!generatePublicUrl()}
               >
-                <ExternalLink className="w-4 h-4 mr-2" />
                 Open Public
               </Button>
 
-              <div className="relative">
+              {/* <div className="relative">
                 <Button
                   onClick={() => setShowMenu(!showMenu)}
                   variant="outline"
@@ -437,7 +435,7 @@ export default function DocDetailPage() {
                     </div>
                   </div>
                 )}
-              </div>
+              </div> */}
             </div>
           </div>
 
