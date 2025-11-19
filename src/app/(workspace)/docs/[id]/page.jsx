@@ -5,7 +5,6 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft,
-  Globe,
   Settings,
   Eye,
   Copy,
@@ -28,7 +27,6 @@ import {
   BarChart3,
   TrendingUp,
   Zap,
-  BookOpen,
   Shield,
   X,
 } from "lucide-react";
@@ -332,7 +330,9 @@ export default function DocDetailPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div>
-                <h1 className={`text-3xl font-bold tracking-tight ${themeClasses.text.bold}`}>
+                <h1
+                  className={`text-3xl font-bold tracking-tight ${themeClasses.text.bold}`}
+                >
                   {project.name}
                 </h1>
                 {/* <p className={`text-sm ${themeClasses.text.tertiary}`}>
@@ -444,7 +444,6 @@ export default function DocDetailPage() {
           <div className="flex items-center gap-6 mt-5">
             {[
               { id: "overview", label: "Overview", icon: BarChart3 },
-              { id: "content", label: "Content", icon: BookOpen },
               { id: "settings", label: "Settings", icon: Settings },
               { id: "analytics", label: "Analytics", icon: Activity },
             ].map(({ id, label, icon: Icon }) => (
@@ -469,94 +468,338 @@ export default function DocDetailPage() {
       <div className="max-w-7xl mx-auto px-6 py-8">
         {activeTab === "overview" && (
           <div className="space-y-8">
-            {/* Production Status Card */}
+            {/* Production Deployment - Vercel Style */}
             <div
-              className={`p-6 border rounded-xl ${
+              className={`border rounded-xl overflow-hidden ${
                 isDark
-                  ? "border-gray-800 bg-gradient-to-br from-gray-900/50 to-gray-800/30"
-                  : "border-gray-200 bg-gradient-to-br from-white to-gray-50/50"
+                  ? "border-gray-800 bg-gray-900/50"
+                  : "border-gray-200 bg-white"
               }`}
             >
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="w-5 h-5 text-green-500" />
+                      <span
+                        className={`font-semibold ${themeClasses.text.primary}`}
+                      >
+                        Production Deployment
+                      </span>
+                    </div>
+                    <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 rounded-full">
+                      Live
+                    </span>
+                  </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span
-                      className={`font-semibold ${themeClasses.text.primary}`}
+                    <Button
+                      onClick={() => window.open(generatePublicUrl(), "_blank")}
+                      variant="outline"
+                      size="sm"
                     >
-                      Production Deployment
-                    </span>
+                      <ExternalLink className="w-4 h-4 mr-2" />
+                      Visit
+                    </Button>
                   </div>
-                  <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 rounded-full">
-                    Live
-                  </span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    onClick={() => window.open(generatePublicUrl(), "_blank")}
-                    variant="outline"
-                    size="sm"
-                  >
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    Visit
-                  </Button>
-                </div>
-              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <div
-                    className={`text-sm ${themeClasses.text.secondary} mb-1`}
-                  >
-                    Public URL
+                <div className="flex gap-8">
+                  {/* Left side - Preview (40% width) */}
+                  <div className="w-2/5 space-y-4">
+                    <div
+                      className={`border rounded-lg overflow-hidden ${
+                        isDark ? "border-gray-700" : "border-gray-200"
+                      }`}
+                    >
+                      <div
+                        className={`h-4 flex items-center gap-1 px-3 ${
+                          isDark ? "bg-gray-800" : "bg-gray-100"
+                        }`}
+                      >
+                        <div className="flex gap-1">
+                          <div className="w-2 h-2 rounded-full bg-red-400"></div>
+                          <div className="w-2 h-2 rounded-full bg-yellow-400"></div>
+                          <div className="w-2 h-2 rounded-full bg-green-400"></div>
+                        </div>
+                        <div
+                          className={`text-xs ml-3 ${themeClasses.text.tertiary} font-mono truncate`}
+                        >
+                          {generatePublicUrl()
+                            ? generatePublicUrl().replace(/^https?:\/\//, "")
+                            : "your-docs.com"}
+                        </div>
+                      </div>
+                      <div
+                        className={`aspect-video ${
+                          isDark ? "bg-gray-900" : "bg-gray-50"
+                        } flex items-center justify-center relative overflow-hidden`}
+                      >
+                        {/* Placeholder preview content */}
+                        <div className="w-full h-full p-4">
+                          <div className="w-full h-full rounded border border-dashed border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center">
+                            <div
+                              className={`w-12 h-12 rounded-lg flex items-center justify-center mb-3 ${
+                                isDark
+                                  ? "bg-gray-800 text-gray-400"
+                                  : "bg-gray-200 text-gray-500"
+                              }`}
+                            >
+                              <FileText className="w-6 h-6" />
+                            </div>
+                            <div
+                              className={`text-sm font-medium ${themeClasses.text.primary} mb-1`}
+                            >
+                              {project.name}
+                            </div>
+                            <div
+                              className={`text-xs ${themeClasses.text.secondary} text-center px-2`}
+                            >
+                              API Documentation
+                            </div>
+                            <div className="flex gap-1 mt-3">
+                              <div
+                                className={`w-16 h-2 rounded ${
+                                  isDark ? "bg-gray-700" : "bg-gray-200"
+                                }`}
+                              ></div>
+                              <div
+                                className={`w-12 h-2 rounded ${
+                                  isDark ? "bg-gray-700" : "bg-gray-200"
+                                }`}
+                              ></div>
+                              <div
+                                className={`w-8 h-2 rounded ${
+                                  isDark ? "bg-gray-700" : "bg-gray-200"
+                                }`}
+                              ></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => window.open(generatePublicUrl(), "_blank")}
+                      disabled={!generatePublicUrl()}
+                      className={`w-full text-xs py-2 px-3 rounded transition-colors ${
+                        generatePublicUrl()
+                          ? isDark
+                            ? "bg-gray-800 hover:bg-gray-700 text-gray-300"
+                            : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                          : isDark
+                          ? "bg-gray-800 text-gray-600 cursor-not-allowed"
+                          : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      }`}
+                    >
+                      {generatePublicUrl()
+                        ? "Open Preview"
+                        : "Preview not available"}
+                    </button>
                   </div>
-                  <div
-                    className={`text-sm font-mono ${themeClasses.text.primary} break-all`}
-                  >
-                    {generatePublicUrl() || "Not yet published"}
-                  </div>
-                </div>
-                <div>
-                  <div
-                    className={`text-sm ${themeClasses.text.secondary} mb-1`}
-                  >
-                    Last Updated
-                  </div>
-                  <div className={`text-sm ${themeClasses.text.primary}`}>
-                    {new Date(project.updated).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </div>
-                </div>
-                <div>
-                  <div
-                    className={`text-sm ${themeClasses.text.secondary} mb-1`}
-                  >
-                    Status
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                    <span className={`text-sm ${themeClasses.text.primary}`}>
-                      Healthy
-                    </span>
+
+                  {/* Right side - Details (60% width) */}
+                  <div className="flex-1 space-y-8">
+                    {/* Domain */}
+                    <div>
+                      <h4
+                        className={`text-sm font-semibold ${themeClasses.text.primary} mb-3`}
+                      >
+                        Domain
+                      </h4>
+                      <div
+                        className={`p-4 rounded-lg border ${
+                          isDark
+                            ? "border-gray-700 bg-gray-800/50"
+                            : "border-gray-200 bg-gray-50"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                            <div>
+                              <div
+                                className={`text-sm font-medium ${themeClasses.text.primary}`}
+                              >
+                                {generatePublicUrl()
+                                  ? generatePublicUrl().replace(
+                                      /^https?:\/\//,
+                                      ""
+                                    )
+                                  : "Not assigned"}
+                              </div>
+                              <div
+                                className={`text-xs ${themeClasses.text.secondary}`}
+                              >
+                                {generatePublicUrl()
+                                  ? "Ready"
+                                  : "Awaiting configuration"}
+                              </div>
+                            </div>
+                          </div>
+                          <ExternalLink
+                            className={`w-4 h-4 ${themeClasses.text.tertiary}`}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Deployment Details */}
+                    <div>
+                      <h4
+                        className={`text-sm font-semibold ${themeClasses.text.primary} mb-3`}
+                      >
+                        Details
+                      </h4>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between py-2">
+                          <span
+                            className={`text-sm ${themeClasses.text.secondary}`}
+                          >
+                            Status
+                          </span>
+                          <div className="flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                            <span
+                              className={`text-sm ${themeClasses.text.primary}`}
+                            >
+                              Ready
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between py-2">
+                          <span
+                            className={`text-sm ${themeClasses.text.secondary}`}
+                          >
+                            Template
+                          </span>
+                          <span
+                            className={`text-sm ${themeClasses.text.primary} capitalize`}
+                          >
+                            {project.template || "Default"}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center justify-between py-2">
+                          <span
+                            className={`text-sm ${themeClasses.text.secondary}`}
+                          >
+                            Collections
+                          </span>
+                          <span
+                            className={`text-sm ${themeClasses.text.primary}`}
+                          >
+                            {project.collections?.length || 0}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center justify-between py-2">
+                          <span
+                            className={`text-sm ${themeClasses.text.secondary}`}
+                          >
+                            Endpoints
+                          </span>
+                          <span
+                            className={`text-sm ${themeClasses.text.primary}`}
+                          >
+                            {getEndpointCount()}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center justify-between py-2">
+                          <span
+                            className={`text-sm ${themeClasses.text.secondary}`}
+                          >
+                            Last Updated
+                          </span>
+                          <span
+                            className={`text-sm ${themeClasses.text.primary}`}
+                          >
+                            {new Date(project.updated).toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                                day: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              }
+                            )}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Build Settings */}
+                    <div>
+                      <h4
+                        className={`text-sm font-semibold ${themeClasses.text.primary} mb-3`}
+                      >
+                        Configuration
+                      </h4>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between py-2">
+                          <span
+                            className={`text-sm ${themeClasses.text.secondary}`}
+                          >
+                            Public Access
+                          </span>
+                          <span
+                            className={`text-sm ${
+                              project.settings?.isPublic !== false
+                                ? "text-green-600 dark:text-green-400"
+                                : "text-yellow-600 dark:text-yellow-400"
+                            }`}
+                          >
+                            {project.settings?.isPublic !== false
+                              ? "Enabled"
+                              : "Disabled"}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center justify-between py-2">
+                          <span
+                            className={`text-sm ${themeClasses.text.secondary}`}
+                          >
+                            Code Examples
+                          </span>
+                          <span
+                            className={`text-sm ${themeClasses.text.primary}`}
+                          >
+                            {project.settings?.showExamples !== false
+                              ? "Enabled"
+                              : "Disabled"}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center justify-between py-2">
+                          <span
+                            className={`text-sm ${themeClasses.text.secondary}`}
+                          >
+                            Group by Collection
+                          </span>
+                          <span
+                            className={`text-sm ${themeClasses.text.primary}`}
+                          >
+                            {project.settings?.groupByCollection !== false
+                              ? "Enabled"
+                              : "Disabled"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="space-y-8">
               {/* Stats */}
-              <div className="lg:col-span-2">
+              <div>
                 <h2
                   className={`text-lg font-semibold ${themeClasses.text.bold} mb-4`}
                 >
                   Documentation Stats
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <StatCard
                     icon={FileText}
                     label="Collections"
@@ -585,63 +828,320 @@ export default function DocDetailPage() {
                     themeClasses={themeClasses}
                   />
                 </div>
+              </div>
 
-                {/* Collections Overview */}
-                <div
-                  className={`p-6 border rounded-xl ${
-                    isDark
-                      ? "border-gray-800 bg-gray-900/50"
-                      : "border-gray-200 bg-white"
-                  }`}
+              {/* Content & Display Section */}
+              <div>
+                <h2
+                  className={`text-lg font-semibold ${themeClasses.text.bold} mb-6`}
                 >
-                  <h3
-                    className={`font-semibold ${themeClasses.text.bold} mb-4`}
-                  >
-                    Collections in this Documentation
-                  </h3>
-                  <div className="space-y-3">
-                    {project.collections?.map((collectionId) => {
-                      const collection = collections[collectionId];
-                      if (!collection) return null;
+                  Content & Display
+                </h2>
 
-                      return (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {/* Template Selection */}
+                  <div
+                    className={`border rounded-xl p-6 ${
+                      isDark
+                        ? "border-gray-800 bg-gray-900/50"
+                        : "border-gray-200 bg-white"
+                    }`}
+                  >
+                    <h3
+                      className={`font-semibold ${themeClasses.text.bold} mb-4`}
+                    >
+                      Documentation Template
+                    </h3>
+                    <p
+                      className={`text-sm ${themeClasses.text.secondary} mb-6`}
+                    >
+                      Choose how your documentation will be displayed to
+                      visitors
+                    </p>
+
+                    <div className="space-y-3">
+                      {[
+                        {
+                          id: "default",
+                          name: "Default",
+                          description:
+                            "Clean and simple layout with sidebar navigation",
+                          preview: "Sidebar + Content",
+                          isSelected:
+                            !project.template || project.template === "default",
+                        },
+                        {
+                          id: "cards",
+                          name: "Card Layout",
+                          description: "Endpoint cards with expandable details",
+                          preview: "Card Grid",
+                          isSelected: project.template === "cards",
+                        },
+                        {
+                          id: "compact",
+                          name: "Compact",
+                          description: "Dense layout for extensive APIs",
+                          preview: "Compact List",
+                          isSelected: project.template === "compact",
+                        },
+                      ].map((template) => (
                         <div
-                          key={collectionId}
-                          className="flex items-center justify-between py-2"
+                          key={template.id}
+                          onClick={() => {
+                            const updatedProject = {
+                              ...project,
+                              template: template.id,
+                              updated: new Date().toISOString(),
+                            };
+                            setProject(updatedProject);
+                            DocsProjects.update(project.id, updatedProject);
+                          }}
+                          className={`cursor-pointer border rounded-lg p-4 transition-all duration-200 ${
+                            template.isSelected
+                              ? isDark
+                                ? "border-blue-600 bg-blue-900/20"
+                                : "border-blue-500 bg-blue-50"
+                              : isDark
+                              ? "border-gray-700 bg-gray-800/30 hover:border-gray-600"
+                              : "border-gray-200 bg-white hover:border-gray-300"
+                          }`}
                         >
-                          <div className="flex items-center gap-3">
-                            <div
-                              className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                                isDark
-                                  ? "bg-gray-800 text-gray-300"
-                                  : "bg-gray-100 text-gray-600"
+                          <div className="flex items-center justify-between mb-2">
+                            <h4
+                              className={`font-medium ${themeClasses.text.bold}`}
+                            >
+                              {template.name}
+                            </h4>
+                            {template.isSelected && (
+                              <CheckCircle className="w-4 h-4 text-blue-500" />
+                            )}
+                          </div>
+                          <p
+                            className={`text-xs ${themeClasses.text.secondary} mb-2`}
+                          >
+                            {template.description}
+                          </p>
+                          <div
+                            className={`text-xs px-2 py-1 rounded ${
+                              isDark
+                                ? "bg-gray-700 text-gray-300"
+                                : "bg-gray-100 text-gray-600"
+                            }`}
+                          >
+                            {template.preview}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Display Options */}
+                  <div
+                    className={`border rounded-xl p-6 ${
+                      isDark
+                        ? "border-gray-800 bg-gray-900/50"
+                        : "border-gray-200 bg-white"
+                    }`}
+                  >
+                    <h3
+                      className={`font-semibold ${themeClasses.text.bold} mb-4`}
+                    >
+                      Display Options
+                    </h3>
+
+                    <div className="space-y-6">
+                      {/* Color Theme */}
+                      <div>
+                        <label
+                          className={`block text-sm font-medium ${themeClasses.text.primary} mb-3`}
+                        >
+                          Color Theme
+                        </label>
+                        <div className="grid grid-cols-2 gap-2">
+                          {[
+                            {
+                              id: "default",
+                              name: "Default",
+                              color: "#171717",
+                            },
+                            { id: "blue", name: "Blue", color: "#3b82f6" },
+                            { id: "green", name: "Green", color: "#10b981" },
+                            { id: "purple", name: "Purple", color: "#8b5cf6" },
+                          ].map((theme) => (
+                            <button
+                              key={theme.id}
+                              onClick={() => {
+                                const updatedProject = {
+                                  ...project,
+                                  displayOptions: {
+                                    ...project.displayOptions,
+                                    colorTheme: theme.id,
+                                  },
+                                  updated: new Date().toISOString(),
+                                };
+                                setProject(updatedProject);
+                                DocsProjects.update(project.id, updatedProject);
+                              }}
+                              className={`flex items-center gap-2 p-3 rounded-lg border transition-colors ${
+                                (project.displayOptions?.colorTheme ||
+                                  "default") === theme.id
+                                  ? isDark
+                                    ? "border-blue-600 bg-blue-900/20"
+                                    : "border-blue-500 bg-blue-50"
+                                  : isDark
+                                  ? "border-gray-700 hover:border-gray-600"
+                                  : "border-gray-200 hover:border-gray-300"
                               }`}
                             >
-                              <FileText className="w-4 h-4" />
-                            </div>
-                            <div>
                               <div
-                                className={`font-medium ${themeClasses.text.bold}`}
+                                className="w-3 h-3 rounded-full"
+                                style={{ backgroundColor: theme.color }}
+                              />
+                              <span
+                                className={`text-xs ${themeClasses.text.primary}`}
                               >
-                                {collection.name}
-                              </div>
-                              <div
-                                className={`text-sm ${themeClasses.text.secondary}`}
-                              >
-                                {collection.requests?.length || 0} endpoints
-                              </div>
-                            </div>
-                          </div>
-                          <Button variant="ghost" size="sm">
-                            <ExternalLink className="w-4 h-4" />
-                          </Button>
+                                {theme.name}
+                              </span>
+                            </button>
+                          ))}
                         </div>
-                      );
-                    })}
+                      </div>
+
+                      {/* Layout Options */}
+                      <div>
+                        <label
+                          className={`block text-sm font-medium ${themeClasses.text.primary} mb-3`}
+                        >
+                          Layout Settings
+                        </label>
+                        <div className="space-y-3">
+                          {[
+                            {
+                              id: "showMethodBadges",
+                              label: "HTTP method badges",
+                              description: "GET, POST, PUT, etc. badges",
+                            },
+                            {
+                              id: "showCodeExamples",
+                              label: "Code examples",
+                              description: "cURL and SDK examples",
+                            },
+                            {
+                              id: "groupByCollection",
+                              label: "Group by collection",
+                              description: "Organize by parent collection",
+                            },
+                            {
+                              id: "showResponseExamples",
+                              label: "Response examples",
+                              description: "Sample response data",
+                            },
+                          ].map((option) => (
+                            <div
+                              key={option.id}
+                              className="flex items-center gap-3"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={
+                                  project.displayOptions?.[option.id] !== false
+                                }
+                                onChange={(e) => {
+                                  const updatedProject = {
+                                    ...project,
+                                    displayOptions: {
+                                      ...project.displayOptions,
+                                      [option.id]: e.target.checked,
+                                    },
+                                    updated: new Date().toISOString(),
+                                  };
+                                  setProject(updatedProject);
+                                  DocsProjects.update(
+                                    project.id,
+                                    updatedProject
+                                  );
+                                }}
+                                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                              />
+                              <div className="flex-1">
+                                <label
+                                  className={`text-sm font-medium ${themeClasses.text.primary}`}
+                                >
+                                  {option.label}
+                                </label>
+                                <p
+                                  className={`text-xs ${themeClasses.text.secondary}`}
+                                >
+                                  {option.description}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
 
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Collections Overview */}
+                <div className="lg:col-span-2">
+                  <h2
+                    className={`text-lg font-semibold ${themeClasses.text.bold} mb-4`}
+                  >
+                    Collections in Documentation
+                  </h2>
+                  <div
+                    className={`p-6 border rounded-xl ${
+                      isDark
+                        ? "border-gray-800 bg-gray-900/50"
+                        : "border-gray-200 bg-white"
+                    }`}
+                  >
+                    <div className="space-y-3">
+                      {project.collections?.map((collectionId) => {
+                        const collection = collections[collectionId];
+                        if (!collection) return null;
+
+                        return (
+                          <div
+                            key={collectionId}
+                            className="flex items-center justify-between py-2"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div
+                                className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                                  isDark
+                                    ? "bg-gray-800 text-gray-300"
+                                    : "bg-gray-100 text-gray-600"
+                                }`}
+                              >
+                                <FileText className="w-4 h-4" />
+                              </div>
+                              <div>
+                                <div
+                                  className={`font-medium ${themeClasses.text.bold}`}
+                                >
+                                  {collection.name}
+                                </div>
+                                <div
+                                  className={`text-sm ${themeClasses.text.secondary}`}
+                                >
+                                  {collection.requests?.length || 0} endpoints
+                                </div>
+                              </div>
+                            </div>
+                            <Button variant="ghost" size="sm">
+                              <ExternalLink className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
               {/* Activity Feed */}
               <div>
                 <h2
@@ -674,355 +1174,6 @@ export default function DocDetailPage() {
           </div>
         )}
 
-        {activeTab === "content" && (
-          <div className="space-y-8">
-            <h2
-              className={`text-lg font-semibold ${themeClasses.text.bold} mb-6`}
-            >
-              Content & Display
-            </h2>
-
-            {/* Template Selection */}
-            <div
-              className={`border rounded-xl p-6 ${
-                isDark
-                  ? "border-gray-800 bg-gray-900/50"
-                  : "border-gray-200 bg-white"
-              }`}
-            >
-              <h3 className={`font-semibold ${themeClasses.text.bold} mb-4`}>
-                Documentation Template
-              </h3>
-              <p className={`text-sm ${themeClasses.text.secondary} mb-6`}>
-                Choose how your documentation will be displayed to visitors
-              </p>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {[
-                  {
-                    id: "default",
-                    name: "Default",
-                    description:
-                      "Clean and simple layout with sidebar navigation",
-                    preview: "Sidebar + Content",
-                    isSelected:
-                      !project.template || project.template === "default",
-                  },
-                  {
-                    id: "cards",
-                    name: "Card Layout",
-                    description: "Endpoint cards with expandable details",
-                    preview: "Card Grid",
-                    isSelected: project.template === "cards",
-                  },
-                  {
-                    id: "compact",
-                    name: "Compact",
-                    description: "Dense layout for extensive APIs",
-                    preview: "Compact List",
-                    isSelected: project.template === "compact",
-                  },
-                ].map((template) => (
-                  <div
-                    key={template.id}
-                    onClick={() => {
-                      const updatedProject = {
-                        ...project,
-                        template: template.id,
-                        updated: new Date().toISOString(),
-                      };
-                      setProject(updatedProject);
-                      DocsProjects.update(project.id, updatedProject);
-                    }}
-                    className={`cursor-pointer border-2 rounded-lg p-4 transition-all duration-200 ${
-                      template.isSelected
-                        ? isDark
-                          ? "border-blue-600 bg-blue-900/20"
-                          : "border-blue-500 bg-blue-50"
-                        : isDark
-                        ? "border-gray-700 bg-gray-800/30 hover:border-gray-600"
-                        : "border-gray-200 bg-white hover:border-gray-300"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-3">
-                      <h4 className={`font-medium ${themeClasses.text.bold}`}>
-                        {template.name}
-                      </h4>
-                      {template.isSelected && (
-                        <CheckCircle className="w-5 h-5 text-blue-500" />
-                      )}
-                    </div>
-                    <p
-                      className={`text-sm ${themeClasses.text.secondary} mb-3`}
-                    >
-                      {template.description}
-                    </p>
-                    <div
-                      className={`text-xs px-2 py-1 rounded ${
-                        isDark
-                          ? "bg-gray-700 text-gray-300"
-                          : "bg-gray-100 text-gray-600"
-                      }`}
-                    >
-                      {template.preview}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Display Options */}
-            <div
-              className={`border rounded-xl p-6 ${
-                isDark
-                  ? "border-gray-800 bg-gray-900/50"
-                  : "border-gray-200 bg-white"
-              }`}
-            >
-              <h3 className={`font-semibold ${themeClasses.text.bold} mb-4`}>
-                Display Options
-              </h3>
-
-              <div className="space-y-6">
-                {/* Color Theme */}
-                <div>
-                  <label
-                    className={`block text-sm font-medium ${themeClasses.text.primary} mb-3`}
-                  >
-                    Color Theme
-                  </label>
-                  <div className="grid grid-cols-4 gap-3">
-                    {[
-                      { id: "default", name: "Default", color: "#171717" },
-                      { id: "blue", name: "Blue", color: "#3b82f6" },
-                      { id: "green", name: "Green", color: "#10b981" },
-                      { id: "purple", name: "Purple", color: "#8b5cf6" },
-                    ].map((theme) => (
-                      <button
-                        key={theme.id}
-                        onClick={() => {
-                          const updatedProject = {
-                            ...project,
-                            displayOptions: {
-                              ...project.displayOptions,
-                              colorTheme: theme.id,
-                            },
-                            updated: new Date().toISOString(),
-                          };
-                          setProject(updatedProject);
-                          DocsProjects.update(project.id, updatedProject);
-                        }}
-                        className={`flex items-center gap-2 p-3 rounded-lg border transition-colors ${
-                          (project.displayOptions?.colorTheme || "default") ===
-                          theme.id
-                            ? isDark
-                              ? "border-blue-600 bg-blue-900/20"
-                              : "border-blue-500 bg-blue-50"
-                            : isDark
-                            ? "border-gray-700 hover:border-gray-600"
-                            : "border-gray-200 hover:border-gray-300"
-                        }`}
-                      >
-                        <div
-                          className="w-4 h-4 rounded-full"
-                          style={{ backgroundColor: theme.color }}
-                        />
-                        <span
-                          className={`text-sm ${themeClasses.text.primary}`}
-                        >
-                          {theme.name}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Layout Options */}
-                <div>
-                  <label
-                    className={`block text-sm font-medium ${themeClasses.text.primary} mb-3`}
-                  >
-                    Layout Settings
-                  </label>
-                  <div className="space-y-3">
-                    {[
-                      {
-                        id: "showMethodBadges",
-                        label: "Show HTTP method badges",
-                        description:
-                          "Display GET, POST, PUT, etc. badges for endpoints",
-                      },
-                      {
-                        id: "showCodeExamples",
-                        label: "Show code examples",
-                        description:
-                          "Include cURL and SDK examples for each endpoint",
-                      },
-                      {
-                        id: "groupByCollection",
-                        label: "Group by collection",
-                        description:
-                          "Organize endpoints by their parent collection",
-                      },
-                      {
-                        id: "showResponseExamples",
-                        label: "Show response examples",
-                        description:
-                          "Display sample response data for endpoints",
-                      },
-                    ].map((option) => (
-                      <div key={option.id} className="flex items-start gap-3">
-                        <div className="flex items-center h-5">
-                          <input
-                            type="checkbox"
-                            checked={
-                              project.displayOptions?.[option.id] !== false
-                            }
-                            onChange={(e) => {
-                              const updatedProject = {
-                                ...project,
-                                displayOptions: {
-                                  ...project.displayOptions,
-                                  [option.id]: e.target.checked,
-                                },
-                                updated: new Date().toISOString(),
-                              };
-                              setProject(updatedProject);
-                              DocsProjects.update(project.id, updatedProject);
-                            }}
-                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                          />
-                        </div>
-                        <div className="flex-1">
-                          <label
-                            className={`text-sm font-medium ${themeClasses.text.primary}`}
-                          >
-                            {option.label}
-                          </label>
-                          <p
-                            className={`text-xs ${themeClasses.text.secondary} mt-1`}
-                          >
-                            {option.description}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Content Overview */}
-            <div
-              className={`border rounded-xl p-6 ${
-                isDark
-                  ? "border-gray-800 bg-gray-900/50"
-                  : "border-gray-200 bg-white"
-              }`}
-            >
-              <div className="flex items-center justify-between mb-4">
-                <h3 className={`font-semibold ${themeClasses.text.bold}`}>
-                  Content Overview
-                </h3>
-                <button
-                  onClick={() => window.open(generatePublicUrl(), "_blank")}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
-                    isDark
-                      ? "bg-gray-700 hover:bg-gray-600 text-gray-200"
-                      : "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                  }`}
-                  disabled={!generatePublicUrl()}
-                >
-                  <ExternalLink className="w-3 h-3 mr-1.5 inline" />
-                  Preview Documentation
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div
-                  className={`p-4 rounded-lg border ${
-                    isDark
-                      ? "border-gray-700 bg-gray-800/50"
-                      : "border-gray-200 bg-gray-50"
-                  }`}
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    <FileText className="w-4 h-4 text-blue-500" />
-                    <span
-                      className={`text-sm font-medium ${themeClasses.text.primary}`}
-                    >
-                      Collections
-                    </span>
-                  </div>
-                  <div
-                    className={`text-2xl font-bold ${themeClasses.text.bold}`}
-                  >
-                    {project.collections?.length || 0}
-                  </div>
-                  <div className={`text-xs ${themeClasses.text.secondary}`}>
-                    From parent collection
-                  </div>
-                </div>
-
-                <div
-                  className={`p-4 rounded-lg border ${
-                    isDark
-                      ? "border-gray-700 bg-gray-800/50"
-                      : "border-gray-200 bg-gray-50"
-                  }`}
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    <Code className="w-4 h-4 text-green-500" />
-                    <span
-                      className={`text-sm font-medium ${themeClasses.text.primary}`}
-                    >
-                      Endpoints
-                    </span>
-                  </div>
-                  <div
-                    className={`text-2xl font-bold ${themeClasses.text.bold}`}
-                  >
-                    {getEndpointCount()}
-                  </div>
-                  <div className={`text-xs ${themeClasses.text.secondary}`}>
-                    Total API endpoints
-                  </div>
-                </div>
-
-                <div
-                  className={`p-4 rounded-lg border ${
-                    isDark
-                      ? "border-gray-700 bg-gray-800/50"
-                      : "border-gray-200 bg-gray-50"
-                  }`}
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    <Globe className="w-4 h-4 text-purple-500" />
-                    <span
-                      className={`text-sm font-medium ${themeClasses.text.primary}`}
-                    >
-                      Status
-                    </span>
-                  </div>
-                  <div
-                    className={`text-sm font-medium ${
-                      project.settings?.isPublic !== false
-                        ? "text-green-500"
-                        : "text-yellow-500"
-                    }`}
-                  >
-                    {project.settings?.isPublic !== false
-                      ? "Published"
-                      : "Draft"}
-                  </div>
-                  <div className={`text-xs ${themeClasses.text.secondary}`}>
-                    Documentation visibility
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
 
         {activeTab === "settings" && (
           <div className="space-y-8">
