@@ -152,7 +152,7 @@ const DocumentationProjectCard = ({
               View
             </Button> */}
 
-            <div className="relative opacity-0 group-hover:opacity-100 transition-opacity menu-container">
+            <div className="relative menu-container">
               <Button
                 onClick={(e) => {
                   e.stopPropagation();
