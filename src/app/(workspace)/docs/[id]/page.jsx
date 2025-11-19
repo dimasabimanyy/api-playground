@@ -331,7 +331,7 @@ export default function DocDetailPage() {
             <div className="flex items-center gap-4">
               <div>
                 <h1
-                  className={`text-3xl font-bold tracking-tight ${themeClasses.text.bold}`}
+                  className={`text-[1.85rem] font-bold tracking-tight ${themeClasses.text.bold}`}
                 >
                   {project.name}
                 </h1>
@@ -469,18 +469,25 @@ export default function DocDetailPage() {
         {activeTab === "overview" && (
           <div className="space-y-8">
             {/* Production Deployment - Vercel Style */}
-            <div
-              className={`border rounded-xl overflow-hidden ${
-                isDark
-                  ? "border-gray-800 bg-gray-900/50"
-                  : "border-gray-200 bg-white"
-              }`}
-            >
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-6">
+            <div>
+              <div className="mb-5">
+                <h2
+                  className={`font-semibold tracking-tight text-[1.4rem] ${themeClasses.text.bold}`}
+                >
+                  Production Deployment
+                </h2>
+              </div>
+              <div
+                className={`border rounded-xl overflow-hidden ${
+                  isDark
+                    ? "border-gray-800 bg-gray-900/50"
+                    : "border-gray-200 bg-white"
+                }`}
+              >
+                <div className="p-6">
+                  {/* <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2">
-                      <CheckCircle className="w-5 h-5 text-green-500" />
                       <span
                         className={`font-semibold ${themeClasses.text.primary}`}
                       >
@@ -501,121 +508,117 @@ export default function DocDetailPage() {
                       Visit
                     </Button>
                   </div>
-                </div>
+                </div> */}
 
-                <div className="flex gap-8">
-                  {/* Left side - Preview (40% width) */}
-                  <div className="w-2/5 space-y-4">
-                    <div
-                      className={`border rounded-lg overflow-hidden ${
-                        isDark ? "border-gray-700" : "border-gray-200"
-                      }`}
-                    >
+                  <div className="flex gap-8">
+                    {/* Left side - Preview (40% width) */}
+                    <div className="w-2/5 space-y-4">
                       <div
-                        className={`h-4 flex items-center gap-1 px-3 ${
-                          isDark ? "bg-gray-800" : "bg-gray-100"
+                        className={`border rounded-lg overflow-hidden ${
+                          isDark ? "border-gray-700" : "border-gray-200"
                         }`}
                       >
-                        <div className="flex gap-1">
-                          <div className="w-2 h-2 rounded-full bg-red-400"></div>
-                          <div className="w-2 h-2 rounded-full bg-yellow-400"></div>
-                          <div className="w-2 h-2 rounded-full bg-green-400"></div>
+                        <div
+                          className={`h-4 flex items-center gap-1 px-3 ${
+                            isDark ? "bg-gray-800" : "bg-gray-100"
+                          }`}
+                        >
+                          <div className="flex gap-1">
+                            <div className="w-2 h-2 rounded-full bg-red-400"></div>
+                            <div className="w-2 h-2 rounded-full bg-yellow-400"></div>
+                            <div className="w-2 h-2 rounded-full bg-green-400"></div>
+                          </div>
+                          <div
+                            className={`text-xs ml-3 ${themeClasses.text.tertiary} font-mono truncate`}
+                          >
+                            {generatePublicUrl()
+                              ? generatePublicUrl().replace(/^https?:\/\//, "")
+                              : "your-docs.com"}
+                          </div>
                         </div>
                         <div
-                          className={`text-xs ml-3 ${themeClasses.text.tertiary} font-mono truncate`}
+                          className={`aspect-video ${
+                            isDark ? "bg-gray-900" : "bg-gray-50"
+                          } flex items-center justify-center relative overflow-hidden`}
                         >
-                          {generatePublicUrl()
-                            ? generatePublicUrl().replace(/^https?:\/\//, "")
-                            : "your-docs.com"}
-                        </div>
-                      </div>
-                      <div
-                        className={`aspect-video ${
-                          isDark ? "bg-gray-900" : "bg-gray-50"
-                        } flex items-center justify-center relative overflow-hidden`}
-                      >
-                        {/* Placeholder preview content */}
-                        <div className="w-full h-full p-4">
-                          <div className="w-full h-full rounded border border-dashed border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center">
-                            <div
-                              className={`w-12 h-12 rounded-lg flex items-center justify-center mb-3 ${
-                                isDark
-                                  ? "bg-gray-800 text-gray-400"
-                                  : "bg-gray-200 text-gray-500"
-                              }`}
-                            >
-                              <FileText className="w-6 h-6" />
-                            </div>
-                            <div
-                              className={`text-sm font-medium ${themeClasses.text.primary} mb-1`}
-                            >
-                              {project.name}
-                            </div>
-                            <div
-                              className={`text-xs ${themeClasses.text.secondary} text-center px-2`}
-                            >
-                              API Documentation
-                            </div>
-                            <div className="flex gap-1 mt-3">
+                          {/* Placeholder preview content */}
+                          <div className="w-full h-full p-4">
+                            <div className="w-full h-full rounded border border-dashed border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center">
                               <div
-                                className={`w-16 h-2 rounded ${
-                                  isDark ? "bg-gray-700" : "bg-gray-200"
+                                className={`w-12 h-12 rounded-lg flex items-center justify-center mb-3 ${
+                                  isDark
+                                    ? "bg-gray-800 text-gray-400"
+                                    : "bg-gray-200 text-gray-500"
                                 }`}
-                              ></div>
+                              >
+                                <FileText className="w-6 h-6" />
+                              </div>
                               <div
-                                className={`w-12 h-2 rounded ${
-                                  isDark ? "bg-gray-700" : "bg-gray-200"
-                                }`}
-                              ></div>
+                                className={`text-sm font-medium ${themeClasses.text.primary} mb-1`}
+                              >
+                                {project.name}
+                              </div>
                               <div
-                                className={`w-8 h-2 rounded ${
-                                  isDark ? "bg-gray-700" : "bg-gray-200"
-                                }`}
-                              ></div>
+                                className={`text-xs ${themeClasses.text.secondary} text-center px-2`}
+                              >
+                                API Documentation
+                              </div>
+                              <div className="flex gap-1 mt-3">
+                                <div
+                                  className={`w-16 h-2 rounded ${
+                                    isDark ? "bg-gray-700" : "bg-gray-200"
+                                  }`}
+                                ></div>
+                                <div
+                                  className={`w-12 h-2 rounded ${
+                                    isDark ? "bg-gray-700" : "bg-gray-200"
+                                  }`}
+                                ></div>
+                                <div
+                                  className={`w-8 h-2 rounded ${
+                                    isDark ? "bg-gray-700" : "bg-gray-200"
+                                  }`}
+                                ></div>
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                    <button
-                      onClick={() => window.open(generatePublicUrl(), "_blank")}
-                      disabled={!generatePublicUrl()}
-                      className={`w-full text-xs py-2 px-3 rounded transition-colors ${
-                        generatePublicUrl()
-                          ? isDark
-                            ? "bg-gray-800 hover:bg-gray-700 text-gray-300"
-                            : "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                          : isDark
-                          ? "bg-gray-800 text-gray-600 cursor-not-allowed"
-                          : "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      }`}
-                    >
-                      {generatePublicUrl()
-                        ? "Open Preview"
-                        : "Preview not available"}
-                    </button>
-                  </div>
-
-                  {/* Right side - Details (60% width) */}
-                  <div className="flex-1 space-y-8">
-                    {/* Domain */}
-                    <div>
-                      <h4
-                        className={`text-sm font-semibold ${themeClasses.text.primary} mb-3`}
-                      >
-                        Domain
-                      </h4>
-                      <div
-                        className={`p-4 rounded-lg border ${
-                          isDark
-                            ? "border-gray-700 bg-gray-800/50"
-                            : "border-gray-200 bg-gray-50"
+                      {/* <button
+                        onClick={() =>
+                          window.open(generatePublicUrl(), "_blank")
+                        }
+                        disabled={!generatePublicUrl()}
+                        className={`w-full text-xs py-2 px-3 rounded transition-colors ${
+                          generatePublicUrl()
+                            ? isDark
+                              ? "bg-gray-800 hover:bg-gray-700 text-gray-300"
+                              : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                            : isDark
+                            ? "bg-gray-800 text-gray-600 cursor-not-allowed"
+                            : "bg-gray-100 text-gray-400 cursor-not-allowed"
                         }`}
                       >
-                        <div className="flex items-center justify-between">
+                        {generatePublicUrl()
+                          ? "Open Preview"
+                          : "Preview not available"}
+                      </button> */}
+                    </div>
+
+                    {/* Right side - Details (60% width) */}
+                    <div className="flex-1">
+                      {/* Domain */}
+                      <div>
+                        <h4
+                          className={`text-sm ${themeClasses.text.primary} mb-1`}
+                          style={{ color: "#666666" }}
+                        >
+                          Domains
+                        </h4>
+                        <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-3">
-                            <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                            <div>
+                            {/* <div className="w-2 h-2 rounded-full bg-green-500"></div> */}
+                            <div className="flex gap-2">
                               <div
                                 className={`text-sm font-medium ${themeClasses.text.primary}`}
                               >
@@ -626,165 +629,168 @@ export default function DocDetailPage() {
                                     )
                                   : "Not assigned"}
                               </div>
-                              <div
-                                className={`text-xs ${themeClasses.text.secondary}`}
-                              >
-                                {generatePublicUrl()
-                                  ? "Ready"
-                                  : "Awaiting configuration"}
-                              </div>
+                              <ExternalLink
+                                className={`w-4 h-4 ${themeClasses.text.tertiary}`}
+                              />
+                              {/* <div
+                                  className={`text-xs ${themeClasses.text.secondary}`}
+                                >
+                                  {generatePublicUrl()
+                                    ? "Ready"
+                                    : "Awaiting configuration"}
+                                </div> */}
                             </div>
                           </div>
-                          <ExternalLink
-                            className={`w-4 h-4 ${themeClasses.text.tertiary}`}
-                          />
                         </div>
                       </div>
-                    </div>
 
-                    {/* Deployment Details */}
-                    <div>
-                      <h4
-                        className={`text-sm font-semibold ${themeClasses.text.primary} mb-3`}
-                      >
-                        Details
-                      </h4>
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between py-2">
-                          <span
-                            className={`text-sm ${themeClasses.text.secondary}`}
-                          >
-                            Status
-                          </span>
-                          <div className="flex items-center gap-2">
-                            <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                      {/* Deployment Details */}
+                      <div>
+                        {/* <h4
+                          className={`text-sm ${themeClasses.text.primary} mb-1`}
+                          style={{ color: "#666666" }}
+                        >
+                          Details
+                        </h4> */}
+                        <div>
+                          <div className="flex items-center gap-3 py-2.5">
                             <span
-                              className={`text-sm ${themeClasses.text.primary}`}
+                              className={`text-sm ${themeClasses.text.secondary}`}
                             >
-                              Ready
+                              Status
+                            </span>
+                            <div className="flex items-center gap-2">
+                              <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                              <span
+                                className={`text-sm font-medium ${themeClasses.text.primary}`}
+                              >
+                                Ready
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-3 py-2.5">
+                            <span
+                              className={`text-sm ${themeClasses.text.secondary}`}
+                            >
+                              Template
+                            </span>
+                            <span
+                              className={`text-sm font-medium ${themeClasses.text.primary} capitalize`}
+                            >
+                              {project.template || "Default"}
+                            </span>
+                          </div>
+
+                          <div className="flex gap-3">
+                            <div className="flex items-center gap-3 py-2.5">
+                              <span
+                                className={`text-sm ${themeClasses.text.secondary}`}
+                              >
+                                Collections
+                              </span>
+                              <span
+                                className={`text-sm font-medium ${themeClasses.text.primary}`}
+                              >
+                                {project.collections?.length || 0}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-3 py-2.5">
+                              <span
+                                className={`text-sm ${themeClasses.text.secondary}`}
+                              >
+                                Endpoints
+                              </span>
+                              <span
+                                className={`text-sm font-medium ${themeClasses.text.primary}`}
+                              >
+                                {getEndpointCount()}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-3 py-2.5">
+                            <span
+                              className={`text-sm ${themeClasses.text.secondary}`}
+                            >
+                              Last Updated
+                            </span>
+                            <span
+                              className={`text-sm font-medium ${themeClasses.text.primary}`}
+                            >
+                              {new Date(project.updated).toLocaleDateString(
+                                "en-US",
+                                {
+                                  month: "short",
+                                  day: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                }
+                              )}
                             </span>
                           </div>
                         </div>
-
-                        <div className="flex items-center justify-between py-2">
-                          <span
-                            className={`text-sm ${themeClasses.text.secondary}`}
-                          >
-                            Template
-                          </span>
-                          <span
-                            className={`text-sm ${themeClasses.text.primary} capitalize`}
-                          >
-                            {project.template || "Default"}
-                          </span>
-                        </div>
-
-                        <div className="flex items-center justify-between py-2">
-                          <span
-                            className={`text-sm ${themeClasses.text.secondary}`}
-                          >
-                            Collections
-                          </span>
-                          <span
-                            className={`text-sm ${themeClasses.text.primary}`}
-                          >
-                            {project.collections?.length || 0}
-                          </span>
-                        </div>
-
-                        <div className="flex items-center justify-between py-2">
-                          <span
-                            className={`text-sm ${themeClasses.text.secondary}`}
-                          >
-                            Endpoints
-                          </span>
-                          <span
-                            className={`text-sm ${themeClasses.text.primary}`}
-                          >
-                            {getEndpointCount()}
-                          </span>
-                        </div>
-
-                        <div className="flex items-center justify-between py-2">
-                          <span
-                            className={`text-sm ${themeClasses.text.secondary}`}
-                          >
-                            Last Updated
-                          </span>
-                          <span
-                            className={`text-sm ${themeClasses.text.primary}`}
-                          >
-                            {new Date(project.updated).toLocaleDateString(
-                              "en-US",
-                              {
-                                month: "short",
-                                day: "numeric",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              }
-                            )}
-                          </span>
-                        </div>
                       </div>
-                    </div>
 
-                    {/* Build Settings */}
-                    <div>
-                      <h4
-                        className={`text-sm font-semibold ${themeClasses.text.primary} mb-3`}
-                      >
-                        Configuration
-                      </h4>
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between py-2">
-                          <span
-                            className={`text-sm ${themeClasses.text.secondary}`}
-                          >
-                            Public Access
-                          </span>
-                          <span
-                            className={`text-sm ${
-                              project.settings?.isPublic !== false
-                                ? "text-green-600 dark:text-green-400"
-                                : "text-yellow-600 dark:text-yellow-400"
-                            }`}
-                          >
-                            {project.settings?.isPublic !== false
-                              ? "Enabled"
-                              : "Disabled"}
-                          </span>
-                        </div>
+                      {/* Build Settings */}
+                      {/* <div>
+                        <h4
+                          className={`text-sm font-semibold ${themeClasses.text.primary} mb-3`}
+                        >
+                          Configuration
+                        </h4>
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between py-2">
+                            <span
+                              className={`text-sm ${themeClasses.text.secondary}`}
+                            >
+                              Public Access
+                            </span>
+                            <span
+                              className={`text-sm ${
+                                project.settings?.isPublic !== false
+                                  ? "text-green-600 dark:text-green-400"
+                                  : "text-yellow-600 dark:text-yellow-400"
+                              }`}
+                            >
+                              {project.settings?.isPublic !== false
+                                ? "Enabled"
+                                : "Disabled"}
+                            </span>
+                          </div>
 
-                        <div className="flex items-center justify-between py-2">
-                          <span
-                            className={`text-sm ${themeClasses.text.secondary}`}
-                          >
-                            Code Examples
-                          </span>
-                          <span
-                            className={`text-sm ${themeClasses.text.primary}`}
-                          >
-                            {project.settings?.showExamples !== false
-                              ? "Enabled"
-                              : "Disabled"}
-                          </span>
-                        </div>
+                          <div className="flex items-center justify-between py-2">
+                            <span
+                              className={`text-sm ${themeClasses.text.secondary}`}
+                            >
+                              Code Examples
+                            </span>
+                            <span
+                              className={`text-sm ${themeClasses.text.primary}`}
+                            >
+                              {project.settings?.showExamples !== false
+                                ? "Enabled"
+                                : "Disabled"}
+                            </span>
+                          </div>
 
-                        <div className="flex items-center justify-between py-2">
-                          <span
-                            className={`text-sm ${themeClasses.text.secondary}`}
-                          >
-                            Group by Collection
-                          </span>
-                          <span
-                            className={`text-sm ${themeClasses.text.primary}`}
-                          >
-                            {project.settings?.groupByCollection !== false
-                              ? "Enabled"
-                              : "Disabled"}
-                          </span>
+                          <div className="flex items-center justify-between py-2">
+                            <span
+                              className={`text-sm ${themeClasses.text.secondary}`}
+                            >
+                              Group by Collection
+                            </span>
+                            <span
+                              className={`text-sm ${themeClasses.text.primary}`}
+                            >
+                              {project.settings?.groupByCollection !== false
+                                ? "Enabled"
+                                : "Disabled"}
+                            </span>
+                          </div>
                         </div>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>
@@ -1084,8 +1090,7 @@ export default function DocDetailPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Collections Overview */}
+              {/* <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2">
                   <h2
                     className={`text-lg font-semibold ${themeClasses.text.bold} mb-4`}
@@ -1141,7 +1146,8 @@ export default function DocDetailPage() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
+
               {/* Activity Feed */}
               <div>
                 <h2
@@ -1173,7 +1179,6 @@ export default function DocDetailPage() {
             </div>
           </div>
         )}
-
 
         {activeTab === "settings" && (
           <div className="space-y-8">

@@ -17,7 +17,7 @@ export const getThemeClasses = (isDark) => ({
 
   // Text colors
   text: {
-    primary: isDark ? "text-white" : "!text-[#000]",
+    primary: isDark ? "text-white" : "text-[#000]",
     secondary: isDark ? "text-gray-300" : "text-gray-600",
     tertiary: isDark ? "text-gray-400" : "text-gray-500",
     muted: isDark ? "text-gray-500" : "text-gray-400",
