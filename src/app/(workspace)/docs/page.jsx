@@ -593,7 +593,7 @@ export default function DocsPage() {
                   viewMode={viewMode}
                   onView={() => viewDocumentation(project)}
                   onEdit={() => {
-                    /* TODO: Edit project */
+                    // Edit functionality is now handled by clicking the card
                   }}
                   onDuplicate={() => duplicateProject(project)}
                   onDelete={() => deleteProject(project)}

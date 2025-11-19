@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import TwoPanelSidebar from "@/components/playground/TwoPanelSidebar";
 import {
   Plus,
   FileText,
@@ -51,6 +50,7 @@ const DocumentationProjectCard = ({
   themeClasses,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
+  const router = useRouter();
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -76,10 +76,19 @@ const DocumentationProjectCard = ({
     return totalEndpoints;
   };
 
+  const handleCardClick = (e) => {
+    // Don't navigate if clicking on menu button or menu items
+    if (e.target.closest('.menu-container')) {
+      e.stopPropagation();
+      return;
+    }
+    router.push(`/docs/${project.id}`);
+  };
+
   if (viewMode === "list") {
     return (
       <div
-        onClick={onView}
+        onClick={handleCardClick}
         className={`group py-3 px-4 transition-all duration-200 border-b last:border-b-0 cursor-pointer ${
           isDark
             ? "border-gray-800 hover:bg-gray-800/30"
@@ -143,9 +152,12 @@ const DocumentationProjectCard = ({
               View
             </Button> */}
 
-            <div className="relative opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="relative opacity-0 group-hover:opacity-100 transition-opacity menu-container">
               <Button
-                onClick={() => setShowMenu(!showMenu)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowMenu(!showMenu);
+                }}
                 size="sm"
                 variant="ghost"
                 className="cursor-pointer"
@@ -165,7 +177,8 @@ const DocumentationProjectCard = ({
                 >
                   <div className="p-1">
                     <button
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         onEdit();
                         setShowMenu(false);
                       }}
@@ -177,7 +190,8 @@ const DocumentationProjectCard = ({
                       Edit
                     </button>
                     <button
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         onDuplicate();
                         setShowMenu(false);
                       }}
@@ -189,7 +203,8 @@ const DocumentationProjectCard = ({
                       Duplicate
                     </button>
                     <button
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         onDelete();
                         setShowMenu(false);
                       }}
@@ -211,7 +226,8 @@ const DocumentationProjectCard = ({
   // Grid view
   return (
     <div
-      className={`group border rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-gray-200/20 ${
+      onClick={handleCardClick}
+      className={`group border rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-gray-200/20 cursor-pointer ${
         isDark
           ? "border-gray-800 bg-gray-900/50 hover:border-gray-700 hover:bg-gray-900"
           : "border-gray-200 bg-white hover:border-gray-300"
@@ -241,9 +257,12 @@ const DocumentationProjectCard = ({
             </p>
           </div>
 
-          <div className="relative">
+          <div className="relative menu-container">
             <button
-              onClick={() => setShowMenu(!showMenu)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowMenu(!showMenu);
+              }}
               className={`p-2 rounded-lg transition-colors cursor-pointer opacity-0 group-hover:opacity-100 hover:${
                 isDark ? "bg-gray-800" : "bg-gray-100"
               }`}
@@ -263,7 +282,8 @@ const DocumentationProjectCard = ({
               >
                 <div className="p-1">
                   <button
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       onEdit();
                       setShowMenu(false);
                     }}
@@ -275,7 +295,8 @@ const DocumentationProjectCard = ({
                     Edit
                   </button>
                   <button
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       onDuplicate();
                       setShowMenu(false);
                     }}
@@ -287,7 +308,8 @@ const DocumentationProjectCard = ({
                     Duplicate
                   </button>
                   <button
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       onDelete();
                       setShowMenu(false);
                     }}
@@ -329,20 +351,9 @@ const DocumentationProjectCard = ({
           </span>
         </div>
 
-        {/* Actions */}
-        <div className="flex gap-3">
-          <Button
-            onClick={onView}
-            className={`cursor-pointer ${
-              isDark
-                ? "bg-white text-black hover:bg-gray-100"
-                : "bg-black text-white hover:bg-gray-800"
-            }`}
-            size="sm"
-            style={{ borderRadius: "8px" }}
-          >
-            View Documentation
-          </Button>
+        {/* Click hint */}
+        <div className="text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">
+          Click to manage documentation
         </div>
       </div>
     </div>
