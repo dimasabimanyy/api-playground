@@ -56,12 +56,12 @@ const StatCard = ({ icon: Icon, label, value, trend, trendLabel, isDark, themeCl
       >
         <Icon className="w-4 h-4" />
       </div>
-      <span className={`text-sm font-medium ${themeClasses.text.primary}`}>
+      <span className={`text-sm font-medium ${themeClasses.text.bold}`}>
         {label}
       </span>
     </div>
     <div className="space-y-1">
-      <div className={`text-2xl font-bold ${themeClasses.text.primary}`}>
+      <div className={`text-2xl font-bold ${themeClasses.text.bold}`}>
         {value}
       </div>
       {trend && (
@@ -94,7 +94,7 @@ const ActivityItem = ({ icon: Icon, title, description, time, status, isDark, th
       <Icon className="w-4 h-4" />
     </div>
     <div className="flex-1 min-w-0">
-      <div className={`text-sm font-medium ${themeClasses.text.primary}`}>
+      <div className={`text-sm font-medium ${themeClasses.text.bold}`}>
         {title}
       </div>
       <div className={`text-xs ${themeClasses.text.secondary} mt-1`}>
@@ -294,7 +294,7 @@ export default function DocDetailPage() {
                 <ArrowLeft className="w-5 h-5" />
               </Link>
               <div>
-                <h1 className={`text-2xl font-bold ${themeClasses.text.primary}`}>
+                <h1 className={`text-2xl font-bold ${themeClasses.text.bold}`}>
                   {project.name}
                 </h1>
                 <p className={`text-sm ${themeClasses.text.tertiary}`}>
@@ -498,7 +498,7 @@ export default function DocDetailPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Stats */}
               <div className="lg:col-span-2">
-                <h2 className={`text-lg font-semibold ${themeClasses.text.primary} mb-4`}>
+                <h2 className={`text-lg font-semibold ${themeClasses.text.bold} mb-4`}>
                   Documentation Stats
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
@@ -539,7 +539,7 @@ export default function DocDetailPage() {
                       : "border-gray-200 bg-white"
                   }`}
                 >
-                  <h3 className={`font-semibold ${themeClasses.text.primary} mb-4`}>
+                  <h3 className={`font-semibold ${themeClasses.text.bold} mb-4`}>
                     Collections in this Documentation
                   </h3>
                   <div className="space-y-3">
@@ -558,7 +558,7 @@ export default function DocDetailPage() {
                               <FileText className="w-4 h-4" />
                             </div>
                             <div>
-                              <div className={`font-medium ${themeClasses.text.primary}`}>
+                              <div className={`font-medium ${themeClasses.text.bold}`}>
                                 {collection.name}
                               </div>
                               <div className={`text-sm ${themeClasses.text.secondary}`}>
@@ -578,7 +578,7 @@ export default function DocDetailPage() {
 
               {/* Activity Feed */}
               <div>
-                <h2 className={`text-lg font-semibold ${themeClasses.text.primary} mb-4`}>
+                <h2 className={`text-lg font-semibold ${themeClasses.text.bold} mb-4`}>
                   Recent Activity
                 </h2>
                 <div

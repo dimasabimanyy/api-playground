@@ -124,7 +124,7 @@ export default function UserProfilePage() {
                 </span>
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">@{username}</h1>
+                <h1 className="text-2xl font-bold text-[#171717]">@{username}</h1>
                 <p className="text-gray-600">Public Documentation</p>
               </div>
             </div>
@@ -150,7 +150,7 @@ export default function UserProfilePage() {
                 <BookOpen className="w-5 h-5 text-blue-600" />
               </div>
               <div>
-                <div className="text-2xl font-bold text-gray-900">{projects.length}</div>
+                <div className="text-2xl font-bold text-[#171717]">{projects.length}</div>
                 <div className="text-sm text-gray-600">Documentation{projects.length !== 1 ? 's' : ''}</div>
               </div>
             </div>
@@ -162,7 +162,7 @@ export default function UserProfilePage() {
                 <Code className="w-5 h-5 text-green-600" />
               </div>
               <div>
-                <div className="text-2xl font-bold text-gray-900">
+                <div className="text-2xl font-bold text-[#171717]">
                   {projects.reduce((acc, project) => acc + (project.collections?.length || 0), 0)}
                 </div>
                 <div className="text-sm text-gray-600">API Collections</div>
@@ -176,7 +176,7 @@ export default function UserProfilePage() {
                 <Star className="w-5 h-5 text-purple-600" />
               </div>
               <div>
-                <div className="text-2xl font-bold text-gray-900">
+                <div className="text-2xl font-bold text-[#171717]">
                   {projects.length > 0 ? formatDate(projects.sort((a, b) => new Date(b.updated) - new Date(a.updated))[0].updated) : 'N/A'}
                 </div>
                 <div className="text-sm text-gray-600">Last Updated</div>
@@ -232,7 +232,7 @@ export default function UserProfilePage() {
                     <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
                   </div>
                   
-                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                  <h3 className="font-semibold text-[#171717] mb-2 group-hover:text-blue-600 transition-colors">
                     {project.name}
                   </h3>
                   
@@ -261,7 +261,7 @@ export default function UserProfilePage() {
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <BookOpen className="w-8 h-8 text-gray-400" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-[#171717] mb-2">
               No documentation yet
             </h3>
             <p className="text-gray-600">

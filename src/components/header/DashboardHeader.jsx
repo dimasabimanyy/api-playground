@@ -83,10 +83,10 @@ const DashboardHeader = ({ layoutMode, setLayoutMode }) => {
           >
             <Zap className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
           </div>
-          <h1 className="text-normal font-bold tracking-tight text-gray-900 dark:text-white hidden sm:block">
+          <h1 className={`text-normal font-bold tracking-tight ${themeClasses.text.bold} hidden sm:block`}>
             API Playground
           </h1>
-          <h1 className="text-sm font-bold tracking-tight text-gray-900 dark:text-white sm:hidden">
+          <h1 className={`text-sm font-bold tracking-tight ${themeClasses.text.bold} sm:hidden`}>
             API
           </h1>
         </div>

@@ -113,7 +113,7 @@ const EndpointCard = ({ request, baseUrl }) => {
         <div className="flex items-center gap-3">
           <MethodBadge method={request.method} />
           <div className="text-left">
-            <div className="font-medium text-gray-900">{request.name}</div>
+            <div className="font-medium text-[#171717]">{request.name}</div>
             <div className="text-sm text-gray-600 font-mono">{request.url}</div>
           </div>
         </div>
@@ -128,14 +128,14 @@ const EndpointCard = ({ request, baseUrl }) => {
         <div className="border-t border-gray-200 p-4 bg-gray-50">
           {request.description && (
             <div className="mb-4">
-              <h4 className="font-medium text-gray-900 mb-2">Description</h4>
+              <h4 className="font-medium text-[#171717] mb-2">Description</h4>
               <p className="text-sm text-gray-600">{request.description}</p>
             </div>
           )}
 
           <div className="space-y-4">
             <div>
-              <h4 className="font-medium text-gray-900 mb-2 flex items-center gap-2">
+              <h4 className="font-medium text-[#171717] mb-2 flex items-center gap-2">
                 <Terminal className="w-4 h-4" />
                 Request
               </h4>
@@ -151,12 +151,12 @@ const EndpointCard = ({ request, baseUrl }) => {
 
             {request.headers && Object.keys(request.headers).length > 0 && (
               <div>
-                <h4 className="font-medium text-gray-900 mb-2">Headers</h4>
+                <h4 className="font-medium text-[#171717] mb-2">Headers</h4>
                 <div className="bg-white border rounded p-3 text-sm">
                   {Object.entries(request.headers).map(([key, value]) => (
                     <div key={key} className="flex justify-between py-1">
                       <span className="font-mono text-gray-600">{key}:</span>
-                      <span className="font-mono text-gray-900">{value}</span>
+                      <span className="font-mono text-[#171717]">{value}</span>
                     </div>
                   ))}
                 </div>
@@ -165,13 +165,13 @@ const EndpointCard = ({ request, baseUrl }) => {
 
             {request.body && request.method !== "GET" && (
               <div>
-                <h4 className="font-medium text-gray-900 mb-2">Request Body</h4>
+                <h4 className="font-medium text-[#171717] mb-2">Request Body</h4>
                 <CodeBlock code={request.body} language="json" />
               </div>
             )}
 
             <div>
-              <h4 className="font-medium text-gray-900 mb-2">cURL Example</h4>
+              <h4 className="font-medium text-[#171717] mb-2">cURL Example</h4>
               <CodeBlock code={generateCurlExample()} language="bash" />
             </div>
           </div>
@@ -419,7 +419,7 @@ export default function PublicUserDocPage() {
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h1 className="text-xl font-bold text-gray-900">{project.name}</h1>
+                    <h1 className="text-xl font-bold text-[#171717]">{project.name}</h1>
                     <span className="text-sm text-gray-500">by @{username}</span>
                   </div>
                   <p className="text-sm text-gray-600">{project.description}</p>
@@ -465,7 +465,7 @@ export default function PublicUserDocPage() {
                 </div>
               </div>
               
-              <h2 className="font-semibold text-gray-900 mb-4">Collections</h2>
+              <h2 className="font-semibold text-[#171717] mb-4">Collections</h2>
               <nav className="space-y-1">
                 {collections.map((collection) => (
                   <button
@@ -487,7 +487,7 @@ export default function PublicUserDocPage() {
 
               {/* Base URL Info */}
               <div className="mt-8 p-4 bg-gray-50 rounded-lg">
-                <h3 className="font-medium text-gray-900 mb-2">Base URL</h3>
+                <h3 className="font-medium text-[#171717] mb-2">Base URL</h3>
                 <code className="text-sm bg-gray-100 px-2 py-1 rounded block break-all">
                   {baseUrl}
                 </code>
@@ -502,7 +502,7 @@ export default function PublicUserDocPage() {
                 {(!activeCollection || activeCollection === collection.id) && (
                   <>
                     <div className="mb-6">
-                      <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                      <h2 className="text-2xl font-bold text-[#171717] mb-2">
                         {collection.name}
                       </h2>
                       <p className="text-gray-600">{collection.description}</p>

@@ -22,6 +22,7 @@ export const getThemeClasses = (isDark) => ({
     tertiary: isDark ? "text-gray-400" : "text-gray-500",
     muted: isDark ? "text-gray-500" : "text-gray-400",
     accent: isDark ? "text-blue-400" : "text-blue-600",
+    bold: isDark ? "text-white" : "text-[#171717]", // Vercel-style bold title color
   },
 
   // Border colors
