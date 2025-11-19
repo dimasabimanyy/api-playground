@@ -38,14 +38,24 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useCollections } from "@/contexts/CollectionsContext";
 import { getThemeClasses } from "@/lib/theme";
 import { DocsProjects, DocsMetadata } from "@/lib/docs-storage";
-import { generateUsername, generatePublicDocUrl, generateProjectSlug } from "@/lib/user-utils";
+import {
+  generateUsername,
+  generatePublicDocUrl,
+  generateProjectSlug,
+} from "@/lib/user-utils";
 
-const StatCard = ({ icon: Icon, label, value, trend, trendLabel, isDark, themeClasses }) => (
+const StatCard = ({
+  icon: Icon,
+  label,
+  value,
+  trend,
+  trendLabel,
+  isDark,
+  themeClasses,
+}) => (
   <div
     className={`p-4 border rounded-lg ${
-      isDark
-        ? "border-gray-800 bg-gray-900/50"
-        : "border-gray-200 bg-white"
+      isDark ? "border-gray-800 bg-gray-900/50" : "border-gray-200 bg-white"
     }`}
     style={{ borderRadius: "12px" }}
   >
@@ -67,9 +77,18 @@ const StatCard = ({ icon: Icon, label, value, trend, trendLabel, isDark, themeCl
       </div>
       {trend && (
         <div className="flex items-center gap-1">
-          <TrendingUp className={`w-3 h-3 ${trend > 0 ? 'text-green-500' : 'text-red-500'}`} />
-          <span className={`text-xs ${trend > 0 ? 'text-green-500' : 'text-red-500'}`}>
-            {trend > 0 ? '+' : ''}{trend}% {trendLabel}
+          <TrendingUp
+            className={`w-3 h-3 ${
+              trend > 0 ? "text-green-500" : "text-red-500"
+            }`}
+          />
+          <span
+            className={`text-xs ${
+              trend > 0 ? "text-green-500" : "text-red-500"
+            }`}
+          >
+            {trend > 0 ? "+" : ""}
+            {trend}% {trendLabel}
           </span>
         </div>
       )}
@@ -77,19 +96,27 @@ const StatCard = ({ icon: Icon, label, value, trend, trendLabel, isDark, themeCl
   </div>
 );
 
-const ActivityItem = ({ icon: Icon, title, description, time, status, isDark, themeClasses }) => (
+const ActivityItem = ({
+  icon: Icon,
+  title,
+  description,
+  time,
+  status,
+  isDark,
+  themeClasses,
+}) => (
   <div className="flex items-start gap-3 py-3">
     <div
       className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-        status === 'success'
-          ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400'
-          : status === 'warning'
-          ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400'
-          : status === 'error'
-          ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400'
+        status === "success"
+          ? "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400"
+          : status === "warning"
+          ? "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400"
+          : status === "error"
+          ? "bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400"
           : isDark
-          ? 'bg-gray-800 text-gray-300'
-          : 'bg-gray-100 text-gray-600'
+          ? "bg-gray-800 text-gray-300"
+          : "bg-gray-100 text-gray-600"
       }`}
     >
       <Icon className="w-4 h-4" />
@@ -101,9 +128,7 @@ const ActivityItem = ({ icon: Icon, title, description, time, status, isDark, th
       <div className={`text-xs ${themeClasses.text.secondary} mt-1`}>
         {description}
       </div>
-      <div className={`text-xs ${themeClasses.text.tertiary} mt-1`}>
-        {time}
-      </div>
+      <div className={`text-xs ${themeClasses.text.tertiary} mt-1`}>{time}</div>
     </div>
   </div>
 );
@@ -191,18 +216,28 @@ export default function DocDetailPage() {
     };
 
     sessionStorage.setItem(`docs_${docId}`, JSON.stringify(docData));
-    window.open(`/docs/generated?docId=${docId}&project=${project.id}`, "_blank");
+    window.open(
+      `/docs/generated?docId=${docId}&project=${project.id}`,
+      "_blank"
+    );
   };
 
   const deleteProject = () => {
-    if (confirm(`Are you sure you want to delete "${project.name}"? This action cannot be undone.`)) {
+    if (
+      confirm(
+        `Are you sure you want to delete "${project.name}"? This action cannot be undone.`
+      )
+    ) {
       DocsProjects.delete(project.id);
       router.push("/docs");
     }
   };
 
   const duplicateProject = () => {
-    const duplicated = DocsProjects.duplicate(project.id, `${project.name} Copy`);
+    const duplicated = DocsProjects.duplicate(
+      project.id,
+      `${project.name} Copy`
+    );
     if (duplicated) {
       router.push(`/docs/${duplicated.id}`);
     }
@@ -210,7 +245,9 @@ export default function DocDetailPage() {
 
   if (loading) {
     return (
-      <div className={`min-h-screen ${themeClasses.bg.primary} flex items-center justify-center`}>
+      <div
+        className={`min-h-screen ${themeClasses.bg.bold} flex items-center justify-center`}
+      >
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-t-transparent rounded-full animate-spin mx-auto mb-4 border-gray-300"></div>
           <p className={themeClasses.text.secondary}>Loading project...</p>
@@ -221,9 +258,13 @@ export default function DocDetailPage() {
 
   if (!project) {
     return (
-      <div className={`min-h-screen ${themeClasses.bg.primary} flex items-center justify-center`}>
+      <div
+        className={`min-h-screen ${themeClasses.bg.bold} flex items-center justify-center`}
+      >
         <div className="text-center">
-          <h1 className={`text-xl font-semibold ${themeClasses.text.primary} mb-2`}>
+          <h1
+            className={`text-xl font-semibold ${themeClasses.text.primary} mb-2`}
+          >
             Project not found
           </h1>
           <Link
@@ -256,63 +297,65 @@ export default function DocDetailPage() {
       title: "Documentation updated",
       description: "Collections synced and regenerated",
       time: "2 hours ago",
-      status: "success"
+      status: "success",
     },
     {
       icon: Eye,
       title: "Public view accessed",
       description: "Documentation viewed 15 times",
       time: "5 hours ago",
-      status: "info"
+      status: "info",
     },
     {
       icon: GitBranch,
       title: "Collections modified",
       description: "3 endpoints added to User Management",
       time: "1 day ago",
-      status: "success"
+      status: "success",
     },
     {
       icon: Share2,
       title: "Documentation shared",
       description: "Public link copied to clipboard",
       time: "2 days ago",
-      status: "info"
-    }
+      status: "info",
+    },
   ];
 
   return (
-    <div className={`min-h-screen ${themeClasses.bg.primary}`}>
+    <div className={`min-h-screen ${themeClasses.bg.bold}`}>
       {/* Header */}
-      <div className={`border-b ${themeClasses.border.primary} ${themeClasses.bg.primary}`}>
+      <div
+        className={`border-b ${themeClasses.border.primary} ${themeClasses.bg.bold}`}
+      >
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Link
-                href="/docs"
-                className={`p-2 rounded-lg transition-colors ${themeClasses.button.ghost}`}
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </Link>
               <div>
                 <h1 className={`text-2xl font-bold ${themeClasses.text.bold}`}>
                   {project.name}
                 </h1>
                 <p className={`text-sm ${themeClasses.text.tertiary}`}>
-                  {generatePublicUrl() ? generatePublicUrl().replace('https://', '').replace('http://', '') : 'Public URL will be available once published'}
+                  {generatePublicUrl()
+                    ? generatePublicUrl()
+                        .replace("https://", "")
+                        .replace("http://", "")
+                    : "Public URL will be available once published"}
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-2">
               <Button
                 onClick={copyPublicUrl}
                 variant="outline"
                 size="sm"
-                className={`${themeClasses.button.secondary}`}
+                className={`${themeClasses.button.outline}`}
                 disabled={!generatePublicUrl()}
+                style={{
+                  borderRadius: "6px"
+                }}
               >
-                <Copy className="w-4 h-4 mr-2" />
                 Copy URL
               </Button>
               <Button
@@ -337,7 +380,7 @@ export default function DocDetailPage() {
                 <ExternalLink className="w-4 h-4 mr-2" />
                 Open Public
               </Button>
-              
+
               <div className="relative">
                 <Button
                   onClick={() => setShowMenu(!showMenu)}
@@ -347,7 +390,7 @@ export default function DocDetailPage() {
                 >
                   <MoreVertical className="w-4 h-4" />
                 </Button>
-                
+
                 {showMenu && (
                   <div
                     className={`absolute right-0 top-full mt-2 w-48 border rounded-xl shadow-xl z-50 ${
@@ -397,7 +440,7 @@ export default function DocDetailPage() {
               </div>
             </div>
           </div>
-          
+
           {/* Navigation Tabs */}
           <div className="flex items-center gap-6 mt-6">
             {[
@@ -439,7 +482,9 @@ export default function DocDetailPage() {
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span className={`font-semibold ${themeClasses.text.primary}`}>
+                    <span
+                      className={`font-semibold ${themeClasses.text.primary}`}
+                    >
                       Production Deployment
                     </span>
                   </div>
@@ -458,18 +503,24 @@ export default function DocDetailPage() {
                   </Button>
                 </div>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <div className={`text-sm ${themeClasses.text.secondary} mb-1`}>
+                  <div
+                    className={`text-sm ${themeClasses.text.secondary} mb-1`}
+                  >
                     Public URL
                   </div>
-                  <div className={`text-sm font-mono ${themeClasses.text.primary} break-all`}>
-                    {generatePublicUrl() || 'Not yet published'}
+                  <div
+                    className={`text-sm font-mono ${themeClasses.text.primary} break-all`}
+                  >
+                    {generatePublicUrl() || "Not yet published"}
                   </div>
                 </div>
                 <div>
-                  <div className={`text-sm ${themeClasses.text.secondary} mb-1`}>
+                  <div
+                    className={`text-sm ${themeClasses.text.secondary} mb-1`}
+                  >
                     Last Updated
                   </div>
                   <div className={`text-sm ${themeClasses.text.primary}`}>
@@ -483,7 +534,9 @@ export default function DocDetailPage() {
                   </div>
                 </div>
                 <div>
-                  <div className={`text-sm ${themeClasses.text.secondary} mb-1`}>
+                  <div
+                    className={`text-sm ${themeClasses.text.secondary} mb-1`}
+                  >
                     Status
                   </div>
                   <div className="flex items-center gap-2">
@@ -499,7 +552,9 @@ export default function DocDetailPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Stats */}
               <div className="lg:col-span-2">
-                <h2 className={`text-lg font-semibold ${themeClasses.text.bold} mb-4`}>
+                <h2
+                  className={`text-lg font-semibold ${themeClasses.text.bold} mb-4`}
+                >
                   Documentation Stats
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
@@ -540,29 +595,40 @@ export default function DocDetailPage() {
                       : "border-gray-200 bg-white"
                   }`}
                 >
-                  <h3 className={`font-semibold ${themeClasses.text.bold} mb-4`}>
+                  <h3
+                    className={`font-semibold ${themeClasses.text.bold} mb-4`}
+                  >
                     Collections in this Documentation
                   </h3>
                   <div className="space-y-3">
                     {project.collections?.map((collectionId) => {
                       const collection = collections[collectionId];
                       if (!collection) return null;
-                      
+
                       return (
-                        <div key={collectionId} className="flex items-center justify-between py-2">
+                        <div
+                          key={collectionId}
+                          className="flex items-center justify-between py-2"
+                        >
                           <div className="flex items-center gap-3">
                             <div
                               className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                                isDark ? "bg-gray-800 text-gray-300" : "bg-gray-100 text-gray-600"
+                                isDark
+                                  ? "bg-gray-800 text-gray-300"
+                                  : "bg-gray-100 text-gray-600"
                               }`}
                             >
                               <FileText className="w-4 h-4" />
                             </div>
                             <div>
-                              <div className={`font-medium ${themeClasses.text.bold}`}>
+                              <div
+                                className={`font-medium ${themeClasses.text.bold}`}
+                              >
                                 {collection.name}
                               </div>
-                              <div className={`text-sm ${themeClasses.text.secondary}`}>
+                              <div
+                                className={`text-sm ${themeClasses.text.secondary}`}
+                              >
                                 {collection.requests?.length || 0} endpoints
                               </div>
                             </div>
@@ -579,7 +645,9 @@ export default function DocDetailPage() {
 
               {/* Activity Feed */}
               <div>
-                <h2 className={`text-lg font-semibold ${themeClasses.text.bold} mb-4`}>
+                <h2
+                  className={`text-lg font-semibold ${themeClasses.text.bold} mb-4`}
+                >
                   Recent Activity
                 </h2>
                 <div
@@ -609,7 +677,9 @@ export default function DocDetailPage() {
 
         {activeTab === "content" && (
           <div className="space-y-8">
-            <h2 className={`text-lg font-semibold ${themeClasses.text.bold} mb-6`}>
+            <h2
+              className={`text-lg font-semibold ${themeClasses.text.bold} mb-6`}
+            >
               Content & Display
             </h2>
 
@@ -627,30 +697,32 @@ export default function DocDetailPage() {
               <p className={`text-sm ${themeClasses.text.secondary} mb-6`}>
                 Choose how your documentation will be displayed to visitors
               </p>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {[
                   {
-                    id: 'default',
-                    name: 'Default',
-                    description: 'Clean and simple layout with sidebar navigation',
-                    preview: 'Sidebar + Content',
-                    isSelected: !project.template || project.template === 'default'
+                    id: "default",
+                    name: "Default",
+                    description:
+                      "Clean and simple layout with sidebar navigation",
+                    preview: "Sidebar + Content",
+                    isSelected:
+                      !project.template || project.template === "default",
                   },
                   {
-                    id: 'cards',
-                    name: 'Card Layout',
-                    description: 'Endpoint cards with expandable details',
-                    preview: 'Card Grid',
-                    isSelected: project.template === 'cards'
+                    id: "cards",
+                    name: "Card Layout",
+                    description: "Endpoint cards with expandable details",
+                    preview: "Card Grid",
+                    isSelected: project.template === "cards",
                   },
                   {
-                    id: 'compact',
-                    name: 'Compact',
-                    description: 'Dense layout for extensive APIs',
-                    preview: 'Compact List',
-                    isSelected: project.template === 'compact'
-                  }
+                    id: "compact",
+                    name: "Compact",
+                    description: "Dense layout for extensive APIs",
+                    preview: "Compact List",
+                    isSelected: project.template === "compact",
+                  },
                 ].map((template) => (
                   <div
                     key={template.id}
@@ -658,7 +730,7 @@ export default function DocDetailPage() {
                       const updatedProject = {
                         ...project,
                         template: template.id,
-                        updated: new Date().toISOString()
+                        updated: new Date().toISOString(),
                       };
                       setProject(updatedProject);
                       DocsProjects.update(project.id, updatedProject);
@@ -681,12 +753,18 @@ export default function DocDetailPage() {
                         <CheckCircle className="w-5 h-5 text-blue-500" />
                       )}
                     </div>
-                    <p className={`text-sm ${themeClasses.text.secondary} mb-3`}>
+                    <p
+                      className={`text-sm ${themeClasses.text.secondary} mb-3`}
+                    >
                       {template.description}
                     </p>
-                    <div className={`text-xs px-2 py-1 rounded ${
-                      isDark ? "bg-gray-700 text-gray-300" : "bg-gray-100 text-gray-600"
-                    }`}>
+                    <div
+                      className={`text-xs px-2 py-1 rounded ${
+                        isDark
+                          ? "bg-gray-700 text-gray-300"
+                          : "bg-gray-100 text-gray-600"
+                      }`}
+                    >
                       {template.preview}
                     </div>
                   </div>
@@ -705,19 +783,21 @@ export default function DocDetailPage() {
               <h3 className={`font-semibold ${themeClasses.text.bold} mb-4`}>
                 Display Options
               </h3>
-              
+
               <div className="space-y-6">
                 {/* Color Theme */}
                 <div>
-                  <label className={`block text-sm font-medium ${themeClasses.text.primary} mb-3`}>
+                  <label
+                    className={`block text-sm font-medium ${themeClasses.text.primary} mb-3`}
+                  >
                     Color Theme
                   </label>
                   <div className="grid grid-cols-4 gap-3">
                     {[
-                      { id: 'default', name: 'Default', color: '#171717' },
-                      { id: 'blue', name: 'Blue', color: '#3b82f6' },
-                      { id: 'green', name: 'Green', color: '#10b981' },
-                      { id: 'purple', name: 'Purple', color: '#8b5cf6' }
+                      { id: "default", name: "Default", color: "#171717" },
+                      { id: "blue", name: "Blue", color: "#3b82f6" },
+                      { id: "green", name: "Green", color: "#10b981" },
+                      { id: "purple", name: "Purple", color: "#8b5cf6" },
                     ].map((theme) => (
                       <button
                         key={theme.id}
@@ -726,15 +806,16 @@ export default function DocDetailPage() {
                             ...project,
                             displayOptions: {
                               ...project.displayOptions,
-                              colorTheme: theme.id
+                              colorTheme: theme.id,
                             },
-                            updated: new Date().toISOString()
+                            updated: new Date().toISOString(),
                           };
                           setProject(updatedProject);
                           DocsProjects.update(project.id, updatedProject);
                         }}
                         className={`flex items-center gap-2 p-3 rounded-lg border transition-colors ${
-                          (project.displayOptions?.colorTheme || 'default') === theme.id
+                          (project.displayOptions?.colorTheme || "default") ===
+                          theme.id
                             ? isDark
                               ? "border-blue-600 bg-blue-900/20"
                               : "border-blue-500 bg-blue-50"
@@ -747,7 +828,9 @@ export default function DocDetailPage() {
                           className="w-4 h-4 rounded-full"
                           style={{ backgroundColor: theme.color }}
                         />
-                        <span className={`text-sm ${themeClasses.text.primary}`}>
+                        <span
+                          className={`text-sm ${themeClasses.text.primary}`}
+                        >
                           {theme.name}
                         </span>
                       </button>
@@ -757,45 +840,53 @@ export default function DocDetailPage() {
 
                 {/* Layout Options */}
                 <div>
-                  <label className={`block text-sm font-medium ${themeClasses.text.primary} mb-3`}>
+                  <label
+                    className={`block text-sm font-medium ${themeClasses.text.primary} mb-3`}
+                  >
                     Layout Settings
                   </label>
                   <div className="space-y-3">
                     {[
                       {
-                        id: 'showMethodBadges',
-                        label: 'Show HTTP method badges',
-                        description: 'Display GET, POST, PUT, etc. badges for endpoints'
+                        id: "showMethodBadges",
+                        label: "Show HTTP method badges",
+                        description:
+                          "Display GET, POST, PUT, etc. badges for endpoints",
                       },
                       {
-                        id: 'showCodeExamples',
-                        label: 'Show code examples',
-                        description: 'Include cURL and SDK examples for each endpoint'
+                        id: "showCodeExamples",
+                        label: "Show code examples",
+                        description:
+                          "Include cURL and SDK examples for each endpoint",
                       },
                       {
-                        id: 'groupByCollection',
-                        label: 'Group by collection',
-                        description: 'Organize endpoints by their parent collection'
+                        id: "groupByCollection",
+                        label: "Group by collection",
+                        description:
+                          "Organize endpoints by their parent collection",
                       },
                       {
-                        id: 'showResponseExamples',
-                        label: 'Show response examples',
-                        description: 'Display sample response data for endpoints'
-                      }
+                        id: "showResponseExamples",
+                        label: "Show response examples",
+                        description:
+                          "Display sample response data for endpoints",
+                      },
                     ].map((option) => (
                       <div key={option.id} className="flex items-start gap-3">
                         <div className="flex items-center h-5">
                           <input
                             type="checkbox"
-                            checked={project.displayOptions?.[option.id] !== false}
+                            checked={
+                              project.displayOptions?.[option.id] !== false
+                            }
                             onChange={(e) => {
                               const updatedProject = {
                                 ...project,
                                 displayOptions: {
                                   ...project.displayOptions,
-                                  [option.id]: e.target.checked
+                                  [option.id]: e.target.checked,
                                 },
-                                updated: new Date().toISOString()
+                                updated: new Date().toISOString(),
                               };
                               setProject(updatedProject);
                               DocsProjects.update(project.id, updatedProject);
@@ -804,10 +895,14 @@ export default function DocDetailPage() {
                           />
                         </div>
                         <div className="flex-1">
-                          <label className={`text-sm font-medium ${themeClasses.text.primary}`}>
+                          <label
+                            className={`text-sm font-medium ${themeClasses.text.primary}`}
+                          >
                             {option.label}
                           </label>
-                          <p className={`text-xs ${themeClasses.text.secondary} mt-1`}>
+                          <p
+                            className={`text-xs ${themeClasses.text.secondary} mt-1`}
+                          >
                             {option.description}
                           </p>
                         </div>
@@ -843,20 +938,26 @@ export default function DocDetailPage() {
                   Preview Documentation
                 </button>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className={`p-4 rounded-lg border ${
-                  isDark
-                    ? "border-gray-700 bg-gray-800/50"
-                    : "border-gray-200 bg-gray-50"
-                }`}>
+                <div
+                  className={`p-4 rounded-lg border ${
+                    isDark
+                      ? "border-gray-700 bg-gray-800/50"
+                      : "border-gray-200 bg-gray-50"
+                  }`}
+                >
                   <div className="flex items-center gap-2 mb-2">
                     <FileText className="w-4 h-4 text-blue-500" />
-                    <span className={`text-sm font-medium ${themeClasses.text.primary}`}>
+                    <span
+                      className={`text-sm font-medium ${themeClasses.text.primary}`}
+                    >
                       Collections
                     </span>
                   </div>
-                  <div className={`text-2xl font-bold ${themeClasses.text.bold}`}>
+                  <div
+                    className={`text-2xl font-bold ${themeClasses.text.bold}`}
+                  >
                     {project.collections?.length || 0}
                   </div>
                   <div className={`text-xs ${themeClasses.text.secondary}`}>
@@ -864,18 +965,24 @@ export default function DocDetailPage() {
                   </div>
                 </div>
 
-                <div className={`p-4 rounded-lg border ${
-                  isDark
-                    ? "border-gray-700 bg-gray-800/50"
-                    : "border-gray-200 bg-gray-50"
-                }`}>
+                <div
+                  className={`p-4 rounded-lg border ${
+                    isDark
+                      ? "border-gray-700 bg-gray-800/50"
+                      : "border-gray-200 bg-gray-50"
+                  }`}
+                >
                   <div className="flex items-center gap-2 mb-2">
                     <Code className="w-4 h-4 text-green-500" />
-                    <span className={`text-sm font-medium ${themeClasses.text.primary}`}>
+                    <span
+                      className={`text-sm font-medium ${themeClasses.text.primary}`}
+                    >
                       Endpoints
                     </span>
                   </div>
-                  <div className={`text-2xl font-bold ${themeClasses.text.bold}`}>
+                  <div
+                    className={`text-2xl font-bold ${themeClasses.text.bold}`}
+                  >
                     {getEndpointCount()}
                   </div>
                   <div className={`text-xs ${themeClasses.text.secondary}`}>
@@ -883,21 +990,31 @@ export default function DocDetailPage() {
                   </div>
                 </div>
 
-                <div className={`p-4 rounded-lg border ${
-                  isDark
-                    ? "border-gray-700 bg-gray-800/50"
-                    : "border-gray-200 bg-gray-50"
-                }`}>
+                <div
+                  className={`p-4 rounded-lg border ${
+                    isDark
+                      ? "border-gray-700 bg-gray-800/50"
+                      : "border-gray-200 bg-gray-50"
+                  }`}
+                >
                   <div className="flex items-center gap-2 mb-2">
                     <Globe className="w-4 h-4 text-purple-500" />
-                    <span className={`text-sm font-medium ${themeClasses.text.primary}`}>
+                    <span
+                      className={`text-sm font-medium ${themeClasses.text.primary}`}
+                    >
                       Status
                     </span>
                   </div>
-                  <div className={`text-sm font-medium ${
-                    project.settings?.isPublic !== false ? "text-green-500" : "text-yellow-500"
-                  }`}>
-                    {project.settings?.isPublic !== false ? "Published" : "Draft"}
+                  <div
+                    className={`text-sm font-medium ${
+                      project.settings?.isPublic !== false
+                        ? "text-green-500"
+                        : "text-yellow-500"
+                    }`}
+                  >
+                    {project.settings?.isPublic !== false
+                      ? "Published"
+                      : "Draft"}
                   </div>
                   <div className={`text-xs ${themeClasses.text.secondary}`}>
                     Documentation visibility
@@ -910,7 +1027,9 @@ export default function DocDetailPage() {
 
         {activeTab === "settings" && (
           <div className="space-y-8">
-            <h2 className={`text-lg font-semibold ${themeClasses.text.bold} mb-6`}>
+            <h2
+              className={`text-lg font-semibold ${themeClasses.text.bold} mb-6`}
+            >
               Project Settings
             </h2>
 
@@ -925,17 +1044,23 @@ export default function DocDetailPage() {
               <h3 className={`font-semibold ${themeClasses.text.bold} mb-4`}>
                 General
               </h3>
-              
+
               <div className="space-y-4">
                 <div>
-                  <label className={`block text-sm font-medium ${themeClasses.text.primary} mb-2`}>
+                  <label
+                    className={`block text-sm font-medium ${themeClasses.text.primary} mb-2`}
+                  >
                     Project Name
                   </label>
                   <input
                     type="text"
                     value={project.name}
                     onChange={(e) => {
-                      const updatedProject = { ...project, name: e.target.value, updated: new Date().toISOString() };
+                      const updatedProject = {
+                        ...project,
+                        name: e.target.value,
+                        updated: new Date().toISOString(),
+                      };
                       setProject(updatedProject);
                       DocsProjects.update(project.id, updatedProject);
                     }}
@@ -945,13 +1070,19 @@ export default function DocDetailPage() {
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-medium ${themeClasses.text.primary} mb-2`}>
+                  <label
+                    className={`block text-sm font-medium ${themeClasses.text.primary} mb-2`}
+                  >
                     Description
                   </label>
                   <textarea
                     value={project.description || ""}
                     onChange={(e) => {
-                      const updatedProject = { ...project, description: e.target.value, updated: new Date().toISOString() };
+                      const updatedProject = {
+                        ...project,
+                        description: e.target.value,
+                        updated: new Date().toISOString(),
+                      };
                       setProject(updatedProject);
                       DocsProjects.update(project.id, updatedProject);
                     }}
@@ -961,19 +1092,31 @@ export default function DocDetailPage() {
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-medium ${themeClasses.text.primary} mb-2`}>
+                  <label
+                    className={`block text-sm font-medium ${themeClasses.text.primary} mb-2`}
+                  >
                     Public URL
                   </label>
                   <div className="flex items-center gap-2">
                     <span className={`text-sm ${themeClasses.text.secondary}`}>
-                      {typeof window !== 'undefined' ? window.location.origin : 'https://your-domain.com'}/{generateUsername(user)}/
+                      {typeof window !== "undefined"
+                        ? window.location.origin
+                        : "https://your-domain.com"}
+                      /{generateUsername(user)}/
                     </span>
                     <input
                       type="text"
                       value={project.slug || generateProjectSlug(project.name)}
                       onChange={(e) => {
-                        const slug = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-');
-                        const updatedProject = { ...project, slug, updated: new Date().toISOString() };
+                        const slug = e.target.value
+                          .toLowerCase()
+                          .replace(/[^a-z0-9-]/g, "-")
+                          .replace(/-+/g, "-");
+                        const updatedProject = {
+                          ...project,
+                          slug,
+                          updated: new Date().toISOString(),
+                        };
                         setProject(updatedProject);
                         DocsProjects.update(project.id, updatedProject);
                       }}
@@ -999,20 +1142,27 @@ export default function DocDetailPage() {
               <h3 className={`font-semibold ${themeClasses.text.bold} mb-4`}>
                 API Configuration
               </h3>
-              
+
               <div className="space-y-4">
                 <div>
-                  <label className={`block text-sm font-medium ${themeClasses.text.primary} mb-2`}>
+                  <label
+                    className={`block text-sm font-medium ${themeClasses.text.primary} mb-2`}
+                  >
                     Base URL
                   </label>
                   <input
                     type="url"
-                    value={project.settings?.baseUrl || "https://api.example.com"}
+                    value={
+                      project.settings?.baseUrl || "https://api.example.com"
+                    }
                     onChange={(e) => {
-                      const updatedProject = { 
-                        ...project, 
-                        settings: { ...project.settings, baseUrl: e.target.value },
-                        updated: new Date().toISOString()
+                      const updatedProject = {
+                        ...project,
+                        settings: {
+                          ...project.settings,
+                          baseUrl: e.target.value,
+                        },
+                        updated: new Date().toISOString(),
                       };
                       setProject(updatedProject);
                       DocsProjects.update(project.id, updatedProject);
@@ -1023,17 +1173,22 @@ export default function DocDetailPage() {
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-medium ${themeClasses.text.primary} mb-2`}>
+                  <label
+                    className={`block text-sm font-medium ${themeClasses.text.primary} mb-2`}
+                  >
                     API Version
                   </label>
                   <input
                     type="text"
                     value={project.settings?.apiVersion || "v1"}
                     onChange={(e) => {
-                      const updatedProject = { 
-                        ...project, 
-                        settings: { ...project.settings, apiVersion: e.target.value },
-                        updated: new Date().toISOString()
+                      const updatedProject = {
+                        ...project,
+                        settings: {
+                          ...project.settings,
+                          apiVersion: e.target.value,
+                        },
+                        updated: new Date().toISOString(),
                       };
                       setProject(updatedProject);
                       DocsProjects.update(project.id, updatedProject);
@@ -1056,11 +1211,13 @@ export default function DocDetailPage() {
               <h3 className={`font-semibold ${themeClasses.text.bold} mb-4`}>
                 Documentation Options
               </h3>
-              
+
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className={`text-sm font-medium ${themeClasses.text.primary}`}>
+                    <div
+                      className={`text-sm font-medium ${themeClasses.text.primary}`}
+                    >
                       Show Code Examples
                     </div>
                     <div className={`text-xs ${themeClasses.text.tertiary}`}>
@@ -1070,29 +1227,42 @@ export default function DocDetailPage() {
                   <button
                     onClick={() => {
                       const newValue = !project.settings?.showExamples;
-                      const updatedProject = { 
-                        ...project, 
-                        settings: { ...project.settings, showExamples: newValue },
-                        updated: new Date().toISOString()
+                      const updatedProject = {
+                        ...project,
+                        settings: {
+                          ...project.settings,
+                          showExamples: newValue,
+                        },
+                        updated: new Date().toISOString(),
                       };
                       setProject(updatedProject);
                       DocsProjects.update(project.id, updatedProject);
                     }}
                     className={`w-10 h-6 rounded-full transition-colors relative ${
                       project.settings?.showExamples !== false
-                        ? isDark ? "bg-blue-600" : "bg-blue-500"
-                        : isDark ? "bg-gray-600" : "bg-gray-300"
+                        ? isDark
+                          ? "bg-blue-600"
+                          : "bg-blue-500"
+                        : isDark
+                        ? "bg-gray-600"
+                        : "bg-gray-300"
                     }`}
                   >
-                    <div className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
-                      project.settings?.showExamples !== false ? "right-1" : "left-1"
-                    }`}></div>
+                    <div
+                      className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
+                        project.settings?.showExamples !== false
+                          ? "right-1"
+                          : "left-1"
+                      }`}
+                    ></div>
                   </button>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className={`text-sm font-medium ${themeClasses.text.primary}`}>
+                    <div
+                      className={`text-sm font-medium ${themeClasses.text.primary}`}
+                    >
                       Group by Collections
                     </div>
                     <div className={`text-xs ${themeClasses.text.tertiary}`}>
@@ -1102,29 +1272,42 @@ export default function DocDetailPage() {
                   <button
                     onClick={() => {
                       const newValue = !project.settings?.groupByCollection;
-                      const updatedProject = { 
-                        ...project, 
-                        settings: { ...project.settings, groupByCollection: newValue },
-                        updated: new Date().toISOString()
+                      const updatedProject = {
+                        ...project,
+                        settings: {
+                          ...project.settings,
+                          groupByCollection: newValue,
+                        },
+                        updated: new Date().toISOString(),
                       };
                       setProject(updatedProject);
                       DocsProjects.update(project.id, updatedProject);
                     }}
                     className={`w-10 h-6 rounded-full transition-colors relative ${
                       project.settings?.groupByCollection !== false
-                        ? isDark ? "bg-blue-600" : "bg-blue-500"
-                        : isDark ? "bg-gray-600" : "bg-gray-300"
+                        ? isDark
+                          ? "bg-blue-600"
+                          : "bg-blue-500"
+                        : isDark
+                        ? "bg-gray-600"
+                        : "bg-gray-300"
                     }`}
                   >
-                    <div className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
-                      project.settings?.groupByCollection !== false ? "right-1" : "left-1"
-                    }`}></div>
+                    <div
+                      className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
+                        project.settings?.groupByCollection !== false
+                          ? "right-1"
+                          : "left-1"
+                      }`}
+                    ></div>
                   </button>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className={`text-sm font-medium ${themeClasses.text.primary}`}>
+                    <div
+                      className={`text-sm font-medium ${themeClasses.text.primary}`}
+                    >
                       Public Access
                     </div>
                     <div className={`text-xs ${themeClasses.text.tertiary}`}>
@@ -1134,23 +1317,31 @@ export default function DocDetailPage() {
                   <button
                     onClick={() => {
                       const newValue = !project.settings?.isPublic;
-                      const updatedProject = { 
-                        ...project, 
+                      const updatedProject = {
+                        ...project,
                         settings: { ...project.settings, isPublic: newValue },
-                        updated: new Date().toISOString()
+                        updated: new Date().toISOString(),
                       };
                       setProject(updatedProject);
                       DocsProjects.update(project.id, updatedProject);
                     }}
                     className={`w-10 h-6 rounded-full transition-colors relative ${
                       project.settings?.isPublic !== false
-                        ? isDark ? "bg-blue-600" : "bg-blue-500"
-                        : isDark ? "bg-gray-600" : "bg-gray-300"
+                        ? isDark
+                          ? "bg-blue-600"
+                          : "bg-blue-500"
+                        : isDark
+                        ? "bg-gray-600"
+                        : "bg-gray-300"
                     }`}
                   >
-                    <div className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
-                      project.settings?.isPublic !== false ? "right-1" : "left-1"
-                    }`}></div>
+                    <div
+                      className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
+                        project.settings?.isPublic !== false
+                          ? "right-1"
+                          : "left-1"
+                      }`}
+                    ></div>
                   </button>
                 </div>
               </div>
@@ -1163,7 +1354,7 @@ export default function DocDetailPage() {
               <h3 className="font-semibold text-red-700 dark:text-red-400 mb-4">
                 Danger Zone
               </h3>
-              
+
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -1171,12 +1362,17 @@ export default function DocDetailPage() {
                       Delete Project
                     </div>
                     <div className="text-xs text-red-600 dark:text-red-500">
-                      Permanently delete this documentation project and all its data
+                      Permanently delete this documentation project and all its
+                      data
                     </div>
                   </div>
                   <button
                     onClick={() => {
-                      if (confirm(`Are you sure you want to delete "${project.name}"? This action cannot be undone.`)) {
+                      if (
+                        confirm(
+                          `Are you sure you want to delete "${project.name}"? This action cannot be undone.`
+                        )
+                      ) {
                         DocsProjects.delete(project.id);
                         router.push("/docs");
                       }
@@ -1193,7 +1389,9 @@ export default function DocDetailPage() {
 
         {activeTab === "analytics" && (
           <div className="space-y-8">
-            <h2 className={`text-lg font-semibold ${themeClasses.text.bold} mb-6`}>
+            <h2
+              className={`text-lg font-semibold ${themeClasses.text.bold} mb-6`}
+            >
               Analytics & Insights
             </h2>
 
@@ -1210,11 +1408,15 @@ export default function DocDetailPage() {
                   <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
                     <Eye className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                   </div>
-                  <span className={`text-sm font-medium ${themeClasses.text.bold}`}>
+                  <span
+                    className={`text-sm font-medium ${themeClasses.text.bold}`}
+                  >
                     Page Views
                   </span>
                 </div>
-                <div className={`text-2xl font-bold ${themeClasses.text.bold} mb-1`}>
+                <div
+                  className={`text-2xl font-bold ${themeClasses.text.bold} mb-1`}
+                >
                   1,247
                 </div>
                 <div className="flex items-center gap-1">
@@ -1234,11 +1436,15 @@ export default function DocDetailPage() {
                   <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
                     <Users className="w-4 h-4 text-green-600 dark:text-green-400" />
                   </div>
-                  <span className={`text-sm font-medium ${themeClasses.text.bold}`}>
+                  <span
+                    className={`text-sm font-medium ${themeClasses.text.bold}`}
+                  >
                     Unique Visitors
                   </span>
                 </div>
-                <div className={`text-2xl font-bold ${themeClasses.text.bold} mb-1`}>
+                <div
+                  className={`text-2xl font-bold ${themeClasses.text.bold} mb-1`}
+                >
                   892
                 </div>
                 <div className="flex items-center gap-1">
@@ -1258,11 +1464,15 @@ export default function DocDetailPage() {
                   <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
                     <Clock className="w-4 h-4 text-purple-600 dark:text-purple-400" />
                   </div>
-                  <span className={`text-sm font-medium ${themeClasses.text.bold}`}>
+                  <span
+                    className={`text-sm font-medium ${themeClasses.text.bold}`}
+                  >
                     Avg. Time
                   </span>
                 </div>
-                <div className={`text-2xl font-bold ${themeClasses.text.bold} mb-1`}>
+                <div
+                  className={`text-2xl font-bold ${themeClasses.text.bold} mb-1`}
+                >
                   2m 34s
                 </div>
                 <div className="flex items-center gap-1">
@@ -1282,11 +1492,15 @@ export default function DocDetailPage() {
                   <div className="w-8 h-8 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center">
                     <Share2 className="w-4 h-4 text-orange-600 dark:text-orange-400" />
                   </div>
-                  <span className={`text-sm font-medium ${themeClasses.text.bold}`}>
+                  <span
+                    className={`text-sm font-medium ${themeClasses.text.bold}`}
+                  >
                     Referrals
                   </span>
                 </div>
-                <div className={`text-2xl font-bold ${themeClasses.text.bold} mb-1`}>
+                <div
+                  className={`text-2xl font-bold ${themeClasses.text.bold} mb-1`}
+                >
                   156
                 </div>
                 <div className="flex items-center gap-1">
@@ -1307,7 +1521,7 @@ export default function DocDetailPage() {
               <h3 className={`font-semibold ${themeClasses.text.bold} mb-4`}>
                 Most Viewed Endpoints
               </h3>
-              
+
               <div className="space-y-3">
                 {[
                   { name: "GET /users", views: 342, percentage: 85 },
@@ -1316,29 +1530,42 @@ export default function DocDetailPage() {
                   { name: "PUT /users/{id}", views: 189, percentage: 47 },
                   { name: "DELETE /users/{id}", views: 145, percentage: 36 },
                 ].map((endpoint, index) => (
-                  <div key={index} className="flex items-center justify-between">
+                  <div
+                    key={index}
+                    className="flex items-center justify-between"
+                  >
                     <div className="flex items-center gap-3">
-                      <div className={`w-6 h-6 rounded flex items-center justify-center text-xs font-medium ${
-                        isDark ? "bg-gray-700 text-gray-300" : "bg-gray-100 text-gray-600"
-                      }`}>
+                      <div
+                        className={`w-6 h-6 rounded flex items-center justify-center text-xs font-medium ${
+                          isDark
+                            ? "bg-gray-700 text-gray-300"
+                            : "bg-gray-100 text-gray-600"
+                        }`}
+                      >
                         {index + 1}
                       </div>
-                      <span className={`font-mono text-sm ${themeClasses.text.bold}`}>
+                      <span
+                        className={`font-mono text-sm ${themeClasses.text.bold}`}
+                      >
                         {endpoint.name}
                       </span>
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="flex items-center gap-2">
-                        <div className={`w-16 h-2 rounded-full overflow-hidden ${
-                          isDark ? "bg-gray-700" : "bg-gray-200"
-                        }`}>
+                        <div
+                          className={`w-16 h-2 rounded-full overflow-hidden ${
+                            isDark ? "bg-gray-700" : "bg-gray-200"
+                          }`}
+                        >
                           <div
                             className="h-full bg-blue-500"
                             style={{ width: `${endpoint.percentage}%` }}
                           />
                         </div>
                       </div>
-                      <span className={`text-sm ${themeClasses.text.secondary} w-12 text-right`}>
+                      <span
+                        className={`text-sm ${themeClasses.text.secondary} w-12 text-right`}
+                      >
                         {endpoint.views}
                       </span>
                     </div>
@@ -1359,7 +1586,7 @@ export default function DocDetailPage() {
                 <h3 className={`font-semibold ${themeClasses.text.bold} mb-4`}>
                   Traffic Sources
                 </h3>
-                
+
                 <div className="space-y-4">
                   {[
                     { source: "Direct", visitors: 423, percentage: 47 },
@@ -1367,20 +1594,27 @@ export default function DocDetailPage() {
                     { source: "Social Media", visitors: 134, percentage: 15 },
                     { source: "Referrals", visitors: 23, percentage: 3 },
                   ].map((source, index) => (
-                    <div key={index} className="flex items-center justify-between">
+                    <div
+                      key={index}
+                      className="flex items-center justify-between"
+                    >
                       <span className={`text-sm ${themeClasses.text.primary}`}>
                         {source.source}
                       </span>
                       <div className="flex items-center gap-3">
-                        <div className={`w-20 h-2 rounded-full overflow-hidden ${
-                          isDark ? "bg-gray-700" : "bg-gray-200"
-                        }`}>
+                        <div
+                          className={`w-20 h-2 rounded-full overflow-hidden ${
+                            isDark ? "bg-gray-700" : "bg-gray-200"
+                          }`}
+                        >
                           <div
                             className="h-full bg-gradient-to-r from-blue-500 to-purple-500"
                             style={{ width: `${source.percentage}%` }}
                           />
                         </div>
-                        <span className={`text-sm ${themeClasses.text.secondary} w-8 text-right`}>
+                        <span
+                          className={`text-sm ${themeClasses.text.secondary} w-8 text-right`}
+                        >
                           {source.percentage}%
                         </span>
                       </div>
@@ -1399,32 +1633,66 @@ export default function DocDetailPage() {
                 <h3 className={`font-semibold ${themeClasses.text.bold} mb-4`}>
                   Geographic Distribution
                 </h3>
-                
+
                 <div className="space-y-4">
                   {[
-                    { country: "United States", flag: "🇺🇸", visitors: 445, percentage: 50 },
-                    { country: "United Kingdom", flag: "🇬🇧", visitors: 178, percentage: 20 },
-                    { country: "Germany", flag: "🇩🇪", visitors: 134, percentage: 15 },
-                    { country: "Canada", flag: "🇨🇦", visitors: 89, percentage: 10 },
-                    { country: "Others", flag: "🌍", visitors: 46, percentage: 5 },
+                    {
+                      country: "United States",
+                      flag: "🇺🇸",
+                      visitors: 445,
+                      percentage: 50,
+                    },
+                    {
+                      country: "United Kingdom",
+                      flag: "🇬🇧",
+                      visitors: 178,
+                      percentage: 20,
+                    },
+                    {
+                      country: "Germany",
+                      flag: "🇩🇪",
+                      visitors: 134,
+                      percentage: 15,
+                    },
+                    {
+                      country: "Canada",
+                      flag: "🇨🇦",
+                      visitors: 89,
+                      percentage: 10,
+                    },
+                    {
+                      country: "Others",
+                      flag: "🌍",
+                      visitors: 46,
+                      percentage: 5,
+                    },
                   ].map((country, index) => (
-                    <div key={index} className="flex items-center justify-between">
+                    <div
+                      key={index}
+                      className="flex items-center justify-between"
+                    >
                       <div className="flex items-center gap-2">
                         <span>{country.flag}</span>
-                        <span className={`text-sm ${themeClasses.text.primary}`}>
+                        <span
+                          className={`text-sm ${themeClasses.text.primary}`}
+                        >
                           {country.country}
                         </span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <div className={`w-20 h-2 rounded-full overflow-hidden ${
-                          isDark ? "bg-gray-700" : "bg-gray-200"
-                        }`}>
+                        <div
+                          className={`w-20 h-2 rounded-full overflow-hidden ${
+                            isDark ? "bg-gray-700" : "bg-gray-200"
+                          }`}
+                        >
                           <div
                             className="h-full bg-gradient-to-r from-green-500 to-blue-500"
                             style={{ width: `${country.percentage}%` }}
                           />
                         </div>
-                        <span className={`text-sm ${themeClasses.text.secondary} w-8 text-right`}>
+                        <span
+                          className={`text-sm ${themeClasses.text.secondary} w-8 text-right`}
+                        >
                           {country.percentage}%
                         </span>
                       </div>
@@ -1451,7 +1719,9 @@ export default function DocDetailPage() {
                     Analytics Preview
                   </h4>
                   <p className={`text-sm ${themeClasses.text.secondary}`}>
-                    This is a preview of what analytics data would look like. In production, this would show real visitor statistics, popular endpoints, and usage patterns for your documentation.
+                    This is a preview of what analytics data would look like. In
+                    production, this would show real visitor statistics, popular
+                    endpoints, and usage patterns for your documentation.
                   </p>
                 </div>
               </div>

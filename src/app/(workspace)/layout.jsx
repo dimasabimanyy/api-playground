@@ -222,7 +222,7 @@ const layout = ({ children }) => {
       // Navigate to documentation page
       router.push("/docs");
       return;
-    } else if (currentPath === "/docs" && itemId !== "documentation") {
+    } else if (currentPath.includes("/docs") && itemId !== "documentation") {
       // Navigate to playground page
       router.push("/playground");
     }
