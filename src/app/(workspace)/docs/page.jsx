@@ -37,6 +37,7 @@ import { DocsProjects, DocsMetadata } from "@/lib/docs-storage";
 import DocGeneratorModal from "@/components/docs/DocGeneratorModal";
 import SearchInput from "@/components/ui/SearchInput";
 import DashboardHeader from "@/components/header/DashboardHeader";
+import DocumentationProjectCard from "@/components/docs/DocumentationProjectCard";
 
 function UserAvatar({ user, isDark }) {
   const [imageLoaded, setImageLoaded] = useState(true);
@@ -128,38 +129,10 @@ export default function DocsPage() {
   const [docsProjects, setDocsProjects] = useState({});
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [viewMode, setViewMode] = useState("grid"); // 'grid' or 'list'
+  const [viewMode, setViewMode] = useState("list"); // 'grid' or 'list'
   const [sortBy, setSortBy] = useState("updated"); // 'updated', 'created', 'name'
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
-
-  // Sidebar menu items
-  const sidebarMenuItems = [
-    {
-      id: "collections",
-      icon: FolderOpen,
-      label: "Collections",
-      description: "Saved grouped requests",
-    },
-    {
-      id: "history",
-      icon: History,
-      label: "History",
-      description: "Past requests sent",
-    },
-    {
-      id: "environments",
-      icon: Globe,
-      label: "Environments",
-      description: "Manage variables like API keys, URLs, tokens",
-    },
-    {
-      id: "documentation",
-      icon: BookOpen,
-      label: "Docs",
-      description: "API Documentation",
-    },
-  ];
 
   // Load documentation projects
   useEffect(() => {
@@ -329,7 +302,7 @@ export default function DocsPage() {
         } ml-0 lg:ml-0 w-full lg:w-auto px-6`}
       >
         {/* Page Header */}
-        <div className="py-8">
+        <div className="py-6">
           {/* Search and Controls */}
           <div className="flex items-center gap-3">
             {/* Search Input - Full Width */}
@@ -339,7 +312,7 @@ export default function DocsPage() {
                 placeholder="Find documentation..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 py-1.5 text-sm focus:ring-0 focus:outline-none cursor-pointer h-9"
+                className="pl-10 h-9 text-sm focus:ring-0 focus:outline-none cursor-pointer"
                 style={{
                   borderRadius: "6px",
                   borderColor: isDark
@@ -464,7 +437,7 @@ export default function DocsPage() {
             >
               <button
                 onClick={() => setViewMode("grid")}
-                className={`px-2.5 py-1.5 transition-colors cursor-pointer ${
+                className={`px-2.5 h-9 transition-colors cursor-pointer ${
                   viewMode === "grid"
                     ? isDark
                       ? "bg-gray-700 text-white"
@@ -478,7 +451,7 @@ export default function DocsPage() {
               </button>
               <button
                 onClick={() => setViewMode("list")}
-                className={`px-2.5 py-1.5 transition-colors border-l cursor-pointer ${
+                className={`px-2.5 h-9 transition-colors border-l cursor-pointer ${
                   isDark ? "border-gray-600" : "border-gray-200"
                 } ${
                   viewMode === "list"
@@ -498,7 +471,7 @@ export default function DocsPage() {
             <Button
               onClick={createNewDocumentation}
               size="sm"
-              className={`px-4 py-1.5 h-9 font-medium cursor-pointer ${
+              className={`px-4 h-9 font-medium cursor-pointer ${
                 isDark
                   ? "bg-white text-black hover:bg-gray-200"
                   : "bg-black text-white hover:bg-gray-800"
@@ -604,16 +577,16 @@ export default function DocsPage() {
               className={
                 viewMode === "grid"
                   ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-                  : `border rounded-lg overflow-hidden ${
+                  : `border overflow-hidden ${
                       isDark
                         ? "border-gray-800 bg-gray-900/50"
                         : "border-gray-200 bg-white"
                     }`
               }
-              style={viewMode === "list" ? { borderRadius: "12px" } : undefined}
+              style={viewMode === "list" ? { borderRadius: "6px" } : undefined}
             >
               {filteredProjects.map((project) => (
-                <ProjectCard
+                <DocumentationProjectCard
                   key={project.id}
                   project={project}
                   collections={collections}
@@ -644,316 +617,5 @@ export default function DocsPage() {
         }}
       />
     </>
-  );
-}
-
-// Project card component
-function ProjectCard({
-  project,
-  collections,
-  viewMode,
-  onView,
-  onEdit,
-  onDuplicate,
-  onDelete,
-  isDark,
-  themeClasses,
-}) {
-  const [showMenu, setShowMenu] = useState(false);
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
-
-  const getCollectionCount = () => project.collections?.length || 0;
-  const getEndpointCount = () => {
-    if (!project.collections) return 0;
-
-    // Calculate total endpoints from all collections in the project
-    let totalEndpoints = 0;
-    project.collections.forEach((collectionId) => {
-      const collection = collections[collectionId];
-      if (collection && collection.requests) {
-        totalEndpoints += collection.requests.length;
-      }
-    });
-
-    return totalEndpoints;
-  };
-
-  if (viewMode === "list") {
-    return (
-      <div
-        className={`group p-4 transition-all duration-200 border-b last:border-b-0 ${
-          isDark
-            ? "border-gray-800 hover:bg-gray-800/30"
-            : "border-gray-200 hover:bg-gray-50"
-        }`}
-      >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4 flex-1 min-w-0">
-            <div
-              className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                isDark
-                  ? "bg-gray-800 text-gray-300"
-                  : "bg-gray-100 text-gray-600"
-              }`}
-              style={{ borderRadius: "8px" }}
-            >
-              <FileText className="w-5 h-5" />
-            </div>
-
-            <div className="flex-1 min-w-0">
-              <h3
-                className={`font-semibold ${themeClasses.text.primary} truncate mb-1`}
-              >
-                {project.name}
-              </h3>
-              <p className={`text-sm ${themeClasses.text.secondary} truncate`}>
-                {project.description || "No description"}
-              </p>
-            </div>
-
-            <div className="hidden md:flex items-center gap-6">
-              <div
-                className={`flex items-center gap-4 text-xs ${themeClasses.text.tertiary}`}
-              >
-                <span className="flex items-center gap-1">
-                  <div className="w-1.5 h-1.5 rounded-full bg-current opacity-50"></div>
-                  {getCollectionCount()} collections
-                </span>
-                <span className="flex items-center gap-1">
-                  <div className="w-1.5 h-1.5 rounded-full bg-current opacity-50"></div>
-                  {getEndpointCount()} endpoints
-                </span>
-                <span className="flex items-center gap-1">
-                  <Calendar className="w-3 h-3 opacity-50" />
-                  {formatDate(project.updated)}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Button
-              onClick={onView}
-              size="sm"
-              className={`cursor-pointer ${
-                isDark
-                  ? "bg-white text-black hover:bg-gray-100"
-                  : "bg-black text-white hover:bg-gray-800"
-              }`}
-              style={{ borderRadius: "6px" }}
-            >
-              View
-            </Button>
-
-            <div className="relative opacity-0 group-hover:opacity-100 transition-opacity">
-              <Button
-                onClick={() => setShowMenu(!showMenu)}
-                size="sm"
-                variant="ghost"
-                className="cursor-pointer"
-                style={{ borderRadius: "6px" }}
-              >
-                <MoreVertical className="w-4 h-4" />
-              </Button>
-
-              {showMenu && (
-                <div
-                  className={`absolute right-0 top-10 z-20 w-48 border rounded-xl shadow-xl ${
-                    isDark
-                      ? "border-gray-700 bg-gray-800"
-                      : "border-gray-200 bg-white"
-                  }`}
-                  style={{ borderRadius: "12px" }}
-                >
-                  <div className="p-1">
-                    <button
-                      onClick={() => {
-                        onEdit();
-                        setShowMenu(false);
-                      }}
-                      className={`w-full text-left px-3 py-2 text-sm rounded-lg cursor-pointer hover:${
-                        isDark ? "bg-gray-700" : "bg-gray-100"
-                      } flex items-center gap-2 transition-colors`}
-                    >
-                      <Edit3 className="w-4 h-4" />
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => {
-                        onDuplicate();
-                        setShowMenu(false);
-                      }}
-                      className={`w-full text-left px-3 py-2 text-sm rounded-lg cursor-pointer hover:${
-                        isDark ? "bg-gray-700" : "bg-gray-100"
-                      } flex items-center gap-2 transition-colors`}
-                    >
-                      <Copy className="w-4 h-4" />
-                      Duplicate
-                    </button>
-                    <button
-                      onClick={() => {
-                        onDelete();
-                        setShowMenu(false);
-                      }}
-                      className="w-full text-left px-3 py-2 text-sm rounded-lg cursor-pointer hover:bg-red-500/10 text-red-500 flex items-center gap-2 transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Grid view
-  return (
-    <div
-      className={`group border rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-gray-200/20 ${
-        isDark
-          ? "border-gray-800 bg-gray-900/50 hover:border-gray-700 hover:bg-gray-900"
-          : "border-gray-200 bg-white hover:border-gray-300"
-      }`}
-      style={{ borderRadius: "6px" }}
-    >
-      <div className="p-6">
-        {/* Header - Icon, Title, URL, Menu in same row */}
-        <div className="flex items-center gap-3 mb-4">
-          <div
-            className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
-              isDark ? "bg-gray-800 text-gray-300" : "bg-gray-100 text-gray-600"
-            }`}
-            style={{ borderRadius: "8px" }}
-          >
-            <FileText className="w-5 h-5" />
-          </div>
-
-          <div className="flex-1 min-w-0">
-            <h3
-              className={`text-base font-semibold ${themeClasses.text.primary} truncate`}
-            >
-              {project.name}
-            </h3>
-            <p className={`text-xs ${themeClasses.text.tertiary} truncate`}>
-              docs.example.com/{project.name.toLowerCase().replace(/\s+/g, "-")}
-            </p>
-          </div>
-
-          <div className="relative">
-            <button
-              onClick={() => setShowMenu(!showMenu)}
-              className={`p-2 rounded-lg transition-colors cursor-pointer opacity-0 group-hover:opacity-100 hover:${
-                isDark ? "bg-gray-800" : "bg-gray-100"
-              }`}
-              style={{ borderRadius: "6px" }}
-            >
-              <MoreVertical className="w-4 h-4" />
-            </button>
-
-            {showMenu && (
-              <div
-                className={`absolute right-0 top-10 z-20 w-48 border rounded-xl shadow-xl ${
-                  isDark
-                    ? "border-gray-700 bg-gray-800"
-                    : "border-gray-200 bg-white"
-                }`}
-                style={{ borderRadius: "12px" }}
-              >
-                <div className="p-1">
-                  <button
-                    onClick={() => {
-                      onEdit();
-                      setShowMenu(false);
-                    }}
-                    className={`w-full text-left px-3 py-2 text-sm rounded-lg cursor-pointer hover:${
-                      isDark ? "bg-gray-700" : "bg-gray-100"
-                    } flex items-center gap-2 transition-colors`}
-                  >
-                    <Edit3 className="w-4 h-4" />
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => {
-                      onDuplicate();
-                      setShowMenu(false);
-                    }}
-                    className={`w-full text-left px-3 py-2 text-sm rounded-lg cursor-pointer hover:${
-                      isDark ? "bg-gray-700" : "bg-gray-100"
-                    } flex items-center gap-2 transition-colors`}
-                  >
-                    <Copy className="w-4 h-4" />
-                    Duplicate
-                  </button>
-                  <button
-                    onClick={() => {
-                      onDelete();
-                      setShowMenu(false);
-                    }}
-                    className="w-full text-left px-3 py-2 text-sm rounded-lg cursor-pointer hover:bg-red-500/10 text-red-500 flex items-center gap-2 transition-colors"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                    Delete
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Description */}
-        <div className="mb-4">
-          <p
-            className={`text-sm ${themeClasses.text.secondary} line-clamp-2 leading-relaxed`}
-          >
-            {project.description || "No description provided"}
-          </p>
-        </div>
-
-        {/* Stats */}
-        <div
-          className={`flex items-center gap-4 mb-6 text-xs ${themeClasses.text.tertiary}`}
-        >
-          <span className="flex items-center gap-1">
-            <div className="w-1.5 h-1.5 rounded-full bg-current opacity-50"></div>
-            {getCollectionCount()} collections
-          </span>
-          <span className="flex items-center gap-1">
-            <div className="w-1.5 h-1.5 rounded-full bg-current opacity-50"></div>
-            {getEndpointCount()} endpoints
-          </span>
-          <span className="flex items-center gap-1 ml-auto">
-            <Calendar className="w-3 h-3 opacity-50" />
-            {formatDate(project.updated)}
-          </span>
-        </div>
-
-        {/* Actions */}
-        <div className="flex gap-3">
-          <Button
-            onClick={onView}
-            className={`cursor-pointer ${
-              isDark
-                ? "bg-white text-black hover:bg-gray-100"
-                : "bg-black text-white hover:bg-gray-800"
-            }`}
-            size="sm"
-            style={{ borderRadius: "8px" }}
-          >
-            View Documentation
-          </Button>
-        </div>
-      </div>
-    </div>
   );
 }
