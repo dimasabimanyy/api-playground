@@ -34,6 +34,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useCollections } from "@/contexts/CollectionsContext";
 import { getThemeClasses } from "@/lib/theme";
 import { DocsProjects, DocsMetadata } from "@/lib/docs-storage";
+import { generateUsername, generatePublicDocUrl } from "@/lib/user-utils";
 import DocGeneratorModal from "@/components/docs/DocGeneratorModal";
 import SearchInput from "@/components/ui/SearchInput";
 import DashboardHeader from "@/components/header/DashboardHeader";
@@ -198,43 +199,15 @@ export default function DocsPage() {
   };
 
   const viewDocumentation = (project) => {
-    // Generate documentation and navigate to it
-    const enhancedCollections = getCollectionsWithDocs();
-    const projectCollections = {};
-
-    project.collections.forEach((collectionId) => {
-      if (enhancedCollections[collectionId]) {
-        projectCollections[collectionId] = enhancedCollections[collectionId];
-      }
-    });
-
-    // Store project data and navigate
-    const docId = `project_${project.id}_${Date.now()}`;
-    const docData = {
-      project: project,
-      collections: Object.values(projectCollections),
-      customization: {
-        title: project.name,
-        description: project.description,
-        baseUrl: project.settings?.baseUrl || "https://api.example.com",
-        ...project.settings,
-      },
-      meta: {
-        generatedAt: new Date().toISOString(),
-        generator: "API Playground",
-        totalEndpoints: Object.values(projectCollections).reduce(
-          (acc, col) => acc + (col.requests?.length || 0),
-          0
-        ),
-        totalCollections: Object.values(projectCollections).length,
-      },
-    };
-
-    sessionStorage.setItem(`docs_${docId}`, JSON.stringify(docData));
-    window.open(
-      `/docs/generated?docId=${docId}&project=${project.id}`,
-      "_blank"
-    );
+    // Navigate to public documentation using the new username-based URL
+    if (user) {
+      const username = generateUsername(user);
+      const publicUrl = generatePublicDocUrl(username, project.name);
+      window.open(publicUrl, "_blank");
+    } else {
+      // Fallback to old format if no user (shouldn't happen in authenticated context)
+      console.warn("No user found for generating public documentation URL");
+    }
   };
 
   // Sidebar handlers
@@ -299,7 +272,7 @@ export default function DocsPage() {
       <div
         className={`flex-1 flex flex-col ${
           sidebarCollapsed ? "lg:ml-0" : "lg:ml-0"
-        } ml-0 lg:ml-0 w-full lg:w-auto px-6`}
+        } ml-0 lg:ml-0 w-full lg:w-auto px-6 ${themeClasses.bg.bold}`}
       >
         {/* Page Header */}
         <div className="py-6">

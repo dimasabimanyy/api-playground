@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
+import { generateUsername, generatePublicDocUrl } from "@/lib/user-utils";
+import { DocsProjects } from "@/lib/docs-storage";
 import ModernTemplate from "@/components/docs/templates/ModernTemplate";
 import EditableModernTemplate from "@/components/docs/templates/EditableModernTemplate";
 import { Button } from "@/components/ui/button";
@@ -123,17 +126,54 @@ const mockCollections = [
 
 export default function GeneratedDocsPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const { user } = useAuth();
   const [docData, setDocData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isEditMode, setIsEditMode] = useState(false);
   const [hasEnhancedData, setHasEnhancedData] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
 
   useEffect(() => {
-    // Parse URL parameters
+    // Check if we can redirect to the new URL format
+    const projectParam = searchParams.get('project');
+    const docId = searchParams.get('docId');
+    
+    if (user && projectParam) {
+      // Try to find the project and redirect to new format
+      try {
+        const allProjects = DocsProjects.getAll();
+        let foundProject = null;
+        
+        // Try to match by project ID in the project parameter
+        for (const projectId in allProjects) {
+          if (projectParam.includes(projectId)) {
+            foundProject = allProjects[projectId];
+            break;
+          }
+        }
+        
+        if (foundProject) {
+          setRedirecting(true);
+          const username = generateUsername(user);
+          const newUrl = generatePublicDocUrl(username, foundProject.name);
+          
+          // Show redirect notice for 2 seconds then redirect
+          setTimeout(() => {
+            window.location.href = newUrl;
+          }, 2000);
+          
+          return;
+        }
+      } catch (error) {
+        console.error('Failed to redirect to new format:', error);
+      }
+    }
+
+    // Parse URL parameters for legacy support
     const template = searchParams.get('template') || 'modern';
     const collectionsParam = searchParams.get('collections') || '';
     const title = searchParams.get('title') || 'API Documentation';
-    const docId = searchParams.get('docId');
     
     // Try to load enhanced docs data first
     if (docId) {
@@ -182,7 +222,7 @@ export default function GeneratedDocsPage() {
       });
       setLoading(false);
     }, 1000);
-  }, [searchParams]);
+  }, [searchParams, user]);
 
   const handleExport = (format) => {
     // Placeholder for export functionality
@@ -247,6 +287,25 @@ export default function GeneratedDocsPage() {
     // You could show a toast notification here
     alert('Share URL copied to clipboard!');
   };
+
+  if (redirecting) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="text-center max-w-md">
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            Redirecting to New URL
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
+            We're moving your documentation to a new, cleaner URL format...
+          </p>
+          <div className="text-sm text-gray-500 dark:text-gray-500">
+            You'll be redirected automatically in a moment
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (

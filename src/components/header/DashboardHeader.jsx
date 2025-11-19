@@ -52,7 +52,7 @@ const DashboardHeader = ({ layoutMode, setLayoutMode }) => {
 
   return (
     <header
-      className={`border-b ${themeClasses.border.primary} ${themeClasses.bg.bold} flex items-center px-3 py-2 sm:px-6 transition-all duration-300 relative z-50`}
+      className={`border-b ${themeClasses.border.primary} ${themeClasses.bg.light} flex items-center px-3 py-2 sm:px-6 transition-all duration-300 relative z-50`}
     >
       <div className="flex items-center space-x-2 sm:space-x-6 min-w-0 flex-shrink-0">
         {/* Mobile Hamburger Menu */}

@@ -1130,7 +1130,7 @@ export default function Playground() {
   if (!tabsInitialized) {
     return (
       <div
-        className={`min-h-screen flex items-center justify-center ${themeClasses.bg.primary}`}
+        className={`min-h-screen flex items-center justify-center ${themeClasses.bg.bold}`}
       >
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-[1.5px] border-gray-400 mx-auto mb-2"></div>
@@ -1150,7 +1150,7 @@ export default function Playground() {
       >
         {/* Request Tabs - Flat Design */}
         <div
-          className={`${themeClasses.bg.glass} border-b ${themeClasses.border.primary}`}
+          className={`${themeClasses.bg.light} border-b ${themeClasses.border.primary}`}
         >
           <div className="flex items-center px-2 py-0">
             <div className="flex items-center overflow-x-auto scrollbar-hide">
@@ -1213,7 +1213,7 @@ export default function Playground() {
 
         {/* Request Name Header - Full Width */}
         <div
-          className={`${themeClasses.border.primary}`}
+          className={`${themeClasses.border.primary} ${themeClasses.bg.bold}`}
         >
           <div className="px-4 pt-4 pb-1">
             <div className="flex flex-col sm:flex-row sm:items-center gap-3">
@@ -1307,7 +1307,7 @@ export default function Playground() {
         </div>
 
         {/* Method + URL + Send Row - Full Width */}
-        <div className={`${themeClasses.border.primary}`}>
+        <div className={`${themeClasses.border.primary} ${themeClasses.bg.bold}`}>
           <div className="px-3 py-3">
             <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-2">
               {/* METHOD SELECT + URL INPUT + ENVIRONMENT ROW */}
@@ -1408,7 +1408,7 @@ export default function Playground() {
           data-layout-container
           className={`flex-1 flex ${
             layoutMode === "single" ? "flex-col" : "flex-col lg:flex-row"
-          } ${themeClasses.bg.primary} transition-colors duration-300 ${
+          } ${themeClasses.bg.bold} transition-colors duration-300 ${
             isDragging
               ? layoutMode === "single"
                 ? "cursor-row-resize"

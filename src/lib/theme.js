@@ -12,6 +12,7 @@ export const getThemeClasses = (isDark) => ({
       ? "bg-[#1a1a1a]/50 backdrop-blur-xl"
       : "bg-white/60 backdrop-blur-xl",
     bold: isDark ? "bg-[#111]" : "bg-[#fafafa]",
+    light: isDark ? "bg-[#111]" : "bg-[#FFFFFF]",
   },
 
   // Text colors

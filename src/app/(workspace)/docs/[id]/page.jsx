@@ -37,6 +37,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useCollections } from "@/contexts/CollectionsContext";
 import { getThemeClasses } from "@/lib/theme";
 import { DocsProjects, DocsMetadata } from "@/lib/docs-storage";
+import { generateUsername, generatePublicDocUrl } from "@/lib/user-utils";
 
 const StatCard = ({ icon: Icon, label, value, trend, trendLabel, isDark, themeClasses }) => (
   <div
@@ -143,9 +144,9 @@ export default function DocDetailPage() {
   };
 
   const generatePublicUrl = () => {
-    if (!project) return "";
-    const baseUrl = window.location.origin;
-    return `${baseUrl}/docs/public/${project.id}`;
+    if (!project || !user) return "";
+    const username = generateUsername(user);
+    return generatePublicDocUrl(username, project.name);
   };
 
   const copyPublicUrl = async () => {
@@ -297,7 +298,7 @@ export default function DocDetailPage() {
                   {project.name}
                 </h1>
                 <p className={`text-sm ${themeClasses.text.tertiary}`}>
-                  {generatePublicUrl().replace('https://', '').replace('http://', '')}
+                  {generatePublicUrl() ? generatePublicUrl().replace('https://', '').replace('http://', '') : 'Public URL will be available once published'}
                 </p>
               </div>
             </div>
@@ -308,6 +309,7 @@ export default function DocDetailPage() {
                 variant="outline"
                 size="sm"
                 className={`${themeClasses.button.secondary}`}
+                disabled={!generatePublicUrl()}
               >
                 <Copy className="w-4 h-4 mr-2" />
                 Copy URL
@@ -329,6 +331,7 @@ export default function DocDetailPage() {
                     : "bg-black text-white hover:bg-gray-800"
                 }`}
                 size="sm"
+                disabled={!generatePublicUrl()}
               >
                 <ExternalLink className="w-4 h-4 mr-2" />
                 Open Public
@@ -461,7 +464,7 @@ export default function DocDetailPage() {
                     Public URL
                   </div>
                   <div className={`text-sm font-mono ${themeClasses.text.primary} break-all`}>
-                    {generatePublicUrl()}
+                    {generatePublicUrl() || 'Not yet published'}
                   </div>
                 </div>
                 <div>

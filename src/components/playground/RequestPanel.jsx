@@ -107,10 +107,10 @@ export default function RequestPanel({
 
   return (
     <div
-      className={`flex-1 h-full flex flex-col border-r transition-all duration-300 ${themeClasses.border.primary} ${themeClasses.bg.glass}`}
+      className={`flex-1 h-full flex flex-col border-r transition-all duration-300 ${themeClasses.border.primary} ${themeClasses.bg.bold}`}
     >
       <div
-        className={`flex-1 overflow-y-auto transition-colors duration-300 ${themeClasses.bg.primary}`}
+        className={`flex-1 overflow-y-auto transition-colors duration-300 ${themeClasses.bg.bold}`}
       >
         {/* Request Configuration Tabs - Theme Aware */}
         <div className="mt-3">
