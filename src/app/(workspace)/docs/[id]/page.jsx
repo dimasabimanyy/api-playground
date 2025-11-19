@@ -326,27 +326,27 @@ export default function DocDetailPage() {
     <div className={`min-h-screen ${themeClasses.bg.bold}`}>
       {/* Header */}
       <div
-        className={`border-b ${themeClasses.border.primary} ${themeClasses.bg.bold}`}
+        className={`border-b ${themeClasses.border.primary} ${themeClasses.bg.bold} pt-6`}
       >
-        <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="max-w-7xl mx-auto px-6 pt-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div>
-                <h1 className={`text-2xl font-bold ${themeClasses.text.bold}`}>
+                <h1 className={`text-3xl font-bold tracking-tight ${themeClasses.text.bold}`}>
                   {project.name}
                 </h1>
-                <p className={`text-sm ${themeClasses.text.tertiary}`}>
+                {/* <p className={`text-sm ${themeClasses.text.tertiary}`}>
                   {generatePublicUrl()
                     ? generatePublicUrl()
                         .replace("https://", "")
                         .replace("http://", "")
                     : "Public URL will be available once published"}
-                </p>
+                </p> */}
               </div>
             </div>
 
             <div className="flex items-center gap-2">
-              <Button
+              {/* <Button
                 onClick={copyPublicUrl}
                 variant="outline"
                 size="sm"
@@ -357,7 +357,7 @@ export default function DocDetailPage() {
                 }}
               >
                 Copy URL
-              </Button>
+              </Button> */}
               {/* <Button
                 onClick={viewDocumentation}
                 variant="outline"
@@ -368,11 +368,12 @@ export default function DocDetailPage() {
               </Button> */}
               <Button
                 onClick={() => window.open(generatePublicUrl(), "_blank")}
-                className={`${
-                  isDark
-                    ? "bg-white text-black hover:bg-gray-200"
-                    : "bg-black text-white hover:bg-gray-800"
-                }`}
+                className={`${themeClasses.button.fill} px-4 h-9`}
+                // className={`${
+                //   isDark
+                //     ? "bg-white text-black hover:bg-gray-200"
+                //     : "bg-black text-white hover:bg-gray-800"
+                // }`}
                 size="sm"
                 disabled={!generatePublicUrl()}
               >
@@ -440,7 +441,7 @@ export default function DocDetailPage() {
           </div>
 
           {/* Navigation Tabs */}
-          <div className="flex items-center gap-6 mt-6">
+          <div className="flex items-center gap-6 mt-5">
             {[
               { id: "overview", label: "Overview", icon: BarChart3 },
               { id: "content", label: "Content", icon: BookOpen },
@@ -450,7 +451,7 @@ export default function DocDetailPage() {
               <button
                 key={id}
                 onClick={() => setActiveTab(id)}
-                className={`flex items-center gap-2 px-1 py-2 text-sm font-medium transition-colors border-b-2 ${
+                className={`cursor-pointer flex items-center gap-2 px-1 py-2 text-sm font-medium transition-colors border-b-2 ${
                   activeTab === id
                     ? `${themeClasses.text.primary} border-black dark:border-white`
                     : `${themeClasses.text.secondary} border-transparent hover:${themeClasses.text.primary}`

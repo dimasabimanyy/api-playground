@@ -56,6 +56,7 @@ export const getThemeClasses = (isDark) => ({
     outline: isDark
       ? "cursor-pointer"
       : "cursor-pointer text-[#171717] bg-white",
+    fill: `cursor-pointer radius-6 ${isDark ? "bg-[#171717]" : "text-white"}`
   },
 
   // Card/panel styles
