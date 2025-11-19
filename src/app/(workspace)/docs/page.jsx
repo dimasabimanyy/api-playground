@@ -564,13 +564,13 @@ export default function DocsPage() {
           /* Documentation Projects */
           <div className="pb-12">
             {/* Results Header */}
-            <div className="mb-6">
+            {/* <div className="mb-6">
               <p className={`text-sm ${themeClasses.text.secondary}`}>
                 {filteredProjects.length} project
                 {filteredProjects.length !== 1 ? "s" : ""}
                 {searchQuery && ` matching "${searchQuery}"`}
               </p>
-            </div>
+            </div> */}
 
             {/* Projects Grid/List */}
             <div
