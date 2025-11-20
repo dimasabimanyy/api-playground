@@ -27,7 +27,7 @@ export const getThemeClasses = (isDark) => ({
 
   // Border colors
   border: {
-    primary: isDark ? "border-gray-800/50" : "border-gray-200/60",
+    primary: isDark ? "border-gray-800/50" : "primary-gray-border",
     secondary: isDark ? "border-gray-700/50" : "border-gray-300/40",
     accent: isDark ? "border-blue-500/50" : "border-blue-400/50",
   },

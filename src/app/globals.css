@@ -224,3 +224,12 @@
 .radius-6 {
   border-radius: 6px;
 }
+
+h1, h2, h3,h4,h5,h6 {
+  letter-spacing: -0.4px;
+}
+
+.primary-gray-border {
+  border-color: rgb(235, 235, 235);
+  box-shadow: rgba(0, 0, 0, 0) 0;
+}

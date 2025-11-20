@@ -837,13 +837,13 @@ export default function DocDetailPage() {
 
               {/* Content & Display Section */}
               <div>
-                <div className="mb-5">
+                {/* <div className="mb-5">
                   <h2
                     className={`font-semibold tracking-tight text-[1.3rem] ${themeClasses.text.bold}`}
                   >
                     Content & Display
                   </h2>
-                </div>
+                </div> */}
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   {/* Template Selection */}
@@ -855,7 +855,7 @@ export default function DocDetailPage() {
                     }`}
                   >
                     <h3
-                      className={`font-semibold ${themeClasses.text.bold} mb-4`}
+                      className={`font-semibold ${themeClasses.text.bold} mb-2`}
                     >
                       Documentation Template
                     </h3>
@@ -950,20 +950,20 @@ export default function DocDetailPage() {
                         : "border-gray-200 bg-white"
                     }`}
                   >
-                    <h3
-                      className={`font-semibold ${themeClasses.text.bold} mb-4`}
+                    {/* <h3
+                      className={`font-semibold ${themeClasses.text.bold} mb-2`}
                     >
                       Display Options
-                    </h3>
+                    </h3> */}
 
                     <div className="space-y-6">
                       {/* Color Theme */}
                       <div>
-                        <label
+                        <h4
                           className={`block text-sm font-medium ${themeClasses.text.primary} mb-3`}
                         >
                           Color Theme
-                        </label>
+                        </h4>
                         <div className="grid grid-cols-2 gap-2">
                           {[
                             {
@@ -1016,11 +1016,11 @@ export default function DocDetailPage() {
 
                       {/* Layout Options */}
                       <div>
-                        <label
+                        <h4
                           className={`block text-sm font-medium ${themeClasses.text.primary} mb-3`}
                         >
                           Layout Settings
-                        </label>
+                        </h4>
                         <div className="space-y-3">
                           {[
                             {
