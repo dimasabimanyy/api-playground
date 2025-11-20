@@ -65,7 +65,7 @@ export default function TwoPanelSidebar({
   console.log("pathname: ", pathname);
 
   useEffect(() => {
-    if (pathname === "/docs") {
+    if (pathname.includes("/docs")) {
       setContentOpen(false);
     }
   }, [pathname]);

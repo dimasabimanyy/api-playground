@@ -798,8 +798,7 @@ export default function DocDetailPage() {
             </div>
 
             <div className="space-y-8">
-              {/* Stats */}
-              <div>
+              {/* <div>
                 <h2
                   className={`text-lg font-semibold ${themeClasses.text.bold} mb-4`}
                 >
@@ -834,7 +833,7 @@ export default function DocDetailPage() {
                     themeClasses={themeClasses}
                   />
                 </div>
-              </div>
+              </div> */}
 
               {/* Content & Display Section */}
               <div>

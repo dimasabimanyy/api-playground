@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -117,7 +117,7 @@ const layout = ({ children }) => {
     typeof window !== "undefined" && window.innerWidth < 1024
   );
   const [activeMenuTab, setActiveMenuTab] = useState("collections");
-  const [sidebarContentOpen, setSidebarContentOpen] = useState(true); // Track if sidebar content is visible
+  const [sidebarContentOpen, setSidebarContentOpen] = useState(false); // Track if sidebar content is visible
   const [sidebarContentWidth, setSidebarContentWidth] = useState(280); // Width of the content panel in pixels
   const [isSidebarResizing, setIsSidebarResizing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -216,6 +216,15 @@ const layout = ({ children }) => {
 
   // Handle navigation item clicks with toggle behavior
   const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (pathname.includes("/docs")) {
+      setSidebarContentOpen(false);
+    } else {
+      setSidebarContentOpen(true);
+    }
+  }, [pathname]);
 
   const handleNavItemClick = (itemId, currentPath) => {
     if (itemId === "documentation") {
