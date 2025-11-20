@@ -1196,7 +1196,7 @@ const layout = ({ children }) => {
         />
 
         {/* Main Content Layout - Theme Aware */}
-        <div className="flex h-[calc(100vh-3.5rem)] relative">
+        <div className="flex min-h-[calc(100vh-3.5rem)] relative">
           {/* Mobile Sidebar Overlay */}
           {!sidebarCollapsed && (
             <div
@@ -1217,7 +1217,7 @@ const layout = ({ children }) => {
               sidebarCollapsed
                 ? "-translate-x-full lg:translate-x-0"
                 : "translate-x-0"
-            } w-72 fixed lg:relative top-[3.5rem] lg:top-0 left-0 h-[calc(100vh-3.5rem)] lg:h-full border-r ${
+            } w-72 fixed lg:relative top-[3.5rem] lg:top-0 left-0 min-h-[calc(100vh-3.5rem)] lg:min-h-full border-r ${
               themeClasses.border.primary
             } ${themeClasses.bg.glass} ${
               isSidebarResizing ? "" : "transition-all duration-300"
