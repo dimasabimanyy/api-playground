@@ -465,14 +465,14 @@ export default function DocDetailPage() {
       </div>
 
       {/* Content */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className={`max-w-7xl mx-auto px-6 py-8 ${themeClasses.bg.bold}`}>
         {activeTab === "overview" && (
           <div className="space-y-8">
             {/* Production Deployment - Vercel Style */}
             <div>
               <div className="mb-5">
                 <h2
-                  className={`font-semibold tracking-tight text-[1.4rem] ${themeClasses.text.bold}`}
+                  className={`font-semibold tracking-tight text-[1.3rem] ${themeClasses.text.bold}`}
                 >
                   Production Deployment
                 </h2>
@@ -837,11 +837,13 @@ export default function DocDetailPage() {
 
               {/* Content & Display Section */}
               <div>
-                <h2
-                  className={`text-lg font-semibold ${themeClasses.text.bold} mb-6`}
-                >
-                  Content & Display
-                </h2>
+                <div className="mb-5">
+                  <h2
+                    className={`font-semibold tracking-tight text-[1.3rem] ${themeClasses.text.bold}`}
+                  >
+                    Content & Display
+                  </h2>
+                </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   {/* Template Selection */}
