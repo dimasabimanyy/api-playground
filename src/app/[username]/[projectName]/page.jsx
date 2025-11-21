@@ -23,17 +23,60 @@ import {
   X,
   Home,
   ArrowLeft,
+  Menu,
+  Hash,
+  Code2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DocsProjects } from "@/lib/docs-storage";
 
+// Table of Contents Component
+const TableOfContents = ({ collections, activeSection, onSectionClick }) => {
+  return (
+    <div className="sticky top-24 space-y-4">
+      <div className="text-sm font-medium text-slate-900 mb-3">On this page</div>
+      <div className="space-y-2 text-sm">
+        {collections.map((collection) => (
+          <div key={collection.id} className="space-y-1">
+            <button
+              onClick={() => onSectionClick(collection.id)}
+              className={`block text-left hover:text-slate-900 transition-colors ${
+                activeSection === collection.id
+                  ? "text-slate-900 font-medium"
+                  : "text-slate-600"
+              }`}
+            >
+              {collection.name}
+            </button>
+            <div className="ml-4 space-y-1">
+              {collection.requests.map((request) => (
+                <button
+                  key={request.id}
+                  onClick={() => onSectionClick(`endpoint-${request.id}`)}
+                  className={`block text-left text-xs hover:text-slate-700 transition-colors ${
+                    activeSection === `endpoint-${request.id}`
+                      ? "text-slate-700 font-medium"
+                      : "text-slate-500"
+                  }`}
+                >
+                  {request.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const MethodBadge = ({ method }) => {
   const colors = {
-    GET: "bg-green-100 text-green-700 border-green-200",
+    GET: "bg-emerald-100 text-emerald-700 border-emerald-200",
     POST: "bg-blue-100 text-blue-700 border-blue-200", 
-    PUT: "bg-orange-100 text-orange-700 border-orange-200",
-    PATCH: "bg-yellow-100 text-yellow-700 border-yellow-200",
+    PUT: "bg-amber-100 text-amber-700 border-amber-200",
+    PATCH: "bg-orange-100 text-orange-700 border-orange-200",
     DELETE: "bg-red-100 text-red-700 border-red-200",
     HEAD: "bg-gray-100 text-gray-700 border-gray-200",
     OPTIONS: "bg-purple-100 text-purple-700 border-purple-200",
@@ -41,7 +84,7 @@ const MethodBadge = ({ method }) => {
 
   return (
     <span
-      className={`px-2 py-1 text-xs font-mono font-semibold rounded-md border ${
+      className={`inline-flex items-center px-2.5 py-0.5 text-xs font-mono font-semibold rounded-full border ${
         colors[method] || colors.GET
       }`}
     >
@@ -50,12 +93,14 @@ const MethodBadge = ({ method }) => {
   );
 };
 
-const CodeBlock = ({ code, language = "json" }) => {
+const CodeBlock = ({ code, language = "json", tabs = null, title = null }) => {
   const [copied, setCopied] = useState(false);
+  const [activeTab, setActiveTab] = useState(tabs ? tabs[0].key : language);
 
   const copyCode = async () => {
     try {
-      await navigator.clipboard.writeText(code);
+      const codeToShow = tabs ? tabs.find(tab => tab.key === activeTab)?.code || code : code;
+      await navigator.clipboard.writeText(codeToShow);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
@@ -63,120 +108,201 @@ const CodeBlock = ({ code, language = "json" }) => {
     }
   };
 
+  const codeToShow = tabs ? tabs.find(tab => tab.key === activeTab)?.code || code : code;
+
   return (
-    <div className="relative">
-      <button
-        onClick={copyCode}
-        className="absolute top-3 right-3 p-2 text-gray-400 hover:text-gray-600 transition-colors"
-        title="Copy code"
-      >
-        {copied ? (
-          <CheckCircle className="w-4 h-4 text-green-500" />
-        ) : (
-          <Copy className="w-4 h-4" />
-        )}
-      </button>
-      <pre className="bg-gray-900 text-gray-100 rounded-lg p-4 overflow-x-auto text-sm">
-        <code className={`language-${language}`}>{code}</code>
+    <div className="bg-slate-950 border border-slate-800 rounded-xl overflow-hidden">
+      {/* Header with tabs and copy button */}
+      <div className="flex items-center justify-between px-4 py-3 bg-slate-900 border-b border-slate-800">
+        <div className="flex items-center gap-3">
+          {title && (
+            <span className="text-slate-300 text-sm font-medium">{title}</span>
+          )}
+          {tabs && (
+            <div className="flex items-center gap-1">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`px-3 py-1.5 text-xs font-mono rounded-md transition-colors ${
+                    activeTab === tab.key
+                      ? "bg-slate-800 text-white"
+                      : "text-slate-400 hover:text-slate-300 hover:bg-slate-800/50"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+        <button
+          onClick={copyCode}
+          className="p-2 text-slate-400 hover:text-slate-200 transition-colors rounded-md hover:bg-slate-800"
+          title="Copy code"
+        >
+          {copied ? (
+            <CheckCircle className="w-4 h-4 text-emerald-400" />
+          ) : (
+            <Copy className="w-4 h-4" />
+          )}
+        </button>
+      </div>
+      
+      {/* Code content */}
+      <pre className="p-4 text-sm text-slate-100 overflow-x-auto bg-slate-950">
+        <code className={`language-${tabs ? activeTab : language}`}>{codeToShow}</code>
       </pre>
     </div>
   );
 };
 
 const EndpointCard = ({ request, baseUrl }) => {
-  const [expanded, setExpanded] = useState(false);
-
   const fullUrl = `${baseUrl}${request.url}`;
+  const endpointId = `endpoint-${request.id}`;
 
-  const generateCurlExample = () => {
+  const generateCodeExamples = () => {
+    const examples = [];
+
+    // cURL Example
     let curl = `curl -X ${request.method} "${fullUrl}"`;
-    
     if (request.headers && Object.keys(request.headers).length > 0) {
       Object.entries(request.headers).forEach(([key, value]) => {
         curl += ` \\\n  -H "${key}: ${value}"`;
       });
     }
-    
     if (request.body && request.method !== "GET") {
       curl += ` \\\n  -d '${request.body}'`;
     }
-    
-    return curl;
+    examples.push({ key: "curl", label: "cURL", code: curl });
+
+    // JavaScript Example
+    const jsCode = `fetch('${fullUrl}', {
+  method: '${request.method}',${request.headers && Object.keys(request.headers).length > 0 ? `
+  headers: ${JSON.stringify(request.headers, null, 4)},` : ''}${request.body && request.method !== "GET" ? `
+  body: JSON.stringify(${request.body})` : ''}
+})
+.then(response => response.json())
+.then(data => console.log(data));`;
+    examples.push({ key: "javascript", label: "JavaScript", code: jsCode });
+
+    // Python Example
+    const pythonCode = `import requests${request.body && request.method !== "GET" ? `
+import json` : ''}
+
+url = "${fullUrl}"${request.headers && Object.keys(request.headers).length > 0 ? `
+headers = ${JSON.stringify(request.headers, null, 4).replace(/"/g, "'").replace(/'/g, '"')}` : ''}${request.body && request.method !== "GET" ? `
+data = ${request.body}` : ''}
+
+response = requests.${request.method.toLowerCase()}(url${request.headers && Object.keys(request.headers).length > 0 ? ', headers=headers' : ''}${request.body && request.method !== "GET" ? ', json=data' : ''})
+print(response.json())`;
+    examples.push({ key: "python", label: "Python", code: pythonCode });
+
+    return examples;
+  };
+
+  const generateResponse = () => {
+    return `{
+  "status": "success",
+  "data": {
+    "id": "12345",
+    "created_at": "2024-01-15T10:30:00Z"
+  }
+}`;
   };
 
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden">
-      <button
-        onClick={() => setExpanded(!expanded)}
-        className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
-      >
-        <div className="flex items-center gap-3">
+    <div className="mb-16" id={endpointId}>
+      {/* Endpoint Header */}
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-4">
           <MethodBadge method={request.method} />
-          <div className="text-left">
-            <div className="font-medium text-[#171717]">{request.name}</div>
-            <div className="text-sm text-gray-600 font-mono">{request.url}</div>
-          </div>
+          <h3 className="text-2xl font-semibold text-slate-900">{request.name}</h3>
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}#${endpointId}`);
+            }}
+            className="p-1 text-slate-400 hover:text-slate-600 transition-colors"
+            title="Copy link to this section"
+          >
+            <Hash className="w-4 h-4" />
+          </button>
         </div>
-        {expanded ? (
-          <ChevronDown className="w-5 h-5 text-gray-400" />
-        ) : (
-          <ChevronRight className="w-5 h-5 text-gray-400" />
+        
+        <div className="mb-4">
+          <code className="text-base font-mono px-4 py-3 bg-slate-100 text-slate-800 rounded-lg border inline-block">
+            {request.method} {request.url}
+          </code>
+        </div>
+        
+        {request.description && (
+          <p className="text-slate-600 leading-relaxed text-lg">{request.description}</p>
         )}
-      </button>
-      
-      {expanded && (
-        <div className="border-t border-gray-200 p-4 bg-gray-50">
-          {request.description && (
-            <div className="mb-4">
-              <h4 className="font-medium text-[#171717] mb-2">Description</h4>
-              <p className="text-sm text-gray-600">{request.description}</p>
-            </div>
-          )}
+      </div>
 
-          <div className="space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        {/* Left Column - Request Details */}
+        <div className="space-y-8">
+          {/* Headers */}
+          {request.headers && Object.keys(request.headers).length > 0 && (
             <div>
-              <h4 className="font-medium text-[#171717] mb-2 flex items-center gap-2">
-                <Terminal className="w-4 h-4" />
-                Request
+              <h4 className="font-semibold text-slate-900 mb-4 flex items-center gap-2 text-lg">
+                <Code2 className="w-5 h-5" />
+                Headers
               </h4>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <MethodBadge method={request.method} />
-                  <code className="text-sm bg-gray-100 px-2 py-1 rounded">
-                    {fullUrl}
-                  </code>
+              <div className="border border-slate-200 rounded-lg overflow-hidden">
+                <div className="bg-slate-50 px-4 py-3 border-b border-slate-200">
+                  <div className="grid grid-cols-2 gap-4 text-sm font-semibold text-slate-700">
+                    <span>Name</span>
+                    <span>Value</span>
+                  </div>
                 </div>
-              </div>
-            </div>
-
-            {request.headers && Object.keys(request.headers).length > 0 && (
-              <div>
-                <h4 className="font-medium text-[#171717] mb-2">Headers</h4>
-                <div className="bg-white border rounded p-3 text-sm">
+                <div className="divide-y divide-slate-200">
                   {Object.entries(request.headers).map(([key, value]) => (
-                    <div key={key} className="flex justify-between py-1">
-                      <span className="font-mono text-gray-600">{key}:</span>
-                      <span className="font-mono text-[#171717]">{value}</span>
+                    <div key={key} className="grid grid-cols-2 gap-4 px-4 py-3">
+                      <span className="font-mono text-slate-600 text-sm">{key}</span>
+                      <span className="font-mono text-slate-900 text-sm">{value}</span>
                     </div>
                   ))}
                 </div>
               </div>
-            )}
-
-            {request.body && request.method !== "GET" && (
-              <div>
-                <h4 className="font-medium text-[#171717] mb-2">Request Body</h4>
-                <CodeBlock code={request.body} language="json" />
-              </div>
-            )}
-
-            <div>
-              <h4 className="font-medium text-[#171717] mb-2">cURL Example</h4>
-              <CodeBlock code={generateCurlExample()} language="bash" />
             </div>
+          )}
+
+          {/* Request Body */}
+          {request.body && request.method !== "GET" && (
+            <div>
+              <h4 className="font-semibold text-slate-900 mb-4 text-lg">Request Body</h4>
+              <CodeBlock 
+                code={request.body} 
+                language="json" 
+                title="JSON"
+              />
+            </div>
+          )}
+
+          {/* Response */}
+          <div>
+            <h4 className="font-semibold text-slate-900 mb-4 text-lg">Response</h4>
+            <CodeBlock 
+              code={generateResponse()} 
+              language="json" 
+              title="200 OK"
+            />
           </div>
         </div>
-      )}
+
+        {/* Right Column - Code Examples */}
+        <div className="space-y-8">
+          <div>
+            <h4 className="font-semibold text-slate-900 mb-4 text-lg">Code Examples</h4>
+            <CodeBlock 
+              tabs={generateCodeExamples()}
+              title="Request Examples"
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
@@ -190,6 +316,8 @@ export default function PublicUserDocPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCollection, setActiveCollection] = useState(null);
+  const [activeSection, setActiveSection] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
@@ -197,6 +325,26 @@ export default function PublicUserDocPage() {
       loadProjectByUsernameAndName();
     }
   }, [username, projectName]);
+
+  // Handle scroll for active section detection
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = document.querySelectorAll('[id^="endpoint-"], [id^="collection-"]');
+      const scrollY = window.scrollY + 100;
+
+      sections.forEach((section) => {
+        const top = section.offsetTop;
+        const bottom = top + section.offsetHeight;
+        
+        if (scrollY >= top && scrollY < bottom) {
+          setActiveSection(section.id);
+        }
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const loadProjectByUsernameAndName = async () => {
     try {
@@ -367,12 +515,19 @@ export default function PublicUserDocPage() {
     })).filter(collection => collection.requests.length > 0);
   };
 
+  const handleSectionClick = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <div className="w-8 h-8 border-4 border-t-transparent rounded-full animate-spin mx-auto mb-4 border-gray-300"></div>
-          <p className="text-gray-600">Loading documentation...</p>
+          <div className="w-8 h-8 border-4 border-t-transparent rounded-full animate-spin mx-auto mb-4 border-slate-300"></div>
+          <p className="text-slate-600">Loading documentation...</p>
         </div>
       </div>
     );
@@ -380,15 +535,15 @@ export default function PublicUserDocPage() {
 
   if (notFound || !project) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center max-w-md">
-          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
-            <FileText className="w-8 h-8 text-gray-400" />
+          <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <FileText className="w-8 h-8 text-slate-400" />
           </div>
-          <h1 className="text-xl font-semibold text-gray-900 mb-2">
+          <h1 className="text-xl font-semibold text-slate-900 mb-2">
             Documentation Not Found
           </h1>
-          <p className="text-gray-600 mb-6">
+          <p className="text-slate-600 mb-6">
             The documentation for <strong>{username}/{projectName}</strong> doesn't exist or has been removed.
           </p>
           <div className="flex items-center justify-center gap-3">
@@ -409,27 +564,27 @@ export default function PublicUserDocPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="border-b border-gray-200 bg-white sticky top-0 z-50">
+      <header className="border-b border-slate-200 bg-white sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
                   <BookOpen className="w-5 h-5 text-white" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h1 className="text-xl font-bold text-[#171717]">{project.name}</h1>
-                    <span className="text-sm text-gray-500">by @{username}</span>
+                    <h1 className="text-xl font-bold text-slate-900">{project.name}</h1>
+                    <span className="text-sm text-slate-500">by @{username}</span>
                   </div>
-                  <p className="text-sm text-gray-600">{project.description}</p>
+                  <p className="text-sm text-slate-600">{project.description}</p>
                 </div>
               </div>
             </div>
             
             <div className="flex items-center gap-3">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <Input
                   placeholder="Search endpoints..."
                   value={searchQuery}
@@ -437,6 +592,14 @@ export default function PublicUserDocPage() {
                   className="pl-10 w-64"
                 />
               </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="lg:hidden"
+              >
+                <Menu className="w-4 h-4" />
+              </Button>
               <Button variant="outline" size="sm" asChild>
                 <Link href="/">
                   <Globe className="w-4 h-4 mr-2" />
@@ -448,101 +611,127 @@ export default function PublicUserDocPage() {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Sidebar Navigation */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-24">
-              <div className="mb-6">
-                <div className="text-sm text-gray-500 mb-2">Documentation by</div>
+      <div className="max-w-7xl mx-auto">
+        <div className="flex">
+          {/* Left Sidebar - Navigation */}
+          <div className={`w-64 border-r border-slate-200 bg-white fixed lg:sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto z-40 transform transition-transform ${
+            sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+          }`}>
+            <div className="p-6 space-y-6">
+              <div>
+                <div className="text-sm text-slate-500 mb-2">Documentation by</div>
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center">
-                    <span className="text-xs font-medium text-gray-700">
+                  <div className="w-6 h-6 bg-slate-300 rounded-full flex items-center justify-center">
+                    <span className="text-xs font-medium text-slate-700">
                       {username.charAt(0).toUpperCase()}
                     </span>
                   </div>
-                  <span className="font-medium text-gray-900">@{username}</span>
+                  <span className="font-medium text-slate-900">@{username}</span>
                 </div>
               </div>
               
-              <h2 className="font-semibold text-[#171717] mb-4">Collections</h2>
-              <nav className="space-y-1">
-                {collections.map((collection) => (
-                  <button
-                    key={collection.id}
-                    onClick={() => setActiveCollection(collection.id)}
-                    className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
-                      activeCollection === collection.id
-                        ? "bg-gray-100 text-gray-900 font-medium"
-                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                    }`}
-                  >
-                    {collection.name}
-                    <div className="text-xs text-gray-500 mt-1">
-                      {collection.requests.length} endpoint{collection.requests.length !== 1 ? 's' : ''}
+              <div>
+                <h2 className="font-semibold text-slate-900 mb-4">Collections</h2>
+                <nav className="space-y-2">
+                  {collections.map((collection) => (
+                    <div key={collection.id} className="space-y-1">
+                      <button
+                        onClick={() => handleSectionClick(`collection-${collection.id}`)}
+                        className="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-900 hover:bg-slate-100 transition-colors"
+                      >
+                        {collection.name}
+                      </button>
+                      <div className="ml-4 space-y-1">
+                        {collection.requests.map((request) => (
+                          <button
+                            key={request.id}
+                            onClick={() => handleSectionClick(`endpoint-${request.id}`)}
+                            className="w-full text-left px-3 py-1.5 rounded-md text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors flex items-center gap-2"
+                          >
+                            <MethodBadge method={request.method} />
+                            <span className="truncate">{request.name}</span>
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                  </button>
-                ))}
-              </nav>
+                  ))}
+                </nav>
+              </div>
 
               {/* Base URL Info */}
-              <div className="mt-8 p-4 bg-gray-50 rounded-lg">
-                <h3 className="font-medium text-[#171717] mb-2">Base URL</h3>
-                <code className="text-sm bg-gray-100 px-2 py-1 rounded block break-all">
+              <div className="p-4 bg-slate-50 rounded-lg">
+                <h3 className="font-medium text-slate-900 mb-2">Base URL</h3>
+                <code className="text-sm bg-slate-100 px-2 py-1 rounded block break-all">
                   {baseUrl}
                 </code>
               </div>
             </div>
           </div>
 
-          {/* Main Content */}
-          <div className="lg:col-span-3">
-            {filteredEndpoints().map((collection) => (
-              <div key={collection.id} className="mb-12">
-                {(!activeCollection || activeCollection === collection.id) && (
-                  <>
-                    <div className="mb-6">
-                      <h2 className="text-2xl font-bold text-[#171717] mb-2">
-                        {collection.name}
-                      </h2>
-                      <p className="text-gray-600">{collection.description}</p>
-                    </div>
+          {/* Main Content Area */}
+          <div className="flex-1 lg:flex">
+            {/* Content */}
+            <div className="flex-1 max-w-4xl px-6 py-8">
+              {filteredEndpoints().map((collection) => (
+                <div key={collection.id} className="mb-16" id={`collection-${collection.id}`}>
+                  <div className="mb-12">
+                    <h2 className="text-3xl font-bold text-slate-900 mb-4">
+                      {collection.name}
+                    </h2>
+                    <p className="text-lg text-slate-600 leading-relaxed">{collection.description}</p>
+                  </div>
 
-                    <div className="space-y-4">
-                      {collection.requests.map((request) => (
-                        <EndpointCard
-                          key={request.id}
-                          request={request}
-                          baseUrl={baseUrl}
-                        />
-                      ))}
-                    </div>
-                  </>
-                )}
-              </div>
-            ))}
-
-            {filteredEndpoints().length === 0 && searchQuery && (
-              <div className="text-center py-12">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Search className="w-8 h-8 text-gray-400" />
+                  <div className="space-y-16">
+                    {collection.requests.map((request) => (
+                      <EndpointCard
+                        key={request.id}
+                        request={request}
+                        baseUrl={baseUrl}
+                      />
+                    ))}
+                  </div>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  No endpoints found
-                </h3>
-                <p className="text-gray-600">
-                  Try adjusting your search terms or browse all collections.
-                </p>
-              </div>
-            )}
+              ))}
+
+              {filteredEndpoints().length === 0 && searchQuery && (
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Search className="w-8 h-8 text-slate-400" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-slate-900 mb-2">
+                    No endpoints found
+                  </h3>
+                  <p className="text-slate-600">
+                    Try adjusting your search terms or browse all collections.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Right TOC */}
+            <div className="hidden xl:block w-64 p-6">
+              <TableOfContents
+                collections={collections}
+                activeSection={activeSection}
+                onSectionClick={handleSectionClick}
+              />
+            </div>
           </div>
         </div>
       </div>
 
+      {/* Mobile Sidebar Overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Footer */}
-      <footer className="border-t border-gray-200 bg-gray-50 py-8">
+      <footer className="border-t border-slate-200 bg-slate-50 py-8 mt-16">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center text-sm text-gray-600">
+          <div className="text-center text-sm text-slate-600">
             <p>
               Documentation by <strong>@{username}</strong> • Generated with API Playground • 
               Last updated {new Date(project.updated).toLocaleDateString()}
