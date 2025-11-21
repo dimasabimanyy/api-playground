@@ -845,281 +845,306 @@ export default function DocDetailPage() {
                   </h2>
                 </div> */}
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {/* Template Selection */}
-                  <div
-                    className={`border rounded-xl p-6 ${
-                      isDark
-                        ? "border-gray-800 bg-gray-900/50"
-                        : "border-gray-200 bg-white"
-                    }`}
+                {/* Template & Styling Options - Combined Card */}
+                <div
+                  className={`border rounded-xl p-6 ${
+                    isDark
+                      ? "border-gray-800 bg-gray-900/50"
+                      : "border-gray-200 bg-white"
+                  }`}
+                >
+                  <h3
+                    className={`font-semibold ${themeClasses.text.bold} mb-2`}
                   >
-                    <h3
-                      className={`font-semibold ${themeClasses.text.bold} mb-2`}
-                    >
-                      Documentation Template
-                    </h3>
-                    <p
-                      className={`text-sm ${themeClasses.text.secondary} mb-6`}
-                    >
-                      Choose how your documentation will be displayed to
-                      visitors
-                    </p>
+                    Documentation Template
+                  </h3>
+                  <p className={`text-sm ${themeClasses.text.secondary} mb-6`}>
+                    Choose your template and customize its appearance
+                  </p>
 
-                    <div className="space-y-3">
-                      {[
-                        {
-                          id: "stripe-style",
-                          name: "Template A - Minimalist",
-                          description:
-                            "Stripe/Mintlify-style with left sidebar, wide reading column, and beautiful code blocks",
-                          preview: "Premium Documentation",
-                          isSelected:
-                            !project.template || project.template === "default" || project.template === "stripe-style",
-                        },
-                      ].map((template) => (
+                  {/* Template Selection */}
+                  <div className="mb-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      {/* Template Options */}
+                      <div className="space-y-3">
+                        {[
+                          {
+                            id: "stripe-style",
+                            name: "Template A - Minimalist",
+                            description:
+                              "Stripe/Mintlify-style with left sidebar, wide reading column, and beautiful code blocks",
+                            preview: "Premium Documentation",
+                            isSelected:
+                              !project.template ||
+                              project.template === "default" ||
+                              project.template === "stripe-style",
+                          },
+                        ].map((template) => (
+                          <div
+                            key={template.id}
+                            onClick={() => {
+                              const updatedProject = {
+                                ...project,
+                                template: template.id,
+                                updated: new Date().toISOString(),
+                              };
+                              setProject(updatedProject);
+                              DocsProjects.update(project.id, updatedProject);
+                            }}
+                            className={`cursor-pointer border rounded-lg p-4 transition-all duration-200 ${
+                              template.isSelected
+                                ? isDark
+                                  ? "border-blue-600 bg-blue-900/20"
+                                  : "border-blue-500 bg-blue-50"
+                                : isDark
+                                ? "border-gray-700 bg-gray-800/30 hover:border-gray-600"
+                                : "border-gray-200 bg-white hover:border-gray-300"
+                            }`}
+                          >
+                            <div className="flex items-center justify-between mb-2">
+                              <h5
+                                className={`font-medium ${themeClasses.text.bold}`}
+                              >
+                                {template.name}
+                              </h5>
+                              {template.isSelected && (
+                                <CheckCircle className="w-4 h-4 text-blue-500" />
+                              )}
+                            </div>
+                            <p
+                              className={`text-xs ${themeClasses.text.secondary} mb-2`}
+                            >
+                              {template.description}
+                            </p>
+                            <div
+                              className={`text-xs px-2 py-1 rounded ${
+                                isDark
+                                  ? "bg-gray-700 text-gray-300"
+                                  : "bg-gray-100 text-gray-600"
+                              }`}
+                            >
+                              {template.preview}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Template Preview */}
+                      <div className="hidden lg:block">
                         <div
-                          key={template.id}
-                          onClick={() => {
+                          className={`border rounded-lg overflow-hidden ${
+                            isDark
+                              ? "border-gray-700 bg-gray-800"
+                              : "border-gray-200 bg-gray-50"
+                          }`}
+                        >
+                          {/* Placeholder for template preview image */}
+                          <div
+                            className={`aspect-[4/3] flex items-center justify-center ${
+                              isDark
+                                ? "bg-gray-800 text-gray-500"
+                                : "bg-gray-100 text-gray-400"
+                            }`}
+                          >
+                            <div className="text-center">
+                              <FileText className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                              <p className="text-xs">Template Preview</p>
+                              <p className="text-xs opacity-75">Image coming soon</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Separator */}
+                  <div
+                    className={`border-t ${
+                      isDark ? "border-gray-700" : "border-gray-200"
+                    } my-6`}
+                  ></div>
+
+                  <div className="space-y-6">
+                    {/* Primary Color Picker */}
+                    <div>
+                      <h4
+                        className={`block text-sm font-medium ${themeClasses.text.primary} mb-3`}
+                      >
+                        Primary Color
+                      </h4>
+                      <p
+                        className={`text-xs ${themeClasses.text.secondary} mb-3`}
+                      >
+                        Used for buttons, links, and accents
+                      </p>
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="color"
+                          value={
+                            project.displayOptions?.primaryColor || "#171717"
+                          }
+                          onChange={(e) => {
                             const updatedProject = {
                               ...project,
-                              template: template.id,
+                              displayOptions: {
+                                ...project.displayOptions,
+                                primaryColor: e.target.value,
+                              },
                               updated: new Date().toISOString(),
                             };
                             setProject(updatedProject);
                             DocsProjects.update(project.id, updatedProject);
                           }}
-                          className={`cursor-pointer border rounded-lg p-4 transition-all duration-200 ${
-                            template.isSelected
-                              ? isDark
-                                ? "border-blue-600 bg-blue-900/20"
-                                : "border-blue-500 bg-blue-50"
-                              : isDark
-                              ? "border-gray-700 bg-gray-800/30 hover:border-gray-600"
-                              : "border-gray-200 bg-white hover:border-gray-300"
+                          className="w-10 h-10 rounded-lg border border-gray-300 cursor-pointer"
+                          style={{
+                            backgroundColor:
+                              project.displayOptions?.primaryColor || "#171717",
+                          }}
+                        />
+                        <input
+                          type="text"
+                          value={
+                            project.displayOptions?.primaryColor || "#171717"
+                          }
+                          onChange={(e) => {
+                            const updatedProject = {
+                              ...project,
+                              displayOptions: {
+                                ...project.displayOptions,
+                                primaryColor: e.target.value,
+                              },
+                              updated: new Date().toISOString(),
+                            };
+                            setProject(updatedProject);
+                            DocsProjects.update(project.id, updatedProject);
+                          }}
+                          className={`w-20 px-3 py-2 text-sm border rounded-lg ${
+                            isDark
+                              ? "border-gray-700 bg-gray-800 text-white"
+                              : "border-gray-300 bg-white text-gray-900"
                           }`}
-                        >
-                          <div className="flex items-center justify-between mb-2">
-                            <h4
-                              className={`font-medium ${themeClasses.text.bold}`}
-                            >
-                              {template.name}
-                            </h4>
-                            {template.isSelected && (
-                              <CheckCircle className="w-4 h-4 text-blue-500" />
-                            )}
-                          </div>
-                          <p
-                            className={`text-xs ${themeClasses.text.secondary} mb-2`}
-                          >
-                            {template.description}
-                          </p>
-                          <div
-                            className={`text-xs px-2 py-1 rounded ${
-                              isDark
-                                ? "bg-gray-700 text-gray-300"
-                                : "bg-gray-100 text-gray-600"
-                            }`}
-                          >
-                            {template.preview}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Display Options */}
-                  <div
-                    className={`border rounded-xl p-6 ${
-                      isDark
-                        ? "border-gray-800 bg-gray-900/50"
-                        : "border-gray-200 bg-white"
-                    }`}
-                  >
-                    {/* <h3
-                      className={`font-semibold ${themeClasses.text.bold} mb-2`}
-                    >
-                      Display Options
-                    </h3> */}
-
-                    <div className="space-y-6">
-                      {/* Primary Color Picker */}
-                      <div>
-                        <h4
-                          className={`block text-sm font-medium ${themeClasses.text.primary} mb-3`}
-                        >
-                          Primary Color
-                        </h4>
-                        <p
-                          className={`text-xs ${themeClasses.text.secondary} mb-3`}
-                        >
-                          Used for buttons, links, and accents
-                        </p>
-                        <div className="flex items-center gap-3">
-                          <input
-                            type="color"
-                            value={project.displayOptions?.primaryColor || "#171717"}
-                            onChange={(e) => {
+                          placeholder="#171717"
+                        />
+                      </div>
+                      <div className="flex gap-2 mt-2">
+                        {[
+                          { name: "Default", color: "#171717" },
+                          { name: "Blue", color: "#3b82f6" },
+                          { name: "Green", color: "#10b981" },
+                          { name: "Purple", color: "#8b5cf6" },
+                          { name: "Red", color: "#ef4444" },
+                          { name: "Orange", color: "#f97316" },
+                        ].map((preset) => (
+                          <button
+                            key={preset.color}
+                            onClick={() => {
                               const updatedProject = {
                                 ...project,
                                 displayOptions: {
                                   ...project.displayOptions,
-                                  primaryColor: e.target.value,
+                                  primaryColor: preset.color,
                                 },
                                 updated: new Date().toISOString(),
                               };
                               setProject(updatedProject);
                               DocsProjects.update(project.id, updatedProject);
                             }}
-                            className="w-10 h-10 rounded-lg border border-gray-300 cursor-pointer"
-                            style={{ backgroundColor: project.displayOptions?.primaryColor || "#171717" }}
+                            className="w-6 h-6 rounded-md border border-gray-300 hover:scale-110 transition-transform"
+                            style={{ backgroundColor: preset.color }}
+                            title={preset.name}
                           />
-                          <div className="flex-1">
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Layout Options */}
+                    <div>
+                      <h4
+                        className={`block text-sm font-medium ${themeClasses.text.primary} mb-3`}
+                      >
+                        Layout Settings
+                      </h4>
+                      <div className="space-y-3">
+                        {[
+                          {
+                            id: "showTOC",
+                            label: "Show Table of Contents",
+                            description: "Right sidebar navigation",
+                            default: true,
+                          },
+                          {
+                            id: "showMethodBadges",
+                            label: "HTTP method badges",
+                            description: "GET, POST, PUT, etc. badges",
+                            default: true,
+                          },
+                          {
+                            id: "showCodeExamples",
+                            label: "Code examples",
+                            description: "Multi-language code examples",
+                            default: true,
+                          },
+                          {
+                            id: "showResponseExamples",
+                            label: "Response examples",
+                            description: "Sample response data",
+                            default: true,
+                          },
+                          {
+                            id: "groupByCollection",
+                            label: "Group by collection",
+                            description: "Organize endpoints by collection",
+                            default: true,
+                          },
+                        ].map((option) => (
+                          <div
+                            key={option.id}
+                            className="flex items-center gap-3"
+                          >
                             <input
-                              type="text"
-                              value={project.displayOptions?.primaryColor || "#171717"}
+                              type="checkbox"
+                              checked={
+                                project.displayOptions?.[option.id] !==
+                                undefined
+                                  ? project.displayOptions[option.id]
+                                  : option.default
+                              }
                               onChange={(e) => {
                                 const updatedProject = {
                                   ...project,
                                   displayOptions: {
                                     ...project.displayOptions,
-                                    primaryColor: e.target.value,
+                                    [option.id]: e.target.checked,
                                   },
                                   updated: new Date().toISOString(),
                                 };
                                 setProject(updatedProject);
                                 DocsProjects.update(project.id, updatedProject);
                               }}
-                              className={`w-full px-3 py-2 text-sm border rounded-lg ${
-                                isDark
-                                  ? "border-gray-700 bg-gray-800 text-white"
-                                  : "border-gray-300 bg-white text-gray-900"
-                              }`}
-                              placeholder="#171717"
+                              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                             />
-                          </div>
-                        </div>
-                        <div className="flex gap-2 mt-2">
-                          {[
-                            { name: "Default", color: "#171717" },
-                            { name: "Blue", color: "#3b82f6" },
-                            { name: "Green", color: "#10b981" },
-                            { name: "Purple", color: "#8b5cf6" },
-                            { name: "Red", color: "#ef4444" },
-                            { name: "Orange", color: "#f97316" },
-                          ].map((preset) => (
-                            <button
-                              key={preset.color}
-                              onClick={() => {
-                                const updatedProject = {
-                                  ...project,
-                                  displayOptions: {
-                                    ...project.displayOptions,
-                                    primaryColor: preset.color,
-                                  },
-                                  updated: new Date().toISOString(),
-                                };
-                                setProject(updatedProject);
-                                DocsProjects.update(project.id, updatedProject);
-                              }}
-                              className="w-6 h-6 rounded-md border border-gray-300 hover:scale-110 transition-transform"
-                              style={{ backgroundColor: preset.color }}
-                              title={preset.name}
-                            />
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Layout Options */}
-                      <div>
-                        <h4
-                          className={`block text-sm font-medium ${themeClasses.text.primary} mb-3`}
-                        >
-                          Layout Settings
-                        </h4>
-                        <div className="space-y-3">
-                          {[
-                            {
-                              id: "showTOC",
-                              label: "Show Table of Contents",
-                              description: "Right sidebar navigation",
-                              default: true,
-                            },
-                            {
-                              id: "showMethodBadges",
-                              label: "HTTP method badges",
-                              description: "GET, POST, PUT, etc. badges",
-                              default: true,
-                            },
-                            {
-                              id: "showCodeExamples",
-                              label: "Code examples",
-                              description: "Multi-language code examples",
-                              default: true,
-                            },
-                            {
-                              id: "showResponseExamples",
-                              label: "Response examples",
-                              description: "Sample response data",
-                              default: true,
-                            },
-                            {
-                              id: "groupByCollection",
-                              label: "Group by collection",
-                              description: "Organize endpoints by collection",
-                              default: true,
-                            },
-                          ].map((option) => (
-                            <div
-                              key={option.id}
-                              className="flex items-center gap-3"
-                            >
-                              <input
-                                type="checkbox"
-                                checked={
-                                  project.displayOptions?.[option.id] !== undefined 
-                                    ? project.displayOptions[option.id] 
-                                    : option.default
-                                }
-                                onChange={(e) => {
-                                  const updatedProject = {
-                                    ...project,
-                                    displayOptions: {
-                                      ...project.displayOptions,
-                                      [option.id]: e.target.checked,
-                                    },
-                                    updated: new Date().toISOString(),
-                                  };
-                                  setProject(updatedProject);
-                                  DocsProjects.update(
-                                    project.id,
-                                    updatedProject
-                                  );
-                                }}
-                                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                              />
-                              <div className="flex-1">
-                                <label
-                                  className={`text-sm font-medium ${themeClasses.text.primary}`}
-                                >
-                                  {option.label}
-                                </label>
-                                <p
-                                  className={`text-xs ${themeClasses.text.secondary}`}
-                                >
-                                  {option.description}
-                                </p>
-                              </div>
+                            <div className="flex-1">
+                              <label
+                                className={`text-sm font-medium ${themeClasses.text.primary}`}
+                              >
+                                {option.label}
+                              </label>
+                              <p
+                                className={`text-xs ${themeClasses.text.secondary}`}
+                              >
+                                {option.description}
+                              </p>
                             </div>
-                          ))}
-                        </div>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
 
-              {/* <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2">
                   <h2
                     className={`text-lg font-semibold ${themeClasses.text.bold} mb-4`}
@@ -1177,31 +1202,30 @@ export default function DocDetailPage() {
                 </div>
               </div> */}
 
-              {/* Activity Feed */}
-              <div>
-                <h2
-                  className={`text-lg font-semibold ${themeClasses.text.bold} mb-4`}
-                >
-                  Recent Activity
-                </h2>
-                <div
-                  className={`border rounded-xl ${
-                    isDark
-                      ? "border-gray-800 bg-gray-900/50"
-                      : "border-gray-200 bg-white"
-                  }`}
-                >
-                  <div className="p-4">
-                    <div className="space-y-1">
-                      {recentActivity.map((activity, index) => (
-                        <ActivityItem
-                          key={index}
-                          {...activity}
-                          isDark={isDark}
-                          themeClasses={themeClasses}
-                        />
-                      ))}
-                    </div>
+            {/* Activity Feed */}
+            <div>
+              <h2
+                className={`text-lg font-semibold ${themeClasses.text.bold} mb-4`}
+              >
+                Recent Activity
+              </h2>
+              <div
+                className={`border rounded-xl ${
+                  isDark
+                    ? "border-gray-800 bg-gray-900/50"
+                    : "border-gray-200 bg-white"
+                }`}
+              >
+                <div className="p-4">
+                  <div className="space-y-1">
+                    {recentActivity.map((activity, index) => (
+                      <ActivityItem
+                        key={index}
+                        {...activity}
+                        isDark={isDark}
+                        themeClasses={themeClasses}
+                      />
+                    ))}
                   </div>
                 </div>
               </div>
