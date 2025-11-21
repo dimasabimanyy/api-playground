@@ -869,27 +869,13 @@ export default function DocDetailPage() {
                     <div className="space-y-3">
                       {[
                         {
-                          id: "default",
-                          name: "Default",
+                          id: "stripe-style",
+                          name: "Template A - Minimalist",
                           description:
-                            "Clean and simple layout with sidebar navigation",
-                          preview: "Sidebar + Content",
+                            "Stripe/Mintlify-style with left sidebar, wide reading column, and beautiful code blocks",
+                          preview: "Premium Documentation",
                           isSelected:
-                            !project.template || project.template === "default",
-                        },
-                        {
-                          id: "cards",
-                          name: "Card Layout",
-                          description: "Endpoint cards with expandable details",
-                          preview: "Card Grid",
-                          isSelected: project.template === "cards",
-                        },
-                        {
-                          id: "compact",
-                          name: "Compact",
-                          description: "Dense layout for extensive APIs",
-                          preview: "Compact List",
-                          isSelected: project.template === "compact",
+                            !project.template || project.template === "default" || project.template === "stripe-style",
                         },
                       ].map((template) => (
                         <div

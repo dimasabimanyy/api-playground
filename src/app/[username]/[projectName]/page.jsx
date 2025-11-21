@@ -372,6 +372,11 @@ export default function PublicUserDocPage() {
         return;
       }
 
+      // Set default template if none specified
+      if (!foundProject.template) {
+        foundProject.template = "stripe-style";
+      }
+
       setProject(foundProject);
 
       // Mock collections data for demo - in real app, this would come from the project

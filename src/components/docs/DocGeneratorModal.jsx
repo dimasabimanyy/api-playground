@@ -26,19 +26,9 @@ import { DocsProjects } from "@/lib/docs-storage";
 
 const templates = [
   {
-    id: "modern",
-    name: "Modern",
-    description: "Clean and minimal",
-  },
-  {
-    id: "minimal",
-    name: "Minimal",
-    description: "Text-focused style",
-  },
-  {
-    id: "classic",
-    name: "Classic",
-    description: "Traditional layout",
+    id: "stripe-style",
+    name: "Template A - Minimalist",
+    description: "Stripe/Mintlify-style with premium layout",
   },
 ];
 
@@ -53,7 +43,7 @@ export default function DocGeneratorModal({
   const themeClasses = getThemeClasses(isDark);
   
   const [selectedCollection, setSelectedCollection] = useState(null);
-  const [selectedTemplate, setSelectedTemplate] = useState("modern");
+  const [selectedTemplate, setSelectedTemplate] = useState("stripe-style");
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);

@@ -18,7 +18,7 @@ const STORAGE_KEYS = {
 
 // Default settings
 const DEFAULT_SETTINGS = {
-  defaultTheme: 'modern',
+  defaultTheme: 'stripe-style',
   autoSave: true,
   autoSaveInterval: 30000, // 30 seconds
   backupEnabled: true,
