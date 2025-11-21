@@ -71,7 +71,7 @@ const TableOfContents = ({ collections, activeSection, onSectionClick }) => {
   );
 };
 
-const MethodBadge = ({ method }) => {
+const MethodBadge = ({ method, primaryColor = "#171717" }) => {
   const colors = {
     GET: "bg-emerald-100 text-emerald-700 border-emerald-200",
     POST: "bg-blue-100 text-blue-700 border-blue-200", 
@@ -87,6 +87,14 @@ const MethodBadge = ({ method }) => {
       className={`inline-flex items-center px-2.5 py-0.5 text-xs font-mono font-semibold rounded-full border ${
         colors[method] || colors.GET
       }`}
+      style={{
+        // Override with primary color for GET requests or when specified
+        ...(method === "GET" && primaryColor !== "#171717" && {
+          backgroundColor: `${primaryColor}15`,
+          color: primaryColor,
+          borderColor: `${primaryColor}40`,
+        }),
+      }}
     >
       {method}
     </span>
@@ -157,7 +165,7 @@ const CodeBlock = ({ code, language = "json", tabs = null, title = null }) => {
   );
 };
 
-const EndpointCard = ({ request, baseUrl }) => {
+const EndpointCard = ({ request, baseUrl, project }) => {
   const fullUrl = `${baseUrl}${request.url}`;
   const endpointId = `endpoint-${request.id}`;
 
@@ -216,13 +224,28 @@ print(response.json())`;
       {/* Endpoint Header */}
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-4">
-          <MethodBadge method={request.method} />
+          {(project?.displayOptions?.showMethodBadges !== false) && (
+            <MethodBadge method={request.method} primaryColor={project?.displayOptions?.primaryColor} />
+          )}
           <h3 className="text-2xl font-semibold text-slate-900">{request.name}</h3>
           <button
             onClick={() => {
               navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}#${endpointId}`);
             }}
-            className="p-1 text-slate-400 hover:text-slate-600 transition-colors"
+            className="p-1 text-slate-400 hover:transition-colors"
+            style={{ 
+              color: project?.displayOptions?.primaryColor ? `${project.displayOptions.primaryColor}80` : undefined,
+            }}
+            onMouseEnter={(e) => {
+              if (project?.displayOptions?.primaryColor) {
+                e.target.style.color = project.displayOptions.primaryColor;
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (project?.displayOptions?.primaryColor) {
+                e.target.style.color = `${project.displayOptions.primaryColor}80`;
+              }
+            }}
             title="Copy link to this section"
           >
             <Hash className="w-4 h-4" />
@@ -282,26 +305,30 @@ print(response.json())`;
           )}
 
           {/* Response */}
-          <div>
-            <h4 className="font-semibold text-slate-900 mb-4 text-lg">Response</h4>
-            <CodeBlock 
-              code={generateResponse()} 
-              language="json" 
-              title="200 OK"
-            />
-          </div>
+          {(project?.displayOptions?.showResponseExamples !== false) && (
+            <div>
+              <h4 className="font-semibold text-slate-900 mb-4 text-lg">Response</h4>
+              <CodeBlock 
+                code={generateResponse()} 
+                language="json" 
+                title="200 OK"
+              />
+            </div>
+          )}
         </div>
 
         {/* Right Column - Code Examples */}
-        <div className="space-y-8">
-          <div>
-            <h4 className="font-semibold text-slate-900 mb-4 text-lg">Code Examples</h4>
-            <CodeBlock 
-              tabs={generateCodeExamples()}
-              title="Request Examples"
-            />
+        {(project?.displayOptions?.showCodeExamples !== false) && (
+          <div className="space-y-8">
+            <div>
+              <h4 className="font-semibold text-slate-900 mb-4 text-lg">Code Examples</h4>
+              <CodeBlock 
+                tabs={generateCodeExamples()}
+                title="Request Examples"
+              />
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
@@ -605,7 +632,15 @@ export default function PublicUserDocPage() {
               >
                 <Menu className="w-4 h-4" />
               </Button>
-              <Button variant="outline" size="sm" asChild>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                asChild
+                style={{ 
+                  borderColor: project?.displayOptions?.primaryColor || "#171717",
+                  color: project?.displayOptions?.primaryColor || "#171717"
+                }}
+              >
                 <Link href="/">
                   <Globe className="w-4 h-4 mr-2" />
                   API Playground
@@ -653,7 +688,9 @@ export default function PublicUserDocPage() {
                             onClick={() => handleSectionClick(`endpoint-${request.id}`)}
                             className="w-full text-left px-3 py-1.5 rounded-md text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors flex items-center gap-2"
                           >
-                            <MethodBadge method={request.method} />
+                            {(project?.displayOptions?.showMethodBadges !== false) && (
+                              <MethodBadge method={request.method} primaryColor={project?.displayOptions?.primaryColor} />
+                            )}
                             <span className="truncate">{request.name}</span>
                           </button>
                         ))}
@@ -692,6 +729,7 @@ export default function PublicUserDocPage() {
                         key={request.id}
                         request={request}
                         baseUrl={baseUrl}
+                        project={project}
                       />
                     ))}
                   </div>
@@ -713,14 +751,16 @@ export default function PublicUserDocPage() {
               )}
             </div>
 
-            {/* Right TOC */}
-            <div className="hidden xl:block w-64 p-6">
-              <TableOfContents
-                collections={collections}
-                activeSection={activeSection}
-                onSectionClick={handleSectionClick}
-              />
-            </div>
+            {/* Right TOC - Only show if enabled in settings */}
+            {(project.displayOptions?.showTOC !== false) && (
+              <div className="hidden xl:block w-64 p-6">
+                <TableOfContents
+                  collections={collections}
+                  activeSection={activeSection}
+                  onSectionClick={handleSectionClick}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

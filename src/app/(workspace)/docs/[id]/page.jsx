@@ -943,59 +943,89 @@ export default function DocDetailPage() {
                     </h3> */}
 
                     <div className="space-y-6">
-                      {/* Color Theme */}
+                      {/* Primary Color Picker */}
                       <div>
                         <h4
                           className={`block text-sm font-medium ${themeClasses.text.primary} mb-3`}
                         >
-                          Color Theme
+                          Primary Color
                         </h4>
-                        <div className="grid grid-cols-2 gap-2">
-                          {[
-                            {
-                              id: "default",
-                              name: "Default",
-                              color: "#171717",
-                            },
-                            { id: "blue", name: "Blue", color: "#3b82f6" },
-                            { id: "green", name: "Green", color: "#10b981" },
-                            { id: "purple", name: "Purple", color: "#8b5cf6" },
-                          ].map((theme) => (
-                            <button
-                              key={theme.id}
-                              onClick={() => {
+                        <p
+                          className={`text-xs ${themeClasses.text.secondary} mb-3`}
+                        >
+                          Used for buttons, links, and accents
+                        </p>
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="color"
+                            value={project.displayOptions?.primaryColor || "#171717"}
+                            onChange={(e) => {
+                              const updatedProject = {
+                                ...project,
+                                displayOptions: {
+                                  ...project.displayOptions,
+                                  primaryColor: e.target.value,
+                                },
+                                updated: new Date().toISOString(),
+                              };
+                              setProject(updatedProject);
+                              DocsProjects.update(project.id, updatedProject);
+                            }}
+                            className="w-10 h-10 rounded-lg border border-gray-300 cursor-pointer"
+                            style={{ backgroundColor: project.displayOptions?.primaryColor || "#171717" }}
+                          />
+                          <div className="flex-1">
+                            <input
+                              type="text"
+                              value={project.displayOptions?.primaryColor || "#171717"}
+                              onChange={(e) => {
                                 const updatedProject = {
                                   ...project,
                                   displayOptions: {
                                     ...project.displayOptions,
-                                    colorTheme: theme.id,
+                                    primaryColor: e.target.value,
                                   },
                                   updated: new Date().toISOString(),
                                 };
                                 setProject(updatedProject);
                                 DocsProjects.update(project.id, updatedProject);
                               }}
-                              className={`flex items-center gap-2 p-3 rounded-lg border transition-colors ${
-                                (project.displayOptions?.colorTheme ||
-                                  "default") === theme.id
-                                  ? isDark
-                                    ? "border-blue-600 bg-blue-900/20"
-                                    : "border-blue-500 bg-blue-50"
-                                  : isDark
-                                  ? "border-gray-700 hover:border-gray-600"
-                                  : "border-gray-200 hover:border-gray-300"
+                              className={`w-full px-3 py-2 text-sm border rounded-lg ${
+                                isDark
+                                  ? "border-gray-700 bg-gray-800 text-white"
+                                  : "border-gray-300 bg-white text-gray-900"
                               }`}
-                            >
-                              <div
-                                className="w-3 h-3 rounded-full"
-                                style={{ backgroundColor: theme.color }}
-                              />
-                              <span
-                                className={`text-xs ${themeClasses.text.primary}`}
-                              >
-                                {theme.name}
-                              </span>
-                            </button>
+                              placeholder="#171717"
+                            />
+                          </div>
+                        </div>
+                        <div className="flex gap-2 mt-2">
+                          {[
+                            { name: "Default", color: "#171717" },
+                            { name: "Blue", color: "#3b82f6" },
+                            { name: "Green", color: "#10b981" },
+                            { name: "Purple", color: "#8b5cf6" },
+                            { name: "Red", color: "#ef4444" },
+                            { name: "Orange", color: "#f97316" },
+                          ].map((preset) => (
+                            <button
+                              key={preset.color}
+                              onClick={() => {
+                                const updatedProject = {
+                                  ...project,
+                                  displayOptions: {
+                                    ...project.displayOptions,
+                                    primaryColor: preset.color,
+                                  },
+                                  updated: new Date().toISOString(),
+                                };
+                                setProject(updatedProject);
+                                DocsProjects.update(project.id, updatedProject);
+                              }}
+                              className="w-6 h-6 rounded-md border border-gray-300 hover:scale-110 transition-transform"
+                              style={{ backgroundColor: preset.color }}
+                              title={preset.name}
+                            />
                           ))}
                         </div>
                       </div>
@@ -1010,24 +1040,34 @@ export default function DocDetailPage() {
                         <div className="space-y-3">
                           {[
                             {
+                              id: "showTOC",
+                              label: "Show Table of Contents",
+                              description: "Right sidebar navigation",
+                              default: true,
+                            },
+                            {
                               id: "showMethodBadges",
                               label: "HTTP method badges",
                               description: "GET, POST, PUT, etc. badges",
+                              default: true,
                             },
                             {
                               id: "showCodeExamples",
                               label: "Code examples",
-                              description: "cURL and SDK examples",
-                            },
-                            {
-                              id: "groupByCollection",
-                              label: "Group by collection",
-                              description: "Organize by parent collection",
+                              description: "Multi-language code examples",
+                              default: true,
                             },
                             {
                               id: "showResponseExamples",
                               label: "Response examples",
                               description: "Sample response data",
+                              default: true,
+                            },
+                            {
+                              id: "groupByCollection",
+                              label: "Group by collection",
+                              description: "Organize endpoints by collection",
+                              default: true,
                             },
                           ].map((option) => (
                             <div
@@ -1037,7 +1077,9 @@ export default function DocDetailPage() {
                               <input
                                 type="checkbox"
                                 checked={
-                                  project.displayOptions?.[option.id] !== false
+                                  project.displayOptions?.[option.id] !== undefined 
+                                    ? project.displayOptions[option.id] 
+                                    : option.default
                                 }
                                 onChange={(e) => {
                                   const updatedProject = {
