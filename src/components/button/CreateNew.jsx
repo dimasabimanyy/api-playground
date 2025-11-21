@@ -36,7 +36,7 @@ const CreateNew = ({
             style={{
               backgroundColor: isDark ? "white" : "#171717",
               border: "none",
-              borderRadius: "50%"
+              borderRadius: "6px"
             }}
             title="Add New..."
           >
