@@ -29,7 +29,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { DocsProjects } from "@/lib/docs-storage";
+import { DocsProjects } from "@/lib/docs-storage-db";
 
 // Table of Contents Component
 const TableOfContents = ({ collections, activeSection, onSectionClick }) => {
@@ -224,8 +224,8 @@ print(response.json())`;
       {/* Endpoint Header */}
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-4">
-          {(project?.displayOptions?.showMethodBadges !== false) && (
-            <MethodBadge method={request.method} primaryColor={project?.displayOptions?.primaryColor} />
+          {(project?.settings?.displayOptions?.showMethodBadges !== false) && (
+            <MethodBadge method={request.method} primaryColor={project?.settings?.displayOptions?.primaryColor} />
           )}
           <h3 className="text-2xl font-semibold text-slate-900">{request.name}</h3>
           <button
@@ -234,16 +234,16 @@ print(response.json())`;
             }}
             className="p-1 text-slate-400 hover:transition-colors"
             style={{ 
-              color: project?.displayOptions?.primaryColor ? `${project.displayOptions.primaryColor}80` : undefined,
+              color: project?.settings?.displayOptions?.primaryColor ? `${project.settings.displayOptions.primaryColor}80` : undefined,
             }}
             onMouseEnter={(e) => {
-              if (project?.displayOptions?.primaryColor) {
-                e.target.style.color = project.displayOptions.primaryColor;
+              if (project?.settings?.displayOptions?.primaryColor) {
+                e.target.style.color = project.settings.displayOptions.primaryColor;
               }
             }}
             onMouseLeave={(e) => {
-              if (project?.displayOptions?.primaryColor) {
-                e.target.style.color = `${project.displayOptions.primaryColor}80`;
+              if (project?.settings?.displayOptions?.primaryColor) {
+                e.target.style.color = `${project.settings.displayOptions.primaryColor}80`;
               }
             }}
             title="Copy link to this section"
@@ -305,7 +305,7 @@ print(response.json())`;
           )}
 
           {/* Response */}
-          {(project?.displayOptions?.showResponseExamples !== false) && (
+          {(project?.settings?.displayOptions?.showResponseExamples !== false) && (
             <div>
               <h4 className="font-semibold text-slate-900 mb-4 text-lg">Response</h4>
               <CodeBlock 
@@ -318,7 +318,7 @@ print(response.json())`;
         </div>
 
         {/* Right Column - Code Examples */}
-        {(project?.displayOptions?.showCodeExamples !== false) && (
+        {(project?.settings?.displayOptions?.showCodeExamples !== false) && (
           <div className="space-y-8">
             <div>
               <h4 className="font-semibold text-slate-900 mb-4 text-lg">Code Examples</h4>
@@ -376,14 +376,13 @@ export default function PublicUserDocPage() {
   const loadProjectByUsernameAndName = async () => {
     try {
       // Get all projects and find by username and project name
-      const allProjects = DocsProjects.getAll();
+      const allProjects = await DocsProjects.getAll();
       
       // Find project that matches both username and project name
       // In a real app, you'd have a database lookup by username and project slug
       let foundProject = null;
       
-      for (const projectId in allProjects) {
-        const project = allProjects[projectId];
+      for (const project of allProjects) {
         const projectSlug = project.name.toLowerCase().replace(/\s+/g, '-');
         
         // For now, we'll use a simple match - in production you'd have proper user/project relationship
@@ -637,8 +636,8 @@ export default function PublicUserDocPage() {
                 size="sm" 
                 asChild
                 style={{ 
-                  borderColor: project?.displayOptions?.primaryColor || "#171717",
-                  color: project?.displayOptions?.primaryColor || "#171717"
+                  borderColor: project?.settings?.displayOptions?.primaryColor || "#171717",
+                  color: project?.settings?.displayOptions?.primaryColor || "#171717"
                 }}
               >
                 <Link href="/">
@@ -688,8 +687,8 @@ export default function PublicUserDocPage() {
                             onClick={() => handleSectionClick(`endpoint-${request.id}`)}
                             className="w-full text-left px-3 py-1.5 rounded-md text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors flex items-center gap-2"
                           >
-                            {(project?.displayOptions?.showMethodBadges !== false) && (
-                              <MethodBadge method={request.method} primaryColor={project?.displayOptions?.primaryColor} />
+                            {(project?.settings?.displayOptions?.showMethodBadges !== false) && (
+                              <MethodBadge method={request.method} primaryColor={project?.settings?.displayOptions?.primaryColor} />
                             )}
                             <span className="truncate">{request.name}</span>
                           </button>
@@ -752,7 +751,7 @@ export default function PublicUserDocPage() {
             </div>
 
             {/* Right TOC - Only show if enabled in settings */}
-            {(project.displayOptions?.showTOC !== false) && (
+            {(project.settings?.displayOptions?.showTOC !== false) && (
               <div className="hidden xl:block w-64 p-6">
                 <TableOfContents
                   collections={collections}

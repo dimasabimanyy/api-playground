@@ -33,7 +33,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCollections } from "@/contexts/CollectionsContext";
 import { getThemeClasses } from "@/lib/theme";
-import { DocsProjects, DocsMetadata } from "@/lib/docs-storage";
+import { DocsProjects, DocsMetadata } from "@/lib/docs-storage-db";
 import { generateUsername, generatePublicDocUrl } from "@/lib/user-utils";
 import DocGeneratorModal from "@/components/docs/DocGeneratorModal";
 import SearchInput from "@/components/ui/SearchInput";
@@ -140,10 +140,15 @@ export default function DocsPage() {
     loadDocsProjects();
   }, []);
 
-  const loadDocsProjects = () => {
+  const loadDocsProjects = async () => {
     try {
-      const projects = DocsProjects.getAll();
-      setDocsProjects(projects);
+      const projects = await DocsProjects.getAll();
+      // Convert array to object for backward compatibility with existing code
+      const projectsObject = projects.reduce((acc, project) => {
+        acc[project.id] = project;
+        return acc;
+      }, {});
+      setDocsProjects(projectsObject);
     } catch (error) {
       console.error("Failed to load documentation projects:", error);
     } finally {
@@ -166,10 +171,10 @@ export default function DocsPage() {
         case "name":
           return a.name.localeCompare(b.name);
         case "created":
-          return new Date(b.created) - new Date(a.created);
+          return new Date(b.created_at || b.created) - new Date(a.created_at || a.created);
         case "updated":
         default:
-          return new Date(b.updated) - new Date(a.updated);
+          return new Date(b.updated_at || b.updated) - new Date(a.updated_at || a.updated);
       }
     });
 
@@ -177,24 +182,32 @@ export default function DocsPage() {
     setShowCreateModal(true);
   };
 
-  const duplicateProject = (project) => {
-    const duplicated = DocsProjects.duplicate(
-      project.id,
-      `${project.name} Copy`
-    );
-    if (duplicated) {
-      loadDocsProjects();
+  const duplicateProject = async (project) => {
+    try {
+      const duplicated = await DocsProjects.duplicate(
+        project.id,
+        `${project.name} Copy`
+      );
+      if (duplicated) {
+        await loadDocsProjects();
+      }
+    } catch (error) {
+      console.error("Failed to duplicate project:", error);
     }
   };
 
-  const deleteProject = (project) => {
+  const deleteProject = async (project) => {
     if (
       confirm(
         `Are you sure you want to delete "${project.name}"? This action cannot be undone.`
       )
     ) {
-      DocsProjects.delete(project.id);
-      loadDocsProjects();
+      try {
+        await DocsProjects.delete(project.id);
+        await loadDocsProjects();
+      } catch (error) {
+        console.error("Failed to delete project:", error);
+      }
     }
   };
 
@@ -584,9 +597,9 @@ export default function DocsPage() {
         open={showCreateModal}
         onOpenChange={setShowCreateModal}
         collections={getCollectionsWithDocs()}
-        onGenerate={() => {
+        onGenerate={async () => {
           setShowCreateModal(false);
-          loadDocsProjects();
+          await loadDocsProjects();
         }}
       />
     </>

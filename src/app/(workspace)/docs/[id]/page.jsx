@@ -35,7 +35,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCollections } from "@/contexts/CollectionsContext";
 import { getThemeClasses } from "@/lib/theme";
-import { DocsProjects, DocsMetadata } from "@/lib/docs-storage";
+import { DocsProjects, DocsMetadata } from "@/lib/docs-storage-db";
 import {
   generateUsername,
   generatePublicDocUrl,
@@ -144,16 +144,32 @@ export default function DocDetailPage() {
   const [activeTab, setActiveTab] = useState("overview");
   const [showMenu, setShowMenu] = useState(false);
 
+  // Helper function to handle async project updates
+  const updateProject = async (updates) => {
+    try {
+      const updatedProject = {
+        ...project,
+        ...updates,
+        updated_at: new Date().toISOString(),
+      };
+      setProject(updatedProject);
+      await DocsProjects.update(project.id, updatedProject);
+    } catch (error) {
+      console.error('Failed to update project:', error);
+      // Revert optimistic update on error
+      setProject(project);
+    }
+  };
+
   useEffect(() => {
     if (params.id) {
       loadProject();
     }
   }, [params.id]);
 
-  const loadProject = () => {
+  const loadProject = async () => {
     try {
-      const projects = DocsProjects.getAll();
-      const projectData = projects[params.id];
+      const projectData = await DocsProjects.get(params.id);
       if (projectData) {
         setProject(projectData);
       } else {
@@ -883,13 +899,9 @@ export default function DocDetailPage() {
                           <div
                             key={template.id}
                             onClick={() => {
-                              const updatedProject = {
-                                ...project,
+                              updateProject({
                                 template: template.id,
-                                updated: new Date().toISOString(),
-                              };
-                              setProject(updatedProject);
-                              DocsProjects.update(project.id, updatedProject);
+                              });
                             }}
                             className={`cursor-pointer border rounded-lg p-4 transition-all duration-200 ${
                               template.isSelected
@@ -981,42 +993,40 @@ export default function DocDetailPage() {
                         <input
                           type="color"
                           value={
-                            project.displayOptions?.primaryColor || "#171717"
+                            project.settings?.displayOptions?.primaryColor || "#171717"
                           }
                           onChange={(e) => {
-                            const updatedProject = {
-                              ...project,
-                              displayOptions: {
-                                ...project.displayOptions,
-                                primaryColor: e.target.value,
+                            updateProject({
+                              settings: {
+                                ...project.settings,
+                                displayOptions: {
+                                  ...project.settings?.displayOptions,
+                                  primaryColor: e.target.value,
+                                },
                               },
-                              updated: new Date().toISOString(),
-                            };
-                            setProject(updatedProject);
-                            DocsProjects.update(project.id, updatedProject);
+                            });
                           }}
                           className="w-10 h-10 rounded-lg border border-gray-300 cursor-pointer"
                           style={{
                             backgroundColor:
-                              project.displayOptions?.primaryColor || "#171717",
+                              project.settings?.displayOptions?.primaryColor || "#171717",
                           }}
                         />
                         <input
                           type="text"
                           value={
-                            project.displayOptions?.primaryColor || "#171717"
+                            project.settings?.displayOptions?.primaryColor || "#171717"
                           }
                           onChange={(e) => {
-                            const updatedProject = {
-                              ...project,
-                              displayOptions: {
-                                ...project.displayOptions,
-                                primaryColor: e.target.value,
+                            updateProject({
+                              settings: {
+                                ...project.settings,
+                                displayOptions: {
+                                  ...project.settings?.displayOptions,
+                                  primaryColor: e.target.value,
+                                },
                               },
-                              updated: new Date().toISOString(),
-                            };
-                            setProject(updatedProject);
-                            DocsProjects.update(project.id, updatedProject);
+                            });
                           }}
                           className={`w-20 px-3 py-2 text-sm border rounded-lg ${
                             isDark
@@ -1038,16 +1048,15 @@ export default function DocDetailPage() {
                           <button
                             key={preset.color}
                             onClick={() => {
-                              const updatedProject = {
-                                ...project,
-                                displayOptions: {
-                                  ...project.displayOptions,
-                                  primaryColor: preset.color,
+                              updateProject({
+                                settings: {
+                                  ...project.settings,
+                                  displayOptions: {
+                                    ...project.settings?.displayOptions,
+                                    primaryColor: preset.color,
+                                  },
                                 },
-                                updated: new Date().toISOString(),
-                              };
-                              setProject(updatedProject);
-                              DocsProjects.update(project.id, updatedProject);
+                              });
                             }}
                             className="w-6 h-6 rounded-md border border-gray-300 hover:scale-110 transition-transform"
                             style={{ backgroundColor: preset.color }}
@@ -1104,22 +1113,21 @@ export default function DocDetailPage() {
                             <input
                               type="checkbox"
                               checked={
-                                project.displayOptions?.[option.id] !==
+                                project.settings?.displayOptions?.[option.id] !==
                                 undefined
-                                  ? project.displayOptions[option.id]
+                                  ? project.settings.displayOptions[option.id]
                                   : option.default
                               }
                               onChange={(e) => {
-                                const updatedProject = {
-                                  ...project,
-                                  displayOptions: {
-                                    ...project.displayOptions,
-                                    [option.id]: e.target.checked,
+                                updateProject({
+                                  settings: {
+                                    ...project.settings,
+                                    displayOptions: {
+                                      ...project.settings?.displayOptions,
+                                      [option.id]: e.target.checked,
+                                    },
                                   },
-                                  updated: new Date().toISOString(),
-                                };
-                                setProject(updatedProject);
-                                DocsProjects.update(project.id, updatedProject);
+                                });
                               }}
                               className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                             />

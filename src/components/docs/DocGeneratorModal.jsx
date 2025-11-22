@@ -22,7 +22,7 @@ import {
 import { useTheme } from "@/contexts/ThemeContext";
 import { getThemeClasses } from "@/lib/theme";
 import { DocsGenerator } from "@/lib/docs-generator";
-import { DocsProjects } from "@/lib/docs-storage";
+import { DocsProjects } from "@/lib/docs-storage-db";
 
 const templates = [
   {
@@ -135,17 +135,24 @@ export default function DocGeneratorModal({
       });
       
       // Create and save documentation project to dashboard storage
-      const project = DocsProjects.create(
+      const project = await DocsProjects.create(
         customization.title,
         customization.description,
         [selectedCollection]
       );
       
-      // Add settings to the project
-      const updatedProject = DocsProjects.update(project.id, {
+      // Add settings to the project  
+      const updatedProject = await DocsProjects.update(project.id, {
         settings: {
           template: selectedTemplate,
           baseUrl: customization.baseUrl,
+          displayOptions: {
+            showTOC: true,
+            showMethodBadges: true,
+            showResponseExamples: customization.includeExamples,
+            showCodeExamples: customization.includeExamples,
+            primaryColor: "#171717"
+          },
           includeExamples: customization.includeExamples,
           includeAuth: customization.includeAuth,
           groupByCollection: customization.groupByCollection,

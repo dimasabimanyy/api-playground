@@ -72,7 +72,7 @@ export const DocsProjects = {
       if (error && error.code !== 'PGRST116') throw error; // PGRST116 is "not found"
       return project || null;
     } catch (error) {
-      console.error('Error loading project:', error);
+      console.error('Error loading project:', error.message);
       return null;
     }
   },
