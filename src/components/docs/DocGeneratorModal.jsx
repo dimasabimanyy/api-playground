@@ -17,7 +17,9 @@ import {
   Check,
   Search,
   X,
-  ChevronDown
+  ChevronDown,
+  Upload,
+  Palette
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { getThemeClasses } from "@/lib/theme";
@@ -50,11 +52,25 @@ export default function DocGeneratorModal({
   const [customization, setCustomization] = useState({
     title: "API Documentation",
     description: "Complete API reference for your application",
+    baseUrl: "https://api.example.com",
+    // Branding
+    logo: null,
+    favicon: null,
+    primaryColor: "#171717",
+    secondaryColor: "#6b7280",
+    accentColor: "#3b82f6",
+    // Theme
+    defaultTheme: "light",
+    allowThemeSwitch: true,
+    // Font
+    baseFont: "system-ui",
+    monoFont: "ui-monospace",
+    // Features
+    enableTOC: true,
     includeExamples: true,
     includeAuth: true,
     groupByCollection: true,
     includeErrorCodes: true,
-    baseUrl: "https://api.example.com",
   });
 
   // Handle pre-selected collection and reset state
@@ -355,95 +371,100 @@ export default function DocGeneratorModal({
 
           {/* Template Selection */}
           <div className="mb-8">
-            <div>
-              {/* <label className={`text-sm font-medium ${themeClasses.text.primary}`}>
-                Choose Style
-              </label> */}
-              <p className={`text-xs ${themeClasses.text.tertiary} mb-2`}>
+            <div className="mb-4">
+              <h3 className={`text-lg font-semibold ${themeClasses.text.primary} mb-1`}>
+                Template & Style
+              </h3>
+              <p className={`text-sm ${themeClasses.text.tertiary}`}>
                 Select a visual theme for your documentation
               </p>
             </div>
-            <div className="grid grid-cols-3 gap-3">
-              {templates.map((template) => (
-                <button
-                  key={template.id}
-                  onClick={() => setSelectedTemplate(template.id)}
-                  className={`group relative p-3 text-left transition-all duration-200 cursor-pointer border ${
-                    selectedTemplate === template.id
-                      ? isDark ? 'bg-gray-900' : 'bg-white shadow-sm'
-                      : isDark ? 'hover:bg-gray-900/50' : 'hover:bg-gray-50'
-                  }`}
-                  style={{
-                    borderRadius: '6px',
-                    borderColor: selectedTemplate === template.id 
-                      ? (isDark ? 'rgb(82, 82, 82)' : 'rgb(0, 0, 0)')
-                      : (isDark ? 'rgb(38, 38, 38)' : 'rgb(235, 235, 235)'),
-                    backgroundColor: selectedTemplate === template.id 
-                      ? (isDark ? 'rgb(23, 23, 23)' : 'white')
-                      : (isDark ? 'transparent' : '#fafafa')
-                  }}
-                >
-                  {/* Preview mockup */}
-                  <div 
-                    className={`w-full h-10 mb-3 flex items-center justify-center border ${
-                      template.id === 'modern' 
-                        ? isDark ? 'bg-gradient-to-r from-blue-900/40 to-purple-900/40 border-blue-800/30' : 'bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200/50'
-                        : template.id === 'minimal'
-                        ? isDark ? 'bg-gray-800/60 border-gray-700' : 'bg-gray-100/80 border-gray-300'
-                        : isDark ? 'bg-gradient-to-r from-emerald-900/40 to-teal-900/40 border-emerald-800/30' : 'bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-200/50'
-                    }`}
-                    style={{ borderRadius: '6px' }}
-                  >
-                    <div className="flex space-x-1">
-                      <div className={`w-1 h-6 rounded-full ${
-                        template.id === 'modern' ? 'bg-blue-500/60' :
-                        template.id === 'minimal' ? 'bg-gray-500/60' : 'bg-emerald-500/60'
-                      }`} />
-                      <div className={`w-1 h-4 rounded-full ${
-                        template.id === 'modern' ? 'bg-purple-500/60' :
-                        template.id === 'minimal' ? 'bg-gray-400/60' : 'bg-teal-500/60'
-                      }`} />
-                      <div className={`w-1 h-5 rounded-full ${
-                        template.id === 'modern' ? 'bg-blue-600/60' :
-                        template.id === 'minimal' ? 'bg-gray-600/60' : 'bg-emerald-600/60'
-                      }`} />
-                    </div>
+            
+            <div className={`border rounded-xl overflow-hidden ${
+              isDark ? 'border-gray-800 bg-gray-900/50' : 'border-gray-200 bg-white'
+            }`}>
+              <div className="grid grid-cols-2">
+                {/* Left: Template Options */}
+                <div className={`p-6 border-r ${isDark ? 'border-gray-800' : 'border-gray-200'}`}>
+                  <h4 className={`text-sm font-medium ${themeClasses.text.primary} mb-4`}>
+                    Choose Template
+                  </h4>
+                  <div className="space-y-3">
+                    {templates.map((template) => (
+                      <button
+                        key={template.id}
+                        onClick={() => setSelectedTemplate(template.id)}
+                        className={`w-full p-4 text-left rounded-lg border transition-all ${
+                          selectedTemplate === template.id
+                            ? isDark 
+                              ? 'border-white bg-gray-800 text-white' 
+                              : 'border-black bg-gray-50 text-black'
+                            : isDark 
+                              ? 'border-gray-700 hover:border-gray-600 hover:bg-gray-800/50' 
+                              : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className={`font-medium text-sm ${
+                              selectedTemplate === template.id ? 'text-current' : themeClasses.text.primary
+                            }`}>
+                              {template.name}
+                            </div>
+                            <div className={`text-xs ${
+                              selectedTemplate === template.id 
+                                ? 'text-current opacity-75' 
+                                : themeClasses.text.tertiary
+                            } mt-1`}>
+                              {template.description}
+                            </div>
+                          </div>
+                          {selectedTemplate === template.id && (
+                            <Check className="w-4 h-4" />
+                          )}
+                        </div>
+                      </button>
+                    ))}
                   </div>
-                  
-                  {/* Selection indicator */}
-                  {selectedTemplate === template.id && (
-                    <div className="absolute top-2 right-2">
-                      <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
-                        isDark ? 'bg-white text-black' : 'bg-black text-white'
-                      }`}>
-                        <Check className="w-3 h-3" />
+                </div>
+                
+                {/* Right: Preview */}
+                <div className="p-6">
+                  <h4 className={`text-sm font-medium ${themeClasses.text.primary} mb-4`}>
+                    Preview
+                  </h4>
+                  <div className={`w-full h-48 rounded-lg border-2 border-dashed ${
+                    isDark ? 'border-gray-700 bg-gray-800/50' : 'border-gray-300 bg-gray-50'
+                  } flex items-center justify-center`}>
+                    <div className="text-center">
+                      <div className={`w-12 h-12 rounded-lg ${
+                        isDark ? 'bg-gray-700' : 'bg-gray-200'
+                      } mx-auto mb-2 flex items-center justify-center`}>
+                        <BookOpen className={`w-6 h-6 ${themeClasses.text.tertiary}`} />
                       </div>
+                      <p className={`text-sm ${themeClasses.text.tertiary}`}>
+                        Preview coming soon
+                      </p>
                     </div>
-                  )}
-                  
-                  <div className={`font-medium text-sm ${themeClasses.text.primary} mb-1`}>
-                    {template.name}
                   </div>
-                  <div className={`text-xs ${themeClasses.text.tertiary} leading-relaxed`}>
-                    {template.description}
-                  </div>
-                </button>
-              ))}
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Configuration */}
-          <div className="grid grid-cols-2 gap-6">
-            <div className="space-y-3">
-              <label className={`text-sm font-medium ${themeClasses.text.primary}`}>
-                Configuration
-              </label>
-              <div className="space-y-3">
+          <div className="space-y-8">
+            {/* Basic Info */}
+            <div>
+              <h3 className={`text-lg font-semibold ${themeClasses.text.primary} mb-4`}>
+                Basic Information
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
                 <Input
                   value={customization.title}
                   onChange={(e) => setCustomization(prev => ({ ...prev, title: e.target.value }))}
                   placeholder="Documentation title"
-                  className="text-sm font-normal border"
+                  className="text-sm"
                   style={{
                     borderRadius: '6px',
                     borderColor: isDark ? 'rgb(38, 38, 38)' : 'rgb(235, 235, 235)',
@@ -454,7 +475,7 @@ export default function DocGeneratorModal({
                   value={customization.baseUrl}
                   onChange={(e) => setCustomization(prev => ({ ...prev, baseUrl: e.target.value }))}
                   placeholder="Base URL (optional)"
-                  className="text-sm font-normal border"
+                  className="text-sm"
                   style={{
                     borderRadius: '6px',
                     borderColor: isDark ? 'rgb(38, 38, 38)' : 'rgb(235, 235, 235)',
@@ -464,29 +485,200 @@ export default function DocGeneratorModal({
               </div>
             </div>
 
-            <div className="space-y-3">
-              <label className={`text-sm font-medium ${themeClasses.text.primary}`}>
-                Include
-              </label>
-              <div className="space-y-3">
-                {[
-                  { key: 'includeExamples', label: 'Request Examples' },
-                  { key: 'includeAuth', label: 'Authentication' },
-                  { key: 'groupByCollection', label: 'Group by Collection' },
-                  { key: 'includeErrorCodes', label: 'Error Codes' },
-                ].map((option) => (
-                  <label key={option.key} className="flex items-center gap-2 cursor-pointer">
+            {/* Branding */}
+            <div>
+              <h3 className={`text-lg font-semibold ${themeClasses.text.primary} mb-4`}>
+                Branding
+              </h3>
+              <div className="space-y-4">
+                {/* Upload Controls */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className={`text-sm font-medium ${themeClasses.text.secondary} mb-2 block`}>
+                      Logo
+                    </label>
+                    <div className={`border-2 border-dashed rounded-lg p-4 text-center ${
+                      isDark ? 'border-gray-700 bg-gray-800/50' : 'border-gray-300 bg-gray-50'
+                    }`}>
+                      <Upload className={`w-6 h-6 mx-auto mb-2 ${themeClasses.text.tertiary}`} />
+                      <p className={`text-xs ${themeClasses.text.tertiary}`}>Upload logo</p>
+                    </div>
+                  </div>
+                  <div>
+                    <label className={`text-sm font-medium ${themeClasses.text.secondary} mb-2 block`}>
+                      Favicon
+                    </label>
+                    <div className={`border-2 border-dashed rounded-lg p-4 text-center ${
+                      isDark ? 'border-gray-700 bg-gray-800/50' : 'border-gray-300 bg-gray-50'
+                    }`}>
+                      <Upload className={`w-6 h-6 mx-auto mb-2 ${themeClasses.text.tertiary}`} />
+                      <p className={`text-xs ${themeClasses.text.tertiary}`}>Upload favicon</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Color Pickers */}
+                <div className="grid grid-cols-3 gap-4">
+                  {[
+                    { key: 'primaryColor', label: 'Primary Color' },
+                    { key: 'secondaryColor', label: 'Secondary Color' },
+                    { key: 'accentColor', label: 'Accent Color' }
+                  ].map((color) => (
+                    <div key={color.key}>
+                      <label className={`text-sm font-medium ${themeClasses.text.secondary} mb-2 block`}>
+                        {color.label}
+                      </label>
+                      <div className="flex items-center gap-2">
+                        <div className="relative">
+                          <input
+                            type="color"
+                            value={customization[color.key]}
+                            onChange={(e) => setCustomization(prev => ({ ...prev, [color.key]: e.target.value }))}
+                            className="w-10 h-8 rounded border cursor-pointer"
+                            style={{ 
+                              borderColor: isDark ? 'rgb(38, 38, 38)' : 'rgb(235, 235, 235)',
+                              backgroundColor: customization[color.key]
+                            }}
+                          />
+                        </div>
+                        <Input
+                          value={customization[color.key]}
+                          onChange={(e) => setCustomization(prev => ({ ...prev, [color.key]: e.target.value }))}
+                          className="flex-1 text-xs font-mono"
+                          style={{
+                            borderRadius: '6px',
+                            borderColor: isDark ? 'rgb(38, 38, 38)' : 'rgb(235, 235, 235)',
+                            backgroundColor: isDark ? 'transparent' : '#fafafa'
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Theme */}
+            <div>
+              <h3 className={`text-lg font-semibold ${themeClasses.text.primary} mb-4`}>
+                Theme
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className={`text-sm font-medium ${themeClasses.text.secondary} mb-2 block`}>
+                    Default Theme
+                  </label>
+                  <select
+                    value={customization.defaultTheme}
+                    onChange={(e) => setCustomization(prev => ({ ...prev, defaultTheme: e.target.value }))}
+                    className={`w-full p-2 text-sm border rounded ${
+                      isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300'
+                    }`}
+                    style={{ borderRadius: '6px' }}
+                  >
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                  </select>
+                </div>
+                <div className="flex items-end">
+                  <label className="flex items-center gap-2 cursor-pointer">
                     <Checkbox
-                      checked={customization[option.key]}
+                      checked={customization.allowThemeSwitch}
                       onCheckedChange={(checked) => 
-                        setCustomization(prev => ({ ...prev, [option.key]: checked }))
+                        setCustomization(prev => ({ ...prev, allowThemeSwitch: checked }))
                       }
                     />
                     <span className={`text-sm ${themeClasses.text.secondary}`}>
-                      {option.label}
+                      Allow theme switch
                     </span>
                   </label>
-                ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Font */}
+            <div>
+              <h3 className={`text-lg font-semibold ${themeClasses.text.primary} mb-4`}>
+                Font
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className={`text-sm font-medium ${themeClasses.text.secondary} mb-2 block`}>
+                    Base Font
+                  </label>
+                  <select
+                    value={customization.baseFont}
+                    onChange={(e) => setCustomization(prev => ({ ...prev, baseFont: e.target.value }))}
+                    className={`w-full p-2 text-sm border rounded ${
+                      isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300'
+                    }`}
+                    style={{ borderRadius: '6px' }}
+                  >
+                    <option value="system-ui">System UI</option>
+                    <option value="inter">Inter</option>
+                    <option value="helvetica">Helvetica</option>
+                    <option value="arial">Arial</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={`text-sm font-medium ${themeClasses.text.secondary} mb-2 block`}>
+                    Mono Font
+                  </label>
+                  <select
+                    value={customization.monoFont}
+                    onChange={(e) => setCustomization(prev => ({ ...prev, monoFont: e.target.value }))}
+                    className={`w-full p-2 text-sm border rounded ${
+                      isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300'
+                    }`}
+                    style={{ borderRadius: '6px' }}
+                  >
+                    <option value="ui-monospace">UI Monospace</option>
+                    <option value="monaco">Monaco</option>
+                    <option value="consolas">Consolas</option>
+                    <option value="courier">Courier</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Features */}
+            <div>
+              <h3 className={`text-lg font-semibold ${themeClasses.text.primary} mb-4`}>
+                Features
+              </h3>
+              <div className="space-y-3">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <Checkbox
+                    checked={customization.enableTOC}
+                    onCheckedChange={(checked) => 
+                      setCustomization(prev => ({ ...prev, enableTOC: checked }))
+                    }
+                  />
+                  <span className={`text-sm ${themeClasses.text.secondary}`}>
+                    Enable Table of Contents
+                  </span>
+                </label>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  {[
+                    { key: 'includeExamples', label: 'Request Examples' },
+                    { key: 'includeAuth', label: 'Authentication' },
+                    { key: 'groupByCollection', label: 'Group by Collection' },
+                    { key: 'includeErrorCodes', label: 'Error Codes' },
+                  ].map((option) => (
+                    <label key={option.key} className="flex items-center gap-2 cursor-pointer">
+                      <Checkbox
+                        checked={customization[option.key]}
+                        onCheckedChange={(checked) => 
+                          setCustomization(prev => ({ ...prev, [option.key]: checked }))
+                        }
+                      />
+                      <span className={`text-sm ${themeClasses.text.secondary}`}>
+                        {option.label}
+                      </span>
+                    </label>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
