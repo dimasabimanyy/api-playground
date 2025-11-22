@@ -143,14 +143,12 @@ export default function DocsPage() {
   const loadDocsProjects = async () => {
     try {
       const projects = await DocsProjects.getAll();
-      // Convert array to object for backward compatibility with existing code
-      const projectsObject = projects.reduce((acc, project) => {
-        acc[project.id] = project;
-        return acc;
-      }, {});
-      setDocsProjects(projectsObject);
+      
+      // DocsProjects.getAll() already returns an object, no need to convert
+      setDocsProjects(projects || {});
     } catch (error) {
       console.error("Failed to load documentation projects:", error);
+      setDocsProjects({}); // Set empty object on error
     } finally {
       setLoading(false);
     }
