@@ -82,7 +82,11 @@ export default function DocGeneratorModal({
 
   // Close dropdown when clicking outside
   useEffect(() => {
-    const handleClickOutside = () => {
+    const handleClickOutside = (event) => {
+      // Don't close if clicking on the dropdown or its contents
+      if (event.target.closest('[data-dropdown]') || event.target.closest('[data-dropdown-item]')) {
+        return;
+      }
       setShowDropdown(false);
     };
 
@@ -93,6 +97,9 @@ export default function DocGeneratorModal({
   }, [showDropdown]);
 
   const handleCollectionSelect = (collectionId) => {
+    console.log('handleCollectionSelect called with:', collectionId);
+    console.log('Available collections:', Object.keys(collections));
+    console.log('Selected collection object:', collections[collectionId]);
     setSelectedCollection(collectionId);
     setSearchQuery("");
     setShowDropdown(false);
@@ -103,14 +110,19 @@ export default function DocGeneratorModal({
   };
 
   // Filter collections based on debounced search query
-  const filteredCollections = Object.values(collections).filter(collection =>
-    debouncedSearchQuery.trim() === "" || 
-    collection.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
-    (collection.requests || []).some(request => 
-      request.name?.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
-      request.url?.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
-    )
-  );
+  const filteredCollections = Object.values(collections).filter(collection => {
+    // If no search query, show all collections
+    if (debouncedSearchQuery.trim() === "") {
+      return true;
+    }
+    
+    // Otherwise filter by search query
+    return collection.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
+      (collection.requests || []).some(request => 
+        request.name?.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
+        request.url?.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
+      );
+  });
 
   // Get selected collection object
   const selectedCollectionObject = selectedCollection ? collections[selectedCollection] : null;
@@ -195,7 +207,7 @@ export default function DocGeneratorModal({
           className={isDark ? '!bg-black/30' : '!bg-transparent'}
           style={isDark ? {} : { backgroundColor: 'rgba(255, 255, 255)' }}
         />
-        <DialogContent className={`sm:max-w-3xl md:max-w-4xl lg:max-w-5xl xl:max-w-5xl ${isDark ? 'bg-black border-gray-800' : 'bg-white'} border shadow-lg max-h-[90vh] overflow-y-auto`} 
+        <DialogContent className={`sm:max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-4xl ${isDark ? 'bg-black border-gray-800' : 'bg-white'} border shadow-lg max-h-[90vh] overflow-y-auto`} 
           style={{ 
             borderRadius: '12px',
             borderColor: isDark ? 'rgb(38, 38, 38)' : 'rgb(235, 235, 235)'
@@ -230,6 +242,9 @@ export default function DocGeneratorModal({
                   <Input
                     value={selectedCollectionObject ? selectedCollectionObject.name : searchQuery}
                     onChange={(e) => {
+                      console.log('target: ', e.target.value);
+
+                      console.log(selectedCollection);
                       if (!selectedCollectionObject) {
                         setSearchQuery(e.target.value);
                         setShowDropdown(e.target.value.length > 0);
@@ -237,7 +252,7 @@ export default function DocGeneratorModal({
                     }}
                     onFocus={(e) => {
                       if (!selectedCollectionObject) {
-                        setShowDropdown(searchQuery.length > 0);
+                        setShowDropdown(true);
                       } else {
                         // Prevent text selection when collection is already selected
                         e.target.blur();
@@ -279,8 +294,9 @@ export default function DocGeneratorModal({
                   )}
                   
                   {/* Dropdown */}
-                  {!selectedCollectionObject && showDropdown && debouncedSearchQuery.length > 0 && (
+                  {!selectedCollectionObject && showDropdown && (
                     <div 
+                      data-dropdown
                       className={`absolute z-10 w-full mt-1 max-h-60 overflow-y-auto border ${
                         isDark ? 'bg-black' : 'bg-white'
                       } shadow-lg`}
@@ -298,7 +314,13 @@ export default function DocGeneratorModal({
                         filteredCollections.map((collection) => (
                           <button
                             key={collection.id}
-                            onClick={() => handleCollectionSelect(collection.id)}
+                            data-dropdown-item
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              console.log('Collection clicked:', collection.id, collection.name);
+                              handleCollectionSelect(collection.id);
+                            }}
                             className={`w-full p-3 text-left hover:${
                               isDark ? 'bg-gray-900' : 'bg-gray-50'
                             } transition-colors cursor-pointer`}
