@@ -43,8 +43,6 @@ export default function DocGeneratorModal({
   preSelectedCollectionId = null,
   onGenerate,
 }) {
-  if (!open) return null;
-  
   const { isDark } = useTheme();
   const themeClasses = getThemeClasses(isDark);
   const { collections } = useCollections();
