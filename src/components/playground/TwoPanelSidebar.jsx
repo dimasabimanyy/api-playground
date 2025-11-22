@@ -23,7 +23,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import CreateNew from "../button/CreateNew";
 import ImportModal from "../modals/ImportModal";
-import { useRouter } from "next/router";
 import { usePathname } from "next/navigation";
 import { sidebarMenuItems } from "@/config/sidebar";
 
@@ -61,14 +60,20 @@ export default function TwoPanelSidebar({
 }) {
   const pathname = usePathname();
   const [showImportModal, setShowImportModal] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Handle client-side mounting to prevent hydration issues
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   console.log("pathname: ", pathname);
 
   useEffect(() => {
-    if (pathname.includes("/docs")) {
+    if (mounted && pathname?.includes("/docs")) {
       setContentOpen(false);
     }
-  }, [pathname]);
+  }, [pathname, mounted]);
 
   // Skeleton loading component
   const CollectionSkeleton = () => (
@@ -138,7 +143,7 @@ export default function TwoPanelSidebar({
                             isDark ? "bg-gray-800/30" : "bg-gray-100/50"
                           }`
                     }`}
-                    onClick={() => onNavItemClick(item.id, pathname)}
+                    onClick={() => onNavItemClick(item.id, mounted ? pathname : '')}
                   >
                     <button
                       className={`flex items-center justify-center rounded-lg transition-all duration-200 cursor-pointer ${

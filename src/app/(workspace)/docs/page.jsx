@@ -594,7 +594,6 @@ export default function DocsPage() {
       <DocGeneratorModal
         open={showCreateModal}
         onOpenChange={setShowCreateModal}
-        collections={getCollectionsWithDocs()}
         onGenerate={async () => {
           setShowCreateModal(false);
           await loadDocsProjects();

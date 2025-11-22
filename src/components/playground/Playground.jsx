@@ -1520,7 +1520,7 @@ export default function Playground() {
             setSelectedCollectionForDocs(null);
           }
         }}
-        collections={getCollectionsWithDocs()}
+        // collections={getCollectionsWithDocs()}
         preSelectedCollectionId={selectedCollectionForDocs}
         onGenerate={(docData) => {
           console.log("Generated docs with data:", docData);
