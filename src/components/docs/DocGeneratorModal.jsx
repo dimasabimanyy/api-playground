@@ -195,7 +195,7 @@ export default function DocGeneratorModal({
           className={isDark ? '!bg-black/30' : '!bg-transparent'}
           style={isDark ? {} : { backgroundColor: 'rgba(255, 255, 255)' }}
         />
-        <DialogContent className={`max-w-2xl sm:max-w-2xl md:max-w-2xl lg:max-w-2xl xl:max-w-2xl ${isDark ? 'bg-black border-gray-800' : 'bg-white'} border shadow-lg max-h-[90vh] overflow-y-auto`} 
+        <DialogContent className={`sm:max-w-3xl md:max-w-4xl lg:max-w-5xl xl:max-w-5xl ${isDark ? 'bg-black border-gray-800' : 'bg-white'} border shadow-lg max-h-[90vh] overflow-y-auto`} 
           style={{ 
             borderRadius: '12px',
             borderColor: isDark ? 'rgb(38, 38, 38)' : 'rgb(235, 235, 235)'
@@ -212,9 +212,9 @@ export default function DocGeneratorModal({
         <div className="space-y-8">
           {/* Collection Selection with Input Display */}
           <div className="mb-5">
-            <label className={`text-sm font-medium ${themeClasses.text.primary}`}>
+            {/* <label className={`text-sm font-medium ${themeClasses.text.primary}`}>
               Select Collection
-            </label>
+            </label> */}
             
             {Object.keys(collections).length === 0 ? (
               <div className={`text-center py-8 ${themeClasses.text.tertiary}`}>
@@ -334,10 +334,10 @@ export default function DocGeneratorModal({
           {/* Template Selection */}
           <div className="mb-8">
             <div>
-              <label className={`text-sm font-medium ${themeClasses.text.primary}`}>
+              {/* <label className={`text-sm font-medium ${themeClasses.text.primary}`}>
                 Choose Style
-              </label>
-              <p className={`text-xs ${themeClasses.text.tertiary} mt-1`}>
+              </label> */}
+              <p className={`text-xs ${themeClasses.text.tertiary} mb-2`}>
                 Select a visual theme for your documentation
               </p>
             </div>
