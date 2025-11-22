@@ -12,15 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  BookOpen,
-  Check,
-  Search,
-  X,
-  ChevronDown,
-  Upload,
-  Palette,
-} from "lucide-react";
+import { BookOpen, Check, Search, X, ChevronDown, Upload } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { getThemeClasses } from "@/lib/theme";
 import { DocsGenerator } from "@/lib/docs-generator";
@@ -160,7 +152,9 @@ export default function DocGeneratorModal({
     })
     .slice(0, debouncedSearchQuery.trim() === "" ? collectionsLimit : 50); // Show first 10 by default, 50 when searching
 
-  const hasMoreCollections = Object.values(collections).length > collectionsLimit && debouncedSearchQuery.trim() === "";
+  const hasMoreCollections =
+    Object.values(collections).length > collectionsLimit &&
+    debouncedSearchQuery.trim() === "";
 
   // Get selected collection object
   const selectedCollectionObject = selectedCollection
@@ -173,7 +167,6 @@ export default function DocGeneratorModal({
     console.log("selected coll: ", selectedCollection);
     console.log("selected col obj: ", selectedCollectionObject);
 
-    return;
     try {
       // Generate enhanced documentation using real collections data
       const collectionsToGenerate = {
@@ -283,18 +276,14 @@ export default function DocGeneratorModal({
             >
               Generate Documentation
             </DialogTitle>
-            {/* <p className={`text-sm ${themeClasses.text.secondary} font-normal`}>
-            Create beautiful API documentation from your collections
-          </p> */}
+            <p className={`text-sm ${themeClasses.text.secondary} font-normal`}>
+              Create beautiful API documentation from your collections
+            </p>
           </DialogHeader>
 
           <div className="space-y-8">
             {/* Collection Selection with Input Display */}
             <div className="mb-5">
-              {/* <label className={`text-sm font-medium ${themeClasses.text.primary}`}>
-              Select Collection
-            </label> */}
-
               {Object.keys(collections).length === 0 ? (
                 <div
                   className={`text-center py-8 ${themeClasses.text.tertiary}`}
@@ -448,23 +437,28 @@ export default function DocGeneratorModal({
                                 </div>
                               </button>
                             ))}
-                            
+
                             {/* Load More Button */}
                             {hasMoreCollections && (
                               <button
                                 onClick={(e) => {
                                   e.preventDefault();
                                   e.stopPropagation();
-                                  setCollectionsLimit(prev => prev + 10);
+                                  setCollectionsLimit((prev) => prev + 10);
                                 }}
                                 className={`w-full p-3 text-center hover:${
                                   isDark ? "bg-gray-900" : "bg-gray-50"
                                 } transition-colors cursor-pointer border-t ${
-                                  isDark ? "border-gray-700 text-gray-400" : "border-gray-200 text-gray-500"
+                                  isDark
+                                    ? "border-gray-700 text-gray-400"
+                                    : "border-gray-200 text-gray-500"
                                 }`}
                               >
                                 <div className="text-sm">
-                                  Load more collections... ({Object.values(collections).length - collectionsLimit} more)
+                                  Load more collections... (
+                                  {Object.values(collections).length -
+                                    collectionsLimit}{" "}
+                                  more)
                                 </div>
                               </button>
                             )}
@@ -492,10 +486,10 @@ export default function DocGeneratorModal({
             </div>
 
             {/* Template Selection */}
-            <div className="mb-8">
-              <div className="mb-4">
+            <div className="mb-8 mt-2">
+              <div className="mb-3">
                 <h3
-                  className={`text-lg font-semibold ${themeClasses.text.primary} mb-1`}
+                  className={`text-lg font-semibold ${themeClasses.text.primary} mb-0`}
                 >
                   Template & Style
                 </h3>
@@ -504,98 +498,74 @@ export default function DocGeneratorModal({
                 </p>
               </div>
 
-              <div
-                className={`border rounded-xl overflow-hidden ${
-                  isDark
-                    ? "border-gray-800 bg-gray-900/50"
-                    : "border-gray-200 bg-white"
-                }`}
-              >
-                <div className="grid grid-cols-2">
-                  {/* Left: Template Options */}
-                  <div
-                    className={`p-6 border-r ${
-                      isDark ? "border-gray-800" : "border-gray-200"
-                    }`}
-                  >
-                    <h4
-                      className={`text-sm font-medium ${themeClasses.text.primary} mb-4`}
+              <div className="grid grid-cols-2 gap-5">
+                {/* Left: Template Options */}
+                <div className="space-y-3">
+                  {templates.map((template) => (
+                    <button
+                      key={template.id}
+                      onClick={() => setSelectedTemplate(template.id)}
+                      className={`cursor-pointer w-full p-4 text-left rounded-lg border transition-all ${
+                        selectedTemplate === template.id
+                          ? isDark
+                            ? "border-white bg-gray-800 text-white"
+                            : "border-black bg-gray-50 text-black"
+                          : isDark
+                          ? "border-gray-700 hover:border-gray-600 hover:bg-gray-800/50"
+                          : "border-gray-300 hover:border-gray-400 hover:bg-gray-50"
+                      }`}
                     >
-                      Choose Template
-                    </h4>
-                    <div className="space-y-3">
-                      {templates.map((template) => (
-                        <button
-                          key={template.id}
-                          onClick={() => setSelectedTemplate(template.id)}
-                          className={`w-full p-4 text-left rounded-lg border transition-all ${
-                            selectedTemplate === template.id
-                              ? isDark
-                                ? "border-white bg-gray-800 text-white"
-                                : "border-black bg-gray-50 text-black"
-                              : isDark
-                              ? "border-gray-700 hover:border-gray-600 hover:bg-gray-800/50"
-                              : "border-gray-300 hover:border-gray-400 hover:bg-gray-50"
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <div
-                                className={`font-medium text-sm ${
-                                  selectedTemplate === template.id
-                                    ? "text-current"
-                                    : themeClasses.text.primary
-                                }`}
-                              >
-                                {template.name}
-                              </div>
-                              <div
-                                className={`text-xs ${
-                                  selectedTemplate === template.id
-                                    ? "text-current opacity-75"
-                                    : themeClasses.text.tertiary
-                                } mt-1`}
-                              >
-                                {template.description}
-                              </div>
-                            </div>
-                            {selectedTemplate === template.id && (
-                              <Check className="w-4 h-4" />
-                            )}
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div
+                            className={`font-medium text-sm ${
+                              selectedTemplate === template.id
+                                ? "text-current"
+                                : themeClasses.text.primary
+                            }`}
+                          >
+                            {template.name}
                           </div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Right: Preview */}
-                  <div className="p-6">
-                    <h4
-                      className={`text-sm font-medium ${themeClasses.text.primary} mb-4`}
-                    >
-                      Preview
-                    </h4>
-                    <div
-                      className={`w-full h-48 rounded-lg border-2 border-dashed ${
-                        isDark
-                          ? "border-gray-700 bg-gray-800/50"
-                          : "border-gray-300 bg-gray-50"
-                      } flex items-center justify-center`}
-                    >
-                      <div className="text-center">
-                        <div
-                          className={`w-12 h-12 rounded-lg ${
-                            isDark ? "bg-gray-700" : "bg-gray-200"
-                          } mx-auto mb-2 flex items-center justify-center`}
-                        >
-                          <BookOpen
-                            className={`w-6 h-6 ${themeClasses.text.tertiary}`}
-                          />
+                          <div
+                            className={`text-xs ${
+                              selectedTemplate === template.id
+                                ? "text-current opacity-75"
+                                : themeClasses.text.tertiary
+                            } mt-1`}
+                          >
+                            {template.description}
+                          </div>
                         </div>
-                        <p className={`text-sm ${themeClasses.text.tertiary}`}>
-                          Preview coming soon
-                        </p>
+                        {selectedTemplate === template.id && (
+                          <Check className="w-4 h-4" />
+                        )}
                       </div>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Right: Preview */}
+                <div>
+                  <div
+                    className={`w-full h-48 rounded-lg border-2 border-dashed ${
+                      isDark
+                        ? "border-gray-700 bg-gray-800/50"
+                        : "border-gray-300 bg-gray-50"
+                    } flex items-center justify-center`}
+                  >
+                    <div className="text-center">
+                      <div
+                        className={`w-12 h-12 rounded-lg ${
+                          isDark ? "bg-gray-700" : "bg-gray-200"
+                        } mx-auto mb-2 flex items-center justify-center`}
+                      >
+                        <BookOpen
+                          className={`w-6 h-6 ${themeClasses.text.tertiary}`}
+                        />
+                      </div>
+                      <p className={`text-sm ${themeClasses.text.tertiary}`}>
+                        Preview coming soon
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -906,7 +876,7 @@ export default function DocGeneratorModal({
                     </span>
                   </label>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  {/* <div className="grid grid-cols-2 gap-4">
                     {[
                       { key: "includeExamples", label: "Request Examples" },
                       { key: "includeAuth", label: "Authentication" },
@@ -936,7 +906,7 @@ export default function DocGeneratorModal({
                         </span>
                       </label>
                     ))}
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
