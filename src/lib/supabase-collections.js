@@ -5,7 +5,7 @@ export const getCollectionsPagination = async ({
   pageSize = 10,
   startIndex = 0,
   endIndex = 9
-}) => {
+} = {}) => {
   try {
     let startIndexRange = 0;
     let endIndexRange = 9;
