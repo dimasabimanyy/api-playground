@@ -12,7 +12,8 @@ import {
   deleteRequestFromCollection as removeRequest,
   searchRequests as searchAllRequests,
   reorderRequests as reorderCollectionRequests,
-  saveRequestToHistory
+  saveRequestToHistory,
+  getCollectionsPagination
 } from '@/lib/supabase-collections';
 import { DocsMetadata } from '@/lib/docs-storage';
 
@@ -54,17 +55,19 @@ export function CollectionsProvider({ children }) {
    */
   const loadCollections = async () => {
     if (!user) {
-      console.log('CollectionsContext: loadCollections called but no user');
+      // console.log('CollectionsContext: loadCollections called but no user');
       return;
     }
     
-    console.log('CollectionsContext: Starting to load collections');
+    // console.log('CollectionsContext: Starting to load collections');
     setLoading(true);
     setError(null);
     
     try {
-      const data = await fetchCollections();
-      console.log('CollectionsContext: Collections loaded:', data);
+      // const data = await fetchCollections();
+      const data = await getCollectionsPagination();
+      
+      // console.log('CollectionsContext: Collections loaded:', data);
       setCollections(data);
       
       // If no collections exist, we can create a default one programmatically

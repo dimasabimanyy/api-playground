@@ -1,4 +1,48 @@
-import { createClient } from './supabase'
+import { createClient } from "./supabase";
+
+export const getCollectionsPagination = async (
+  page,
+  totalPerPage = 10,
+  startIndex = 0,
+  endIndex = 9
+) => {
+  try {
+    let startIndexRange = 0;
+    let endIndexRange = 9;
+
+    // Use page based pagination
+    if (page) {
+      // Minus 1 at the end because the index is zero-based
+      startIndexRange = (totalPerPage * page) / totalPerPage - 1;
+      endIndexRange = totalPerPage * page - 1;
+    }
+
+    // Use index based pagination
+    if (startIndex) {
+      startIndexRange = startIndex;
+      endIndexRange = endIndex;
+    }
+    const supabase = createClient();
+
+    const { data, error } = await supabase
+      .from("collections")
+      .select()
+      .order("created_at", { ascending: false })
+      .range(startIndexRange, endIndexRange);
+
+    console.log("data pagination: ", data);
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  } catch (e) {
+    console.error("Error when getting collections by pagination : ", e.message);
+
+    throw new Error(e.message);
+  }
+};
 
 /**
  * Database-backed collections and requests management
@@ -9,12 +53,13 @@ import { createClient } from './supabase'
  * Get all collections for the current user
  */
 export async function getCollections() {
-  const supabase = createClient()
-  
+  const supabase = createClient();
+
   try {
     const { data: collections, error } = await supabase
-      .from('collections')
-      .select(`
+      .from("collections")
+      .select(
+        `
         *,
         requests (
           id,
@@ -29,17 +74,21 @@ export async function getCollections() {
           created_at,
           updated_at
         )
-      `)
-      .order('created_at', { ascending: true }).limit(2)
-    
-    if (error) throw error
-    
+      `
+      )
+      .order("created_at", { ascending: true })
+      .limit(10);
+
+    if (error) throw error;
+
     // Transform to match the existing localStorage format
-    const collectionsMap = {}
-    collections.forEach(collection => {
+    const collectionsMap = {};
+    collections.forEach((collection) => {
       // Sort requests by position
-      const sortedRequests = collection.requests.sort((a, b) => a.position - b.position)
-      
+      const sortedRequests = collection.requests.sort(
+        (a, b) => a.position - b.position
+      );
+
       collectionsMap[collection.id] = {
         id: collection.id,
         name: collection.name,
@@ -47,43 +96,46 @@ export async function getCollections() {
         color: collection.color,
         requests: sortedRequests,
         createdAt: collection.created_at,
-        updatedAt: collection.updated_at
-      }
-    })
-    
-    return collectionsMap
+        updatedAt: collection.updated_at,
+      };
+    });
+
+    return collectionsMap;
   } catch (error) {
-    console.error('Error fetching collections:', error)
-    throw error
+    console.error("Error fetching collections:", error);
+    throw error;
   }
 }
 
 /**
  * Create a new collection
  */
-export async function createCollection(name, description = '', color = 'blue') {
-  const supabase = createClient()
-  
+export async function createCollection(name, description = "", color = "blue") {
+  const supabase = createClient();
+
   try {
     // Get the current user
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
     if (userError || !user) {
-      throw new Error('User must be authenticated to create collections')
+      throw new Error("User must be authenticated to create collections");
     }
 
     const { data: collection, error } = await supabase
-      .from('collections')
+      .from("collections")
       .insert({
         user_id: user.id,
         name,
         description,
-        color
+        color,
       })
       .select()
-      .single()
-    
-    if (error) throw error
-    
+      .single();
+
+    if (error) throw error;
+
     return {
       id: collection.id,
       name: collection.name,
@@ -91,11 +143,11 @@ export async function createCollection(name, description = '', color = 'blue') {
       color: collection.color,
       requests: [],
       createdAt: collection.created_at,
-      updatedAt: collection.updated_at
-    }
+      updatedAt: collection.updated_at,
+    };
   } catch (error) {
-    console.error('Error creating collection:', error)
-    throw error
+    console.error("Error creating collection:", error);
+    throw error;
   }
 }
 
@@ -103,29 +155,29 @@ export async function createCollection(name, description = '', color = 'blue') {
  * Update a collection
  */
 export async function updateCollection(collectionId, updates) {
-  const supabase = createClient()
-  
+  const supabase = createClient();
+
   try {
     const { data: collection, error } = await supabase
-      .from('collections')
+      .from("collections")
       .update(updates)
-      .eq('id', collectionId)
+      .eq("id", collectionId)
       .select()
-      .single()
-    
-    if (error) throw error
-    
+      .single();
+
+    if (error) throw error;
+
     return {
       id: collection.id,
       name: collection.name,
       description: collection.description,
       color: collection.color,
       createdAt: collection.created_at,
-      updatedAt: collection.updated_at
-    }
+      updatedAt: collection.updated_at,
+    };
   } catch (error) {
-    console.error('Error updating collection:', error)
-    throw error
+    console.error("Error updating collection:", error);
+    throw error;
   }
 }
 
@@ -133,20 +185,20 @@ export async function updateCollection(collectionId, updates) {
  * Delete a collection
  */
 export async function deleteCollection(collectionId) {
-  const supabase = createClient()
-  
+  const supabase = createClient();
+
   try {
     const { error } = await supabase
-      .from('collections')
+      .from("collections")
       .delete()
-      .eq('id', collectionId)
-    
-    if (error) throw error
-    
-    return true
+      .eq("id", collectionId);
+
+    if (error) throw error;
+
+    return true;
   } catch (error) {
-    console.error('Error deleting collection:', error)
-    throw error
+    console.error("Error deleting collection:", error);
+    throw error;
   }
 }
 
@@ -154,12 +206,13 @@ export async function deleteCollection(collectionId) {
  * Get a single collection by ID
  */
 export async function getCollection(collectionId) {
-  const supabase = createClient()
-  
+  const supabase = createClient();
+
   try {
     const { data: collection, error } = await supabase
-      .from('collections')
-      .select(`
+      .from("collections")
+      .select(
+        `
         *,
         requests (
           id,
@@ -174,15 +227,18 @@ export async function getCollection(collectionId) {
           created_at,
           updated_at
         )
-      `)
-      .eq('id', collectionId)
-      .single()
-    
-    if (error) throw error
-    
+      `
+      )
+      .eq("id", collectionId)
+      .single();
+
+    if (error) throw error;
+
     // Sort requests by position
-    const sortedRequests = collection.requests.sort((a, b) => a.position - b.position)
-    
+    const sortedRequests = collection.requests.sort(
+      (a, b) => a.position - b.position
+    );
+
     return {
       id: collection.id,
       name: collection.name,
@@ -190,11 +246,11 @@ export async function getCollection(collectionId) {
       color: collection.color,
       requests: sortedRequests,
       createdAt: collection.created_at,
-      updatedAt: collection.updated_at
-    }
+      updatedAt: collection.updated_at,
+    };
   } catch (error) {
-    console.error('Error fetching collection:', error)
-    throw error
+    console.error("Error fetching collection:", error);
+    throw error;
   }
 }
 
@@ -202,38 +258,38 @@ export async function getCollection(collectionId) {
  * Add a request to a collection
  */
 export async function addRequestToCollection(collectionId, request) {
-  const supabase = createClient()
-  
+  const supabase = createClient();
+
   try {
     // Get the highest position in the collection
     const { data: lastRequest } = await supabase
-      .from('requests')
-      .select('position')
-      .eq('collection_id', collectionId)
-      .order('position', { ascending: false })
+      .from("requests")
+      .select("position")
+      .eq("collection_id", collectionId)
+      .order("position", { ascending: false })
       .limit(1)
-      .single()
-    
-    const nextPosition = lastRequest ? lastRequest.position + 1 : 0
-    
+      .single();
+
+    const nextPosition = lastRequest ? lastRequest.position + 1 : 0;
+
     const { data: newRequest, error } = await supabase
-      .from('requests')
+      .from("requests")
       .insert({
         collection_id: collectionId,
         name: request.name,
-        description: request.description || '',
+        description: request.description || "",
         method: request.method,
         url: request.url,
         headers: request.headers || {},
-        body: request.body || '',
+        body: request.body || "",
         tags: request.tags || [],
-        position: nextPosition
+        position: nextPosition,
       })
       .select()
-      .single()
-    
-    if (error) throw error
-    
+      .single();
+
+    if (error) throw error;
+
     return {
       id: newRequest.id,
       name: newRequest.name,
@@ -245,63 +301,70 @@ export async function addRequestToCollection(collectionId, request) {
       tags: newRequest.tags,
       position: newRequest.position,
       createdAt: newRequest.created_at,
-      updatedAt: newRequest.updated_at
-    }
+      updatedAt: newRequest.updated_at,
+    };
   } catch (error) {
-    console.error('Error adding request to collection:', error)
-    throw error
+    console.error("Error adding request to collection:", error);
+    throw error;
   }
 }
 
 /**
  * Update a request by ID (with user security check)
  */
-export async function updateRequestInCollection(requestIdOrCollectionId, requestIdOrUpdates, updatesOrUndefined) {
-  const supabase = createClient()
-  
+export async function updateRequestInCollection(
+  requestIdOrCollectionId,
+  requestIdOrUpdates,
+  updatesOrUndefined
+) {
+  const supabase = createClient();
+
   try {
     // Handle both old signature (collectionId, requestId, updates) and new (requestId, updates)
-    let requestId, updates
+    let requestId, updates;
     if (updatesOrUndefined !== undefined) {
       // Old signature: (collectionId, requestId, updates)
-      requestId = requestIdOrUpdates
-      updates = updatesOrUndefined
+      requestId = requestIdOrUpdates;
+      updates = updatesOrUndefined;
     } else {
       // New signature: (requestId, updates)
-      requestId = requestIdOrCollectionId
-      updates = requestIdOrUpdates
+      requestId = requestIdOrCollectionId;
+      updates = requestIdOrUpdates;
     }
 
     // Get the current user for security
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
     if (userError || !user) {
-      throw new Error('User must be authenticated to update requests')
+      throw new Error("User must be authenticated to update requests");
     }
 
     // First, get all collection IDs owned by the user
     const { data: userCollections, error: collectionsError } = await supabase
-      .from('collections')
-      .select('id')
-      .eq('user_id', user.id)
-    
-    if (collectionsError) throw collectionsError
-    
-    const userCollectionIds = userCollections.map(col => col.id)
-    
+      .from("collections")
+      .select("id")
+      .eq("user_id", user.id);
+
+    if (collectionsError) throw collectionsError;
+
+    const userCollectionIds = userCollections.map((col) => col.id);
+
     if (userCollectionIds.length === 0) {
-      throw new Error('No collections found for user')
+      throw new Error("No collections found for user");
     }
 
     const { data: updatedRequest, error } = await supabase
-      .from('requests')
+      .from("requests")
       .update(updates)
-      .eq('id', requestId)
-      .in('collection_id', userCollectionIds)
+      .eq("id", requestId)
+      .in("collection_id", userCollectionIds)
       .select()
-      .single()
-    
-    if (error) throw error
-    
+      .single();
+
+    if (error) throw error;
+
     return {
       id: updatedRequest.id,
       name: updatedRequest.name,
@@ -313,11 +376,11 @@ export async function updateRequestInCollection(requestIdOrCollectionId, request
       tags: updatedRequest.tags,
       position: updatedRequest.position,
       createdAt: updatedRequest.created_at,
-      updatedAt: updatedRequest.updated_at
-    }
+      updatedAt: updatedRequest.updated_at,
+    };
   } catch (error) {
-    console.error('Error updating request:', error)
-    throw error
+    console.error("Error updating request:", error);
+    throw error;
   }
 }
 
@@ -325,21 +388,21 @@ export async function updateRequestInCollection(requestIdOrCollectionId, request
  * Delete a request from a collection
  */
 export async function deleteRequestFromCollection(collectionId, requestId) {
-  const supabase = createClient()
-  
+  const supabase = createClient();
+
   try {
     const { error } = await supabase
-      .from('requests')
+      .from("requests")
       .delete()
-      .eq('id', requestId)
-      .eq('collection_id', collectionId)
-    
-    if (error) throw error
-    
-    return true
+      .eq("id", requestId)
+      .eq("collection_id", collectionId);
+
+    if (error) throw error;
+
+    return true;
   } catch (error) {
-    console.error('Error deleting request:', error)
-    throw error
+    console.error("Error deleting request:", error);
+    throw error;
   }
 }
 
@@ -347,24 +410,28 @@ export async function deleteRequestFromCollection(collectionId, requestId) {
  * Search requests across all user's collections
  */
 export async function searchRequests(query) {
-  const supabase = createClient()
-  
+  const supabase = createClient();
+
   try {
     const { data: requests, error } = await supabase
-      .from('requests')
-      .select(`
+      .from("requests")
+      .select(
+        `
         *,
         collections!inner (
           id,
           name,
           user_id
         )
-      `)
-      .or(`name.ilike.%${query}%,description.ilike.%${query}%,url.ilike.%${query}%`)
-    
-    if (error) throw error
-    
-    return requests.map(request => ({
+      `
+      )
+      .or(
+        `name.ilike.%${query}%,description.ilike.%${query}%,url.ilike.%${query}%`
+      );
+
+    if (error) throw error;
+
+    return requests.map((request) => ({
       id: request.id,
       name: request.name,
       description: request.description,
@@ -375,11 +442,11 @@ export async function searchRequests(query) {
       tags: request.tags,
       createdAt: request.created_at,
       collectionId: request.collections.id,
-      collectionName: request.collections.name
-    }))
+      collectionName: request.collections.name,
+    }));
   } catch (error) {
-    console.error('Error searching requests:', error)
-    throw error
+    console.error("Error searching requests:", error);
+    throw error;
   }
 }
 
@@ -387,29 +454,29 @@ export async function searchRequests(query) {
  * Reorder requests within a collection
  */
 export async function reorderRequests(collectionId, requestIds) {
-  const supabase = createClient()
-  
+  const supabase = createClient();
+
   try {
     // Update positions for all requests in the new order
     const updates = requestIds.map((requestId, index) => ({
       id: requestId,
-      position: index
-    }))
-    
+      position: index,
+    }));
+
     for (const update of updates) {
       const { error } = await supabase
-        .from('requests')
+        .from("requests")
         .update({ position: update.position })
-        .eq('id', update.id)
-        .eq('collection_id', collectionId)
-      
-      if (error) throw error
+        .eq("id", update.id)
+        .eq("collection_id", collectionId);
+
+      if (error) throw error;
     }
-    
-    return true
+
+    return true;
   } catch (error) {
-    console.error('Error reordering requests:', error)
-    throw error
+    console.error("Error reordering requests:", error);
+    throw error;
   }
 }
 
@@ -417,38 +484,39 @@ export async function reorderRequests(collectionId, requestIds) {
  * Save request to history (for analytics)
  */
 export async function saveRequestToHistory(requestData, response) {
-  const supabase = createClient()
-  
+  const supabase = createClient();
+
   try {
     // Get the current user
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
     if (userError || !user) {
-      console.warn('No authenticated user for request history')
-      return false
+      console.warn("No authenticated user for request history");
+      return false;
     }
 
-    const { error } = await supabase
-      .from('request_history')
-      .insert({
-        user_id: user.id,
-        request_id: requestData.requestId || null,
-        method: requestData.method,
-        url: requestData.url,
-        headers: requestData.headers || {},
-        body: requestData.body || '',
-        response_status: response.status,
-        response_headers: response.headers || {},
-        response_body: response.body || '',
-        response_time: response.responseTime
-      })
-    
-    if (error) throw error
-    
-    return true
+    const { error } = await supabase.from("request_history").insert({
+      user_id: user.id,
+      request_id: requestData.requestId || null,
+      method: requestData.method,
+      url: requestData.url,
+      headers: requestData.headers || {},
+      body: requestData.body || "",
+      response_status: response.status,
+      response_headers: response.headers || {},
+      response_body: response.body || "",
+      response_time: response.responseTime,
+    });
+
+    if (error) throw error;
+
+    return true;
   } catch (error) {
-    console.error('Error saving request to history:', error)
+    console.error("Error saving request to history:", error);
     // Don't throw error for history - it's not critical
-    return false
+    return false;
   }
 }
 
@@ -456,20 +524,20 @@ export async function saveRequestToHistory(requestData, response) {
  * Get request history for analytics
  */
 export async function getRequestHistory(limit = 50) {
-  const supabase = createClient()
-  
+  const supabase = createClient();
+
   try {
     const { data: history, error } = await supabase
-      .from('request_history')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(limit)
-    
-    if (error) throw error
-    
-    return history
+      .from("request_history")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(limit);
+
+    if (error) throw error;
+
+    return history;
   } catch (error) {
-    console.error('Error fetching request history:', error)
-    throw error
+    console.error("Error fetching request history:", error);
+    throw error;
   }
 }
