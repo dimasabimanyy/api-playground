@@ -490,7 +490,7 @@ export default function DocsPage() {
             </p>
             <Button
               onClick={createNewDocumentation}
-              className={`${
+              className={`cursor-pointer ${
                 isDark
                   ? "bg-white text-black hover:bg-gray-200"
                   : "bg-black text-white hover:bg-gray-800"
