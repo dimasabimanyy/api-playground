@@ -100,6 +100,7 @@ export default function DocGeneratorModal({
   useEffect(() => {
     if (collections.length) {
       console.log("success collections: ", collections);
+      setFilteredCollections(collections);
     }
   }, [collections]);
 
@@ -154,9 +155,9 @@ export default function DocGeneratorModal({
   //   })
   //   .slice(0, debouncedSearchQuery.trim() === "" ? collectionsLimit : 50); // Show first 10 by default, 50 when searching
 
-  const hasMoreCollections =
-    Object.values(collections).length > collectionsLimit &&
-    debouncedSearchQuery.trim() === "";
+  // const hasMoreCollections =
+  //   Object.values(collections).length > collectionsLimit &&
+  //   debouncedSearchQuery.trim() === "";
 
   // Get selected collection object
   const selectedCollectionObject = selectedCollection
@@ -376,7 +377,7 @@ export default function DocGeneratorModal({
                           e.preventDefault();
                         }
                       }}
-                      placeholder="Search and select a collection..."
+                      placeholder="Start typing your collection name..."
                       className={`pl-9 ${
                         selectedCollectionObject ? "pr-16" : "pr-9"
                       } text-sm font-normal border ${
@@ -471,19 +472,20 @@ export default function DocGeneratorModal({
                                 >
                                   {collection.name}
                                 </div>
-                                <div
+                                {/* Commented total endpoints */}
+                                {/* <div
                                   className={`text-sm ${themeClasses.text.tertiary} mt-1`}
                                 >
                                   {collection.requests?.length || 0} endpoint
                                   {(collection.requests?.length || 0) !== 1
                                     ? "s"
                                     : ""}
-                                </div>
+                                </div> */}
                               </button>
                             ))}
 
                             {/* Load More Button */}
-                            {hasMoreCollections && (
+                            {/* {hasMoreCollections && (
                               <button
                                 onClick={(e) => {
                                   e.preventDefault();
@@ -505,7 +507,7 @@ export default function DocGeneratorModal({
                                   more)
                                 </div>
                               </button>
-                            )}
+                            )} */}
                           </>
                         )}
                       </div>
