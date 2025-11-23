@@ -30,7 +30,7 @@ export async function getCollections() {
           updated_at
         )
       `)
-      .order('created_at', { ascending: true })
+      .order('created_at', { ascending: true }).limit(2)
     
     if (error) throw error
     

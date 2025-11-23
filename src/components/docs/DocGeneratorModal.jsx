@@ -12,15 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  BookOpen,
-  Check,
-  Search,
-  X,
-  ChevronDown,
-  Upload,
-  Trash2,
-} from "lucide-react";
+import { BookOpen, Check, Search, X, ChevronDown } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { getThemeClasses } from "@/lib/theme";
 import { DocsGenerator } from "@/lib/docs-generator";
@@ -42,8 +34,6 @@ const documentationInitialData = {
   description: "Complete API reference for your application",
   baseUrl: "https://api.example.com",
   // Branding
-  logo: null,
-  logoPreview: null,
   primaryColor: "#171717",
   secondaryColor: "#6b7280",
   accentColor: "#3b82f6",
@@ -79,59 +69,7 @@ export default function DocGeneratorModal({
   const [collectionsLimit, setCollectionsLimit] = useState(COLLECTION_LIMIT);
   const [customization, setCustomization] = useState(documentationInitialData);
 
-  // Handle pre-selected collection and reset state
-  useEffect(() => {
-    if (open) {
-      setSelectedCollection(preSelectedCollectionId || null);
-
-      setSearchQuery("");
-      setDebouncedSearchQuery("");
-
-      setShowDropdown(false);
-      setCollectionsLimit(COLLECTION_LIMIT); // Reset limit when modal opens
-
-      // Reset logo when modal opens
-      setCustomization((prev) => ({
-        ...prev,
-        logo: null,
-        logoPreview: null,
-      }));
-    }
-  }, [preSelectedCollectionId, open]);
-
-  // Debounce search query
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchQuery(searchQuery);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      // Don't close if clicking on the dropdown or its contents
-      if (
-        event.target.closest("[data-dropdown]") ||
-        event.target.closest("[data-dropdown-item]")
-      ) {
-        return;
-      }
-      setShowDropdown(false);
-    };
-
-    if (showDropdown) {
-      document.addEventListener("mousedown", handleClickOutside);
-      return () =>
-        document.removeEventListener("mousedown", handleClickOutside);
-    }
-  }, [showDropdown]);
-
   const handleCollectionSelect = (collectionId) => {
-    console.log("handleCollectionSelect called with:", collectionId);
-    console.log("Available collections:", Object.keys(collections));
-    console.log("Selected collection object:", collections[collectionId]);
     setSelectedCollection(collectionId);
     setSearchQuery("");
     setShowDropdown(false);
@@ -139,44 +77,6 @@ export default function DocGeneratorModal({
 
   const handleCollectionClear = () => {
     setSelectedCollection(null);
-  };
-
-  // Handle logo upload
-  const handleLogoUpload = (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    // Validate file type
-    const validTypes = [
-      "image/png",
-      "image/jpg",
-      "image/jpeg",
-      "image/svg+xml",
-    ];
-    if (!validTypes.includes(file.type)) {
-      alert("Please upload a valid image file (PNG, JPG, or SVG)");
-      return;
-    }
-
-    // Validate file size (2MB limit)
-    if (file.size > 2 * 1024 * 1024) {
-      alert("File size must be less than 2MB");
-      return;
-    }
-
-    // Create preview URL
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setCustomization((prev) => ({
-        ...prev,
-        logo: file,
-        logoPreview: e.target.result,
-      }));
-    };
-    reader.readAsDataURL(file);
-
-    // Clear the input so the same file can be selected again
-    event.target.value = "";
   };
 
   // Filter and limit collections based on search query
@@ -306,6 +206,48 @@ export default function DocGeneratorModal({
       );
     }
   };
+
+  // Handle pre-selected collection and reset state
+  useEffect(() => {
+    if (open) {
+      setSelectedCollection(preSelectedCollectionId || null);
+
+      setSearchQuery("");
+      setDebouncedSearchQuery("");
+
+      setShowDropdown(false);
+      setCollectionsLimit(COLLECTION_LIMIT); // Reset limit when modal opens
+    }
+  }, [preSelectedCollectionId, open]);
+
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Don't close if clicking on the dropdown or its contents
+      if (
+        event.target.closest("[data-dropdown]") ||
+        event.target.closest("[data-dropdown-item]")
+      ) {
+        return;
+      }
+      setShowDropdown(false);
+    };
+
+    if (showDropdown) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [showDropdown]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -682,117 +624,6 @@ export default function DocGeneratorModal({
                   Branding
                 </h3>
                 <div className="space-y-4">
-                  {/* Logo Upload */}
-                  <div className="max-w-md">
-                    <label
-                      className={`text-sm font-medium ${themeClasses.text.secondary} mb-2 block`}
-                    >
-                      Logo (will be used as favicon too)
-                    </label>
-
-                    {customization.logoPreview ? (
-                      <div className="space-y-3">
-                        {/* Logo Preview */}
-                        <div
-                          className={`border rounded-lg p-4 ${
-                            isDark
-                              ? "border-gray-700 bg-gray-800/50"
-                              : "border-gray-300 bg-gray-50"
-                          }`}
-                        >
-                          <div className="flex items-center gap-3">
-                            <img
-                              src={customization.logoPreview}
-                              alt="Logo preview"
-                              className="w-12 h-12 object-contain rounded"
-                            />
-                            <div className="flex-1">
-                              <p
-                                className={`text-sm font-medium ${themeClasses.text.primary}`}
-                              >
-                                Logo uploaded
-                              </p>
-                              <p
-                                className={`text-xs ${themeClasses.text.tertiary}`}
-                              >
-                                {customization.logo?.name}
-                              </p>
-                            </div>
-                            <button
-                              onClick={() =>
-                                setCustomization((prev) => ({
-                                  ...prev,
-                                  logo: null,
-                                  logoPreview: null,
-                                }))
-                              }
-                              className={`p-2 rounded-lg transition-colors ${
-                                isDark
-                                  ? "hover:bg-gray-700 text-gray-400 hover:text-red-400"
-                                  : "hover:bg-gray-200 text-gray-500 hover:text-red-500"
-                              }`}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Replace Button */}
-                        <div className="relative">
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleLogoUpload}
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                            id="logo-replace"
-                          />
-                          <label
-                            htmlFor="logo-replace"
-                            className={`block w-full p-2 text-center text-sm border rounded-lg cursor-pointer transition-colors ${
-                              isDark
-                                ? "border-gray-700 text-gray-300 hover:bg-gray-800"
-                                : "border-gray-300 text-gray-600 hover:bg-gray-50"
-                            }`}
-                          >
-                            Replace logo
-                          </label>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="relative">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={handleLogoUpload}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                          id="logo-upload"
-                        />
-                        <label
-                          htmlFor="logo-upload"
-                          className={`block border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
-                            isDark
-                              ? "border-gray-700 bg-gray-800/50 hover:border-gray-600 hover:bg-gray-800"
-                              : "border-gray-300 bg-gray-50 hover:border-gray-400 hover:bg-gray-100"
-                          }`}
-                        >
-                          <Upload
-                            className={`w-8 h-8 mx-auto mb-3 ${themeClasses.text.tertiary}`}
-                          />
-                          <p
-                            className={`text-sm font-medium ${themeClasses.text.primary} mb-1`}
-                          >
-                            Upload logo
-                          </p>
-                          <p
-                            className={`text-xs ${themeClasses.text.tertiary}`}
-                          >
-                            PNG, JPG, or SVG up to 2MB
-                          </p>
-                        </label>
-                      </div>
-                    )}
-                  </div>
-
                   {/* Color Pickers */}
                   <div className="grid grid-cols-3 gap-4">
                     {[
