@@ -129,6 +129,7 @@ const layout = ({ children }) => {
     // Set correct initial state after hydration
     setSidebarCollapsed(window.innerWidth < 1024);
   }, []);
+
   // Handle search modal keyboard shortcuts and clicks
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -1199,6 +1200,7 @@ const layout = ({ children }) => {
         <DashboardHeader
           layoutMode={layoutMode}
           setLayoutMode={setLayoutMode}
+          setSidebarCollapsed={setSidebarCollapsed}
         />
 
         {/* Main Content Layout - Theme Aware */}

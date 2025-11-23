@@ -14,7 +14,11 @@ import {
 import UserAvatar from "@/components/profile/UserAvatar";
 import { Input } from "@/components/ui/input";
 
-const DashboardHeader = ({ layoutMode, setLayoutMode }) => {
+const DashboardHeader = ({
+  layoutMode,
+  setLayoutMode,
+  setSidebarCollapsed,
+}) => {
   const { toggleTheme, isDark } = useTheme();
   const { user, signOut, loading: authLoading } = useAuth();
 
@@ -22,9 +26,9 @@ const DashboardHeader = ({ layoutMode, setLayoutMode }) => {
 
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(
-    typeof window !== "undefined" && window.innerWidth < 1024
-  );
+  // const [sidebarCollapsed, setSidebarCollapsed] = useState(
+  //   typeof window !== "undefined" && window.innerWidth < 1024
+  // );
 
   // Handle search modal keyboard shortcuts and clicks
   useEffect(() => {
@@ -57,7 +61,7 @@ const DashboardHeader = ({ layoutMode, setLayoutMode }) => {
       <div className="flex items-center space-x-2 sm:space-x-6 min-w-0 flex-shrink-0">
         {/* Mobile Hamburger Menu */}
         <button
-          onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+          onClick={() => setSidebarCollapsed((prevState) => !prevState)}
           className="lg:hidden p-1.5 transition-all duration-200 hover:bg-gray-50"
           style={{ borderRadius: "6px" }}
         >
@@ -220,7 +224,7 @@ const DashboardHeader = ({ layoutMode, setLayoutMode }) => {
 
         {/* User Avatar/Auth Section */}
         {authLoading ? (
-          <div className="h-8 w-8 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+          <div className="h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
         ) : user ? (
           <div className="relative group">
             <UserAvatar user={user} isDark={isDark} />
