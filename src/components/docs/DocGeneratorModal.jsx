@@ -18,6 +18,7 @@ import { getThemeClasses } from "@/lib/theme";
 import { DocsGenerator } from "@/lib/docs-generator";
 import { DocsProjects } from "@/lib/docs-storage-db";
 import { useCollections } from "@/contexts/CollectionsContext";
+import { getCollectionsPagination } from "@/lib/supabase-collections";
 
 const templates = [
   {
@@ -59,8 +60,9 @@ export default function DocGeneratorModal({
 }) {
   const { isDark } = useTheme();
   const themeClasses = getThemeClasses(isDark);
-  const { collections } = useCollections();
+  // const { collections } = useCollections();
 
+  const [collections, setCollections] = useState([]);
   const [selectedCollection, setSelectedCollection] = useState(null);
   const [selectedTemplate, setSelectedTemplate] = useState("stripe-style");
   const [searchQuery, setSearchQuery] = useState("");
@@ -68,6 +70,7 @@ export default function DocGeneratorModal({
   const [showDropdown, setShowDropdown] = useState(false);
   const [collectionsLimit, setCollectionsLimit] = useState(COLLECTION_LIMIT);
   const [customization, setCustomization] = useState(documentationInitialData);
+  const [filteredCollections, setFilteredCollections] = useState([]);
 
   const handleCollectionSelect = (collectionId) => {
     setSelectedCollection(collectionId);
@@ -79,31 +82,77 @@ export default function DocGeneratorModal({
     setSelectedCollection(null);
   };
 
-  // Filter and limit collections based on search query
-  const filteredCollections = Object.values(collections)
-    .filter((collection) => {
-      // If no search query, show all collections (will be limited below)
-      if (debouncedSearchQuery.trim() === "") {
-        return true;
-      }
+  const getCollectionsByPagination = async () => {
+    const data = await getCollectionsPagination({
+      page: 1,
+      pageSize: 10,
+    });
 
-      // Otherwise filter by search query
-      return (
-        collection.name
-          .toLowerCase()
-          .includes(debouncedSearchQuery.toLowerCase()) ||
-        (collection.requests || []).some(
-          (request) =>
-            request.name
-              ?.toLowerCase()
-              .includes(debouncedSearchQuery.toLowerCase()) ||
-            request.url
-              ?.toLowerCase()
-              .includes(debouncedSearchQuery.toLowerCase())
-        )
-      );
-    })
-    .slice(0, debouncedSearchQuery.trim() === "" ? collectionsLimit : 50); // Show first 10 by default, 50 when searching
+    console.log("get data: ", data);
+
+    setCollections(data);
+  };
+
+  useEffect(() => {
+    getCollectionsByPagination();
+  }, []);
+
+  useEffect(() => {
+    if (collections.length) {
+      console.log("success collections: ", collections);
+    }
+  }, [collections]);
+
+  // const filteredCollections = Object.values(collections)
+  //   .filter((collection) => {
+  //     // If no search query, show all collections (will be limited below)
+  //     if (debouncedSearchQuery.trim() === "") {
+  //       return true;
+  //     }
+
+  //     // Otherwise filter by search query
+  //     return (
+  //       collection.name
+  //         .toLowerCase()
+  //         .includes(debouncedSearchQuery.toLowerCase()) ||
+  //       (collection.requests || []).some(
+  //         (request) =>
+  //           request.name
+  //             ?.toLowerCase()
+  //             .includes(debouncedSearchQuery.toLowerCase()) ||
+  //           request.url
+  //             ?.toLowerCase()
+  //             .includes(debouncedSearchQuery.toLowerCase())
+  //       )
+  //     );
+  //   })
+  //   .slice(0, debouncedSearchQuery.trim() === "" ? collectionsLimit : 50); // Show first 10 by default, 50 when searching
+
+  // Filter and limit collections based on search query
+  // const filteredCollections = Object.values(collections)
+  //   .filter((collection) => {
+  //     // If no search query, show all collections (will be limited below)
+  //     if (debouncedSearchQuery.trim() === "") {
+  //       return true;
+  //     }
+
+  //     // Otherwise filter by search query
+  //     return (
+  //       collection.name
+  //         .toLowerCase()
+  //         .includes(debouncedSearchQuery.toLowerCase()) ||
+  //       (collection.requests || []).some(
+  //         (request) =>
+  //           request.name
+  //             ?.toLowerCase()
+  //             .includes(debouncedSearchQuery.toLowerCase()) ||
+  //           request.url
+  //             ?.toLowerCase()
+  //             .includes(debouncedSearchQuery.toLowerCase())
+  //       )
+  //     );
+  //   })
+  //   .slice(0, debouncedSearchQuery.trim() === "" ? collectionsLimit : 50); // Show first 10 by default, 50 when searching
 
   const hasMoreCollections =
     Object.values(collections).length > collectionsLimit &&

@@ -1,11 +1,11 @@
 import { createClient } from "./supabase";
 
-export const getCollectionsPagination = async (
-  page,
-  totalPerPage = 10,
+export const getCollectionsPagination = async ({
+  page = 1,
+  pageSize = 10,
   startIndex = 0,
   endIndex = 9
-) => {
+}) => {
   try {
     let startIndexRange = 0;
     let endIndexRange = 9;
@@ -13,8 +13,8 @@ export const getCollectionsPagination = async (
     // Use page based pagination
     if (page) {
       // Minus 1 at the end because the index is zero-based
-      startIndexRange = (totalPerPage * page) / totalPerPage - 1;
-      endIndexRange = totalPerPage * page - 1;
+      startIndexRange = (pageSize * page) / pageSize - 1;
+      endIndexRange = pageSize * page - 1;
     }
 
     // Use index based pagination
