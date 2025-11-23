@@ -113,9 +113,11 @@ const layout = ({ children }) => {
   const [showShared, setShowShared] = useState(false);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(
-    typeof window !== "undefined" && window.innerWidth < 1024
-  );
+  // const [sidebarCollapsed, setSidebarCollapsed] = useState(
+  //   typeof window !== "undefined" && window.innerWidth < 1024
+  // );
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
   const [activeMenuTab, setActiveMenuTab] = useState("collections");
   const [sidebarContentOpen, setSidebarContentOpen] = useState(false); // Track if sidebar content is visible
   const [sidebarContentWidth, setSidebarContentWidth] = useState(280); // Width of the content panel in pixels
@@ -123,6 +125,10 @@ const layout = ({ children }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchModalOpen, setSearchModalOpen] = useState(false);
 
+  useEffect(() => {
+    // Set correct initial state after hydration
+    setSidebarCollapsed(window.innerWidth < 1024);
+  }, []);
   // Handle search modal keyboard shortcuts and clicks
   useEffect(() => {
     const handleKeyDown = (e) => {
