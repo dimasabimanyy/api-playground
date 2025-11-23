@@ -18,7 +18,11 @@ import { getThemeClasses } from "@/lib/theme";
 import { DocsGenerator } from "@/lib/docs-generator";
 import { DocsProjects } from "@/lib/docs-storage-db";
 import { useCollections } from "@/contexts/CollectionsContext";
-import { getCollectionsPagination } from "@/lib/supabase-collections";
+import {
+  getCollectionsBySearch,
+  getCollectionsPagination,
+} from "@/lib/supabase-collections";
+import useDebounce from "@/hooks/useDebounce";
 
 const templates = [
   {
@@ -72,6 +76,8 @@ export default function DocGeneratorModal({
   const [customization, setCustomization] = useState(documentationInitialData);
   const [filteredCollections, setFilteredCollections] = useState([]);
 
+  const debouncedSearcInput = useDebounce(searchQuery, 500);
+
   const handleCollectionSelect = (collectionId) => {
     setSelectedCollection(collectionId);
     setSearchQuery("");
@@ -103,6 +109,28 @@ export default function DocGeneratorModal({
       setFilteredCollections(collections);
     }
   }, [collections]);
+
+  // Trigger API call when debounced input changes
+  useEffect(() => {
+    if (!debouncedSearcInput) return;
+
+    console.log("Searching for:", debouncedSearcInput);
+
+    const getCollectionsBySearchName = async () => {
+      try {
+        const data = await getCollectionsBySearch(debouncedSearcInput); // As name
+
+        setFilteredCollections(data || []);
+      } catch (e) {
+        console.error(
+          `Error fetching collections by search name: ${e.message}`
+        );
+      }
+    };
+
+    getCollectionsBySearchName();
+    // fetch("/api/search?q=" + debouncedSearcInput)
+  }, [debouncedSearcInput]);
 
   // const filteredCollections = Object.values(collections)
   //   .filter((collection) => {

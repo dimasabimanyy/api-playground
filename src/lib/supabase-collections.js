@@ -1,10 +1,35 @@
 import { createClient } from "./supabase";
 
+export const getCollectionsBySearch = async (name) => {
+  try {
+    const supabase = createClient();
+
+    const { data, error } = await supabase
+      .from("collections")
+      .select()
+      .ilike("name", `%${name}%`)
+      .order("created_at", { ascending: false })
+      .range(0, 19); // Limit to 20. Suggest user to write more specific keyword if the collection is still too many
+
+    console.log("data pagination: ", data);
+
+    if (error) {
+      throw error;
+    }
+
+    return data || [];
+  } catch (e) {
+    console.error(`Error when getting collections by search: ${e.message}`);
+
+    throw new Error(e.message);
+  }
+};
+
 export const getCollectionsPagination = async ({
   page = 1,
   pageSize = 10,
   startIndex = 0,
-  endIndex = 9
+  endIndex = 9,
 } = {}) => {
   try {
     let startIndexRange = 0;
@@ -22,6 +47,7 @@ export const getCollectionsPagination = async ({
       startIndexRange = startIndex;
       endIndexRange = endIndex;
     }
+
     const supabase = createClient();
 
     const { data, error } = await supabase
@@ -36,7 +62,7 @@ export const getCollectionsPagination = async ({
       throw error;
     }
 
-    return data;
+    return data || [];
   } catch (e) {
     console.error("Error when getting collections by pagination : ", e.message);
 
