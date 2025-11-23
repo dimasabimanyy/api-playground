@@ -83,10 +83,14 @@ const DashboardHeader = ({ layoutMode, setLayoutMode }) => {
           >
             <Zap className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
           </div>
-          <h1 className={`text-normal font-bold tracking-tight ${themeClasses.text.bold} hidden sm:block`}>
+          <h1
+            className={`text-normal font-bold tracking-tight ${themeClasses.text.bold} hidden sm:block`}
+          >
             API Playground
           </h1>
-          <h1 className={`text-sm font-bold tracking-tight ${themeClasses.text.bold} sm:hidden`}>
+          <h1
+            className={`text-sm font-bold tracking-tight ${themeClasses.text.bold} sm:hidden`}
+          >
             API
           </h1>
         </div>
@@ -95,9 +99,7 @@ const DashboardHeader = ({ layoutMode, setLayoutMode }) => {
       <div className="flex items-center space-x-1 sm:space-x-3 ml-auto">
         {/* Search Input */}
         <div className="relative z-[99999] search-container">
-          <div
-            className={`transition-all duration-200 w-80`}
-          >
+          <div className={`transition-all duration-200 w-80`}>
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 z-10" />
             <Input
               placeholder={
@@ -109,11 +111,20 @@ const DashboardHeader = ({ layoutMode, setLayoutMode }) => {
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => setSearchModalOpen(true)}
               className="h-[2.2rem] pl-10 py-0 text-vs focus:ring-0 focus:outline-none cursor-pointer transition-all duration-300"
+              // style={{
+              //   borderRadius: "6px",
+              //   borderColor: "rgb(235, 235, 235)",
+              //   backgroundColor: "white",
+              //   border: "1px solid rgb(235, 235, 235)",
+              //   boxShadow: "none",
+              // }}
               style={{
                 borderRadius: "6px",
-                borderColor: "rgb(235, 235, 235)",
-                backgroundColor: "white",
-                border: "1px solid rgb(235, 235, 235)",
+                borderColor: isDark ? "rgb(55, 65, 81)" : "rgb(235, 235, 235)",
+                backgroundColor: isDark ? "rgb(17, 24, 39)" : "white",
+                border: `1px solid ${
+                  isDark ? "rgb(55, 65, 81)" : "rgb(235, 235, 235)"
+                }`,
                 boxShadow: "none",
               }}
             />
