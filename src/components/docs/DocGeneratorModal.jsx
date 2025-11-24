@@ -82,8 +82,8 @@ export default function DocGeneratorModal({
 
   const debouncedSearcInput = useDebounce(searchQuery, 500);
 
-  const handleCollectionSelect = (collectionId) => {
-    setSelectedCollection(collectionId);
+  const handleCollectionSelect = (collection) => {
+    setSelectedCollection(collection);
     setSearchQuery("");
     setShowDropdown(false);
   };
@@ -409,11 +409,7 @@ export default function DocGeneratorModal({
                       className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${themeClasses.text.tertiary}`}
                     />
                     <Input
-                      value={
-                        selectedCollection
-                          ? selectedCollection.name
-                          : searchQuery
-                      }
+                      value={selectedCollection?.name ?? searchQuery ?? ""}
                       onChange={(e) => {
                         if (!selectedCollection) {
                           setSearchQuery(e.target.value);
@@ -518,7 +514,7 @@ export default function DocGeneratorModal({
                                       collection.id,
                                       collection.name
                                     );
-                                    handleCollectionSelect(collection.id);
+                                    handleCollectionSelect(collection);
                                   }}
                                   className={`w-full p-3 text-left hover:${
                                     isDark ? "bg-gray-900" : "bg-gray-50"
