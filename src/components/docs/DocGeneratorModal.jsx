@@ -31,6 +31,7 @@ import {
 } from "@/lib/supabase-collections";
 import useDebounce from "@/hooks/useDebounce";
 import { predefinedDocumenationTemplates } from "@/config/docs-templates";
+import { generateDocumentationFromCollection } from "@/lib/docs-helper";
 
 const COLLECTION_LIMIT = 2;
 
@@ -59,7 +60,7 @@ const documentationInitialData = {
 export default function DocGeneratorModal({
   open,
   onOpenChange,
-  preSelectedCollectionId = null,
+  preSelectedCollection = null,
   onGenerate,
 }) {
   const { isDark } = useTheme();
@@ -199,16 +200,23 @@ export default function DocGeneratorModal({
     : null;
 
   const handleGenerateDocs = async () => {
-    if (!selectedCollection) return;
+    if (!selectedCollection) {
+      // Add UI to handle error
+      return;
+    };
 
     console.log("selected coll: ", selectedCollection);
     console.log("selected col obj: ", selectedCollectionObject);
+
+    return;
 
     try {
       // Generate enhanced documentation using real collections data
       const collectionsToGenerate = {
         [selectedCollection]: selectedCollectionObject,
       };
+
+      const result = await generateDocumentationFromCollection(selectedCollection.id, config);
 
       const docData = await DocsGenerator.generateFromCollections(
         collectionsToGenerate,
@@ -294,7 +302,7 @@ export default function DocGeneratorModal({
   // Handle pre-selected collection and reset state
   useEffect(() => {
     if (open) {
-      setSelectedCollection(preSelectedCollectionId || null);
+      setSelectedCollection(preSelectedCollection || null);
 
       setSearchQuery("");
       setDebouncedSearchQuery("");
@@ -302,7 +310,7 @@ export default function DocGeneratorModal({
       setShowDropdown(false);
       setCollectionsLimit(COLLECTION_LIMIT); // Reset limit when modal opens
     }
-  }, [preSelectedCollectionId, open]);
+  }, [preSelectedCollection, open]);
 
   // Debounce search query
   useEffect(() => {
