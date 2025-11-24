@@ -12,7 +12,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { BookOpen, Check, Search, X, ChevronDown } from "lucide-react";
+import {
+  BookOpen,
+  Check,
+  Search,
+  X,
+  ChevronDown,
+  Ellipsis,
+} from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { getThemeClasses } from "@/lib/theme";
 import { DocsGenerator } from "@/lib/docs-generator";
@@ -75,6 +82,7 @@ export default function DocGeneratorModal({
   const [collectionsLimit, setCollectionsLimit] = useState(COLLECTION_LIMIT);
   const [customization, setCustomization] = useState(documentationInitialData);
   const [filteredCollections, setFilteredCollections] = useState([]);
+  const [isDebounceSearchLoading, setIsDebounceSearchLoading] = useState(false);
 
   const debouncedSearcInput = useDebounce(searchQuery, 500);
 
@@ -114,7 +122,7 @@ export default function DocGeneratorModal({
   useEffect(() => {
     if (!debouncedSearcInput) return;
 
-    console.log("Searching for:", debouncedSearcInput);
+    setIsDebounceSearchLoading(true);
 
     const getCollectionsBySearchName = async () => {
       try {
@@ -125,12 +133,17 @@ export default function DocGeneratorModal({
         console.error(
           `Error fetching collections by search name: ${e.message}`
         );
+      } finally {
+        setIsDebounceSearchLoading(false);
       }
     };
 
     getCollectionsBySearchName();
-    // fetch("/api/search?q=" + debouncedSearcInput)
   }, [debouncedSearcInput]);
+
+  useEffect(() => {
+    console.log("loading: ", isDebounceSearchLoading);
+  }, [isDebounceSearchLoading]);
 
   // const filteredCollections = Object.values(collections)
   //   .filter((collection) => {
@@ -383,9 +396,6 @@ export default function DocGeneratorModal({
                           : searchQuery
                       }
                       onChange={(e) => {
-                        console.log("target: ", e.target.value);
-
-                        console.log(selectedCollection);
                         if (!selectedCollectionObject) {
                           setSearchQuery(e.target.value);
                           setShowDropdown(e.target.value.length > 0);
@@ -439,69 +449,79 @@ export default function DocGeneratorModal({
                       </button>
                     )}
 
-                    {/* Chevron when no selection */}
+                    {/* Chevron when no selection or Loading indicator */}
                     {!selectedCollectionObject && (
-                      <ChevronDown
-                        className={`absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${themeClasses.text.tertiary}`}
-                      />
+                      <>
+                        {isDebounceSearchLoading ? (
+                          <Ellipsis
+                            className={`absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${themeClasses.text.tertiary} animate-pulse`}
+                          />
+                        ) : (
+                          <ChevronDown
+                            className={`absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${themeClasses.text.tertiary}`}
+                          />
+                        )}
+                      </>
                     )}
 
                     {/* Dropdown */}
-                    {!selectedCollectionObject && showDropdown && (
-                      <div
-                        data-dropdown
-                        className={`absolute z-10 w-full mt-1 max-h-60 overflow-y-auto border ${
-                          isDark ? "bg-black" : "bg-white"
-                        } shadow-lg`}
-                        style={{
-                          borderRadius: "6px",
-                          borderColor: isDark
-                            ? "rgb(38, 38, 38)"
-                            : "rgb(235, 235, 235)",
-                        }}
-                      >
-                        {filteredCollections.length === 0 ? (
-                          <div
-                            className={`p-4 text-center ${themeClasses.text.tertiary}`}
-                          >
-                            <Search className="h-5 w-5 mx-auto mb-2 opacity-40" />
-                            <p className="text-sm">No collections found</p>
-                          </div>
-                        ) : (
-                          <>
-                            {filteredCollections.map((collection) => (
-                              <button
-                                key={collection.id}
-                                data-dropdown-item
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  console.log(
-                                    "Collection clicked:",
-                                    collection.id,
-                                    collection.name
-                                  );
-                                  handleCollectionSelect(collection.id);
-                                }}
-                                className={`w-full p-3 text-left hover:${
-                                  isDark ? "bg-gray-900" : "bg-gray-50"
-                                } transition-colors cursor-pointer`}
-                                style={{
-                                  borderBottom: `1px solid ${
-                                    isDark
-                                      ? "rgb(38, 38, 38)"
-                                      : "rgb(235, 235, 235)"
-                                  }`,
-                                  borderBottomWidth: "1px",
-                                }}
-                              >
-                                <div
-                                  className={`font-medium ${themeClasses.text.primary}`}
+                    {!selectedCollectionObject &&
+                      showDropdown &&
+                      !isDebounceSearchLoading && (
+                        <div
+                          data-dropdown
+                          className={`absolute z-10 w-full mt-1 max-h-60 overflow-y-auto border ${
+                            isDark ? "bg-black" : "bg-white"
+                          } shadow-lg`}
+                          style={{
+                            borderRadius: "6px",
+                            borderColor: isDark
+                              ? "rgb(38, 38, 38)"
+                              : "rgb(235, 235, 235)",
+                          }}
+                        >
+                          {filteredCollections.length === 0 ? (
+                            <div
+                              className={`p-4 text-center ${themeClasses.text.tertiary}`}
+                            >
+                              <Search className="h-5 w-5 mx-auto mb-2 opacity-40" />
+                              <p className="text-sm">No collections found</p>
+                            </div>
+                          ) : (
+                            <>
+                              {filteredCollections.map((collection) => (
+                                <button
+                                  key={collection.id}
+                                  data-dropdown-item
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    console.log(
+                                      "Collection clicked:",
+                                      collection.id,
+                                      collection.name
+                                    );
+                                    handleCollectionSelect(collection.id);
+                                  }}
+                                  className={`w-full p-3 text-left hover:${
+                                    isDark ? "bg-gray-900" : "bg-gray-50"
+                                  } transition-colors cursor-pointer`}
+                                  style={{
+                                    borderBottom: `1px solid ${
+                                      isDark
+                                        ? "rgb(38, 38, 38)"
+                                        : "rgb(235, 235, 235)"
+                                    }`,
+                                    borderBottomWidth: "1px",
+                                  }}
                                 >
-                                  {collection.name}
-                                </div>
-                                {/* Commented total endpoints */}
-                                {/* <div
+                                  <div
+                                    className={`font-medium ${themeClasses.text.primary}`}
+                                  >
+                                    {collection.name}
+                                  </div>
+                                  {/* Commented total endpoints */}
+                                  {/* <div
                                   className={`text-sm ${themeClasses.text.tertiary} mt-1`}
                                 >
                                   {collection.requests?.length || 0} endpoint
@@ -509,11 +529,11 @@ export default function DocGeneratorModal({
                                     ? "s"
                                     : ""}
                                 </div> */}
-                              </button>
-                            ))}
+                                </button>
+                              ))}
 
-                            {/* Load More Button */}
-                            {/* {hasMoreCollections && (
+                              {/* Load More Button */}
+                              {/* {hasMoreCollections && (
                               <button
                                 onClick={(e) => {
                                   e.preventDefault();
@@ -536,10 +556,10 @@ export default function DocGeneratorModal({
                                 </div>
                               </button>
                             )} */}
-                          </>
-                        )}
-                      </div>
-                    )}
+                            </>
+                          )}
+                        </div>
+                      )}
                   </div>
 
                   {/* Selected Collection Info */}

@@ -11,7 +11,7 @@ export const getCollectionsBySearch = async (name) => {
       .order("created_at", { ascending: false })
       .range(0, 19); // Limit to 20. Suggest user to write more specific keyword if the collection is still too many
 
-    console.log("data pagination: ", data);
+    console.log("data searched: ", data);
 
     if (error) {
       throw error;
