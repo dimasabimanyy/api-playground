@@ -68,7 +68,9 @@ export default function DocGeneratorModal({
   // const { collections } = useCollections();
 
   const [collections, setCollections] = useState([]);
-  const [selectedCollection, setSelectedCollection] = useState(null);
+  const [selectedCollection, setSelectedCollection] = useState(
+    preSelectedCollection
+  );
   const [selectedTemplate, setSelectedTemplate] = useState("stripe-style");
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
@@ -205,21 +207,34 @@ export default function DocGeneratorModal({
       return;
     }
 
-    console.log("selected coll: ", selectedCollection);
-    // console.log("selected col obj: ", selectedCollection);
-
-    return;
-
     try {
-      // Generate enhanced documentation using real collections data
-      const collectionsToGenerate = {
-        [selectedCollection]: selectedCollection,
+      const options = { ...customization };
+
+      const docsSettings = {
+        name: options.title,
+        status: "PUBLISHED",
+        collection_id: selectedCollection.id,
+        settings: {},
       };
 
+      delete options.title;
+
+      docsSettings.settings = {
+        ...options,
+      };
+
+      console.log("docs setting: ", docsSettings);
+
+      return;
+
       const result = await generateDocumentationFromCollection(
-        selectedCollection.id,
-        config
+        selectedCollection,
+        docsSettings
       );
+
+      console.log("result: ", result);
+
+      return;
 
       const docData = await DocsGenerator.generateFromCollections(
         collectionsToGenerate,
@@ -303,17 +318,17 @@ export default function DocGeneratorModal({
   };
 
   // Handle pre-selected collection and reset state
-  useEffect(() => {
-    if (open) {
-      setSelectedCollection(preSelectedCollection || null);
+  // useEffect(() => {
+  //   if (open) {
+  //     setSelectedCollection(preSelectedCollection || null);
 
-      setSearchQuery("");
-      setDebouncedSearchQuery("");
+  //     setSearchQuery("");
+  //     setDebouncedSearchQuery("");
 
-      setShowDropdown(false);
-      setCollectionsLimit(COLLECTION_LIMIT); // Reset limit when modal opens
-    }
-  }, [preSelectedCollection, open]);
+  //     setShowDropdown(false);
+  //     setCollectionsLimit(COLLECTION_LIMIT); // Reset limit when modal opens
+  //   }
+  // }, [preSelectedCollection, open]);
 
   // Debounce search query
   useEffect(() => {

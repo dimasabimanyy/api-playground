@@ -1,24 +1,21 @@
 import { createClient } from "./supabase";
 
-export const generateDocumentationFromCollection = async (collection, settings) => {
+export const generateDocumentationFromCollection = async (collection = {}, settings) => {
   try {
-    // Insert to database
-    // Insert into docs_projects table
     const supabase = createClient();
 
-    // Get the selected collection to use its name
-    const selectedCollection = filteredCollections.find(
-      (c) => c.id === selectedCollectionId
-    );
-
+    if (!collection) {
+      console.error("Collection props is required!");
+    }
+    
     const docsProject = {
-      name: `${selectedCollection?.name || "API"} Documentation`,
+      name: `${collection.name || "API"} Documentation`,
       description:
         customization.description ||
-        `Documentation for ${selectedCollection?.name || "API Collection"}`,
+        `Documentation for ${collection.name || "API Collection"}`,
       settings,
-      status: "",
-      collection_id: selectedCollectionId,
+      status: "PUBLISHED",
+      collection_id: collection.id,
     };
 
     const { data: insertedProject, error } = await supabase
@@ -33,6 +30,8 @@ export const generateDocumentationFromCollection = async (collection, settings) 
     }
 
     console.log("Docs project created:", insertedProject);
+
+    return insertedProject;
   } catch (error) {
     console.error(error);
 
