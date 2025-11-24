@@ -30,14 +30,7 @@ import {
   getCollectionsPagination,
 } from "@/lib/supabase-collections";
 import useDebounce from "@/hooks/useDebounce";
-
-const templates = [
-  {
-    id: "stripe-style",
-    name: "Template A - Minimalist",
-    description: "Stripe/Mintlify-style with premium layout",
-  },
-];
+import { predefinedDocumenationTemplates } from "@/config/docs-templates";
 
 const COLLECTION_LIMIT = 2;
 
@@ -516,19 +509,10 @@ export default function DocGeneratorModal({
                                   }}
                                 >
                                   <div
-                                    className={`font-medium ${themeClasses.text.primary}`}
+                                    className={`${themeClasses.text.primary} text-sm`}
                                   >
                                     {collection.name}
                                   </div>
-                                  {/* Commented total endpoints */}
-                                  {/* <div
-                                  className={`text-sm ${themeClasses.text.tertiary} mt-1`}
-                                >
-                                  {collection.requests?.length || 0} endpoint
-                                  {(collection.requests?.length || 0) !== 1
-                                    ? "s"
-                                    : ""}
-                                </div> */}
                                 </button>
                               ))}
 
@@ -595,7 +579,7 @@ export default function DocGeneratorModal({
               <div className="grid grid-cols-2 gap-5">
                 {/* Left: Template Options */}
                 <div className="space-y-3">
-                  {templates.map((template) => (
+                  {predefinedDocumenationTemplates.map((template) => (
                     <button
                       key={template.id}
                       onClick={() => setSelectedTemplate(template.id)}
