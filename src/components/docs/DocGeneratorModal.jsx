@@ -32,6 +32,7 @@ import {
 import useDebounce from "@/hooks/useDebounce";
 import { predefinedDocumenationTemplates } from "@/config/docs-templates";
 import { generateDocumentationFromCollection } from "@/lib/docs-helper";
+import { useAuth } from "@/contexts/AuthContext";
 
 const COLLECTION_LIMIT = 2;
 
@@ -64,6 +65,7 @@ export default function DocGeneratorModal({
   onGenerate = () => {},
 }) {
   const { isDark } = useTheme();
+  const { user } = useAuth();
   const themeClasses = getThemeClasses(isDark);
   // const { collections } = useCollections();
 
@@ -213,6 +215,7 @@ export default function DocGeneratorModal({
       const docsSettings = {
         name: options.title,
         status: "PUBLISHED",
+        userId: user.id,
         collection_id: selectedCollection.id,
         settings: {},
       };

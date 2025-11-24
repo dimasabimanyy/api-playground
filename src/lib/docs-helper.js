@@ -19,6 +19,7 @@ export const generateDocumentationFromCollection = async (
       settings: settings.settings,
       status: settings.status,
       collection_id: collection.id,
+      user_id: settings.userId
     };
 
     const { data: insertedProject, error } = await supabase
