@@ -58,10 +58,10 @@ const documentationInitialData = {
 };
 
 export default function DocGeneratorModal({
-  open,
-  onOpenChange,
+  open = false,
+  onOpenChange = () => {},
   preSelectedCollection = null,
-  onGenerate,
+  onGenerate = () => {},
 }) {
   const { isDark } = useTheme();
   const themeClasses = getThemeClasses(isDark);
@@ -195,28 +195,31 @@ export default function DocGeneratorModal({
   //   debouncedSearchQuery.trim() === "";
 
   // Get selected collection object
-  const selectedCollectionObject = selectedCollection
-    ? collections[selectedCollection]
-    : null;
+  // const selectedCollection = selectedCollection
+  //   ? collections[selectedCollection]
+  //   : null;
 
   const handleGenerateDocs = async () => {
     if (!selectedCollection) {
       // Add UI to handle error
       return;
-    };
+    }
 
     console.log("selected coll: ", selectedCollection);
-    console.log("selected col obj: ", selectedCollectionObject);
+    // console.log("selected col obj: ", selectedCollection);
 
     return;
 
     try {
       // Generate enhanced documentation using real collections data
       const collectionsToGenerate = {
-        [selectedCollection]: selectedCollectionObject,
+        [selectedCollection]: selectedCollection,
       };
 
-      const result = await generateDocumentationFromCollection(selectedCollection.id, config);
+      const result = await generateDocumentationFromCollection(
+        selectedCollection.id,
+        config
+      );
 
       const docData = await DocsGenerator.generateFromCollections(
         collectionsToGenerate,
@@ -268,7 +271,7 @@ export default function DocGeneratorModal({
           selectedCollections: [selectedCollection],
           template: selectedTemplate,
           customization,
-          collections: [selectedCollectionObject],
+          collections: [selectedCollection],
           enhancedData: docData,
           docId,
           project: updatedProject || project,
@@ -392,18 +395,18 @@ export default function DocGeneratorModal({
                     />
                     <Input
                       value={
-                        selectedCollectionObject
-                          ? selectedCollectionObject.name
+                        selectedCollection
+                          ? selectedCollection.name
                           : searchQuery
                       }
                       onChange={(e) => {
-                        if (!selectedCollectionObject) {
+                        if (!selectedCollection) {
                           setSearchQuery(e.target.value);
                           setShowDropdown(e.target.value.length > 0);
                         }
                       }}
                       onFocus={(e) => {
-                        if (!selectedCollectionObject) {
+                        if (!selectedCollection) {
                           setShowDropdown(true);
                         } else {
                           // Prevent text selection when collection is already selected
@@ -411,18 +414,16 @@ export default function DocGeneratorModal({
                         }
                       }}
                       onMouseDown={(e) => {
-                        if (selectedCollectionObject) {
+                        if (selectedCollection) {
                           // Prevent text selection on mouse down
                           e.preventDefault();
                         }
                       }}
                       placeholder="Start typing your collection name..."
                       className={`pl-9 ${
-                        selectedCollectionObject ? "pr-16" : "pr-9"
+                        selectedCollection ? "pr-16" : "pr-9"
                       } text-sm font-normal border ${
-                        selectedCollectionObject
-                          ? "cursor-default select-none"
-                          : ""
+                        selectedCollection ? "cursor-default select-none" : ""
                       }`}
                       style={{
                         borderRadius: "6px",
@@ -431,12 +432,12 @@ export default function DocGeneratorModal({
                           : "rgb(235, 235, 235)",
                         backgroundColor: isDark ? "transparent" : "#fafafa",
                       }}
-                      readOnly={!!selectedCollectionObject}
+                      readOnly={!!selectedCollection}
                       autoFocus={false}
                     />
 
                     {/* Clear button when collection is selected */}
-                    {selectedCollectionObject && (
+                    {selectedCollection && (
                       <button
                         onClick={handleCollectionClear}
                         className={`absolute right-3 top-1/2 transform -translate-y-1/2 p-1 hover:${
@@ -451,7 +452,7 @@ export default function DocGeneratorModal({
                     )}
 
                     {/* Chevron when no selection or Loading indicator */}
-                    {!selectedCollectionObject && (
+                    {!selectedCollection && (
                       <>
                         {isDebounceSearchLoading ? (
                           <Ellipsis
@@ -466,7 +467,7 @@ export default function DocGeneratorModal({
                     )}
 
                     {/* Dropdown */}
-                    {!selectedCollectionObject &&
+                    {!selectedCollection &&
                       showDropdown &&
                       !isDebounceSearchLoading && (
                         <div
@@ -553,20 +554,6 @@ export default function DocGeneratorModal({
                         </div>
                       )}
                   </div>
-
-                  {/* Selected Collection Info */}
-                  {selectedCollectionObject && (
-                    <div
-                      className={`text-xs ${themeClasses.text.tertiary} flex items-center gap-1`}
-                    >
-                      <Check className="h-3 w-3" />
-                      {selectedCollectionObject.requests?.length || 0} endpoint
-                      {(selectedCollectionObject.requests?.length || 0) !== 1
-                        ? "s"
-                        : ""}{" "}
-                      in this collection
-                    </div>
-                  )}
                 </div>
               )}
             </div>

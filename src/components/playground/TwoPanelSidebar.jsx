@@ -25,6 +25,7 @@ import CreateNew from "../button/CreateNew";
 import ImportModal from "../modals/ImportModal";
 import { usePathname } from "next/navigation";
 import { sidebarMenuItems } from "@/config/sidebar";
+import DocGeneratorModal from "../docs/DocGeneratorModal";
 
 export default function TwoPanelSidebar({
   sidebarCollapsed,
@@ -60,7 +61,9 @@ export default function TwoPanelSidebar({
 }) {
   const pathname = usePathname();
   const [showImportModal, setShowImportModal] = useState(false);
+  const [docsModalOpen, setDocsModalOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [selectedCollection, setSelectedCollection] = useState({});
 
   // Handle client-side mounting to prevent hydration issues
   useEffect(() => {
@@ -143,7 +146,9 @@ export default function TwoPanelSidebar({
                             isDark ? "bg-gray-800/30" : "bg-gray-100/50"
                           }`
                     }`}
-                    onClick={() => onNavItemClick(item.id, mounted ? pathname : '')}
+                    onClick={() =>
+                      onNavItemClick(item.id, mounted ? pathname : "")
+                    }
                   >
                     <button
                       className={`flex items-center justify-center rounded-lg transition-all duration-200 cursor-pointer ${
@@ -282,20 +287,28 @@ export default function TwoPanelSidebar({
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
                                   <DropdownMenuItem
+                                    className="cursor-pointer"
                                     onClick={() =>
                                       setEditingCollection(collection.id)
                                     }
                                   >
-                                    <Edit className="h-3 w-3 mr-2" />
                                     Rename
                                   </DropdownMenuItem>
                                   <DropdownMenuItem
+                                    className="cursor-pointer"
+                                    onClick={() => {
+                                      setSelectedCollection(collection);
+                                      setDocsModalOpen(true);
+                                    }}
+                                  >
+                                    Generate documentation
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    className="cursor-pointer text-red-600"
                                     onClick={() =>
                                       deleteCollection(collection.id)
                                     }
-                                    className="text-red-600"
                                   >
-                                    <Trash2 className="h-3 w-3 mr-2" />
                                     Delete
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
@@ -442,6 +455,25 @@ export default function TwoPanelSidebar({
       </div>
 
       <ImportModal open={showImportModal} onOpenChange={setShowImportModal} />
+
+      <DocGeneratorModal
+        open={docsModalOpen}
+        preSelectedCollection={selectedCollection}
+        // onOpenChange={(open) => {
+        //   setDocsModalOpen(open);
+
+        //   if (!open) {
+        //     setSelectedCollectionForDocs(null);
+        //   }
+        // }}
+        // collections={getCollectionsWithDocs()}
+        // preSelectedCollectionId={selectedCollectionForDocs}
+        // onGenerate={(docData) => {
+        //   console.log("Generated docs with data:", docData);
+        //   setDocsModalOpen(false);
+        //   setSelectedCollectionForDocs(null);
+        // }}
+      />
     </>
   );
 }
