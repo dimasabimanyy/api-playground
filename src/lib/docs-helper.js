@@ -1,20 +1,23 @@
 import { createClient } from "./supabase";
 
-export const generateDocumentationFromCollection = async (collection = {}, settings) => {
+export const generateDocumentationFromCollection = async (
+  collection = {},
+  settings = {}
+) => {
   try {
     const supabase = createClient();
 
     if (!collection) {
       console.error("Collection props is required!");
     }
-    
+
     const docsProject = {
-      name: `${collection.name || "API"} Documentation`,
-      description:
-        customization.description ||
-        `Documentation for ${collection.name || "API Collection"}`,
-      settings,
-      status: "PUBLISHED",
+      name: settings.name || `${collection.name || "API"} Documentation`,
+      // description:
+      //   settings.description ||
+      //   `Documentation for ${collection.name || "API Collection"}`, // Do we need this? the field hasn't exist yet btw
+      settings: settings.settings,
+      status: settings.status,
       collection_id: collection.id,
     };
 

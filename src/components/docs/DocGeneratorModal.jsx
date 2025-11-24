@@ -225,8 +225,6 @@ export default function DocGeneratorModal({
 
       console.log("docs setting: ", docsSettings);
 
-      return;
-
       const result = await generateDocumentationFromCollection(
         selectedCollection,
         docsSettings
@@ -308,12 +306,12 @@ export default function DocGeneratorModal({
     } catch (error) {
       console.error("Failed to generate documentation:", error);
       // Fallback to old method if generation fails
-      window.open(
-        `/docs/generated?template=${selectedTemplate}&collections=${selectedCollection}&title=${encodeURIComponent(
-          customization.title
-        )}`,
-        "_blank"
-      );
+      // window.open(
+      //   `/docs/generated?template=${selectedTemplate}&collections=${selectedCollection}&title=${encodeURIComponent(
+      //     customization.title
+      //   )}`,
+      //   "_blank"
+      // );
     }
   };
 
@@ -444,7 +442,7 @@ export default function DocGeneratorModal({
                         backgroundColor: isDark ? "transparent" : "#fafafa",
                       }}
                       readOnly={!!selectedCollection}
-                      autoFocus={false}
+                      autoFocus
                     />
 
                     {/* Clear button when collection is selected */}
