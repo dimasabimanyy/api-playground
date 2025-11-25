@@ -81,6 +81,7 @@ export default function DocGeneratorModal({
   const [customization, setCustomization] = useState(documentationInitialData);
   const [filteredCollections, setFilteredCollections] = useState([]);
   const [isDebounceSearchLoading, setIsDebounceSearchLoading] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const debouncedSearcInput = useDebounce(searchQuery, 500);
 
@@ -205,116 +206,47 @@ export default function DocGeneratorModal({
 
   const handleGenerateDocs = async () => {
     if (!selectedCollection) {
-      // Add UI to handle error
+      alert('Please select a collection first');
       return;
     }
 
+    setIsGenerating(true);
+
     try {
-      const options = { ...customization };
-
-      const docsSettings = {
-        name: options.title,
-        status: "PUBLISHED",
-        userId: user.id,
-        collection_id: selectedCollection.id,
-        settings: {},
-      };
-
-      delete options.title;
-
-      docsSettings.settings = {
-        ...options,
-      };
-
-      console.log("docs setting: ", docsSettings);
-
-      const result = await generateDocumentationFromCollection(
-        selectedCollection,
-        docsSettings
-      );
-
-      console.log("result: ", result);
-
-      return;
-
-      const docData = await DocsGenerator.generateFromCollections(
-        collectionsToGenerate,
-        {
-          title: customization.title,
-          description: customization.description,
-          baseUrl: customization.baseUrl,
-          theme: selectedTemplate,
-          showToc: true,
-          showSearch: true,
-          showTryItOut: true,
-          showCodeExamples: customization.includeExamples,
-          groupBy: customization.groupByCollection ? "collection" : "none",
-        }
-      );
-
-      // Create and save documentation project to dashboard storage
-      const project = await DocsProjects.create(
-        customization.title,
-        customization.description,
-        [selectedCollection]
-      );
-
-      // Add settings to the project
-      const updatedProject = await DocsProjects.update(project.id, {
-        settings: {
-          template: selectedTemplate,
-          baseUrl: customization.baseUrl,
-          displayOptions: {
-            showTOC: true,
-            showMethodBadges: true,
-            showResponseExamples: customization.includeExamples,
-            showCodeExamples: customization.includeExamples,
-            primaryColor: "#171717",
-          },
-          includeExamples: customization.includeExamples,
-          includeAuth: customization.includeAuth,
-          groupByCollection: customization.groupByCollection,
-          includeErrorCodes: customization.includeErrorCodes,
+      // Call the API route instead of doing database operations directly
+      const response = await fetch('/api/docs/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
+          selectedCollection,
+          customization,
+          selectedTemplate,
+        }),
       });
 
-      // Store generated docs data for the viewer page
-      const docId = `project_${project.id}_${Date.now()}`;
-      sessionStorage.setItem(`docs_${docId}`, JSON.stringify(docData));
+      const data = await response.json();
 
-      if (onGenerate) {
-        onGenerate({
-          selectedCollections: [selectedCollection],
-          template: selectedTemplate,
-          customization,
-          collections: [selectedCollection],
-          enhancedData: docData,
-          docId,
-          project: updatedProject || project,
-        });
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to generate documentation');
       }
 
-      // Navigate to generated docs page with the enhanced data
-      window.open(
-        `/docs/generated?docId=${docId}&project=${
-          project.id
-        }&template=${selectedTemplate}&collections=${selectedCollection}&title=${encodeURIComponent(
-          customization.title
-        )}`,
-        "_blank"
-      );
+      console.log('Documentation generated successfully:', data.project);
 
       // Close the modal
       onOpenChange(false);
+
+      // Navigate to the generated documentation
+      if (data.project) {
+        window.open(`/docs/${data.project.id}`, '_blank');
+      }
+
     } catch (error) {
-      console.error("Failed to generate documentation:", error);
-      // Fallback to old method if generation fails
-      // window.open(
-      //   `/docs/generated?template=${selectedTemplate}&collections=${selectedCollection}&title=${encodeURIComponent(
-      //     customization.title
-      //   )}`,
-      //   "_blank"
-      // );
+      console.error('Error generating documentation:', error);
+      alert('Failed to generate documentation. Please try again.');
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -977,9 +909,9 @@ export default function DocGeneratorModal({
 
             <Button
               onClick={handleGenerateDocs}
-              disabled={!selectedCollection}
+              disabled={!selectedCollection || isGenerating}
               className={`px-4 py-2 text-sm font-medium ${
-                !selectedCollection ? "opacity-50 cursor-not-allowed" : ""
+                !selectedCollection || isGenerating ? "opacity-50 cursor-not-allowed" : ""
               }`}
               style={{
                 borderRadius: "6px",
@@ -988,7 +920,7 @@ export default function DocGeneratorModal({
                 border: "none",
               }}
             >
-              Generate Documentation
+              {isGenerating ? "Generating..." : "Generate Documentation"}
             </Button>
           </div>
         </DialogContent>
