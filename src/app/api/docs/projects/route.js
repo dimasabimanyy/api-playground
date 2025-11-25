@@ -31,7 +31,13 @@ export async function GET(request) {
 
     const { data: projects, error } = await supabase
       .from('docs_projects')
-      .select('*')
+      .select(`
+        *,
+        collection:collections!collection_id (
+          id,
+          name
+        )
+      `)
       .eq('user_id', user.id)
       .order('updated_at', { ascending: false })
       .range(startIndex, endIndex);

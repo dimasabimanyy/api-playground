@@ -1,31 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
-import TwoPanelSidebar from "@/components/playground/TwoPanelSidebar";
 import {
   Plus,
   FileText,
-  Calendar,
-  Eye,
-  Edit3,
-  MoreVertical,
-  Trash2,
-  Copy,
   Search,
   Filter,
   Grid3X3,
   List,
-  ArrowUpDown,
-  Globe,
-  Zap,
-  Moon,
-  Sun,
-  FolderOpen,
-  History,
-  BookOpen,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -33,101 +16,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { useCollections } from "@/contexts/CollectionsContext";
 import { getThemeClasses } from "@/lib/theme";
 import ApiClient from "@/lib/api-client";
 import { generateUsername, generatePublicDocUrl } from "@/lib/user-utils";
 import DocGeneratorModal from "@/components/docs/DocGeneratorModal";
-import SearchInput from "@/components/ui/SearchInput";
-import DashboardHeader from "@/components/header/DashboardHeader";
 import DocumentationProjectCard from "@/components/docs/DocumentationProjectCard";
 
-function UserAvatar({ user, isDark }) {
-  const [imageLoaded, setImageLoaded] = useState(true);
-  const [imageSrc, setImageSrc] = useState(null);
-
-  useEffect(() => {
-    if (user?.user_metadata?.avatar_url) {
-      // Fix Google profile image URL by removing size parameter and adding referrer policy bypass
-      let avatarUrl = user.user_metadata.avatar_url;
-
-      // If it's a Google profile image, modify the URL for better compatibility
-      if (avatarUrl.includes("googleusercontent.com")) {
-        // Remove the size parameter (=s96-c) and replace with a larger size
-        avatarUrl = avatarUrl.replace(/=s\d+-c$/, "=s128-c");
-      }
-
-      setImageSrc(avatarUrl);
-      setImageLoaded(true);
-    }
-  }, [user]);
-
-  const getInitials = () => {
-    if (user?.user_metadata?.full_name) {
-      return user.user_metadata.full_name.charAt(0).toUpperCase();
-    }
-    if (user?.user_metadata?.name) {
-      return user.user_metadata.name.charAt(0).toUpperCase();
-    }
-    if (user?.email) {
-      return user.email.charAt(0).toUpperCase();
-    }
-    return "U";
-  };
-
-  if (imageLoaded && imageSrc) {
-    return (
-      <div className="w-8 h-8 rounded-full overflow-hidden cursor-pointer">
-        <Image
-          src={imageSrc}
-          alt="User avatar"
-          width={32}
-          height={32}
-          className="w-full h-full object-cover"
-          onError={() => setImageLoaded(false)}
-        />
-      </div>
-    );
-  }
-
-  return (
-    <div
-      className={`w-8 h-8 rounded-full ${
-        isDark ? "bg-gray-700 text-gray-300" : "bg-gray-200 text-gray-700"
-      } flex items-center justify-center cursor-pointer text-sm font-medium`}
-    >
-      {getInitials()}
-    </div>
-  );
-}
-
 export default function DocsPage() {
-  const { isDark, toggleTheme } = useTheme();
-  const { user, signOut } = useAuth();
-  // const {
-  //   collections,
-  //   activeCollectionId,
-  //   setActiveCollectionId,
-  //   addRequestToCollection,
-  //   updateRequestInCollection,
-  //   saveToHistory,
-  //   createCollection,
-  //   deleteCollection,
-  //   getCollectionsWithDocs,
-  //   loading: collectionsLoading,
-  // } = useCollections();
+  const { isDark } = useTheme();
+  const { user } = useAuth();
   const themeClasses = getThemeClasses(isDark);
-  const router = useRouter();
-
-  // Sidebar state
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(
-    typeof window !== "undefined" && window.innerWidth < 1024
-  );
-  const [activeMenuTab, setActiveMenuTab] = useState("documentation");
-  const [sidebarContentOpen, setSidebarContentOpen] = useState(false);
-  const [sidebarContentWidth, setSidebarContentWidth] = useState(280);
-  const [isSidebarResizing, setIsSidebarResizing] = useState(false);
-  const [expandedCollections, setExpandedCollections] = useState(new Set());
 
   const [docsProjects, setDocsProjects] = useState({});
   const [loading, setLoading] = useState(true);
@@ -136,7 +34,7 @@ export default function DocsPage() {
   const [sortBy, setSortBy] = useState("updated"); // 'updated', 'created', 'name'
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
-  
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(2);
@@ -144,7 +42,7 @@ export default function DocsPage() {
     totalCount: 0,
     totalPages: 0,
     hasNextPage: false,
-    hasPreviousPage: false
+    hasPreviousPage: false,
   });
 
   // Load documentation projects
@@ -157,22 +55,24 @@ export default function DocsPage() {
       setLoading(true);
       const response = await ApiClient.docsProjects.getAll({
         page: currentPage,
-        pageSize: pageSize
+        pageSize: pageSize,
       });
-      
+
       // Convert array to object format for compatibility
       const projectsObj = {};
       response.projects?.forEach((project) => {
         projectsObj[project.id] = project;
       });
-      
+
       setDocsProjects(projectsObj);
-      setPagination(response.pagination || {
-        totalCount: 0,
-        totalPages: 0,
-        hasNextPage: false,
-        hasPreviousPage: false
-      });
+      setPagination(
+        response.pagination || {
+          totalCount: 0,
+          totalPages: 0,
+          hasNextPage: false,
+          hasPreviousPage: false,
+        }
+      );
     } catch (error) {
       console.error("Failed to load documentation projects:", error);
       setDocsProjects({}); // Set empty object on error
@@ -196,10 +96,16 @@ export default function DocsPage() {
         case "name":
           return a.name.localeCompare(b.name);
         case "created":
-          return new Date(b.created_at || b.created) - new Date(a.created_at || a.created);
+          return (
+            new Date(b.created_at || b.created) -
+            new Date(a.created_at || a.created)
+          );
         case "updated":
         default:
-          return new Date(b.updated_at || b.updated) - new Date(a.updated_at || a.updated);
+          return (
+            new Date(b.updated_at || b.updated) -
+            new Date(a.updated_at || a.updated)
+          );
       }
     });
 
@@ -240,7 +146,7 @@ export default function DocsPage() {
         settings: project.settings,
         status: project.status,
       };
-      
+
       await ApiClient.docsProjects.create(duplicateData);
       await loadDocsProjects();
     } catch (error) {
@@ -275,39 +181,6 @@ export default function DocsPage() {
     }
   };
 
-  // Sidebar handlers
-  const handleNavItemClick = (itemId) => {
-    if (itemId === "documentation") {
-      // We're already on the docs page, just toggle sidebar
-      if (activeMenuTab === itemId && sidebarContentOpen) {
-        setSidebarContentOpen(false);
-      } else {
-        setActiveMenuTab(itemId);
-        setSidebarContentOpen(true);
-      }
-      return;
-    }
-
-    // Navigate to playground with specific tab
-    router.push(`/?tab=${itemId}`);
-  };
-
-  const toggleCollection = (collectionId) => {
-    setExpandedCollections((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(collectionId)) {
-        newSet.delete(collectionId);
-      } else {
-        newSet.add(collectionId);
-      }
-      return newSet;
-    });
-  };
-
-  const handleSidebarResizeStart = () => {
-    setIsSidebarResizing(true);
-  };
-
   if (loading) {
     return (
       <div className={`min-h-screen ${themeClasses.bg.primary}`}>
@@ -335,9 +208,7 @@ export default function DocsPage() {
     <>
       {/* Main Content Area */}
       <div
-        className={`flex-1 flex flex-col ${
-          sidebarCollapsed ? "lg:ml-0" : "lg:ml-0"
-        } ml-0 lg:ml-0 w-full lg:w-auto px-6 ${themeClasses.bg.bold}`}
+        className={`flex-1 flex flex-col ml-0 lg:ml-0 w-full lg:w-auto px-6 ${themeClasses.bg.bold}`}
       >
         {/* Page Header */}
         <div className="py-6">
@@ -601,15 +472,6 @@ export default function DocsPage() {
         ) : (
           /* Documentation Projects */
           <div className="pb-12">
-            {/* Results Header */}
-            {/* <div className="mb-6">
-              <p className={`text-sm ${themeClasses.text.secondary}`}>
-                {filteredProjects.length} project
-                {filteredProjects.length !== 1 ? "s" : ""}
-                {searchQuery && ` matching "${searchQuery}"`}
-              </p>
-            </div> */}
-
             {/* Projects Grid/List */}
             <div
               className={
@@ -646,11 +508,11 @@ export default function DocsPage() {
                 {/* Results info */}
                 <div className="flex items-center gap-4">
                   <p className={`text-sm ${themeClasses.text.secondary}`}>
-                    Showing {((currentPage - 1) * pageSize) + 1} to{' '}
-                    {Math.min(currentPage * pageSize, pagination.totalCount)} of{' '}
+                    Showing {(currentPage - 1) * pageSize + 1} to{" "}
+                    {Math.min(currentPage * pageSize, pagination.totalCount)} of{" "}
                     {pagination.totalCount} projects
                   </p>
-                  
+
                   {/* Page size selector */}
                   <div className="flex items-center gap-2">
                     <span className={`text-sm ${themeClasses.text.secondary}`}>
@@ -658,7 +520,9 @@ export default function DocsPage() {
                     </span>
                     <select
                       value={pageSize}
-                      onChange={(e) => handlePageSizeChange(parseInt(e.target.value))}
+                      onChange={(e) =>
+                        handlePageSizeChange(parseInt(e.target.value))
+                      }
                       className={`px-2 py-1 text-sm border rounded ${
                         isDark
                           ? "bg-gray-800 border-gray-600 text-gray-200"
@@ -691,38 +555,43 @@ export default function DocsPage() {
 
                   {/* Page numbers */}
                   <div className="flex items-center gap-1">
-                    {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, index) => {
-                      let pageNumber;
-                      if (pagination.totalPages <= 5) {
-                        pageNumber = index + 1;
-                      } else if (currentPage <= 3) {
-                        pageNumber = index + 1;
-                      } else if (currentPage >= pagination.totalPages - 2) {
-                        pageNumber = pagination.totalPages - 4 + index;
-                      } else {
-                        pageNumber = currentPage - 2 + index;
-                      }
+                    {Array.from(
+                      { length: Math.min(5, pagination.totalPages) },
+                      (_, index) => {
+                        let pageNumber;
+                        if (pagination.totalPages <= 5) {
+                          pageNumber = index + 1;
+                        } else if (currentPage <= 3) {
+                          pageNumber = index + 1;
+                        } else if (currentPage >= pagination.totalPages - 2) {
+                          pageNumber = pagination.totalPages - 4 + index;
+                        } else {
+                          pageNumber = currentPage - 2 + index;
+                        }
 
-                      return (
-                        <Button
-                          key={pageNumber}
-                          onClick={() => handlePageChange(pageNumber)}
-                          variant={currentPage === pageNumber ? "default" : "outline"}
-                          size="sm"
-                          className={`px-3 h-8 min-w-[32px] ${
-                            currentPage === pageNumber
-                              ? isDark
-                                ? "bg-white text-black"
-                                : "bg-black text-white"
-                              : isDark
-                              ? "border-gray-600 text-gray-300 hover:bg-gray-800"
-                              : "border-gray-300 text-gray-700 hover:bg-gray-50"
-                          }`}
-                        >
-                          {pageNumber}
-                        </Button>
-                      );
-                    })}
+                        return (
+                          <Button
+                            key={pageNumber}
+                            onClick={() => handlePageChange(pageNumber)}
+                            variant={
+                              currentPage === pageNumber ? "default" : "outline"
+                            }
+                            size="sm"
+                            className={`px-3 h-8 min-w-[32px] ${
+                              currentPage === pageNumber
+                                ? isDark
+                                  ? "bg-white text-black"
+                                  : "bg-black text-white"
+                                : isDark
+                                ? "border-gray-600 text-gray-300 hover:bg-gray-800"
+                                : "border-gray-300 text-gray-700 hover:bg-gray-50"
+                            }`}
+                          >
+                            {pageNumber}
+                          </Button>
+                        );
+                      }
+                    )}
                   </div>
 
                   <Button
@@ -745,6 +614,7 @@ export default function DocsPage() {
         )}
       </div>
       {/* End Page Content */}
+
       {/* Create Documentation Modal */}
       <DocGeneratorModal
         open={showCreateModal}

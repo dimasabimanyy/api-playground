@@ -81,13 +81,13 @@ const DocumentationProjectCard = ({
               <p className={`text-sm ${themeClasses.text.secondary} truncate`}>
                 Documentation for {project.collection?.name}
               </p>
-              {project.description && (
+              {/* {project.description && (
                 <p
                   className={`text-sm ${themeClasses.text.secondary} truncate`}
                 >
                   {project.description}
                 </p>
-              )}
+              )} */}
             </div>
 
             {/* <div className="hidden md:flex items-center gap-6">
