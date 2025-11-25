@@ -1,41 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
-  Plus,
   FileText,
   Calendar,
-  Eye,
   Edit3,
   MoreVertical,
   Trash2,
   Copy,
-  Search,
-  Filter,
-  Grid3X3,
-  List,
-  ArrowUpDown,
-  Globe,
-  Zap,
-  Moon,
-  Sun,
-  FolderOpen,
-  History,
-  BookOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useTheme } from "@/contexts/ThemeContext";
-import { useAuth } from "@/contexts/AuthContext";
-import { useCollections } from "@/contexts/CollectionsContext";
-import { getThemeClasses } from "@/lib/theme";
-import { DocsProjects, DocsMetadata } from "@/lib/docs-storage";
-import DocGeneratorModal from "@/components/docs/DocGeneratorModal";
-import SearchInput from "@/components/ui/SearchInput";
-import DashboardHeader from "@/components/header/DashboardHeader";
 
 // Project card component
 const DocumentationProjectCard = ({
@@ -78,7 +53,7 @@ const DocumentationProjectCard = ({
 
   const handleCardClick = (e) => {
     // Don't navigate if clicking on menu button or menu items
-    if (e.target.closest('.menu-container')) {
+    if (e.target.closest(".menu-container")) {
       e.stopPropagation();
       return;
     }
@@ -97,17 +72,6 @@ const DocumentationProjectCard = ({
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4 flex-1 min-w-0 mr-4">
-            {/* <div
-              className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                isDark
-                  ? "bg-gray-800 text-gray-300"
-                  : "bg-gray-100 text-gray-600"
-              }`}
-              style={{ borderRadius: "8px" }}
-            >
-              <FileText className="w-4 h-4" />
-            </div> */}
-
             <div className="flex-1 min-w-0">
               <h3
                 className={`font-semibold ${themeClasses.text.primary} truncate mb-1 text-[.9rem]`}
@@ -140,18 +104,6 @@ const DocumentationProjectCard = ({
           </div>
 
           <div className="flex items-center gap-2">
-            {/* <Button
-              onClick={onView}
-              className={`cursor-pointer text-xs leading-none h-6 w-12 ${
-                isDark
-                  ? "bg-white text-black hover:bg-gray-100"
-                  : "bg-black text-white hover:bg-gray-800"
-              }`}
-              style={{ borderRadius: "6px", padding: ".1rem .1rem" }}
-            >
-              View
-            </Button> */}
-
             <div className="relative menu-container">
               <Button
                 onClick={(e) => {

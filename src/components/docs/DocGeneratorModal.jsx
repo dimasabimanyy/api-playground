@@ -24,7 +24,6 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { getThemeClasses } from "@/lib/theme";
 import { DocsGenerator } from "@/lib/docs-generator";
 import { DocsProjects } from "@/lib/docs-storage-db";
-import { useCollections } from "@/contexts/CollectionsContext";
 import { collectionsApi } from "@/lib/api-client";
 import useDebounce from "@/hooks/useDebounce";
 import { predefinedDocumenationTemplates } from "@/config/docs-templates";
@@ -122,10 +121,14 @@ export default function DocGeneratorModal({
 
     const getCollectionsBySearchName = async () => {
       try {
-        const response = await collectionsApi.search(debouncedSearcInput, { pageSize: 20 });
+        const response = await collectionsApi.search(debouncedSearcInput, {
+          pageSize: 20,
+        });
         setFilteredCollections(response.collections || []);
       } catch (error) {
-        console.error(`Error fetching collections by search name: ${error.message}`);
+        console.error(
+          `Error fetching collections by search name: ${error.message}`
+        );
       } finally {
         setIsDebounceSearchLoading(false);
       }
@@ -134,73 +137,9 @@ export default function DocGeneratorModal({
     getCollectionsBySearchName();
   }, [debouncedSearcInput]);
 
-  useEffect(() => {
-    console.log("loading: ", isDebounceSearchLoading);
-  }, [isDebounceSearchLoading]);
-
-  // const filteredCollections = Object.values(collections)
-  //   .filter((collection) => {
-  //     // If no search query, show all collections (will be limited below)
-  //     if (debouncedSearchQuery.trim() === "") {
-  //       return true;
-  //     }
-
-  //     // Otherwise filter by search query
-  //     return (
-  //       collection.name
-  //         .toLowerCase()
-  //         .includes(debouncedSearchQuery.toLowerCase()) ||
-  //       (collection.requests || []).some(
-  //         (request) =>
-  //           request.name
-  //             ?.toLowerCase()
-  //             .includes(debouncedSearchQuery.toLowerCase()) ||
-  //           request.url
-  //             ?.toLowerCase()
-  //             .includes(debouncedSearchQuery.toLowerCase())
-  //       )
-  //     );
-  //   })
-  //   .slice(0, debouncedSearchQuery.trim() === "" ? collectionsLimit : 50); // Show first 10 by default, 50 when searching
-
-  // Filter and limit collections based on search query
-  // const filteredCollections = Object.values(collections)
-  //   .filter((collection) => {
-  //     // If no search query, show all collections (will be limited below)
-  //     if (debouncedSearchQuery.trim() === "") {
-  //       return true;
-  //     }
-
-  //     // Otherwise filter by search query
-  //     return (
-  //       collection.name
-  //         .toLowerCase()
-  //         .includes(debouncedSearchQuery.toLowerCase()) ||
-  //       (collection.requests || []).some(
-  //         (request) =>
-  //           request.name
-  //             ?.toLowerCase()
-  //             .includes(debouncedSearchQuery.toLowerCase()) ||
-  //           request.url
-  //             ?.toLowerCase()
-  //             .includes(debouncedSearchQuery.toLowerCase())
-  //       )
-  //     );
-  //   })
-  //   .slice(0, debouncedSearchQuery.trim() === "" ? collectionsLimit : 50); // Show first 10 by default, 50 when searching
-
-  // const hasMoreCollections =
-  //   Object.values(collections).length > collectionsLimit &&
-  //   debouncedSearchQuery.trim() === "";
-
-  // Get selected collection object
-  // const selectedCollection = selectedCollection
-  //   ? collections[selectedCollection]
-  //   : null;
-
   const handleGenerateDocs = async () => {
     if (!selectedCollection) {
-      alert('Please select a collection first');
+      alert("Please select a collection first");
       return;
     }
 
@@ -208,55 +147,42 @@ export default function DocGeneratorModal({
 
     try {
       // Call the API route instead of doing database operations directly
-      const response = await fetch('/api/docs/generate', {
-        method: 'POST',
+      const response = await fetch("/api/docs/create", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           selectedCollection,
           customization,
           selectedTemplate,
         }),
-      });
+      }); 
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to generate documentation');
+        throw new Error(data.error || "Failed to generate documentation");
       }
 
-      console.log('Documentation generated successfully:', data.project);
+      console.log("Documentation generated successfully:", data.project);
+      return;
 
       // Close the modal
       onOpenChange(false);
 
       // Navigate to the generated documentation
       if (data.project) {
-        window.open(`/docs/${data.project.id}`, '_blank');
+        window.open(`/docs/${data.project.id}`, "_blank");
       }
-
     } catch (error) {
-      console.error('Error generating documentation:', error);
-      alert('Failed to generate documentation. Please try again.');
+      console.error("Error generating documentation:", error);
+      // alert("Failed to generate documentation. Please try again.");
     } finally {
       setIsGenerating(false);
     }
   };
-
-  // Handle pre-selected collection and reset state
-  // useEffect(() => {
-  //   if (open) {
-  //     setSelectedCollection(preSelectedCollection || null);
-
-  //     setSearchQuery("");
-  //     setDebouncedSearchQuery("");
-
-  //     setShowDropdown(false);
-  //     setCollectionsLimit(COLLECTION_LIMIT); // Reset limit when modal opens
-  //   }
-  // }, [preSelectedCollection, open]);
-
+  
   // Debounce search query
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -905,7 +831,9 @@ export default function DocGeneratorModal({
               onClick={handleGenerateDocs}
               disabled={!selectedCollection || isGenerating}
               className={`px-4 py-2 text-sm font-medium ${
-                !selectedCollection || isGenerating ? "opacity-50 cursor-not-allowed" : ""
+                !selectedCollection || isGenerating
+                  ? "opacity-50 cursor-not-allowed"
+                  : ""
               }`}
               style={{
                 borderRadius: "6px",

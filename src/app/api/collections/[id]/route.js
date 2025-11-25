@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase-server';
 // GET /api/collections/[id] - Get specific collection
 export async function GET(request, { params }) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {
@@ -39,7 +39,7 @@ export async function GET(request, { params }) {
 // PUT /api/collections/[id] - Update collection
 export async function PUT(request, { params }) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {
@@ -84,7 +84,7 @@ export async function PUT(request, { params }) {
 // DELETE /api/collections/[id] - Delete collection
 export async function DELETE(request, { params }) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {

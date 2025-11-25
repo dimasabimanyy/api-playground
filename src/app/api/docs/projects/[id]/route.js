@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase-server';
 // GET /api/docs/projects/[id] - Get specific docs project
 export async function GET(request, { params }) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {
@@ -47,7 +47,7 @@ export async function GET(request, { params }) {
 // PUT /api/docs/projects/[id] - Update docs project
 export async function PUT(request, { params }) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {
@@ -93,7 +93,7 @@ export async function PUT(request, { params }) {
 // DELETE /api/docs/projects/[id] - Delete docs project
 export async function DELETE(request, { params }) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {
