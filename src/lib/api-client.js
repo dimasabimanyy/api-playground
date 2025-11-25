@@ -101,7 +101,6 @@ export const collectionsApi = {
  * Docs Projects API Client
  */
 export const docsProjectsApi = {
-  // Get all docs projects
   getAll: async (params = {}) => {
     const searchParams = new URLSearchParams();
     
@@ -109,6 +108,7 @@ export const docsProjectsApi = {
     if (params.pageSize) searchParams.set('pageSize', params.pageSize.toString());
 
     const endpoint = `/docs/projects${searchParams.toString() ? `?${searchParams}` : ''}`;
+
     return apiRequest(endpoint);
   },
 

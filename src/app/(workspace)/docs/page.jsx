@@ -33,7 +33,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCollections } from "@/contexts/CollectionsContext";
 import { getThemeClasses } from "@/lib/theme";
-import { DocsProjects, DocsMetadata } from "@/lib/docs-storage-db";
+import ApiClient from "@/lib/api-client";
 import { generateUsername, generatePublicDocUrl } from "@/lib/user-utils";
 import DocGeneratorModal from "@/components/docs/DocGeneratorModal";
 import SearchInput from "@/components/ui/SearchInput";
@@ -142,10 +142,15 @@ export default function DocsPage() {
 
   const loadDocsProjects = async () => {
     try {
-      const projects = await DocsProjects.getAll();
+      const response = await ApiClient.docsProjects.getAll();
       
-      // DocsProjects.getAll() already returns an object, no need to convert
-      setDocsProjects(projects || {});
+      // Convert array to object format for compatibility
+      const projectsObj = {};
+      response.projects?.forEach((project) => {
+        projectsObj[project.id] = project;
+      });
+      
+      setDocsProjects(projectsObj);
     } catch (error) {
       console.error("Failed to load documentation projects:", error);
       setDocsProjects({}); // Set empty object on error
@@ -182,13 +187,18 @@ export default function DocsPage() {
 
   const duplicateProject = async (project) => {
     try {
-      const duplicated = await DocsProjects.duplicate(
-        project.id,
-        `${project.name} Copy`
-      );
-      if (duplicated) {
-        await loadDocsProjects();
-      }
+      // For now, create a new project with copied data
+      // TODO: Implement proper duplicate API endpoint
+      const duplicateData = {
+        name: `${project.name} Copy`,
+        description: project.description,
+        collection_id: project.collection_id,
+        settings: project.settings,
+        status: project.status,
+      };
+      
+      await ApiClient.docsProjects.create(duplicateData);
+      await loadDocsProjects();
     } catch (error) {
       console.error("Failed to duplicate project:", error);
     }
@@ -201,7 +211,7 @@ export default function DocsPage() {
       )
     ) {
       try {
-        await DocsProjects.delete(project.id);
+        await ApiClient.docsProjects.delete(project.id);
         await loadDocsProjects();
       } catch (error) {
         console.error("Failed to delete project:", error);

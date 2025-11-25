@@ -40,8 +40,8 @@ export const DocsProjects = {
       const { data: projects, error } = await supabase
         .from("docs_projects")
         .select("*")
-        .eq("status", "PUBLISHED")
-        .order("updated_at", { ascending: false });
+        // .eq("status", "PUBLISHED")
+        // .order("updated_at", { ascending: false });
 
       if (error) {
         console.log("error bro: ", error);
