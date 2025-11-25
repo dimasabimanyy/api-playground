@@ -26,6 +26,8 @@ import {
   FolderOpen,
   History,
   BookOpen,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -134,15 +136,29 @@ export default function DocsPage() {
   const [sortBy, setSortBy] = useState("updated"); // 'updated', 'created', 'name'
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(2);
+  const [pagination, setPagination] = useState({
+    totalCount: 0,
+    totalPages: 0,
+    hasNextPage: false,
+    hasPreviousPage: false
+  });
 
   // Load documentation projects
   useEffect(() => {
     loadDocsProjects();
-  }, []);
+  }, [currentPage, pageSize]);
 
   const loadDocsProjects = async () => {
     try {
-      const response = await ApiClient.docsProjects.getAll();
+      setLoading(true);
+      const response = await ApiClient.docsProjects.getAll({
+        page: currentPage,
+        pageSize: pageSize
+      });
       
       // Convert array to object format for compatibility
       const projectsObj = {};
@@ -151,6 +167,12 @@ export default function DocsPage() {
       });
       
       setDocsProjects(projectsObj);
+      setPagination(response.pagination || {
+        totalCount: 0,
+        totalPages: 0,
+        hasNextPage: false,
+        hasPreviousPage: false
+      });
     } catch (error) {
       console.error("Failed to load documentation projects:", error);
       setDocsProjects({}); // Set empty object on error
@@ -183,6 +205,28 @@ export default function DocsPage() {
 
   const createNewDocumentation = () => {
     setShowCreateModal(true);
+  };
+
+  // Pagination handlers
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
+
+  const handlePageSizeChange = (newPageSize) => {
+    setPageSize(newPageSize);
+    setCurrentPage(1); // Reset to first page when changing page size
+  };
+
+  const handlePreviousPage = () => {
+    if (pagination.hasPreviousPage) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (pagination.hasNextPage) {
+      setCurrentPage(currentPage + 1);
+    }
   };
 
   const duplicateProject = async (project) => {
@@ -595,6 +639,108 @@ export default function DocsPage() {
                 />
               ))}
             </div>
+
+            {/* Pagination */}
+            {pagination.totalPages > 1 && (
+              <div className="mt-8 flex items-center justify-between">
+                {/* Results info */}
+                <div className="flex items-center gap-4">
+                  <p className={`text-sm ${themeClasses.text.secondary}`}>
+                    Showing {((currentPage - 1) * pageSize) + 1} to{' '}
+                    {Math.min(currentPage * pageSize, pagination.totalCount)} of{' '}
+                    {pagination.totalCount} projects
+                  </p>
+                  
+                  {/* Page size selector */}
+                  <div className="flex items-center gap-2">
+                    <span className={`text-sm ${themeClasses.text.secondary}`}>
+                      Show:
+                    </span>
+                    <select
+                      value={pageSize}
+                      onChange={(e) => handlePageSizeChange(parseInt(e.target.value))}
+                      className={`px-2 py-1 text-sm border rounded ${
+                        isDark
+                          ? "bg-gray-800 border-gray-600 text-gray-200"
+                          : "bg-white border-gray-300 text-gray-700"
+                      }`}
+                    >
+                      <option value={6}>6</option>
+                      <option value={12}>12</option>
+                      <option value={24}>24</option>
+                      <option value={48}>48</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Pagination controls */}
+                <div className="flex items-center gap-2">
+                  <Button
+                    onClick={handlePreviousPage}
+                    disabled={!pagination.hasPreviousPage}
+                    variant="outline"
+                    size="sm"
+                    className={`px-2 h-8 ${
+                      isDark
+                        ? "border-gray-600 text-gray-300 hover:bg-gray-800 disabled:text-gray-500"
+                        : "border-gray-300 text-gray-700 hover:bg-gray-50 disabled:text-gray-400"
+                    }`}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+
+                  {/* Page numbers */}
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, index) => {
+                      let pageNumber;
+                      if (pagination.totalPages <= 5) {
+                        pageNumber = index + 1;
+                      } else if (currentPage <= 3) {
+                        pageNumber = index + 1;
+                      } else if (currentPage >= pagination.totalPages - 2) {
+                        pageNumber = pagination.totalPages - 4 + index;
+                      } else {
+                        pageNumber = currentPage - 2 + index;
+                      }
+
+                      return (
+                        <Button
+                          key={pageNumber}
+                          onClick={() => handlePageChange(pageNumber)}
+                          variant={currentPage === pageNumber ? "default" : "outline"}
+                          size="sm"
+                          className={`px-3 h-8 min-w-[32px] ${
+                            currentPage === pageNumber
+                              ? isDark
+                                ? "bg-white text-black"
+                                : "bg-black text-white"
+                              : isDark
+                              ? "border-gray-600 text-gray-300 hover:bg-gray-800"
+                              : "border-gray-300 text-gray-700 hover:bg-gray-50"
+                          }`}
+                        >
+                          {pageNumber}
+                        </Button>
+                      );
+                    })}
+                  </div>
+
+                  <Button
+                    onClick={handleNextPage}
+                    disabled={!pagination.hasNextPage}
+                    variant="outline"
+                    size="sm"
+                    className={`px-2 h-8 ${
+                      isDark
+                        ? "border-gray-600 text-gray-300 hover:bg-gray-800 disabled:text-gray-500"
+                        : "border-gray-300 text-gray-700 hover:bg-gray-50 disabled:text-gray-400"
+                    }`}
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

@@ -15,6 +15,17 @@ export async function GET(request) {
     const page = parseInt(searchParams.get('page') || '1');
     const pageSize = parseInt(searchParams.get('pageSize') || '10');
 
+    // Get total count for pagination
+    const { count: totalCount, error: countError } = await supabase
+      .from('docs_projects')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id);
+
+    if (countError) {
+      console.error('Error fetching docs projects count:', countError);
+      return NextResponse.json({ error: 'Failed to fetch docs projects count' }, { status: 500 });
+    }
+
     const startIndex = (page - 1) * pageSize;
     const endIndex = startIndex + pageSize - 1;
 
@@ -30,7 +41,22 @@ export async function GET(request) {
       return NextResponse.json({ error: 'Failed to fetch docs projects' }, { status: 500 });
     }
 
-    return NextResponse.json({ projects: projects || [] });
+    // Calculate pagination metadata
+    const totalPages = Math.ceil(totalCount / pageSize);
+    const hasNextPage = page < totalPages;
+    const hasPreviousPage = page > 1;
+
+    return NextResponse.json({ 
+      projects: projects || [],
+      pagination: {
+        page,
+        pageSize,
+        totalCount,
+        totalPages,
+        hasNextPage,
+        hasPreviousPage
+      }
+    });
 
   } catch (error) {
     console.error('Error in docs projects API:', error);

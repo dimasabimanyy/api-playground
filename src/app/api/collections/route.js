@@ -27,6 +27,23 @@ export async function GET(request) {
       query = query.ilike('name', `%${search}%`);
     }
 
+    // Get total count for pagination
+    let countQuery = supabase
+      .from('collections')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id);
+
+    if (search) {
+      countQuery = countQuery.ilike('name', `%${search}%`);
+    }
+
+    const { count: totalCount, error: countError } = await countQuery;
+
+    if (countError) {
+      console.error('Error fetching collections count:', countError);
+      return NextResponse.json({ error: 'Failed to fetch collections count' }, { status: 500 });
+    }
+
     // Add pagination
     const startIndex = (page - 1) * pageSize;
     const endIndex = startIndex + pageSize - 1;
@@ -39,7 +56,22 @@ export async function GET(request) {
       return NextResponse.json({ error: 'Failed to fetch collections' }, { status: 500 });
     }
 
-    return NextResponse.json({ collections: collections || [] });
+    // Calculate pagination metadata
+    const totalPages = Math.ceil(totalCount / pageSize);
+    const hasNextPage = page < totalPages;
+    const hasPreviousPage = page > 1;
+
+    return NextResponse.json({ 
+      collections: collections || [],
+      pagination: {
+        page,
+        pageSize,
+        totalCount,
+        totalPages,
+        hasNextPage,
+        hasPreviousPage
+      }
+    });
 
   } catch (error) {
     console.error('Error in collections API:', error);
