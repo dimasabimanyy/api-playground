@@ -34,10 +34,6 @@ export function AuthProvider({ children }) {
     return () => subscription?.unsubscribe();
   }, [supabase.auth]);
 
-  useEffect(() => {
-    console.log('user: ', user);
-  }, [user])
-
   const signInWithGoogle = async () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',

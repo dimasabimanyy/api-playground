@@ -56,8 +56,6 @@ export const getCollectionsPagination = async ({
       .order("created_at", { ascending: false })
       .range(startIndexRange, endIndexRange);
 
-    console.log("data pagination: ", data);
-
     if (error) {
       throw error;
     }

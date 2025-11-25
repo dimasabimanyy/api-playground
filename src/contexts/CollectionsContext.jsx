@@ -1,7 +1,7 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect } from 'react';
-import { useAuth } from './AuthContext';
+import { createContext, useContext, useState, useEffect } from "react";
+import { useAuth } from "./AuthContext";
 import {
   getCollections as fetchCollections,
   createCollection as createNewCollection,
@@ -13,9 +13,9 @@ import {
   searchRequests as searchAllRequests,
   reorderRequests as reorderCollectionRequests,
   saveRequestToHistory,
-  getCollectionsPagination
-} from '@/lib/supabase-collections';
-import { DocsMetadata } from '@/lib/docs-storage';
+  getCollectionsPagination,
+} from "@/lib/supabase-collections";
+import { DocsMetadata } from "@/lib/docs-storage";
 
 const CollectionsContext = createContext({});
 
@@ -28,12 +28,9 @@ export function CollectionsProvider({ children }) {
 
   // Load collections when user signs in
   useEffect(() => {
-    console.log('CollectionsContext: user changed', { user: user?.email, userId: user?.id });
     if (user) {
-      console.log('CollectionsContext: Loading collections for user');
       loadCollections();
     } else {
-      console.log('CollectionsContext: No user, clearing collections');
       // Clear collections when user signs out
       setCollections({});
       setActiveCollectionId(null);
@@ -44,7 +41,9 @@ export function CollectionsProvider({ children }) {
   useEffect(() => {
     if (Object.keys(collections).length > 0 && !activeCollectionId) {
       // Find the default collection or use the first one
-      const defaultCollection = Object.values(collections).find(c => c.name === 'My APIs');
+      const defaultCollection = Object.values(collections).find(
+        (c) => c.name === "My APIs"
+      );
       const firstCollection = Object.values(collections)[0];
       setActiveCollectionId(defaultCollection?.id || firstCollection?.id);
     }
@@ -58,24 +57,26 @@ export function CollectionsProvider({ children }) {
       // console.log('CollectionsContext: loadCollections called but no user');
       return;
     }
-    
+
     // console.log('CollectionsContext: Starting to load collections');
     setLoading(true);
     setError(null);
-    
+
     try {
       // const data = await fetchCollections();
       const data = await getCollectionsPagination();
-      
+
       // console.log('CollectionsContext: Collections loaded:', data);
       setCollections(data);
-      
+
       // If no collections exist, we can create a default one programmatically
       if (Object.keys(data).length === 0) {
-        console.log('CollectionsContext: No collections found, this might be a new user');
+        console.log(
+          "CollectionsContext: No collections found, this might be a new user"
+        );
       }
     } catch (err) {
-      console.error('CollectionsContext: Failed to load collections:', err);
+      console.error("CollectionsContext: Failed to load collections:", err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -85,17 +86,17 @@ export function CollectionsProvider({ children }) {
   /**
    * Create a new collection
    */
-  const createCollection = async (name, description = '', color = 'blue') => {
-    if (!user) throw new Error('User must be authenticated');
-    
+  const createCollection = async (name, description = "", color = "blue") => {
+    if (!user) throw new Error("User must be authenticated");
+
     try {
       const newCollection = await createNewCollection(name, description, color);
-      
-      setCollections(prev => ({
+
+      setCollections((prev) => ({
         ...prev,
-        [newCollection.id]: newCollection
+        [newCollection.id]: newCollection,
       }));
-      
+
       return newCollection;
     } catch (err) {
       setError(err.message);
@@ -107,19 +108,22 @@ export function CollectionsProvider({ children }) {
    * Update an existing collection
    */
   const updateCollection = async (collectionId, updates) => {
-    if (!user) throw new Error('User must be authenticated');
-    
+    if (!user) throw new Error("User must be authenticated");
+
     try {
-      const updatedCollection = await updateExistingCollection(collectionId, updates);
-      
-      setCollections(prev => ({
+      const updatedCollection = await updateExistingCollection(
+        collectionId,
+        updates
+      );
+
+      setCollections((prev) => ({
         ...prev,
         [collectionId]: {
           ...prev[collectionId],
-          ...updatedCollection
-        }
+          ...updatedCollection,
+        },
       }));
-      
+
       return updatedCollection;
     } catch (err) {
       setError(err.message);
@@ -131,22 +135,24 @@ export function CollectionsProvider({ children }) {
    * Delete a collection
    */
   const deleteCollection = async (collectionId) => {
-    if (!user) throw new Error('User must be authenticated');
-    
+    if (!user) throw new Error("User must be authenticated");
+
     try {
       await removeCollection(collectionId);
-      
-      setCollections(prev => {
+
+      setCollections((prev) => {
         const { [collectionId]: removed, ...rest } = prev;
         return rest;
       });
-      
+
       // If we deleted the active collection, switch to another one
       if (activeCollectionId === collectionId) {
-        const remainingCollections = Object.keys(collections).filter(id => id !== collectionId);
+        const remainingCollections = Object.keys(collections).filter(
+          (id) => id !== collectionId
+        );
         setActiveCollectionId(remainingCollections[0] || null);
       }
-      
+
       return true;
     } catch (err) {
       setError(err.message);
@@ -158,19 +164,19 @@ export function CollectionsProvider({ children }) {
    * Add a request to a collection
    */
   const addRequestToCollection = async (collectionId, request) => {
-    if (!user) throw new Error('User must be authenticated');
-    
+    if (!user) throw new Error("User must be authenticated");
+
     try {
       const newRequest = await addRequest(collectionId, request);
-      
-      setCollections(prev => ({
+
+      setCollections((prev) => ({
         ...prev,
         [collectionId]: {
           ...prev[collectionId],
-          requests: [...(prev[collectionId]?.requests || []), newRequest]
-        }
+          requests: [...(prev[collectionId]?.requests || []), newRequest],
+        },
       }));
-      
+
       return newRequest;
     } catch (err) {
       setError(err.message);
@@ -181,22 +187,31 @@ export function CollectionsProvider({ children }) {
   /**
    * Update a request in a collection
    */
-  const updateRequestInCollection = async (collectionId, requestId, updates) => {
-    if (!user) throw new Error('User must be authenticated');
-    
+  const updateRequestInCollection = async (
+    collectionId,
+    requestId,
+    updates
+  ) => {
+    if (!user) throw new Error("User must be authenticated");
+
     try {
-      const updatedRequest = await updateRequest(collectionId, requestId, updates);
-      
-      setCollections(prev => ({
+      const updatedRequest = await updateRequest(
+        collectionId,
+        requestId,
+        updates
+      );
+
+      setCollections((prev) => ({
         ...prev,
         [collectionId]: {
           ...prev[collectionId],
-          requests: prev[collectionId]?.requests.map(req =>
-            req.id === requestId ? { ...req, ...updatedRequest } : req
-          ) || []
-        }
+          requests:
+            prev[collectionId]?.requests.map((req) =>
+              req.id === requestId ? { ...req, ...updatedRequest } : req
+            ) || [],
+        },
       }));
-      
+
       return updatedRequest;
     } catch (err) {
       setError(err.message);
@@ -208,19 +223,22 @@ export function CollectionsProvider({ children }) {
    * Delete a request from a collection
    */
   const deleteRequestFromCollection = async (collectionId, requestId) => {
-    if (!user) throw new Error('User must be authenticated');
-    
+    if (!user) throw new Error("User must be authenticated");
+
     try {
       await removeRequest(collectionId, requestId);
-      
-      setCollections(prev => ({
+
+      setCollections((prev) => ({
         ...prev,
         [collectionId]: {
           ...prev[collectionId],
-          requests: prev[collectionId]?.requests.filter(req => req.id !== requestId) || []
-        }
+          requests:
+            prev[collectionId]?.requests.filter(
+              (req) => req.id !== requestId
+            ) || [],
+        },
       }));
-      
+
       return true;
     } catch (err) {
       setError(err.message);
@@ -233,7 +251,7 @@ export function CollectionsProvider({ children }) {
    */
   const searchRequests = async (query) => {
     if (!user || !query.trim()) return [];
-    
+
     try {
       return await searchAllRequests(query);
     } catch (err) {
@@ -246,29 +264,29 @@ export function CollectionsProvider({ children }) {
    * Reorder requests within a collection
    */
   const reorderRequests = async (collectionId, requestIds) => {
-    if (!user) throw new Error('User must be authenticated');
-    
+    if (!user) throw new Error("User must be authenticated");
+
     try {
       await reorderCollectionRequests(collectionId, requestIds);
-      
+
       // Update local state to reflect new order
-      setCollections(prev => {
+      setCollections((prev) => {
         const collection = prev[collectionId];
         if (!collection) return prev;
-        
-        const reorderedRequests = requestIds.map(id => 
-          collection.requests.find(req => req.id === id)
-        ).filter(Boolean);
-        
+
+        const reorderedRequests = requestIds
+          .map((id) => collection.requests.find((req) => req.id === id))
+          .filter(Boolean);
+
         return {
           ...prev,
           [collectionId]: {
             ...collection,
-            requests: reorderedRequests
-          }
+            requests: reorderedRequests,
+          },
         };
       });
-      
+
       return true;
     } catch (err) {
       setError(err.message);
@@ -281,12 +299,12 @@ export function CollectionsProvider({ children }) {
    */
   const saveToHistory = async (requestData, response) => {
     if (!user) return false;
-    
+
     try {
       return await saveRequestToHistory(requestData, response);
     } catch (err) {
       // Don't throw error for history - it's not critical
-      console.warn('Failed to save request to history:', err);
+      console.warn("Failed to save request to history:", err);
       return false;
     }
   };
@@ -319,11 +337,11 @@ export function CollectionsProvider({ children }) {
     const enhancedCollections = {};
     Object.entries(collections).forEach(([id, collection]) => {
       enhancedCollections[id] = DocsMetadata.enhanceCollection(collection);
-      
+
       // Enhance requests if they exist
       if (enhancedCollections[id].requests) {
-        enhancedCollections[id].requests = enhancedCollections[id].requests.map(request =>
-          DocsMetadata.enhanceRequest(request)
+        enhancedCollections[id].requests = enhancedCollections[id].requests.map(
+          (request) => DocsMetadata.enhanceRequest(request)
         );
       }
     });
@@ -336,10 +354,10 @@ export function CollectionsProvider({ children }) {
   const getCollectionWithDocs = (collectionId) => {
     const collection = collections[collectionId];
     if (!collection) return null;
-    
+
     const enhanced = DocsMetadata.enhanceCollection(collection);
     if (enhanced.requests) {
-      enhanced.requests = enhanced.requests.map(request =>
+      enhanced.requests = enhanced.requests.map((request) =>
         DocsMetadata.enhanceRequest(request)
       );
     }
@@ -366,7 +384,7 @@ export function CollectionsProvider({ children }) {
     activeCollectionId,
     loading,
     error,
-    
+
     // Actions
     loadCollections,
     createCollection,
@@ -378,20 +396,20 @@ export function CollectionsProvider({ children }) {
     searchRequests,
     reorderRequests,
     saveToHistory,
-    
+
     // Docs-enhanced actions
     getCollectionsWithDocs,
     getCollectionWithDocs,
     updateCollectionDocs,
     updateRequestDocs,
-    
+
     // Setters
     setActiveCollectionId,
-    
+
     // Helpers
     getActiveCollection,
     getCollection,
-    clearError
+    clearError,
   };
 
   return (
@@ -404,7 +422,7 @@ export function CollectionsProvider({ children }) {
 export function useCollections() {
   const context = useContext(CollectionsContext);
   if (context === undefined) {
-    throw new Error('useCollections must be used within a CollectionsProvider');
+    throw new Error("useCollections must be used within a CollectionsProvider");
   }
   return context;
 }

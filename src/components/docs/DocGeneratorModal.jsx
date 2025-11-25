@@ -94,7 +94,7 @@ export default function DocGeneratorModal({
   const getCollectionsByPagination = async () => {
     try {
       const response = await collectionsApi.getPaginated(1, 10);
-      console.log("get data: ", response);
+
       setCollections(response.collections || []);
     } catch (error) {
       console.error("Error fetching collections:", error);
@@ -108,7 +108,6 @@ export default function DocGeneratorModal({
 
   useEffect(() => {
     if (collections.length) {
-      console.log("success collections: ", collections);
       setFilteredCollections(collections);
     }
   }, [collections]);
@@ -157,7 +156,7 @@ export default function DocGeneratorModal({
           customization,
           selectedTemplate,
         }),
-      }); 
+      });
 
       const data = await response.json();
 
@@ -182,7 +181,7 @@ export default function DocGeneratorModal({
       setIsGenerating(false);
     }
   };
-  
+
   // Debounce search query
   useEffect(() => {
     const timer = setTimeout(() => {

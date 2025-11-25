@@ -22,8 +22,6 @@ export async function POST(request) {
       error: authError,
     } = await supabase.auth.getUser();
 
-    console.log("user: ", user);
-
     if (authError || !user) {
       return NextResponse.json(
         { error: "Authentication required" },

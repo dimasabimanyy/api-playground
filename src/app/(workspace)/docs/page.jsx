@@ -102,18 +102,18 @@ function UserAvatar({ user, isDark }) {
 export default function DocsPage() {
   const { isDark, toggleTheme } = useTheme();
   const { user, signOut } = useAuth();
-  const {
-    collections,
-    activeCollectionId,
-    setActiveCollectionId,
-    addRequestToCollection,
-    updateRequestInCollection,
-    saveToHistory,
-    createCollection,
-    deleteCollection,
-    getCollectionsWithDocs,
-    loading: collectionsLoading,
-  } = useCollections();
+  // const {
+  //   collections,
+  //   activeCollectionId,
+  //   setActiveCollectionId,
+  //   addRequestToCollection,
+  //   updateRequestInCollection,
+  //   saveToHistory,
+  //   createCollection,
+  //   deleteCollection,
+  //   getCollectionsWithDocs,
+  //   loading: collectionsLoading,
+  // } = useCollections();
   const themeClasses = getThemeClasses(isDark);
   const router = useRouter();
 
@@ -573,7 +573,6 @@ export default function DocsPage() {
                 <DocumentationProjectCard
                   key={project.id}
                   project={project}
-                  collections={collections}
                   viewMode={viewMode}
                   onView={() => viewDocumentation(project)}
                   onEdit={() => {

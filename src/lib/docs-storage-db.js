@@ -1,31 +1,31 @@
 /**
  * Database-backed storage utilities for enhanced documentation data
- * 
+ *
  * This replaces the localStorage implementation with Supabase database storage
  * for production-ready persistence and multi-user support.
  */
 
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { DocsUtils } from './docs-schema';
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { DocsUtils } from "./docs-schema";
 
 const supabase = createClientComponentClient();
 
 // Default settings
 const DEFAULT_SETTINGS = {
-  defaultTheme: 'modern',
+  defaultTheme: "modern",
   autoSave: true,
   autoSaveInterval: 30000, // 30 seconds
   backupEnabled: true,
   maxBackups: 10,
   lastBackup: null,
-  defaultExportFormat: 'html',
+  defaultExportFormat: "html",
   includeExamples: true,
   includeAuth: true,
   groupByCollection: true,
   includeErrorCodes: true,
   showRequestBody: true,
   showResponseExamples: true,
-  codeTheme: 'vs-dark',
+  codeTheme: "vs-dark",
 };
 
 /**
@@ -38,22 +38,27 @@ export const DocsProjects = {
   getAll: async () => {
     try {
       const { data: projects, error } = await supabase
-        .from('docs_projects')
-        .select('*')
-        .eq('status', 'active')
-        .order('updated_at', { ascending: false });
+        .from("docs_projects")
+        .select("*")
+        .eq("status", "PUBLISHED")
+        .order("updated_at", { ascending: false });
 
-      if (error) throw error;
-      
+      if (error) {
+        console.log("error bro: ", error);
+        throw error;
+      }
+
+      console.log("kratos proj: ", projects);
+
       // Convert to object format for compatibility
       const projectsObj = {};
-      projects?.forEach(project => {
+      projects?.forEach((project) => {
         projectsObj[project.id] = project;
       });
-      
+
       return projectsObj;
     } catch (error) {
-      console.error('Error loading docs projects:', error);
+      console.error("Error loading docs projects:", error);
       return {};
     }
   },
@@ -64,15 +69,15 @@ export const DocsProjects = {
   get: async (projectId) => {
     try {
       const { data: project, error } = await supabase
-        .from('docs_projects')
-        .select('*')
-        .eq('id', projectId)
+        .from("docs_projects")
+        .select("*")
+        .eq("id", projectId)
         .single();
 
-      if (error && error.code !== 'PGRST116') throw error; // PGRST116 is "not found"
+      if (error && error.code !== "PGRST116") throw error; // PGRST116 is "not found"
       return project || null;
     } catch (error) {
-      console.error('Error loading project:', error.message);
+      console.error("Error loading project:", error.message);
       return null;
     }
   },
@@ -80,10 +85,12 @@ export const DocsProjects = {
   /**
    * Create a new documentation project
    */
-  create: async (name, description = '', collections = [], settings = {}) => {
+  create: async (name, description = "", collections = [], settings = {}) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) throw new Error("User not authenticated");
 
       const project = {
         name,
@@ -94,7 +101,7 @@ export const DocsProjects = {
       };
 
       const { data: newProject, error } = await supabase
-        .from('docs_projects')
+        .from("docs_projects")
         .insert([project])
         .select()
         .single();
@@ -102,7 +109,7 @@ export const DocsProjects = {
       if (error) throw error;
       return newProject;
     } catch (error) {
-      console.error('Error creating project:', error);
+      console.error("Error creating project:", error);
       throw error;
     }
   },
@@ -113,19 +120,19 @@ export const DocsProjects = {
   update: async (projectId, updates) => {
     try {
       const { data: updatedProject, error } = await supabase
-        .from('docs_projects')
+        .from("docs_projects")
         .update({
           ...updates,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', projectId)
+        .eq("id", projectId)
         .select()
         .single();
 
       if (error) throw error;
       return updatedProject;
     } catch (error) {
-      console.error('Error updating project:', error);
+      console.error("Error updating project:", error);
       return null;
     }
   },
@@ -136,20 +143,20 @@ export const DocsProjects = {
   delete: async (projectId) => {
     try {
       const { error } = await supabase
-        .from('docs_projects')
-        .update({ 
-          status: 'deleted',
+        .from("docs_projects")
+        .update({
+          status: "deleted",
           updated_at: new Date().toISOString(),
         })
-        .eq('id', projectId);
+        .eq("id", projectId);
 
       if (error) throw error;
-      
+
       // Also clean up associated cache
       await DocsCache.clearForProject(projectId);
       return true;
     } catch (error) {
-      console.error('Error deleting project:', error);
+      console.error("Error deleting project:", error);
       return false;
     }
   },
@@ -176,7 +183,7 @@ export const DocsProjects = {
         duplicate.settings
       );
     } catch (error) {
-      console.error('Error duplicating project:', error);
+      console.error("Error duplicating project:", error);
       return null;
     }
   },
@@ -186,9 +193,9 @@ export const DocsProjects = {
    */
   archive: async (projectId) => {
     try {
-      return await DocsProjects.update(projectId, { status: 'archived' });
+      return await DocsProjects.update(projectId, { status: "archived" });
     } catch (error) {
-      console.error('Error archiving project:', error);
+      console.error("Error archiving project:", error);
       return null;
     }
   },
@@ -198,9 +205,9 @@ export const DocsProjects = {
    */
   restore: async (projectId) => {
     try {
-      return await DocsProjects.update(projectId, { status: 'active' });
+      return await DocsProjects.update(projectId, { status: "active" });
     } catch (error) {
-      console.error('Error restoring project:', error);
+      console.error("Error restoring project:", error);
       return null;
     }
   },
@@ -216,15 +223,15 @@ export const DocsMetadata = {
   getCollection: async (collectionId) => {
     try {
       const { data: metadata, error } = await supabase
-        .from('docs_collections_metadata')
-        .select('*')
-        .eq('collection_id', collectionId)
+        .from("docs_collections_metadata")
+        .select("*")
+        .eq("collection_id", collectionId)
         .single();
 
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error && error.code !== "PGRST116") throw error;
       return metadata || null;
     } catch (error) {
-      console.error('Error loading collection metadata:', error);
+      console.error("Error loading collection metadata:", error);
       return null;
     }
   },
@@ -235,15 +242,15 @@ export const DocsMetadata = {
   getRequest: async (requestId) => {
     try {
       const { data: metadata, error } = await supabase
-        .from('docs_requests_metadata')
-        .select('*')
-        .eq('request_id', requestId)
+        .from("docs_requests_metadata")
+        .select("*")
+        .eq("request_id", requestId)
         .single();
 
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error && error.code !== "PGRST116") throw error;
       return metadata || null;
     } catch (error) {
-      console.error('Error loading request metadata:', error);
+      console.error("Error loading request metadata:", error);
       return null;
     }
   },
@@ -253,8 +260,10 @@ export const DocsMetadata = {
    */
   saveCollection: async (collectionId, docsData) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) throw new Error("User not authenticated");
 
       const metadata = {
         collection_id: collectionId,
@@ -266,10 +275,10 @@ export const DocsMetadata = {
       };
 
       const { data: savedMetadata, error } = await supabase
-        .from('docs_collections_metadata')
-        .upsert(metadata, { 
-          onConflict: 'collection_id,user_id',
-          ignoreDuplicates: false 
+        .from("docs_collections_metadata")
+        .upsert(metadata, {
+          onConflict: "collection_id,user_id",
+          ignoreDuplicates: false,
         })
         .select()
         .single();
@@ -277,7 +286,7 @@ export const DocsMetadata = {
       if (error) throw error;
       return savedMetadata;
     } catch (error) {
-      console.error('Error saving collection metadata:', error);
+      console.error("Error saving collection metadata:", error);
       throw error;
     }
   },
@@ -287,8 +296,10 @@ export const DocsMetadata = {
    */
   saveRequest: async (requestId, docsData) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) throw new Error("User not authenticated");
 
       const metadata = {
         request_id: requestId,
@@ -300,10 +311,10 @@ export const DocsMetadata = {
       };
 
       const { data: savedMetadata, error } = await supabase
-        .from('docs_requests_metadata')
-        .upsert(metadata, { 
-          onConflict: 'request_id,user_id',
-          ignoreDuplicates: false 
+        .from("docs_requests_metadata")
+        .upsert(metadata, {
+          onConflict: "request_id,user_id",
+          ignoreDuplicates: false,
         })
         .select()
         .single();
@@ -311,7 +322,7 @@ export const DocsMetadata = {
       if (error) throw error;
       return savedMetadata;
     } catch (error) {
-      console.error('Error saving request metadata:', error);
+      console.error("Error saving request metadata:", error);
       throw error;
     }
   },
@@ -325,12 +336,12 @@ export const DocsMetadata = {
       if (existing) {
         return { ...collection, docs: existing };
       }
-      
+
       const enhanced = DocsUtils.enhanceCollection(collection);
       await DocsMetadata.saveCollection(collection.id, enhanced.docs);
       return enhanced;
     } catch (error) {
-      console.error('Error enhancing collection:', error);
+      console.error("Error enhancing collection:", error);
       return collection;
     }
   },
@@ -344,12 +355,12 @@ export const DocsMetadata = {
       if (existing) {
         return { ...request, docs: existing };
       }
-      
+
       const enhanced = DocsUtils.enhanceRequest(request);
       await DocsMetadata.saveRequest(request.id, enhanced.docs);
       return enhanced;
     } catch (error) {
-      console.error('Error enhancing request:', error);
+      console.error("Error enhancing request:", error);
       return request;
     }
   },
@@ -361,23 +372,25 @@ export const DocsMetadata = {
     try {
       const enhanced = await Promise.all(
         Object.values(collections).map(async (collection) => {
-          const enhancedCollection = await DocsMetadata.enhanceCollection(collection);
-          
+          const enhancedCollection = await DocsMetadata.enhanceCollection(
+            collection
+          );
+
           if (enhancedCollection.requests) {
             enhancedCollection.requests = await Promise.all(
-              enhancedCollection.requests.map(request => 
+              enhancedCollection.requests.map((request) =>
                 DocsMetadata.enhanceRequest(request)
               )
             );
           }
-          
+
           return enhancedCollection;
         })
       );
 
       return enhanced;
     } catch (error) {
-      console.error('Error bulk enhancing collections:', error);
+      console.error("Error bulk enhancing collections:", error);
       return Object.values(collections);
     }
   },
@@ -388,14 +401,14 @@ export const DocsMetadata = {
   deleteCollection: async (collectionId) => {
     try {
       const { error } = await supabase
-        .from('docs_collections_metadata')
+        .from("docs_collections_metadata")
         .delete()
-        .eq('collection_id', collectionId);
+        .eq("collection_id", collectionId);
 
       if (error) throw error;
       return true;
     } catch (error) {
-      console.error('Error deleting collection metadata:', error);
+      console.error("Error deleting collection metadata:", error);
       return false;
     }
   },
@@ -406,14 +419,14 @@ export const DocsMetadata = {
   deleteRequest: async (requestId) => {
     try {
       const { error } = await supabase
-        .from('docs_requests_metadata')
+        .from("docs_requests_metadata")
         .delete()
-        .eq('request_id', requestId);
+        .eq("request_id", requestId);
 
       if (error) throw error;
       return true;
     } catch (error) {
-      console.error('Error deleting request metadata:', error);
+      console.error("Error deleting request metadata:", error);
       return false;
     }
   },
@@ -421,17 +434,17 @@ export const DocsMetadata = {
   /**
    * Search docs metadata
    */
-  search: async (query, type = 'all') => {
+  search: async (query, type = "all") => {
     try {
       const results = {
         collections: [],
         requests: [],
       };
 
-      if (type === 'all' || type === 'collections') {
+      if (type === "all" || type === "collections") {
         const { data: collections, error: collectionsError } = await supabase
-          .from('docs_collections_metadata')
-          .select('*')
+          .from("docs_collections_metadata")
+          .select("*")
           .or(`title.ilike.%${query}%, description.ilike.%${query}%`)
           .limit(20);
 
@@ -440,11 +453,13 @@ export const DocsMetadata = {
         }
       }
 
-      if (type === 'all' || type === 'requests') {
+      if (type === "all" || type === "requests") {
         const { data: requests, error: requestsError } = await supabase
-          .from('docs_requests_metadata')
-          .select('*')
-          .or(`title.ilike.%${query}%, description.ilike.%${query}%, summary.ilike.%${query}%`)
+          .from("docs_requests_metadata")
+          .select("*")
+          .or(
+            `title.ilike.%${query}%, description.ilike.%${query}%, summary.ilike.%${query}%`
+          )
           .limit(20);
 
         if (!requestsError && requests) {
@@ -454,7 +469,7 @@ export const DocsMetadata = {
 
       return results;
     } catch (error) {
-      console.error('Error searching metadata:', error);
+      console.error("Error searching metadata:", error);
       return { collections: [], requests: [] };
     }
   },
@@ -469,21 +484,23 @@ export const DocsSettings = {
    */
   get: async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return DEFAULT_SETTINGS;
 
       const { data: settings, error } = await supabase
-        .from('docs_settings')
-        .select('*')
-        .eq('user_id', user.id)
+        .from("docs_settings")
+        .select("*")
+        .eq("user_id", user.id)
         .single();
 
-      if (error && error.code !== 'PGRST116') throw error;
-      
+      if (error && error.code !== "PGRST116") throw error;
+
       // Merge with defaults to ensure all settings exist
       return { ...DEFAULT_SETTINGS, ...settings };
     } catch (error) {
-      console.error('Error loading docs settings:', error);
+      console.error("Error loading docs settings:", error);
       return DEFAULT_SETTINGS;
     }
   },
@@ -493,26 +510,31 @@ export const DocsSettings = {
    */
   update: async (updates) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) throw new Error("User not authenticated");
 
       const { data: updatedSettings, error } = await supabase
-        .from('docs_settings')
-        .upsert({
-          user_id: user.id,
-          ...updates,
-          updated_at: new Date().toISOString(),
-        }, { 
-          onConflict: 'user_id',
-          ignoreDuplicates: false 
-        })
+        .from("docs_settings")
+        .upsert(
+          {
+            user_id: user.id,
+            ...updates,
+            updated_at: new Date().toISOString(),
+          },
+          {
+            onConflict: "user_id",
+            ignoreDuplicates: false,
+          }
+        )
         .select()
         .single();
 
       if (error) throw error;
       return { ...DEFAULT_SETTINGS, ...updatedSettings };
     } catch (error) {
-      console.error('Error updating docs settings:', error);
+      console.error("Error updating docs settings:", error);
       throw error;
     }
   },
@@ -524,7 +546,7 @@ export const DocsSettings = {
     try {
       return await DocsSettings.update(DEFAULT_SETTINGS);
     } catch (error) {
-      console.error('Error resetting docs settings:', error);
+      console.error("Error resetting docs settings:", error);
       throw error;
     }
   },
@@ -543,16 +565,16 @@ export const DocsCache = {
       await DocsCache.cleanExpired();
 
       const { data: entry, error } = await supabase
-        .from('docs_cache')
-        .select('*')
-        .eq('cache_key', key)
-        .gte('expires_at', new Date().toISOString())
+        .from("docs_cache")
+        .select("*")
+        .eq("cache_key", key)
+        .gte("expires_at", new Date().toISOString())
         .single();
 
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error && error.code !== "PGRST116") throw error;
       return entry?.content || null;
     } catch (error) {
-      console.error('Error reading docs cache:', error);
+      console.error("Error reading docs cache:", error);
       return null;
     }
   },
@@ -562,29 +584,29 @@ export const DocsCache = {
    */
   set: async (key, data, maxAge = 3600000) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       const expiresAt = new Date(Date.now() + maxAge);
 
       const cacheEntry = {
         cache_key: key,
         user_id: user?.id,
         content: data,
-        content_type: 'json',
+        content_type: "json",
         max_age: maxAge,
         expires_at: expiresAt.toISOString(),
       };
 
-      const { error } = await supabase
-        .from('docs_cache')
-        .upsert(cacheEntry, { 
-          onConflict: 'cache_key',
-          ignoreDuplicates: false 
-        });
+      const { error } = await supabase.from("docs_cache").upsert(cacheEntry, {
+        onConflict: "cache_key",
+        ignoreDuplicates: false,
+      });
 
       if (error) throw error;
       return true;
     } catch (error) {
-      console.error('Error setting docs cache:', error);
+      console.error("Error setting docs cache:", error);
       return false;
     }
   },
@@ -595,14 +617,14 @@ export const DocsCache = {
   delete: async (key) => {
     try {
       const { error } = await supabase
-        .from('docs_cache')
+        .from("docs_cache")
         .delete()
-        .eq('cache_key', key);
+        .eq("cache_key", key);
 
       if (error) throw error;
       return true;
     } catch (error) {
-      console.error('Error deleting docs cache:', error);
+      console.error("Error deleting docs cache:", error);
       return false;
     }
   },
@@ -612,18 +634,20 @@ export const DocsCache = {
    */
   clear: async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return true;
 
       const { error } = await supabase
-        .from('docs_cache')
+        .from("docs_cache")
         .delete()
-        .eq('user_id', user.id);
+        .eq("user_id", user.id);
 
       if (error) throw error;
       return true;
     } catch (error) {
-      console.error('Error clearing docs cache:', error);
+      console.error("Error clearing docs cache:", error);
       return false;
     }
   },
@@ -634,14 +658,14 @@ export const DocsCache = {
   clearForProject: async (projectId) => {
     try {
       const { error } = await supabase
-        .from('docs_cache')
+        .from("docs_cache")
         .delete()
-        .like('cache_key', `%project_${projectId}%`);
+        .like("cache_key", `%project_${projectId}%`);
 
       if (error) throw error;
       return true;
     } catch (error) {
-      console.error('Error clearing project cache:', error);
+      console.error("Error clearing project cache:", error);
       return false;
     }
   },
@@ -652,14 +676,14 @@ export const DocsCache = {
   cleanExpired: async () => {
     try {
       const { error } = await supabase
-        .from('docs_cache')
+        .from("docs_cache")
         .delete()
-        .lt('expires_at', new Date().toISOString());
+        .lt("expires_at", new Date().toISOString());
 
       if (error) throw error;
       return true;
     } catch (error) {
-      console.error('Error cleaning expired cache:', error);
+      console.error("Error cleaning expired cache:", error);
       return false;
     }
   },
@@ -675,20 +699,20 @@ export const DocsTemplates = {
   getAll: async (type = null) => {
     try {
       let query = supabase
-        .from('docs_templates')
-        .select('*')
-        .order('is_system', { ascending: false })
-        .order('name');
+        .from("docs_templates")
+        .select("*")
+        .order("is_system", { ascending: false })
+        .order("name");
 
       if (type) {
-        query = query.eq('type', type);
+        query = query.eq("type", type);
       }
 
       const { data: templates, error } = await query;
       if (error) throw error;
       return templates || [];
     } catch (error) {
-      console.error('Error loading templates:', error);
+      console.error("Error loading templates:", error);
       return [];
     }
   },
@@ -698,24 +722,26 @@ export const DocsTemplates = {
    */
   getUserTemplates: async (type = null) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return [];
 
       let query = supabase
-        .from('docs_templates')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('updated_at', { ascending: false });
+        .from("docs_templates")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("updated_at", { ascending: false });
 
       if (type) {
-        query = query.eq('type', type);
+        query = query.eq("type", type);
       }
 
       const { data: templates, error } = await query;
       if (error) throw error;
       return templates || [];
     } catch (error) {
-      console.error('Error loading user templates:', error);
+      console.error("Error loading user templates:", error);
       return [];
     }
   },
@@ -725,8 +751,10 @@ export const DocsTemplates = {
    */
   create: async (name, description, type, templateData, isSystem = false) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user && !isSystem) throw new Error('User not authenticated');
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user && !isSystem) throw new Error("User not authenticated");
 
       const template = {
         name,
@@ -738,7 +766,7 @@ export const DocsTemplates = {
       };
 
       const { data: newTemplate, error } = await supabase
-        .from('docs_templates')
+        .from("docs_templates")
         .insert([template])
         .select()
         .single();
@@ -746,7 +774,7 @@ export const DocsTemplates = {
       if (error) throw error;
       return newTemplate;
     } catch (error) {
-      console.error('Error creating template:', error);
+      console.error("Error creating template:", error);
       throw error;
     }
   },
@@ -756,14 +784,14 @@ export const DocsTemplates = {
    */
   recordUsage: async (templateId) => {
     try {
-      const { error } = await supabase.rpc('increment_template_usage', {
-        template_id: templateId
+      const { error } = await supabase.rpc("increment_template_usage", {
+        template_id: templateId,
       });
 
       if (error) throw error;
       return true;
     } catch (error) {
-      console.error('Error recording template usage:', error);
+      console.error("Error recording template usage:", error);
       return false;
     }
   },

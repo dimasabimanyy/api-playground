@@ -70,8 +70,6 @@ export default function TwoPanelSidebar({
     setMounted(true);
   }, []);
 
-  console.log("pathname: ", pathname);
-
   useEffect(() => {
     if (mounted && pathname?.includes("/docs")) {
       setContentOpen(false);
