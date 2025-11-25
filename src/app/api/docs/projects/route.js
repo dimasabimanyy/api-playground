@@ -1,6 +1,43 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
 
+// Helper function to generate URL-friendly slug
+function generateSlug(text) {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '') // Remove special characters
+    .replace(/[\s_-]+/g, '-') // Replace spaces and underscores with hyphens
+    .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+}
+
+// Helper function to ensure unique slug
+async function ensureUniqueSlug(supabase, baseSlug, userId, excludeId = null) {
+  let slug = baseSlug;
+  let counter = 1;
+  
+  while (true) {
+    let query = supabase
+      .from('docs_projects')
+      .select('id')
+      .eq('slug', slug)
+      .eq('user_id', userId);
+    
+    if (excludeId) {
+      query = query.neq('id', excludeId);
+    }
+    
+    const { data: existing } = await query;
+    
+    if (!existing || existing.length === 0) {
+      return slug;
+    }
+    
+    slug = `${baseSlug}-${counter}`;
+    counter++;
+  }
+}
+
 // GET /api/docs/projects - Get all docs projects for user
 export async function GET(request) {
   try {
@@ -81,7 +118,7 @@ export async function POST(request) {
     }
 
     const body = await request.json();
-    const { name, description, collection_id, settings, status = 'published' } = body;
+    const { name, description, collection_id, settings, status = 'published', slug: providedSlug } = body;
 
     if (!name) {
       return NextResponse.json({ error: 'Name is required' }, { status: 400 });
@@ -91,12 +128,19 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Collection ID is required' }, { status: 400 });
     }
 
+    // Generate slug from name or use provided slug
+    const baseSlug = providedSlug ? generateSlug(providedSlug) : generateSlug(name);
+    
+    // Ensure slug is unique for this user
+    const uniqueSlug = await ensureUniqueSlug(supabase, baseSlug, user.id);
+
     const projectData = {
       name,
       description: description || '',
       collection_id,
       settings: settings || {},
       status,
+      slug: uniqueSlug,
       user_id: user.id,
     };
 

@@ -2,6 +2,37 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
 import { generateDocumentationFromCollection } from '@/lib/docs-helper';
 
+// Helper function to generate URL-friendly slug
+function generateSlug(text) {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '') // Remove special characters
+    .replace(/[\s_-]+/g, '-') // Replace spaces and underscores with hyphens
+    .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+}
+
+// Helper function to ensure unique slug
+async function ensureUniqueSlug(supabase, baseSlug, userId) {
+  let slug = baseSlug;
+  let counter = 1;
+  
+  while (true) {
+    const { data: existing } = await supabase
+      .from('docs_projects')
+      .select('id')
+      .eq('slug', slug)
+      .eq('user_id', userId);
+    
+    if (!existing || existing.length === 0) {
+      return slug;
+    }
+    
+    slug = `${baseSlug}-${counter}`;
+    counter++;
+  }
+}
+
 export async function POST(request) {
   try {
     const body = await request.json();
@@ -26,9 +57,14 @@ export async function POST(request) {
     }
 
     // Prepare the documentation settings
+    const projectName = customization.title || `${selectedCollection.name} Documentation`;
+    const baseSlug = generateSlug(projectName);
+    const uniqueSlug = await ensureUniqueSlug(supabase, baseSlug, user.id);
+    
     const docsSettings = {
-      name: customization.title || `${selectedCollection.name} Documentation`,
+      name: projectName,
       // description: customization.description || `Documentation for ${selectedCollection.name}`,
+      slug: uniqueSlug,
       user_id: user.id,
       status: 'published',
       collection_id: selectedCollection.id,

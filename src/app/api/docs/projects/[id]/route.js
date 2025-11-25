@@ -1,6 +1,43 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
 
+// Helper function to generate URL-friendly slug
+function generateSlug(text) {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '') // Remove special characters
+    .replace(/[\s_-]+/g, '-') // Replace spaces and underscores with hyphens
+    .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+}
+
+// Helper function to ensure unique slug
+async function ensureUniqueSlug(supabase, baseSlug, userId, excludeId = null) {
+  let slug = baseSlug;
+  let counter = 1;
+  
+  while (true) {
+    let query = supabase
+      .from('docs_projects')
+      .select('id')
+      .eq('slug', slug)
+      .eq('user_id', userId);
+    
+    if (excludeId) {
+      query = query.neq('id', excludeId);
+    }
+    
+    const { data: existing } = await query;
+    
+    if (!existing || existing.length === 0) {
+      return slug;
+    }
+    
+    slug = `${baseSlug}-${counter}`;
+    counter++;
+  }
+}
+
 // GET /api/docs/projects/[id] - Get specific docs project
 export async function GET(request, { params }) {
   try {
@@ -56,13 +93,22 @@ export async function PUT(request, { params }) {
 
     const { id } = params;
     const body = await request.json();
-    const { name, description, settings, status } = body;
+    const { name, description, settings, status, slug: providedSlug } = body;
 
     const updateData = {};
     if (name !== undefined) updateData.name = name;
     if (description !== undefined) updateData.description = description;
     if (settings !== undefined) updateData.settings = settings;
     if (status !== undefined) updateData.status = status;
+    
+    // Handle slug update - regenerate from name or use provided slug
+    if (name !== undefined || providedSlug !== undefined) {
+      const baseSlug = providedSlug ? generateSlug(providedSlug) : (name ? generateSlug(name) : null);
+      if (baseSlug) {
+        const uniqueSlug = await ensureUniqueSlug(supabase, baseSlug, user.id, id);
+        updateData.slug = uniqueSlug;
+      }
+    }
     
     updateData.updated_at = new Date().toISOString();
 
