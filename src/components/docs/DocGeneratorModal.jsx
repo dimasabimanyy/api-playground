@@ -25,10 +25,7 @@ import { getThemeClasses } from "@/lib/theme";
 import { DocsGenerator } from "@/lib/docs-generator";
 import { DocsProjects } from "@/lib/docs-storage-db";
 import { useCollections } from "@/contexts/CollectionsContext";
-import {
-  getCollectionsBySearch,
-  getCollectionsPagination,
-} from "@/lib/supabase-collections";
+import { collectionsApi } from "@/lib/api-client";
 import useDebounce from "@/hooks/useDebounce";
 import { predefinedDocumenationTemplates } from "@/config/docs-templates";
 import { generateDocumentationFromCollection } from "@/lib/docs-helper";
@@ -96,14 +93,14 @@ export default function DocGeneratorModal({
   };
 
   const getCollectionsByPagination = async () => {
-    const data = await getCollectionsPagination({
-      page: 1,
-      pageSize: 10,
-    });
-
-    console.log("get data: ", data);
-
-    setCollections(data);
+    try {
+      const response = await collectionsApi.getPaginated(1, 10);
+      console.log("get data: ", response);
+      setCollections(response.collections || []);
+    } catch (error) {
+      console.error("Error fetching collections:", error);
+      setCollections([]);
+    }
   };
 
   useEffect(() => {
@@ -125,13 +122,10 @@ export default function DocGeneratorModal({
 
     const getCollectionsBySearchName = async () => {
       try {
-        const data = await getCollectionsBySearch(debouncedSearcInput); // As name
-
-        setFilteredCollections(data || []);
-      } catch (e) {
-        console.error(
-          `Error fetching collections by search name: ${e.message}`
-        );
+        const response = await collectionsApi.search(debouncedSearcInput, { pageSize: 20 });
+        setFilteredCollections(response.collections || []);
+      } catch (error) {
+        console.error(`Error fetching collections by search name: ${error.message}`);
       } finally {
         setIsDebounceSearchLoading(false);
       }
