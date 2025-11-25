@@ -79,11 +79,18 @@ const DocumentationProjectCard = ({
                 {project.name}
               </h3>
               <p className={`text-sm ${themeClasses.text.secondary} truncate`}>
-                {project.description || "No description"}
+                Documentation for {project.collection?.name}
               </p>
+              {project.description && (
+                <p
+                  className={`text-sm ${themeClasses.text.secondary} truncate`}
+                >
+                  {project.description}
+                </p>
+              )}
             </div>
 
-            <div className="hidden md:flex items-center gap-6">
+            {/* <div className="hidden md:flex items-center gap-6">
               <div
                 className={`flex items-center gap-4 text-xs ${themeClasses.text.tertiary}`}
               >
@@ -100,7 +107,7 @@ const DocumentationProjectCard = ({
                   {formatDate(project.updated)}
                 </span>
               </div>
-            </div>
+            </div> */}
           </div>
 
           <div className="flex items-center gap-2">

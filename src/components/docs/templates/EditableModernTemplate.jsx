@@ -309,7 +309,7 @@ const EditableModernTemplate = ({ docData, isEditMode = false, onDataChange }) =
             <div className="mb-8">
               {isEditingMode ? (
                 <EditableText
-                  value={editableDocData.customization?.description || 'Complete API reference for your application'}
+                  value={editableDocData.customization?.description || ''}
                   onSave={(value) => updateProjectInfo('description', value)}
                   variant="subtitle"
                   placeholder="Documentation description..."
@@ -318,7 +318,7 @@ const EditableModernTemplate = ({ docData, isEditMode = false, onDataChange }) =
                 />
               ) : (
                 <p className={`text-xl ${themeClasses.text.secondary} max-w-2xl mx-auto`}>
-                  {editableDocData.customization?.description || 'Complete API reference for your application'}
+                  {editableDocData.customization?.description || ''}
                 </p>
               )}
             </div>

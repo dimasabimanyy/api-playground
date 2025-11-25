@@ -34,7 +34,7 @@ const COLLECTION_LIMIT = 2;
 
 const documentationInitialData = {
   title: "API Documentation",
-  description: "Complete API reference for your application",
+  // description: "Complete API reference for your application",
   baseUrl: "https://api.example.com",
   // Branding
   primaryColor: "#171717",

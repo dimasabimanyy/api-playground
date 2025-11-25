@@ -28,7 +28,7 @@ export async function POST(request) {
     // Prepare the documentation settings
     const docsSettings = {
       name: customization.title || `${selectedCollection.name} Documentation`,
-      description: customization.description || `Documentation for ${selectedCollection.name}`,
+      // description: customization.description || `Documentation for ${selectedCollection.name}`,
       user_id: user.id,
       status: 'published',
       collection_id: selectedCollection.id,
