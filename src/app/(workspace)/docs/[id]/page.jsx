@@ -724,7 +724,8 @@ export default function DocDetailPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5 items-start">
+              {/* Column 1: Theme Colors */}
               <div
                 className={`border rounded-xl p-6 ${
                   isDark
@@ -732,51 +733,44 @@ export default function DocDetailPage() {
                     : "border-gray-200 bg-white"
                 }`}
               >
-                {/* Template Selection */}
+                <h3 className={`font-semibold ${themeClasses.text.bold} mb-4`}>
+                  Theme Colors
+                </h3>
+                
                 <div className="space-y-6">
-                  {/* Primary Color Picker */}
+                  {/* Primary Color */}
                   <div>
-                    <h4
-                      className={`block text-sm font-medium ${themeClasses.text.bold} mb-3`}
-                    >
+                    <label className={`block text-sm font-medium ${themeClasses.text.bold} mb-2`}>
                       Primary Color
-                    </h4>
-                    <p
-                      className={`text-xs ${themeClasses.text.secondary} mb-3`}
-                    >
-                      Used for buttons, links, and accents
+                    </label>
+                    <p className={`text-xs ${themeClasses.text.secondary} mb-3`}>
+                      Main brand color for buttons and links
                     </p>
                     <div className="flex items-center gap-3">
-                      <input
-                        type="color"
-                        value={
-                          project.settings?.displayOptions?.primaryColor ||
-                          "#171717"
-                        }
-                        onChange={(e) => {
-                          updateProject({
-                            settings: {
-                              ...project.settings,
-                              displayOptions: {
-                                ...project.settings?.displayOptions,
-                                primaryColor: e.target.value,
+                      <div className="relative">
+                        <input
+                          type="color"
+                          value={project.settings?.displayOptions?.primaryColor || "#171717"}
+                          onChange={(e) => {
+                            updateProject({
+                              settings: {
+                                ...project.settings,
+                                displayOptions: {
+                                  ...project.settings?.displayOptions,
+                                  primaryColor: e.target.value,
+                                },
                               },
-                            },
-                          });
-                        }}
-                        className="w-10 h-10 rounded-lg border border-gray-300 cursor-pointer"
-                        style={{
-                          backgroundColor:
-                            project.settings?.displayOptions?.primaryColor ||
-                            "#171717",
-                        }}
-                      />
+                            });
+                          }}
+                          className="w-12 h-10 rounded-lg border-2 border-gray-300 cursor-pointer"
+                          style={{
+                            backgroundColor: project.settings?.displayOptions?.primaryColor || "#171717",
+                          }}
+                        />
+                      </div>
                       <input
                         type="text"
-                        value={
-                          project.settings?.displayOptions?.primaryColor ||
-                          "#171717"
-                        }
+                        value={project.settings?.displayOptions?.primaryColor || "#171717"}
                         onChange={(e) => {
                           updateProject({
                             settings: {
@@ -788,7 +782,7 @@ export default function DocDetailPage() {
                             },
                           });
                         }}
-                        className={`w-20 px-3 py-2 text-sm border rounded-lg ${
+                        className={`flex-1 px-3 py-2 text-sm border rounded-lg ${
                           isDark
                             ? "border-gray-700 bg-gray-800 text-white"
                             : "border-gray-300 bg-white text-gray-900"
@@ -796,7 +790,7 @@ export default function DocDetailPage() {
                         placeholder="#171717"
                       />
                     </div>
-                    <div className="flex gap-2 mt-2">
+                    <div className="flex gap-1.5 mt-3">
                       {[
                         { name: "Default", color: "#171717" },
                         { name: "Blue", color: "#3b82f6" },
@@ -818,7 +812,7 @@ export default function DocDetailPage() {
                               },
                             });
                           }}
-                          className="w-6 h-6 rounded-md border border-gray-300 hover:scale-110 transition-transform"
+                          className="w-7 h-7 rounded-md border-2 border-gray-300 hover:scale-110 transition-all shadow-sm"
                           style={{ backgroundColor: preset.color }}
                           title={preset.name}
                         />
@@ -826,91 +820,315 @@ export default function DocDetailPage() {
                     </div>
                   </div>
 
-                  {/* Layout Options */}
+                  {/* Secondary Color */}
                   <div>
-                    <h4
-                      className={`block text-sm font-medium ${themeClasses.text.bold} mb-3`}
-                    >
-                      Layout Settings
-                    </h4>
-                    <div className="space-y-3">
-                      {[
-                        {
-                          id: "showTOC",
-                          label: "Show Table of Contents",
-                          description: "Right sidebar navigation",
-                          default: true,
-                        },
-                        {
-                          id: "showMethodBadges",
-                          label: "HTTP method badges",
-                          description: "GET, POST, PUT, etc. badges",
-                          default: true,
-                        },
-                        {
-                          id: "showCodeExamples",
-                          label: "Code examples",
-                          description: "Multi-language code examples",
-                          default: true,
-                        },
-                        {
-                          id: "showResponseExamples",
-                          label: "Response examples",
-                          description: "Sample response data",
-                          default: true,
-                        },
-                        {
-                          id: "groupByCollection",
-                          label: "Group by collection",
-                          description: "Organize endpoints by collection",
-                          default: true,
-                        },
-                      ].map((option) => (
-                        <div
-                          key={option.id}
-                          className="flex items-center gap-3"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={
-                              project.settings?.displayOptions?.[option.id] !==
-                              undefined
-                                ? project.settings.displayOptions[option.id]
-                                : option.default
-                            }
-                            onChange={(e) => {
-                              updateProject({
-                                settings: {
-                                  ...project.settings,
-                                  displayOptions: {
-                                    ...project.settings?.displayOptions,
-                                    [option.id]: e.target.checked,
-                                  },
+                    <label className={`block text-sm font-medium ${themeClasses.text.bold} mb-2`}>
+                      Secondary Color
+                    </label>
+                    <p className={`text-xs ${themeClasses.text.secondary} mb-3`}>
+                      Used for hover states and accents
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <div className="relative">
+                        <input
+                          type="color"
+                          value={project.settings?.displayOptions?.secondaryColor || "#6b7280"}
+                          onChange={(e) => {
+                            updateProject({
+                              settings: {
+                                ...project.settings,
+                                displayOptions: {
+                                  ...project.settings?.displayOptions,
+                                  secondaryColor: e.target.value,
                                 },
-                              });
-                            }}
-                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                          />
-                          <div className="flex-1">
-                            <label
-                              className={`text-sm font-medium ${themeClasses.text.bold}`}
-                            >
-                              {option.label}
-                            </label>
-                            <p
-                              className={`text-xs ${themeClasses.text.secondary}`}
-                            >
-                              {option.description}
-                            </p>
-                          </div>
-                        </div>
-                      ))}
+                              },
+                            });
+                          }}
+                          className="w-12 h-10 rounded-lg border-2 border-gray-300 cursor-pointer"
+                          style={{
+                            backgroundColor: project.settings?.displayOptions?.secondaryColor || "#6b7280",
+                          }}
+                        />
+                      </div>
+                      <input
+                        type="text"
+                        value={project.settings?.displayOptions?.secondaryColor || "#6b7280"}
+                        onChange={(e) => {
+                          updateProject({
+                            settings: {
+                              ...project.settings,
+                              displayOptions: {
+                                ...project.settings?.displayOptions,
+                                secondaryColor: e.target.value,
+                              },
+                            },
+                          });
+                        }}
+                        className={`flex-1 px-3 py-2 text-sm border rounded-lg ${
+                          isDark
+                            ? "border-gray-700 bg-gray-800 text-white"
+                            : "border-gray-300 bg-white text-gray-900"
+                        }`}
+                        placeholder="#6b7280"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Accent Color */}
+                  <div>
+                    <label className={`block text-sm font-medium ${themeClasses.text.bold} mb-2`}>
+                      Accent Color
+                    </label>
+                    <p className={`text-xs ${themeClasses.text.secondary} mb-3`}>
+                      For highlighting and special elements
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <div className="relative">
+                        <input
+                          type="color"
+                          value={project.settings?.displayOptions?.accentColor || "#3b82f6"}
+                          onChange={(e) => {
+                            updateProject({
+                              settings: {
+                                ...project.settings,
+                                displayOptions: {
+                                  ...project.settings?.displayOptions,
+                                  accentColor: e.target.value,
+                                },
+                              },
+                            });
+                          }}
+                          className="w-12 h-10 rounded-lg border-2 border-gray-300 cursor-pointer"
+                          style={{
+                            backgroundColor: project.settings?.displayOptions?.accentColor || "#3b82f6",
+                          }}
+                        />
+                      </div>
+                      <input
+                        type="text"
+                        value={project.settings?.displayOptions?.accentColor || "#3b82f6"}
+                        onChange={(e) => {
+                          updateProject({
+                            settings: {
+                              ...project.settings,
+                              displayOptions: {
+                                ...project.settings?.displayOptions,
+                                accentColor: e.target.value,
+                              },
+                            },
+                          });
+                        }}
+                        className={`flex-1 px-3 py-2 text-sm border rounded-lg ${
+                          isDark
+                            ? "border-gray-700 bg-gray-800 text-white"
+                            : "border-gray-300 bg-white text-gray-900"
+                        }`}
+                        placeholder="#3b82f6"
+                      />
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Documentation Settings */}
+              {/* Column 2: Layout Settings */}
+              <div
+                className={`border rounded-xl p-6 ${
+                  isDark
+                    ? "border-gray-800 bg-gray-900/50"
+                    : "border-gray-200 bg-white"
+                }`}
+              >
+                <h3 className={`font-semibold ${themeClasses.text.bold} mb-4`}>
+                  Layout Settings
+                </h3>
+                
+                <div className="space-y-4">
+                  {/* Sidebar Position */}
+                  <div>
+                    <label className={`block text-sm font-medium ${themeClasses.text.bold} mb-2`}>
+                      Sidebar Position
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {[
+                        { id: "left", label: "Left" },
+                        { id: "right", label: "Right" },
+                      ].map((position) => (
+                        <button
+                          key={position.id}
+                          onClick={() => {
+                            updateProject({
+                              settings: {
+                                ...project.settings,
+                                layoutOptions: {
+                                  ...project.settings?.layoutOptions,
+                                  sidebarPosition: position.id,
+                                },
+                              },
+                            });
+                          }}
+                          className={`px-3 py-2 text-sm rounded-lg border transition-colors ${
+                            (project.settings?.layoutOptions?.sidebarPosition || "left") === position.id
+                              ? isDark
+                                ? "border-blue-600 bg-blue-900/20 text-blue-400"
+                                : "border-blue-500 bg-blue-50 text-blue-600"
+                              : isDark
+                              ? "border-gray-700 text-gray-300 hover:border-gray-600"
+                              : "border-gray-300 text-gray-700 hover:border-gray-400"
+                          }`}
+                        >
+                          {position.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Content Width */}
+                  <div>
+                    <label className={`block text-sm font-medium ${themeClasses.text.bold} mb-2`}>
+                      Content Width
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {[
+                        { id: "narrow", label: "Narrow" },
+                        { id: "wide", label: "Wide" },
+                      ].map((width) => (
+                        <button
+                          key={width.id}
+                          onClick={() => {
+                            updateProject({
+                              settings: {
+                                ...project.settings,
+                                layoutOptions: {
+                                  ...project.settings?.layoutOptions,
+                                  contentWidth: width.id,
+                                },
+                              },
+                            });
+                          }}
+                          className={`px-3 py-2 text-sm rounded-lg border transition-colors ${
+                            (project.settings?.layoutOptions?.contentWidth || "narrow") === width.id
+                              ? isDark
+                                ? "border-blue-600 bg-blue-900/20 text-blue-400"
+                                : "border-blue-500 bg-blue-50 text-blue-600"
+                              : isDark
+                              ? "border-gray-700 text-gray-300 hover:border-gray-600"
+                              : "border-gray-300 text-gray-700 hover:border-gray-400"
+                          }`}
+                        >
+                          {width.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Navigation Style */}
+                  <div>
+                    <label className={`block text-sm font-medium ${themeClasses.text.bold} mb-2`}>
+                      Navigation Style
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {[
+                        { id: "tree", label: "Tree View" },
+                        { id: "flat", label: "Flat List" },
+                      ].map((style) => (
+                        <button
+                          key={style.id}
+                          onClick={() => {
+                            updateProject({
+                              settings: {
+                                ...project.settings,
+                                layoutOptions: {
+                                  ...project.settings?.layoutOptions,
+                                  navigationStyle: style.id,
+                                },
+                              },
+                            });
+                          }}
+                          className={`px-3 py-2 text-sm rounded-lg border transition-colors ${
+                            (project.settings?.layoutOptions?.navigationStyle || "tree") === style.id
+                              ? isDark
+                                ? "border-blue-600 bg-blue-900/20 text-blue-400"
+                                : "border-blue-500 bg-blue-50 text-blue-600"
+                              : isDark
+                              ? "border-gray-700 text-gray-300 hover:border-gray-600"
+                              : "border-gray-300 text-gray-700 hover:border-gray-400"
+                          }`}
+                        >
+                          {style.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Layout Toggles */}
+                  <div className="space-y-3 pt-2">
+                    {[
+                      {
+                        id: "showTOC",
+                        label: "Table of Contents",
+                        description: "Right sidebar navigation",
+                        default: true,
+                      },
+                      {
+                        id: "showSearch",
+                        label: "Global Search",
+                        description: "Search functionality",
+                        default: true,
+                      },
+                      {
+                        id: "stickyHeader",
+                        label: "Sticky Header",
+                        description: "Fixed header on scroll",
+                        default: true,
+                      },
+                    ].map((option) => (
+                      <div key={option.id} className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className={`text-sm font-medium ${themeClasses.text.bold}`}>
+                            {option.label}
+                          </div>
+                          <div className={`text-xs ${themeClasses.text.secondary}`}>
+                            {option.description}
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => {
+                            const newValue = !(project.settings?.layoutOptions?.[option.id] ?? option.default);
+                            updateProject({
+                              settings: {
+                                ...project.settings,
+                                layoutOptions: {
+                                  ...project.settings?.layoutOptions,
+                                  [option.id]: newValue,
+                                },
+                              },
+                            });
+                          }}
+                          className={`w-10 h-6 rounded-full transition-colors relative ${
+                            (project.settings?.layoutOptions?.[option.id] ?? option.default)
+                              ? isDark
+                                ? "bg-blue-600"
+                                : "bg-blue-500"
+                              : isDark
+                              ? "bg-gray-600"
+                              : "bg-gray-300"
+                          }`}
+                        >
+                          <div
+                            className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
+                              (project.settings?.layoutOptions?.[option.id] ?? option.default)
+                                ? "right-1"
+                                : "left-1"
+                            }`}
+                          ></div>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Column 3: Documentation Options */}
               <div
                 className={`border rounded-xl p-6 ${
                   isDark
@@ -923,146 +1141,99 @@ export default function DocDetailPage() {
                 </h3>
 
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div
-                        className={`text-sm font-medium ${themeClasses.text.bold}`}
-                      >
-                        Show Code Examples
+                  {/* Content Options */}
+                  {[
+                    {
+                      id: "showCodeExamples",
+                      label: "Code Examples",
+                      description: "Multi-language code snippets",
+                      default: true,
+                    },
+                    {
+                      id: "showResponseExamples", 
+                      label: "Response Examples",
+                      description: "Sample API response data",
+                      default: true,
+                    },
+                    {
+                      id: "showAuthExamples",
+                      label: "Authentication Examples",
+                      description: "API key and auth headers",
+                      default: true,
+                    },
+                    {
+                      id: "showMethodBadges",
+                      label: "HTTP Method Badges", 
+                      description: "GET, POST, PUT visual badges",
+                      default: true,
+                    },
+                    {
+                      id: "groupByCollection",
+                      label: "Group by Collections",
+                      description: "Organize endpoints by collection",
+                      default: true,
+                    },
+                    {
+                      id: "showErrorCodes",
+                      label: "Error Documentation",
+                      description: "HTTP status codes and meanings",
+                      default: true,
+                    },
+                    {
+                      id: "enableInteractivePlayground",
+                      label: "Interactive Playground",
+                      description: "Try API endpoints directly",
+                      default: false,
+                    },
+                    {
+                      id: "isPublic",
+                      label: "Public Access",
+                      description: "Allow public documentation access",
+                      default: true,
+                    },
+                  ].map((option) => (
+                    <div key={option.id} className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className={`text-sm font-medium ${themeClasses.text.bold}`}>
+                          {option.label}
+                        </div>
+                        <div className={`text-xs ${themeClasses.text.secondary}`}>
+                          {option.description}
+                        </div>
                       </div>
-                      <div className={`text-xs ${themeClasses.text.tertiary}`}>
-                        Include cURL and code examples for each endpoint
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => {
-                        const newValue = !project.settings?.showExamples;
-                        const updatedProject = {
-                          ...project,
-                          settings: {
-                            ...project.settings,
-                            showExamples: newValue,
-                          },
-                          updated: new Date().toISOString(),
-                        };
-                        setProject(updatedProject);
-                        ApiClient.docsProjects.update(
-                          project.id,
-                          updatedProject
-                        );
-                      }}
-                      className={`w-10 h-6 rounded-full transition-colors relative ${
-                        project.settings?.showExamples !== false
-                          ? isDark
-                            ? "bg-blue-600"
-                            : "bg-blue-500"
-                          : isDark
-                          ? "bg-gray-600"
-                          : "bg-gray-300"
-                      }`}
-                    >
-                      <div
-                        className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
-                          project.settings?.showExamples !== false
-                            ? "right-1"
-                            : "left-1"
+                      <button
+                        onClick={() => {
+                          const newValue = !(project.settings?.documentationOptions?.[option.id] ?? option.default);
+                          updateProject({
+                            settings: {
+                              ...project.settings,
+                              documentationOptions: {
+                                ...project.settings?.documentationOptions,
+                                [option.id]: newValue,
+                              },
+                            },
+                          });
+                        }}
+                        className={`w-10 h-6 rounded-full transition-colors relative ${
+                          (project.settings?.documentationOptions?.[option.id] ?? option.default)
+                            ? isDark
+                              ? "bg-blue-600"
+                              : "bg-blue-500"
+                            : isDark
+                            ? "bg-gray-600"
+                            : "bg-gray-300"
                         }`}
-                      ></div>
-                    </button>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div
-                        className={`text-sm font-medium ${themeClasses.text.bold}`}
                       >
-                        Group by Collections
-                      </div>
-                      <div className={`text-xs ${themeClasses.text.tertiary}`}>
-                        Organize endpoints by their collections
-                      </div>
+                        <div
+                          className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
+                            (project.settings?.documentationOptions?.[option.id] ?? option.default)
+                              ? "right-1"
+                              : "left-1"
+                          }`}
+                        ></div>
+                      </button>
                     </div>
-                    <button
-                      onClick={() => {
-                        const newValue = !project.settings?.groupByCollection;
-                        const updatedProject = {
-                          ...project,
-                          settings: {
-                            ...project.settings,
-                            groupByCollection: newValue,
-                          },
-                          updated: new Date().toISOString(),
-                        };
-                        setProject(updatedProject);
-                        ApiClient.docsProjects.update(
-                          project.id,
-                          updatedProject
-                        );
-                      }}
-                      className={`w-10 h-6 rounded-full transition-colors relative ${
-                        project.settings?.groupByCollection !== false
-                          ? isDark
-                            ? "bg-blue-600"
-                            : "bg-blue-500"
-                          : isDark
-                          ? "bg-gray-600"
-                          : "bg-gray-300"
-                      }`}
-                    >
-                      <div
-                        className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
-                          project.settings?.groupByCollection !== false
-                            ? "right-1"
-                            : "left-1"
-                        }`}
-                      ></div>
-                    </button>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div
-                        className={`text-sm font-medium ${themeClasses.text.bold}`}
-                      >
-                        Public Access
-                      </div>
-                      <div className={`text-xs ${themeClasses.text.tertiary}`}>
-                        Allow public access to your documentation
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => {
-                        const newValue = !project.settings?.isPublic;
-                        const updatedProject = {
-                          ...project,
-                          settings: { ...project.settings, isPublic: newValue },
-                          updated: new Date().toISOString(),
-                        };
-                        setProject(updatedProject);
-                        ApiClient.docsProjects.update(
-                          project.id,
-                          updatedProject
-                        );
-                      }}
-                      className={`w-10 h-6 rounded-full transition-colors relative ${
-                        project.settings?.isPublic !== false
-                          ? isDark
-                            ? "bg-blue-600"
-                            : "bg-blue-500"
-                          : isDark
-                          ? "bg-gray-600"
-                          : "bg-gray-300"
-                      }`}
-                    >
-                      <div
-                        className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
-                          project.settings?.isPublic !== false
-                            ? "right-1"
-                            : "left-1"
-                        }`}
-                      ></div>
-                    </button>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>
