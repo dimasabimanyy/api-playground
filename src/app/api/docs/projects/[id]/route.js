@@ -56,6 +56,8 @@ export async function GET(request, { params }) {
 
     const { id } = await params;
 
+    console.log("id : ", id);
+
     const { data: project, error } = await supabase
       .from("docs_projects")
       .select(
@@ -72,6 +74,8 @@ export async function GET(request, { params }) {
       .eq("id", id)
       .eq("user_id", user.id)
       .single();
+
+    console.log("project res: ", project);
 
     if (error) {
       if (error.code === "PGRST116") {

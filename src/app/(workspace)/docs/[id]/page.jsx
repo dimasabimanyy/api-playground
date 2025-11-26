@@ -105,9 +105,11 @@ export default function DocDetailPage() {
       console.log('kratos response: ', response);
       if (response.projects) {
         setProject(response.projects);
-      } else {
-        router.push("/docs");
       }
+      // Handle failed fetching 
+      //  else {
+      //   router.push("/docs");
+      // }
     } catch (error) {
       console.error("Failed to load project:", error);
       router.push("/docs");

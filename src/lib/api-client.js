@@ -120,16 +120,7 @@ export const docsProjectsApi = {
 
   // Get specific docs project by ID
   getById: async (id) => {
-    const searchParams = new URLSearchParams();
-
-    if (id) {
-      searchParams.set("id", id);
-    }
-
-    console.log("search params: ", searchParams.toString());
-    return apiRequest(
-      `/docs/projects${searchParams.toString() ? `?${searchParams}` : ""}`
-    );
+    return apiRequest(`/docs/projects/${id}`);
   },
 
   // Create new docs project
