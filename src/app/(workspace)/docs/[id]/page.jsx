@@ -609,6 +609,19 @@ export default function DocDetailPage() {
             <div className="space-y-8">
               {/* Content & Display Section */}
               <div>
+                <div className="mb-5 flex justify-between align-center">
+                  <div>
+                    <h2
+                      className={`font-semibold tracking-tight text-[1.3rem] ${themeClasses.text.bold}`}
+                    >
+                      Documentation Template
+                    </h2>
+
+                    <p className={`text-sm ${themeClasses.text.secondary}`}>
+                      Choose your template and customize its appearance
+                    </p>
+                  </div>
+                </div>
                 {/* Template & Styling Options - Combined Card */}
                 <div
                   className={`border rounded-xl p-6 ${
@@ -617,66 +630,56 @@ export default function DocDetailPage() {
                       : "border-gray-200 bg-white"
                   }`}
                 >
-                  <h3
-                    className={`font-semibold ${themeClasses.text.bold} mb-2`}
-                  >
-                    Documentation Template
-                  </h3>
-                  <p className={`text-sm ${themeClasses.text.secondary} mb-6`}>
-                    Choose your template and customize its appearance
-                  </p>
-
                   {/* Template Selection */}
-                  <div className="mb-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      {/* Template Options */}
-                      <div className="space-y-3">
-                        {[
-                          {
-                            id: "stripe-style",
-                            name: "Template A - Minimalist",
-                            description:
-                              "Stripe/Mintlify-style with left sidebar, wide reading column, and beautiful code blocks",
-                            preview: "Premium Documentation",
-                            isSelected:
-                              !project.template ||
-                              project.template === "default" ||
-                              project.template === "stripe-style",
-                          },
-                        ].map((template) => (
-                          <div
-                            key={template.id}
-                            onClick={() => {
-                              updateProject({
-                                template: template.id,
-                              });
-                            }}
-                            className={`cursor-pointer border rounded-lg p-4 transition-all duration-200 ${
-                              template.isSelected
-                                ? isDark
-                                  ? "border-blue-600 bg-blue-900/20"
-                                  : "border-blue-500 bg-blue-50"
-                                : isDark
-                                ? "border-gray-700 bg-gray-800/30 hover:border-gray-600"
-                                : "border-gray-200 bg-white hover:border-gray-300"
-                            }`}
-                          >
-                            <div className="flex items-center justify-between mb-2">
-                              <h5
-                                className={`font-medium ${themeClasses.text.bold}`}
-                              >
-                                {template.name}
-                              </h5>
-                              {template.isSelected && (
-                                <CheckCircle className="w-4 h-4 text-blue-500" />
-                              )}
-                            </div>
-                            <p
-                              className={`text-xs ${themeClasses.text.secondary} mb-2`}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Template Options */}
+                    <div className="space-y-3">
+                      {[
+                        {
+                          id: "stripe-style",
+                          name: "Template A - Minimalist",
+                          description:
+                            "Stripe/Mintlify-style with left sidebar, wide reading column, and beautiful code blocks",
+                          // preview: "Premium Documentation",
+                          isSelected:
+                            !project.template ||
+                            project.template === "default" ||
+                            project.template === "stripe-style",
+                        },
+                      ].map((template) => (
+                        <div
+                          key={template.id}
+                          onClick={() => {
+                            updateProject({
+                              template: template.id,
+                            });
+                          }}
+                          className={`cursor-pointer border rounded-lg p-4 transition-all duration-200 ${
+                            template.isSelected
+                              ? isDark
+                                ? "border-blue-600 bg-blue-900/20"
+                                : "border-blue-500 bg-blue-50"
+                              : isDark
+                              ? "border-gray-700 bg-gray-800/30 hover:border-gray-600"
+                              : "border-gray-200 bg-white hover:border-gray-300"
+                          }`}
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <h5
+                              className={`font-medium ${themeClasses.text.bold}`}
                             >
-                              {template.description}
-                            </p>
-                            <div
+                              {template.name}
+                            </h5>
+                            {template.isSelected && (
+                              <CheckCircle className="w-4 h-4 text-blue-500" />
+                            )}
+                          </div>
+                          <p
+                            className={`text-xs ${themeClasses.text.secondary}`}
+                          >
+                            {template.description}
+                          </p>
+                          {/* <div
                               className={`text-xs px-2 py-1 rounded ${
                                 isDark
                                   ? "bg-gray-700 text-gray-300"
@@ -684,221 +687,36 @@ export default function DocDetailPage() {
                               }`}
                             >
                               {template.preview}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+                            </div> */}
+                        </div>
+                      ))}
+                    </div>
 
-                      {/* Template Preview */}
-                      <div className="hidden lg:block">
+                    {/* Template Preview */}
+                    <div className="hidden lg:block">
+                      <div
+                        className={`border rounded-lg overflow-hidden ${
+                          isDark
+                            ? "border-gray-700 bg-gray-800"
+                            : "border-gray-200 bg-gray-50"
+                        }`}
+                      >
+                        {/* Placeholder for template preview image */}
                         <div
-                          className={`border rounded-lg overflow-hidden ${
+                          className={`aspect-[4/3] flex items-center justify-center ${
                             isDark
-                              ? "border-gray-700 bg-gray-800"
-                              : "border-gray-200 bg-gray-50"
+                              ? "bg-gray-800 text-gray-500"
+                              : "bg-gray-100 text-gray-400"
                           }`}
                         >
-                          {/* Placeholder for template preview image */}
-                          <div
-                            className={`aspect-[4/3] flex items-center justify-center ${
-                              isDark
-                                ? "bg-gray-800 text-gray-500"
-                                : "bg-gray-100 text-gray-400"
-                            }`}
-                          >
-                            <div className="text-center">
-                              <FileText className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                              <p className="text-xs">Template Preview</p>
-                              <p className="text-xs opacity-75">
-                                Image coming soon
-                              </p>
-                            </div>
+                          <div className="text-center">
+                            <FileText className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                            <p className="text-xs">Template Preview</p>
+                            <p className="text-xs opacity-75">
+                              Image coming soon
+                            </p>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Separator */}
-                  <div
-                    className={`border-t ${
-                      isDark ? "border-gray-700" : "border-gray-200"
-                    } my-6`}
-                  ></div>
-
-                  <div className="space-y-6">
-                    {/* Primary Color Picker */}
-                    <div>
-                      <h4
-                        className={`block text-sm font-medium ${themeClasses.text.bold} mb-3`}
-                      >
-                        Primary Color
-                      </h4>
-                      <p
-                        className={`text-xs ${themeClasses.text.secondary} mb-3`}
-                      >
-                        Used for buttons, links, and accents
-                      </p>
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="color"
-                          value={
-                            project.settings?.displayOptions?.primaryColor ||
-                            "#171717"
-                          }
-                          onChange={(e) => {
-                            updateProject({
-                              settings: {
-                                ...project.settings,
-                                displayOptions: {
-                                  ...project.settings?.displayOptions,
-                                  primaryColor: e.target.value,
-                                },
-                              },
-                            });
-                          }}
-                          className="w-10 h-10 rounded-lg border border-gray-300 cursor-pointer"
-                          style={{
-                            backgroundColor:
-                              project.settings?.displayOptions?.primaryColor ||
-                              "#171717",
-                          }}
-                        />
-                        <input
-                          type="text"
-                          value={
-                            project.settings?.displayOptions?.primaryColor ||
-                            "#171717"
-                          }
-                          onChange={(e) => {
-                            updateProject({
-                              settings: {
-                                ...project.settings,
-                                displayOptions: {
-                                  ...project.settings?.displayOptions,
-                                  primaryColor: e.target.value,
-                                },
-                              },
-                            });
-                          }}
-                          className={`w-20 px-3 py-2 text-sm border rounded-lg ${
-                            isDark
-                              ? "border-gray-700 bg-gray-800 text-white"
-                              : "border-gray-300 bg-white text-gray-900"
-                          }`}
-                          placeholder="#171717"
-                        />
-                      </div>
-                      <div className="flex gap-2 mt-2">
-                        {[
-                          { name: "Default", color: "#171717" },
-                          { name: "Blue", color: "#3b82f6" },
-                          { name: "Green", color: "#10b981" },
-                          { name: "Purple", color: "#8b5cf6" },
-                          { name: "Red", color: "#ef4444" },
-                          { name: "Orange", color: "#f97316" },
-                        ].map((preset) => (
-                          <button
-                            key={preset.color}
-                            onClick={() => {
-                              updateProject({
-                                settings: {
-                                  ...project.settings,
-                                  displayOptions: {
-                                    ...project.settings?.displayOptions,
-                                    primaryColor: preset.color,
-                                  },
-                                },
-                              });
-                            }}
-                            className="w-6 h-6 rounded-md border border-gray-300 hover:scale-110 transition-transform"
-                            style={{ backgroundColor: preset.color }}
-                            title={preset.name}
-                          />
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Layout Options */}
-                    <div>
-                      <h4
-                        className={`block text-sm font-medium ${themeClasses.text.bold} mb-3`}
-                      >
-                        Layout Settings
-                      </h4>
-                      <div className="space-y-3">
-                        {[
-                          {
-                            id: "showTOC",
-                            label: "Show Table of Contents",
-                            description: "Right sidebar navigation",
-                            default: true,
-                          },
-                          {
-                            id: "showMethodBadges",
-                            label: "HTTP method badges",
-                            description: "GET, POST, PUT, etc. badges",
-                            default: true,
-                          },
-                          {
-                            id: "showCodeExamples",
-                            label: "Code examples",
-                            description: "Multi-language code examples",
-                            default: true,
-                          },
-                          {
-                            id: "showResponseExamples",
-                            label: "Response examples",
-                            description: "Sample response data",
-                            default: true,
-                          },
-                          {
-                            id: "groupByCollection",
-                            label: "Group by collection",
-                            description: "Organize endpoints by collection",
-                            default: true,
-                          },
-                        ].map((option) => (
-                          <div
-                            key={option.id}
-                            className="flex items-center gap-3"
-                          >
-                            <input
-                              type="checkbox"
-                              checked={
-                                project.settings?.displayOptions?.[
-                                  option.id
-                                ] !== undefined
-                                  ? project.settings.displayOptions[option.id]
-                                  : option.default
-                              }
-                              onChange={(e) => {
-                                updateProject({
-                                  settings: {
-                                    ...project.settings,
-                                    displayOptions: {
-                                      ...project.settings?.displayOptions,
-                                      [option.id]: e.target.checked,
-                                    },
-                                  },
-                                });
-                              }}
-                              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                            />
-                            <div className="flex-1">
-                              <label
-                                className={`text-sm font-medium ${themeClasses.text.bold}`}
-                              >
-                                {option.label}
-                              </label>
-                              <p
-                                className={`text-xs ${themeClasses.text.secondary}`}
-                              >
-                                {option.description}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
                       </div>
                     </div>
                   </div>
@@ -906,8 +724,351 @@ export default function DocDetailPage() {
               </div>
             </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
+              <div
+                className={`border rounded-xl p-6 ${
+                  isDark
+                    ? "border-gray-800 bg-gray-900/50"
+                    : "border-gray-200 bg-white"
+                }`}
+              >
+                {/* Template Selection */}
+                <div className="space-y-6">
+                  {/* Primary Color Picker */}
+                  <div>
+                    <h4
+                      className={`block text-sm font-medium ${themeClasses.text.bold} mb-3`}
+                    >
+                      Primary Color
+                    </h4>
+                    <p
+                      className={`text-xs ${themeClasses.text.secondary} mb-3`}
+                    >
+                      Used for buttons, links, and accents
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="color"
+                        value={
+                          project.settings?.displayOptions?.primaryColor ||
+                          "#171717"
+                        }
+                        onChange={(e) => {
+                          updateProject({
+                            settings: {
+                              ...project.settings,
+                              displayOptions: {
+                                ...project.settings?.displayOptions,
+                                primaryColor: e.target.value,
+                              },
+                            },
+                          });
+                        }}
+                        className="w-10 h-10 rounded-lg border border-gray-300 cursor-pointer"
+                        style={{
+                          backgroundColor:
+                            project.settings?.displayOptions?.primaryColor ||
+                            "#171717",
+                        }}
+                      />
+                      <input
+                        type="text"
+                        value={
+                          project.settings?.displayOptions?.primaryColor ||
+                          "#171717"
+                        }
+                        onChange={(e) => {
+                          updateProject({
+                            settings: {
+                              ...project.settings,
+                              displayOptions: {
+                                ...project.settings?.displayOptions,
+                                primaryColor: e.target.value,
+                              },
+                            },
+                          });
+                        }}
+                        className={`w-20 px-3 py-2 text-sm border rounded-lg ${
+                          isDark
+                            ? "border-gray-700 bg-gray-800 text-white"
+                            : "border-gray-300 bg-white text-gray-900"
+                        }`}
+                        placeholder="#171717"
+                      />
+                    </div>
+                    <div className="flex gap-2 mt-2">
+                      {[
+                        { name: "Default", color: "#171717" },
+                        { name: "Blue", color: "#3b82f6" },
+                        { name: "Green", color: "#10b981" },
+                        { name: "Purple", color: "#8b5cf6" },
+                        { name: "Red", color: "#ef4444" },
+                        { name: "Orange", color: "#f97316" },
+                      ].map((preset) => (
+                        <button
+                          key={preset.color}
+                          onClick={() => {
+                            updateProject({
+                              settings: {
+                                ...project.settings,
+                                displayOptions: {
+                                  ...project.settings?.displayOptions,
+                                  primaryColor: preset.color,
+                                },
+                              },
+                            });
+                          }}
+                          className="w-6 h-6 rounded-md border border-gray-300 hover:scale-110 transition-transform"
+                          style={{ backgroundColor: preset.color }}
+                          title={preset.name}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Layout Options */}
+                  <div>
+                    <h4
+                      className={`block text-sm font-medium ${themeClasses.text.bold} mb-3`}
+                    >
+                      Layout Settings
+                    </h4>
+                    <div className="space-y-3">
+                      {[
+                        {
+                          id: "showTOC",
+                          label: "Show Table of Contents",
+                          description: "Right sidebar navigation",
+                          default: true,
+                        },
+                        {
+                          id: "showMethodBadges",
+                          label: "HTTP method badges",
+                          description: "GET, POST, PUT, etc. badges",
+                          default: true,
+                        },
+                        {
+                          id: "showCodeExamples",
+                          label: "Code examples",
+                          description: "Multi-language code examples",
+                          default: true,
+                        },
+                        {
+                          id: "showResponseExamples",
+                          label: "Response examples",
+                          description: "Sample response data",
+                          default: true,
+                        },
+                        {
+                          id: "groupByCollection",
+                          label: "Group by collection",
+                          description: "Organize endpoints by collection",
+                          default: true,
+                        },
+                      ].map((option) => (
+                        <div
+                          key={option.id}
+                          className="flex items-center gap-3"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={
+                              project.settings?.displayOptions?.[option.id] !==
+                              undefined
+                                ? project.settings.displayOptions[option.id]
+                                : option.default
+                            }
+                            onChange={(e) => {
+                              updateProject({
+                                settings: {
+                                  ...project.settings,
+                                  displayOptions: {
+                                    ...project.settings?.displayOptions,
+                                    [option.id]: e.target.checked,
+                                  },
+                                },
+                              });
+                            }}
+                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          />
+                          <div className="flex-1">
+                            <label
+                              className={`text-sm font-medium ${themeClasses.text.bold}`}
+                            >
+                              {option.label}
+                            </label>
+                            <p
+                              className={`text-xs ${themeClasses.text.secondary}`}
+                            >
+                              {option.description}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Documentation Settings */}
+              <div
+                className={`border rounded-xl p-6 ${
+                  isDark
+                    ? "border-gray-800 bg-gray-900/50"
+                    : "border-gray-200 bg-white"
+                }`}
+              >
+                <h3 className={`font-semibold ${themeClasses.text.bold} mb-4`}>
+                  Documentation Options
+                </h3>
+
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div
+                        className={`text-sm font-medium ${themeClasses.text.bold}`}
+                      >
+                        Show Code Examples
+                      </div>
+                      <div className={`text-xs ${themeClasses.text.tertiary}`}>
+                        Include cURL and code examples for each endpoint
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        const newValue = !project.settings?.showExamples;
+                        const updatedProject = {
+                          ...project,
+                          settings: {
+                            ...project.settings,
+                            showExamples: newValue,
+                          },
+                          updated: new Date().toISOString(),
+                        };
+                        setProject(updatedProject);
+                        ApiClient.docsProjects.update(
+                          project.id,
+                          updatedProject
+                        );
+                      }}
+                      className={`w-10 h-6 rounded-full transition-colors relative ${
+                        project.settings?.showExamples !== false
+                          ? isDark
+                            ? "bg-blue-600"
+                            : "bg-blue-500"
+                          : isDark
+                          ? "bg-gray-600"
+                          : "bg-gray-300"
+                      }`}
+                    >
+                      <div
+                        className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
+                          project.settings?.showExamples !== false
+                            ? "right-1"
+                            : "left-1"
+                        }`}
+                      ></div>
+                    </button>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div
+                        className={`text-sm font-medium ${themeClasses.text.bold}`}
+                      >
+                        Group by Collections
+                      </div>
+                      <div className={`text-xs ${themeClasses.text.tertiary}`}>
+                        Organize endpoints by their collections
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        const newValue = !project.settings?.groupByCollection;
+                        const updatedProject = {
+                          ...project,
+                          settings: {
+                            ...project.settings,
+                            groupByCollection: newValue,
+                          },
+                          updated: new Date().toISOString(),
+                        };
+                        setProject(updatedProject);
+                        ApiClient.docsProjects.update(
+                          project.id,
+                          updatedProject
+                        );
+                      }}
+                      className={`w-10 h-6 rounded-full transition-colors relative ${
+                        project.settings?.groupByCollection !== false
+                          ? isDark
+                            ? "bg-blue-600"
+                            : "bg-blue-500"
+                          : isDark
+                          ? "bg-gray-600"
+                          : "bg-gray-300"
+                      }`}
+                    >
+                      <div
+                        className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
+                          project.settings?.groupByCollection !== false
+                            ? "right-1"
+                            : "left-1"
+                        }`}
+                      ></div>
+                    </button>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div
+                        className={`text-sm font-medium ${themeClasses.text.bold}`}
+                      >
+                        Public Access
+                      </div>
+                      <div className={`text-xs ${themeClasses.text.tertiary}`}>
+                        Allow public access to your documentation
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        const newValue = !project.settings?.isPublic;
+                        const updatedProject = {
+                          ...project,
+                          settings: { ...project.settings, isPublic: newValue },
+                          updated: new Date().toISOString(),
+                        };
+                        setProject(updatedProject);
+                        ApiClient.docsProjects.update(
+                          project.id,
+                          updatedProject
+                        );
+                      }}
+                      className={`w-10 h-6 rounded-full transition-colors relative ${
+                        project.settings?.isPublic !== false
+                          ? isDark
+                            ? "bg-blue-600"
+                            : "bg-blue-500"
+                          : isDark
+                          ? "bg-gray-600"
+                          : "bg-gray-300"
+                      }`}
+                    >
+                      <div
+                        className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
+                          project.settings?.isPublic !== false
+                            ? "right-1"
+                            : "left-1"
+                        }`}
+                      ></div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Activity Feed */}
-            <div>
+            {/* <div>
               <h2
                 className={`text-lg font-semibold ${themeClasses.text.bold} mb-4`}
               >
@@ -933,7 +1094,7 @@ export default function DocDetailPage() {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         )}
 
@@ -1111,153 +1272,6 @@ export default function DocDetailPage() {
                     className={`w-full px-3 py-2 text-sm rounded-lg ${themeClasses.input.base}`}
                     placeholder="v1"
                   />
-                </div>
-              </div>
-            </div>
-
-            {/* Documentation Settings */}
-            <div
-              className={`border rounded-xl p-6 ${
-                isDark
-                  ? "border-gray-800 bg-gray-900/50"
-                  : "border-gray-200 bg-white"
-              }`}
-            >
-              <h3 className={`font-semibold ${themeClasses.text.bold} mb-4`}>
-                Documentation Options
-              </h3>
-
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div
-                      className={`text-sm font-medium ${themeClasses.text.bold}`}
-                    >
-                      Show Code Examples
-                    </div>
-                    <div className={`text-xs ${themeClasses.text.tertiary}`}>
-                      Include cURL and code examples for each endpoint
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => {
-                      const newValue = !project.settings?.showExamples;
-                      const updatedProject = {
-                        ...project,
-                        settings: {
-                          ...project.settings,
-                          showExamples: newValue,
-                        },
-                        updated: new Date().toISOString(),
-                      };
-                      setProject(updatedProject);
-                      ApiClient.docsProjects.update(project.id, updatedProject);
-                    }}
-                    className={`w-10 h-6 rounded-full transition-colors relative ${
-                      project.settings?.showExamples !== false
-                        ? isDark
-                          ? "bg-blue-600"
-                          : "bg-blue-500"
-                        : isDark
-                        ? "bg-gray-600"
-                        : "bg-gray-300"
-                    }`}
-                  >
-                    <div
-                      className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
-                        project.settings?.showExamples !== false
-                          ? "right-1"
-                          : "left-1"
-                      }`}
-                    ></div>
-                  </button>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div
-                      className={`text-sm font-medium ${themeClasses.text.bold}`}
-                    >
-                      Group by Collections
-                    </div>
-                    <div className={`text-xs ${themeClasses.text.tertiary}`}>
-                      Organize endpoints by their collections
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => {
-                      const newValue = !project.settings?.groupByCollection;
-                      const updatedProject = {
-                        ...project,
-                        settings: {
-                          ...project.settings,
-                          groupByCollection: newValue,
-                        },
-                        updated: new Date().toISOString(),
-                      };
-                      setProject(updatedProject);
-                      ApiClient.docsProjects.update(project.id, updatedProject);
-                    }}
-                    className={`w-10 h-6 rounded-full transition-colors relative ${
-                      project.settings?.groupByCollection !== false
-                        ? isDark
-                          ? "bg-blue-600"
-                          : "bg-blue-500"
-                        : isDark
-                        ? "bg-gray-600"
-                        : "bg-gray-300"
-                    }`}
-                  >
-                    <div
-                      className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
-                        project.settings?.groupByCollection !== false
-                          ? "right-1"
-                          : "left-1"
-                      }`}
-                    ></div>
-                  </button>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div
-                      className={`text-sm font-medium ${themeClasses.text.bold}`}
-                    >
-                      Public Access
-                    </div>
-                    <div className={`text-xs ${themeClasses.text.tertiary}`}>
-                      Allow public access to your documentation
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => {
-                      const newValue = !project.settings?.isPublic;
-                      const updatedProject = {
-                        ...project,
-                        settings: { ...project.settings, isPublic: newValue },
-                        updated: new Date().toISOString(),
-                      };
-                      setProject(updatedProject);
-                      ApiClient.docsProjects.update(project.id, updatedProject);
-                    }}
-                    className={`w-10 h-6 rounded-full transition-colors relative ${
-                      project.settings?.isPublic !== false
-                        ? isDark
-                          ? "bg-blue-600"
-                          : "bg-blue-500"
-                        : isDark
-                        ? "bg-gray-600"
-                        : "bg-gray-300"
-                    }`}
-                  >
-                    <div
-                      className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
-                        project.settings?.isPublic !== false
-                          ? "right-1"
-                          : "left-1"
-                      }`}
-                    ></div>
-                  </button>
                 </div>
               </div>
             </div>
@@ -1588,9 +1602,7 @@ export default function DocDetailPage() {
                     >
                       <div className="flex items-center gap-2">
                         <span>{country.flag}</span>
-                        <span
-                          className={`text-sm ${themeClasses.text.bold}`}
-                        >
+                        <span className={`text-sm ${themeClasses.text.bold}`}>
                           {country.country}
                         </span>
                       </div>
