@@ -1518,7 +1518,7 @@ export default function Playground() {
         open={docsModalOpen}
         onOpenChange={(open) => {
           setDocsModalOpen(open);
-          
+
           if (!open) {
             setSelectedCollectionForDocs(null);
           }

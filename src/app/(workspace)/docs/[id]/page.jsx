@@ -4,31 +4,20 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
-  ArrowLeft,
   Settings,
   Eye,
-  Copy,
   ExternalLink,
-  Calendar,
   Users,
   Activity,
   FileText,
-  Code,
   GitBranch,
   Share2,
-  Download,
-  MoreVertical,
-  Edit3,
-  Trash2,
   RefreshCw,
   CheckCircle,
   Clock,
   AlertCircle,
   BarChart3,
   TrendingUp,
-  Zap,
-  Shield,
-  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -41,58 +30,6 @@ import {
   generatePublicDocUrl,
   generateProjectSlug,
 } from "@/lib/user-utils";
-
-const StatCard = ({
-  icon: Icon,
-  label,
-  value,
-  trend,
-  trendLabel,
-  isDark,
-  themeClasses,
-}) => (
-  <div
-    className={`p-4 border rounded-lg ${
-      isDark ? "border-gray-800 bg-gray-900/50" : "border-gray-200 bg-white"
-    }`}
-    style={{ borderRadius: "12px" }}
-  >
-    <div className="flex items-center gap-3 mb-3">
-      <div
-        className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-          isDark ? "bg-gray-800 text-gray-300" : "bg-gray-100 text-gray-600"
-        }`}
-      >
-        <Icon className="w-4 h-4" />
-      </div>
-      <span className={`text-sm font-medium ${themeClasses.text.bold}`}>
-        {label}
-      </span>
-    </div>
-    <div className="space-y-1">
-      <div className={`text-2xl font-bold ${themeClasses.text.bold}`}>
-        {value}
-      </div>
-      {trend && (
-        <div className="flex items-center gap-1">
-          <TrendingUp
-            className={`w-3 h-3 ${
-              trend > 0 ? "text-green-500" : "text-red-500"
-            }`}
-          />
-          <span
-            className={`text-xs ${
-              trend > 0 ? "text-green-500" : "text-red-500"
-            }`}
-          >
-            {trend > 0 ? "+" : ""}
-            {trend}% {trendLabel}
-          </span>
-        </div>
-      )}
-    </div>
-  </div>
-);
 
 const ActivityItem = ({
   icon: Icon,
@@ -155,23 +92,19 @@ export default function DocDetailPage() {
       setProject(updatedProject);
       await ApiClient.docsProjects.update(project.id, updatedProject);
     } catch (error) {
-      console.error('Failed to update project:', error);
+      console.error("Failed to update project:", error);
       // Revert optimistic update on error
       setProject(project);
     }
   };
 
-  useEffect(() => {
-    if (params.id) {
-      loadProject();
-    }
-  }, [params.id]);
-
   const loadProject = async () => {
     try {
       const response = await ApiClient.docsProjects.getById(params.id);
-      if (response.project) {
-        setProject(response.project);
+
+      console.log('kratos response: ', response);
+      if (response.projects) {
+        setProject(response.projects);
       } else {
         router.push("/docs");
       }
@@ -182,6 +115,12 @@ export default function DocDetailPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (params.id) {
+      loadProject();
+    }
+  }, [params.id]);
 
   const generatePublicUrl = () => {
     if (!project || !user) return "";
@@ -196,44 +135,6 @@ export default function DocDetailPage() {
     } catch (err) {
       console.error("Failed to copy:", err);
     }
-  };
-
-  const viewDocumentation = () => {
-    const enhancedCollections = getCollectionsWithDocs();
-    const projectCollections = {};
-
-    project.collections.forEach((collectionId) => {
-      if (enhancedCollections[collectionId]) {
-        projectCollections[collectionId] = enhancedCollections[collectionId];
-      }
-    });
-
-    const docId = `project_${project.id}_${Date.now()}`;
-    const docData = {
-      project: project,
-      collections: Object.values(projectCollections),
-      customization: {
-        title: project.name,
-        description: project.description,
-        baseUrl: project.settings?.baseUrl || "https://api.example.com",
-        ...project.settings,
-      },
-      meta: {
-        generatedAt: new Date().toISOString(),
-        generator: "API Playground",
-        totalEndpoints: Object.values(projectCollections).reduce(
-          (acc, col) => acc + (col.requests?.length || 0),
-          0
-        ),
-        totalCollections: Object.values(projectCollections).length,
-      },
-    };
-
-    sessionStorage.setItem(`docs_${docId}`, JSON.stringify(docData));
-    window.open(
-      `/docs/generated?docId=${docId}&project=${project.id}`,
-      "_blank"
-    );
   };
 
   const deleteProject = () => {
@@ -256,7 +157,7 @@ export default function DocDetailPage() {
         settings: project.settings,
         status: project.status,
       };
-      
+
       const response = await ApiClient.docsProjects.create(duplicateData);
       if (response.project) {
         router.push(`/docs/${response.project.id}`);
@@ -301,7 +202,8 @@ export default function DocDetailPage() {
     );
   }
 
-  const getCollectionCount = () => project.collections?.length || 0;
+  // const getCollectionCount = () => project.collections?.length || 0;
+
   const getEndpointCount = () => {
     if (!project.collections) return 0;
     let totalEndpoints = 0;
@@ -823,53 +725,8 @@ export default function DocDetailPage() {
             </div>
 
             <div className="space-y-8">
-              {/* <div>
-                <h2
-                  className={`text-lg font-semibold ${themeClasses.text.bold} mb-4`}
-                >
-                  Documentation Stats
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <StatCard
-                    icon={FileText}
-                    label="Collections"
-                    value={getCollectionCount()}
-                    trend={12}
-                    trendLabel="this month"
-                    isDark={isDark}
-                    themeClasses={themeClasses}
-                  />
-                  <StatCard
-                    icon={Code}
-                    label="Endpoints"
-                    value={getEndpointCount()}
-                    trend={-3}
-                    trendLabel="this week"
-                    isDark={isDark}
-                    themeClasses={themeClasses}
-                  />
-                  <StatCard
-                    icon={Eye}
-                    label="Page Views"
-                    value="1,247"
-                    trend={25}
-                    trendLabel="this week"
-                    isDark={isDark}
-                    themeClasses={themeClasses}
-                  />
-                </div>
-              </div> */}
-
               {/* Content & Display Section */}
               <div>
-                {/* <div className="mb-5">
-                  <h2
-                    className={`font-semibold tracking-tight text-[1.3rem] ${themeClasses.text.bold}`}
-                  >
-                    Content & Display
-                  </h2>
-                </div> */}
-
                 {/* Template & Styling Options - Combined Card */}
                 <div
                   className={`border rounded-xl p-6 ${
@@ -970,7 +827,9 @@ export default function DocDetailPage() {
                             <div className="text-center">
                               <FileText className="w-8 h-8 mx-auto mb-2 opacity-50" />
                               <p className="text-xs">Template Preview</p>
-                              <p className="text-xs opacity-75">Image coming soon</p>
+                              <p className="text-xs opacity-75">
+                                Image coming soon
+                              </p>
                             </div>
                           </div>
                         </div>
@@ -1002,7 +861,8 @@ export default function DocDetailPage() {
                         <input
                           type="color"
                           value={
-                            project.settings?.displayOptions?.primaryColor || "#171717"
+                            project.settings?.displayOptions?.primaryColor ||
+                            "#171717"
                           }
                           onChange={(e) => {
                             updateProject({
@@ -1018,13 +878,15 @@ export default function DocDetailPage() {
                           className="w-10 h-10 rounded-lg border border-gray-300 cursor-pointer"
                           style={{
                             backgroundColor:
-                              project.settings?.displayOptions?.primaryColor || "#171717",
+                              project.settings?.displayOptions?.primaryColor ||
+                              "#171717",
                           }}
                         />
                         <input
                           type="text"
                           value={
-                            project.settings?.displayOptions?.primaryColor || "#171717"
+                            project.settings?.displayOptions?.primaryColor ||
+                            "#171717"
                           }
                           onChange={(e) => {
                             updateProject({
@@ -1122,8 +984,9 @@ export default function DocDetailPage() {
                             <input
                               type="checkbox"
                               checked={
-                                project.settings?.displayOptions?.[option.id] !==
-                                undefined
+                                project.settings?.displayOptions?.[
+                                  option.id
+                                ] !== undefined
                                   ? project.settings.displayOptions[option.id]
                                   : option.default
                               }
@@ -1160,64 +1023,6 @@ export default function DocDetailPage() {
                 </div>
               </div>
             </div>
-
-            {/* <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2">
-                  <h2
-                    className={`text-lg font-semibold ${themeClasses.text.bold} mb-4`}
-                  >
-                    Collections in Documentation
-                  </h2>
-                  <div
-                    className={`p-6 border rounded-xl ${
-                      isDark
-                        ? "border-gray-800 bg-gray-900/50"
-                        : "border-gray-200 bg-white"
-                    }`}
-                  >
-                    <div className="space-y-3">
-                      {project.collections?.map((collectionId) => {
-                        const collection = collections[collectionId];
-                        if (!collection) return null;
-
-                        return (
-                          <div
-                            key={collectionId}
-                            className="flex items-center justify-between py-2"
-                          >
-                            <div className="flex items-center gap-3">
-                              <div
-                                className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                                  isDark
-                                    ? "bg-gray-800 text-gray-300"
-                                    : "bg-gray-100 text-gray-600"
-                                }`}
-                              >
-                                <FileText className="w-4 h-4" />
-                              </div>
-                              <div>
-                                <div
-                                  className={`font-medium ${themeClasses.text.bold}`}
-                                >
-                                  {collection.name}
-                                </div>
-                                <div
-                                  className={`text-sm ${themeClasses.text.secondary}`}
-                                >
-                                  {collection.requests?.length || 0} endpoints
-                                </div>
-                              </div>
-                            </div>
-                            <Button variant="ghost" size="sm">
-                              <ExternalLink className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-              </div> */}
 
             {/* Activity Feed */}
             <div>
@@ -1343,7 +1148,10 @@ export default function DocDetailPage() {
                           updated: new Date().toISOString(),
                         };
                         setProject(updatedProject);
-                        ApiClient.docsProjects.update(project.id, updatedProject);
+                        ApiClient.docsProjects.update(
+                          project.id,
+                          updatedProject
+                        );
                       }}
                       className={`flex-1 px-3 py-2 text-sm rounded-lg ${themeClasses.input.base}`}
                       placeholder="project-name"
