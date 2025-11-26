@@ -27,7 +27,7 @@ import { DocsGenerator } from "@/lib/docs-generator";
 import { DocsProjects } from "@/lib/docs-storage-db";
 import { collectionsApi } from "@/lib/api-client";
 import useDebounce from "@/hooks/useDebounce";
-import { predefinedDocumenationTemplates } from "@/config/docs-templates";
+import { getAllTemplates } from "@/components/docs/templates/TemplateRegistry";
 import { generateDocumentationFromCollection } from "@/lib/docs-helper";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -70,7 +70,7 @@ export default function DocGeneratorModal({
   const [selectedCollection, setSelectedCollection] = useState(
     preSelectedCollection
   );
-  const [selectedTemplate, setSelectedTemplate] = useState("stripe-style");
+  const [selectedTemplate, setSelectedTemplate] = useState("minimalist");
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
@@ -435,12 +435,12 @@ export default function DocGeneratorModal({
               <div className="grid grid-cols-2 gap-5">
                 {/* Left: Template Options */}
                 <div className="space-y-3">
-                  {predefinedDocumenationTemplates.map((template) => (
+                  {getAllTemplates().map((template) => (
                     <button
-                      key={template.id}
-                      onClick={() => setSelectedTemplate(template.id)}
+                      key={template.key}
+                      onClick={() => setSelectedTemplate(template.key)}
                       className={`cursor-pointer w-full p-4 text-left rounded-lg border transition-all ${
-                        selectedTemplate === template.id
+                        selectedTemplate === template.key
                           ? isDark
                             ? "border-white bg-gray-800 text-white"
                             : "border-black bg-gray-50 text-black"
@@ -453,7 +453,7 @@ export default function DocGeneratorModal({
                         <div>
                           <div
                             className={`font-medium text-sm ${
-                              selectedTemplate === template.id
+                              selectedTemplate === template.key
                                 ? "text-current"
                                 : themeClasses.text.primary
                             }`}
@@ -462,7 +462,7 @@ export default function DocGeneratorModal({
                           </div>
                           <div
                             className={`text-xs ${
-                              selectedTemplate === template.id
+                              selectedTemplate === template.key
                                 ? "text-current opacity-75"
                                 : themeClasses.text.tertiary
                             } mt-1`}
@@ -470,7 +470,7 @@ export default function DocGeneratorModal({
                             {template.description}
                           </div>
                         </div>
-                        {selectedTemplate === template.id && (
+                        {selectedTemplate === template.key && (
                           <Check className="w-4 h-4" />
                         )}
                       </div>

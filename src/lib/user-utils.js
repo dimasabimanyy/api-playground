@@ -85,15 +85,16 @@ export function generateProjectSlug(projectName) {
 /**
  * Generate public documentation URL for a project
  * @param {string} username - User's username
- * @param {string} projectName - Project name
+ * @param {string} projectSlugOrName - Project slug (preferred) or project name
  * @param {string} baseUrl - Base URL (optional, defaults to current origin)
+ * @param {boolean} isSlug - Whether projectSlugOrName is already a slug (default: false)
  * @returns {string} Public documentation URL
  */
-export function generatePublicDocUrl(username, projectName, baseUrl = null) {
-  if (!username || !projectName) return '';
+export function generatePublicDocUrl(username, projectSlugOrName, baseUrl = null, isSlug = false) {
+  if (!username || !projectSlugOrName) return '';
   
   const cleanedUsername = cleanUsername(username);
-  const projectSlug = generateProjectSlug(projectName);
+  const projectSlug = isSlug ? projectSlugOrName : generateProjectSlug(projectSlugOrName);
   
   const base = baseUrl || (typeof window !== 'undefined' ? window.location.origin : '');
   

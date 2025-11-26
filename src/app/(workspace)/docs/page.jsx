@@ -170,10 +170,11 @@ export default function DocsPage() {
   };
 
   const viewDocumentation = (project) => {
-    // Navigate to public documentation using the new username-based URL
+    // Navigate to public documentation using the actual project slug
     if (user) {
       const username = generateUsername(user);
-      const publicUrl = generatePublicDocUrl(username, project.name);
+      // Use the actual project slug from the database instead of generating from name
+      const publicUrl = `${window.location.origin}/${username}/${project.slug}`;
       window.open(publicUrl, "_blank");
     } else {
       // Fallback to old format if no user (shouldn't happen in authenticated context)
