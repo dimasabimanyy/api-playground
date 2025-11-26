@@ -102,17 +102,17 @@ export default function DocDetailPage() {
     try {
       const response = await ApiClient.docsProjects.getById(params.id);
 
-      console.log('kratos response: ', response);
-      if (response.projects) {
-        setProject(response.projects);
+      console.log("kratos response: ", response);
+      if (response.project) {
+        setProject(response.project);
       }
-      // Handle failed fetching 
+      // Handle failed fetching
       //  else {
       //   router.push("/docs");
       // }
     } catch (error) {
       console.error("Failed to load project:", error);
-      router.push("/docs");
+      // router.push("/docs");
     } finally {
       setLoading(false);
     }
@@ -189,7 +189,7 @@ export default function DocDetailPage() {
       >
         <div className="text-center">
           <h1
-            className={`text-xl font-semibold ${themeClasses.text.primary} mb-2`}
+            className={`text-xl font-semibold ${themeClasses.text.bold} mb-2`}
           >
             Project not found
           </h1>
@@ -208,13 +208,10 @@ export default function DocDetailPage() {
 
   const getEndpointCount = () => {
     if (!project.collections) return 0;
-    let totalEndpoints = 0;
-    project.collections.forEach((collectionId) => {
-      const collection = collections[collectionId];
-      if (collection && collection.requests) {
-        totalEndpoints += collection.requests.length;
-      }
-    });
+
+    // Use client counting because requests is smaller and already fetched inside the project fetch
+    const totalEndpoints = project.collections.requests.length || 0;
+
     return totalEndpoints;
   };
 
@@ -249,6 +246,14 @@ export default function DocDetailPage() {
     },
   ];
 
+  const projectUpdatedAt = new Date(project.updated_at);
+  const collectionUpdatedAt = new Date(project.collections.updated_at);
+
+  const latestDate =
+    projectUpdatedAt > collectionUpdatedAt
+      ? projectUpdatedAt
+      : collectionUpdatedAt;
+
   return (
     <div className={`min-h-screen ${themeClasses.bg.bold}`}>
       {/* Header */}
@@ -260,7 +265,7 @@ export default function DocDetailPage() {
             <div className="flex items-center gap-4">
               <div>
                 <h1
-                  className={`text-[1.85rem] font-bold tracking-tight ${themeClasses.text.bold}`}
+                  className={`text-[1.6rem] font-bold tracking-tight ${themeClasses.text.bold}`}
                 >
                   {project.name}
                 </h1>
@@ -287,85 +292,6 @@ export default function DocDetailPage() {
               >
                 Copy URL
               </Button> */}
-              {/* <Button
-                onClick={viewDocumentation}
-                variant="outline"
-                size="sm"
-                className={`${themeClasses.button.secondary}`}
-              >
-                View Docs
-              </Button> */}
-              <Button
-                onClick={() => window.open(generatePublicUrl(), "_blank")}
-                className={`${themeClasses.button.fill} px-4 h-9`}
-                // className={`${
-                //   isDark
-                //     ? "bg-white text-black hover:bg-gray-200"
-                //     : "bg-black text-white hover:bg-gray-800"
-                // }`}
-                size="sm"
-                disabled={!generatePublicUrl()}
-              >
-                Open Public
-              </Button>
-
-              {/* <div className="relative">
-                <Button
-                  onClick={() => setShowMenu(!showMenu)}
-                  variant="outline"
-                  size="sm"
-                  className={`${themeClasses.button.secondary}`}
-                >
-                  <MoreVertical className="w-4 h-4" />
-                </Button>
-
-                {showMenu && (
-                  <div
-                    className={`absolute right-0 top-full mt-2 w-48 border rounded-xl shadow-xl z-50 ${
-                      isDark
-                        ? "border-gray-700 bg-gray-800"
-                        : "border-gray-200 bg-white"
-                    }`}
-                  >
-                    <div className="p-1">
-                      <button
-                        onClick={() => {
-                          // TODO: Edit functionality
-                          setShowMenu(false);
-                        }}
-                        className={`w-full text-left px-3 py-2 text-sm rounded-lg hover:${
-                          isDark ? "bg-gray-700" : "bg-gray-100"
-                        } flex items-center gap-2 transition-colors`}
-                      >
-                        <Edit3 className="w-4 h-4" />
-                        Edit Project
-                      </button>
-                      <button
-                        onClick={() => {
-                          duplicateProject();
-                          setShowMenu(false);
-                        }}
-                        className={`w-full text-left px-3 py-2 text-sm rounded-lg hover:${
-                          isDark ? "bg-gray-700" : "bg-gray-100"
-                        } flex items-center gap-2 transition-colors`}
-                      >
-                        <Copy className="w-4 h-4" />
-                        Duplicate
-                      </button>
-                      <button
-                        onClick={() => {
-                          deleteProject();
-                          setShowMenu(false);
-                        }}
-                        className="w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-red-500/10 text-red-500 flex items-center gap-2 transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div> */}
             </div>
           </div>
 
@@ -379,10 +305,10 @@ export default function DocDetailPage() {
               <button
                 key={id}
                 onClick={() => setActiveTab(id)}
-                className={`cursor-pointer flex items-center gap-2 px-1 py-2 text-sm font-medium transition-colors border-b-2 ${
+                className={`cursor-pointer flex items-center gap-2 px-1 py-2 text-sm font-normal transition-colors border-b-2 ${
                   activeTab === id
-                    ? `${themeClasses.text.primary} border-black dark:border-white`
-                    : `${themeClasses.text.secondary} border-transparent hover:${themeClasses.text.primary}`
+                    ? `${themeClasses.text.bold} border-black dark:border-white`
+                    : `${themeClasses.text.secondary} border-transparent hover:${themeClasses.text.bold}`
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -399,12 +325,31 @@ export default function DocDetailPage() {
           <div className="space-y-8">
             {/* Production Deployment - Vercel Style */}
             <div>
-              <div className="mb-5">
+              <div className="mb-5 flex justify-between align-center">
                 <h2
                   className={`font-semibold tracking-tight text-[1.3rem] ${themeClasses.text.bold}`}
                 >
                   Production Deployment
                 </h2>
+
+                <div className="flex gap-3">
+                  <Button
+                    // onClick={viewDocumentation}
+                    variant="outline"
+                    size="sm"
+                    className={`${themeClasses.button.secondary} px-4 h-9`}
+                  >
+                    Open in Playground
+                  </Button>
+                  <Button
+                    onClick={() => window.open(generatePublicUrl(), "_blank")}
+                    className={`${themeClasses.button.fill} px-4 h-9`}
+                    size="sm"
+                    disabled={!generatePublicUrl()}
+                  >
+                    Visit
+                  </Button>
+                </div>
               </div>
               <div
                 className={`border rounded-xl overflow-hidden ${
@@ -414,31 +359,6 @@ export default function DocDetailPage() {
                 }`}
               >
                 <div className="p-6">
-                  {/* <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={`font-semibold ${themeClasses.text.primary}`}
-                      >
-                        Production Deployment
-                      </span>
-                    </div>
-                    <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 rounded-full">
-                      Live
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      onClick={() => window.open(generatePublicUrl(), "_blank")}
-                      variant="outline"
-                      size="sm"
-                    >
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      Visit
-                    </Button>
-                  </div>
-                </div> */}
-
                   <div className="flex gap-8">
                     {/* Left side - Preview (40% width) */}
                     <div className="w-2/5 space-y-4">
@@ -483,7 +403,7 @@ export default function DocDetailPage() {
                                 <FileText className="w-6 h-6" />
                               </div>
                               <div
-                                className={`text-sm font-medium ${themeClasses.text.primary} mb-1`}
+                                className={`text-sm font-medium ${themeClasses.text.bold} mb-1`}
                               >
                                 {project.name}
                               </div>
@@ -536,128 +456,88 @@ export default function DocDetailPage() {
 
                     {/* Right side - Details (60% width) */}
                     <div className="flex-1">
-                      {/* Domain */}
+                      {/* Deployment Details */}
                       <div>
-                        <h4
-                          className={`text-sm ${themeClasses.text.primary} mb-1`}
-                          style={{ color: "#666666" }}
-                        >
-                          Domains
-                        </h4>
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-3">
-                            {/* <div className="w-2 h-2 rounded-full bg-green-500"></div> */}
-                            <div className="flex gap-2">
-                              <div
-                                className={`text-sm font-medium ${themeClasses.text.primary}`}
-                              >
-                                {generatePublicUrl()
-                                  ? generatePublicUrl().replace(
-                                      /^https?:\/\//,
-                                      ""
-                                    )
-                                  : "Not assigned"}
-                              </div>
-                              <ExternalLink
-                                className={`w-4 h-4 ${themeClasses.text.tertiary}`}
-                              />
-                              {/* <div
-                                  className={`text-xs ${themeClasses.text.secondary}`}
-                                >
-                                  {generatePublicUrl()
-                                    ? "Ready"
-                                    : "Awaiting configuration"}
-                                </div> */}
+                        <div className="mb-4">
+                          <span
+                            className={`text-sm  mb-2 ${themeClasses.text.secondary}`}
+                          >
+                            Domain
+                          </span>
+                          <div
+                            className={`flex gap-3 text-sm font-medium ${themeClasses.text.bold}`}
+                          >
+                            <div>
+                              {generatePublicUrl()
+                                ? generatePublicUrl().replace(
+                                    /^https?:\/\//,
+                                    ""
+                                  )
+                                : "Not assigned"}
+                            </div>
+                            <ExternalLink
+                              className={`w-4 h-4 ${themeClasses.text.tertiary}`}
+                            />
+                          </div>
+                        </div>
+
+                        <div className="mb-4">
+                          <span
+                            className={`text-sm  mb-2 ${themeClasses.text.secondary}`}
+                          >
+                            Status
+                          </span>
+                          <div className="flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                            <span
+                              className={`text-sm font-medium ${themeClasses.text.bold}`}
+                            >
+                              Ready
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="mb-3 flex gap-8">
+                          <div>
+                            <div
+                              className={`text-sm  mb-2 ${themeClasses.text.secondary}`}
+                            >
+                              Template
+                            </div>
+                            <div
+                              className={`text-sm font-medium ${themeClasses.text.bold} capitalize`}
+                            >
+                              {project.template || "Default"}
+                            </div>
+                          </div>
+                          <div>
+                            <div
+                              className={`text-sm  mb-2 ${themeClasses.text.secondary}`}
+                            >
+                              Endpoints
+                            </div>
+                            <div
+                              className={`text-sm font-medium ${themeClasses.text.bold}`}
+                            >
+                              {getEndpointCount()}
                             </div>
                           </div>
                         </div>
-                      </div>
-
-                      {/* Deployment Details */}
-                      <div>
-                        {/* <h4
-                          className={`text-sm ${themeClasses.text.primary} mb-1`}
-                          style={{ color: "#666666" }}
-                        >
-                          Details
-                        </h4> */}
-                        <div>
-                          <div className="flex items-center gap-3 py-2.5">
-                            <span
-                              className={`text-sm ${themeClasses.text.secondary}`}
-                            >
-                              Status
-                            </span>
-                            <div className="flex items-center gap-2">
-                              <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-                              <span
-                                className={`text-sm font-medium ${themeClasses.text.primary}`}
-                              >
-                                Ready
-                              </span>
-                            </div>
+                        <div className="mb-4">
+                          <div
+                            className={`text-sm mb-2 ${themeClasses.text.secondary}`}
+                          >
+                            Last Updated
                           </div>
-
-                          <div className="flex items-center gap-3 py-2.5">
-                            <span
-                              className={`text-sm ${themeClasses.text.secondary}`}
-                            >
-                              Template
-                            </span>
-                            <span
-                              className={`text-sm font-medium ${themeClasses.text.primary} capitalize`}
-                            >
-                              {project.template || "Default"}
-                            </span>
-                          </div>
-
-                          <div className="flex gap-3">
-                            <div className="flex items-center gap-3 py-2.5">
-                              <span
-                                className={`text-sm ${themeClasses.text.secondary}`}
-                              >
-                                Collections
-                              </span>
-                              <span
-                                className={`text-sm font-medium ${themeClasses.text.primary}`}
-                              >
-                                {project.collections?.length || 0}
-                              </span>
-                            </div>
-
-                            <div className="flex items-center gap-3 py-2.5">
-                              <span
-                                className={`text-sm ${themeClasses.text.secondary}`}
-                              >
-                                Endpoints
-                              </span>
-                              <span
-                                className={`text-sm font-medium ${themeClasses.text.primary}`}
-                              >
-                                {getEndpointCount()}
-                              </span>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center gap-3 py-2.5">
-                            <span
-                              className={`text-sm ${themeClasses.text.secondary}`}
-                            >
-                              Last Updated
-                            </span>
-                            <span
-                              className={`text-sm font-medium ${themeClasses.text.primary}`}
-                            >
-                              {new Date(project.updated).toLocaleDateString(
-                                "en-US",
-                                {
-                                  month: "short",
-                                  day: "numeric",
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                }
-                              )}
-                            </span>
+                          <div
+                            className={`text-sm font-medium ${themeClasses.text.bold}`}
+                          >
+                            {new Date(latestDate).toLocaleDateString("en-US", {
+                              month: "short",
+                              day: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
                           </div>
                         </div>
                       </div>
@@ -665,7 +545,7 @@ export default function DocDetailPage() {
                       {/* Build Settings */}
                       {/* <div>
                         <h4
-                          className={`text-sm font-semibold ${themeClasses.text.primary} mb-3`}
+                          className={`text-sm font-semibold ${themeClasses.text.bold} mb-3`}
                         >
                           Configuration
                         </h4>
@@ -696,7 +576,7 @@ export default function DocDetailPage() {
                               Code Examples
                             </span>
                             <span
-                              className={`text-sm ${themeClasses.text.primary}`}
+                              className={`text-sm ${themeClasses.text.bold}`}
                             >
                               {project.settings?.showExamples !== false
                                 ? "Enabled"
@@ -711,7 +591,7 @@ export default function DocDetailPage() {
                               Group by Collection
                             </span>
                             <span
-                              className={`text-sm ${themeClasses.text.primary}`}
+                              className={`text-sm ${themeClasses.text.bold}`}
                             >
                               {project.settings?.groupByCollection !== false
                                 ? "Enabled"
@@ -850,7 +730,7 @@ export default function DocDetailPage() {
                     {/* Primary Color Picker */}
                     <div>
                       <h4
-                        className={`block text-sm font-medium ${themeClasses.text.primary} mb-3`}
+                        className={`block text-sm font-medium ${themeClasses.text.bold} mb-3`}
                       >
                         Primary Color
                       </h4>
@@ -942,7 +822,7 @@ export default function DocDetailPage() {
                     {/* Layout Options */}
                     <div>
                       <h4
-                        className={`block text-sm font-medium ${themeClasses.text.primary} mb-3`}
+                        className={`block text-sm font-medium ${themeClasses.text.bold} mb-3`}
                       >
                         Layout Settings
                       </h4>
@@ -1007,7 +887,7 @@ export default function DocDetailPage() {
                             />
                             <div className="flex-1">
                               <label
-                                className={`text-sm font-medium ${themeClasses.text.primary}`}
+                                className={`text-sm font-medium ${themeClasses.text.bold}`}
                               >
                                 {option.label}
                               </label>
@@ -1080,7 +960,7 @@ export default function DocDetailPage() {
               <div className="space-y-4">
                 <div>
                   <label
-                    className={`block text-sm font-medium ${themeClasses.text.primary} mb-2`}
+                    className={`block text-sm font-medium ${themeClasses.text.bold} mb-2`}
                   >
                     Project Name
                   </label>
@@ -1103,7 +983,7 @@ export default function DocDetailPage() {
 
                 <div>
                   <label
-                    className={`block text-sm font-medium ${themeClasses.text.primary} mb-2`}
+                    className={`block text-sm font-medium ${themeClasses.text.bold} mb-2`}
                   >
                     Description
                   </label>
@@ -1125,7 +1005,7 @@ export default function DocDetailPage() {
 
                 <div>
                   <label
-                    className={`block text-sm font-medium ${themeClasses.text.primary} mb-2`}
+                    className={`block text-sm font-medium ${themeClasses.text.bold} mb-2`}
                   >
                     Public URL
                   </label>
@@ -1181,7 +1061,7 @@ export default function DocDetailPage() {
               <div className="space-y-4">
                 <div>
                   <label
-                    className={`block text-sm font-medium ${themeClasses.text.primary} mb-2`}
+                    className={`block text-sm font-medium ${themeClasses.text.bold} mb-2`}
                   >
                     Base URL
                   </label>
@@ -1209,7 +1089,7 @@ export default function DocDetailPage() {
 
                 <div>
                   <label
-                    className={`block text-sm font-medium ${themeClasses.text.primary} mb-2`}
+                    className={`block text-sm font-medium ${themeClasses.text.bold} mb-2`}
                   >
                     API Version
                   </label>
@@ -1251,7 +1131,7 @@ export default function DocDetailPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <div
-                      className={`text-sm font-medium ${themeClasses.text.primary}`}
+                      className={`text-sm font-medium ${themeClasses.text.bold}`}
                     >
                       Show Code Examples
                     </div>
@@ -1296,7 +1176,7 @@ export default function DocDetailPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <div
-                      className={`text-sm font-medium ${themeClasses.text.primary}`}
+                      className={`text-sm font-medium ${themeClasses.text.bold}`}
                     >
                       Group by Collections
                     </div>
@@ -1341,7 +1221,7 @@ export default function DocDetailPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <div
-                      className={`text-sm font-medium ${themeClasses.text.primary}`}
+                      className={`text-sm font-medium ${themeClasses.text.bold}`}
                     >
                       Public Access
                     </div>
@@ -1633,7 +1513,7 @@ export default function DocDetailPage() {
                       key={index}
                       className="flex items-center justify-between"
                     >
-                      <span className={`text-sm ${themeClasses.text.primary}`}>
+                      <span className={`text-sm ${themeClasses.text.bold}`}>
                         {source.source}
                       </span>
                       <div className="flex items-center gap-3">
@@ -1709,7 +1589,7 @@ export default function DocDetailPage() {
                       <div className="flex items-center gap-2">
                         <span>{country.flag}</span>
                         <span
-                          className={`text-sm ${themeClasses.text.primary}`}
+                          className={`text-sm ${themeClasses.text.bold}`}
                         >
                           {country.country}
                         </span>

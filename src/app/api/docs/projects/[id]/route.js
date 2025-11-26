@@ -67,6 +67,7 @@ export async function GET(request, { params }) {
           id,
           name,
           description,
+          updated_at,
           requests (*)
         )
       `
@@ -90,6 +91,8 @@ export async function GET(request, { params }) {
         { status: 500 }
       );
     }
+
+    console.log('result: ', project)
 
     return NextResponse.json({ project });
   } catch (error) {
