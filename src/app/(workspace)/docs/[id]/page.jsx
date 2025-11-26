@@ -325,7 +325,7 @@ export default function DocDetailPage() {
           <div className="space-y-8">
             {/* Production Deployment - Vercel Style */}
             <div>
-              <div className="mb-5 flex justify-between align-center">
+              <div className="mb-5 flex justify-between items-center">
                 <h2
                   className={`font-semibold tracking-tight text-[1.3rem] ${themeClasses.text.bold}`}
                 >
@@ -609,7 +609,7 @@ export default function DocDetailPage() {
             <div className="space-y-8">
               {/* Content & Display Section */}
               <div>
-                <div className="mb-5 flex justify-between align-center">
+                <div className="mb-5 flex justify-between items-center">
                   <div>
                     <h2
                       className={`font-semibold tracking-tight text-[1.3rem] ${themeClasses.text.bold}`}
@@ -736,21 +736,28 @@ export default function DocDetailPage() {
                 <h3 className={`font-semibold ${themeClasses.text.bold} mb-4`}>
                   Theme Colors
                 </h3>
-                
+
                 <div className="space-y-6">
                   {/* Primary Color */}
                   <div>
-                    <label className={`block text-sm font-medium ${themeClasses.text.bold} mb-2`}>
+                    <label
+                      className={`block text-sm font-medium ${themeClasses.text.bold} mb-2`}
+                    >
                       Primary Color
                     </label>
-                    <p className={`text-xs ${themeClasses.text.secondary} mb-3`}>
+                    <p
+                      className={`text-xs ${themeClasses.text.secondary} mb-3`}
+                    >
                       Main brand color for buttons and links
                     </p>
                     <div className="flex items-center gap-3">
-                      <div className="relative">
+                      <div className="flex items-center">
                         <input
                           type="color"
-                          value={project.settings?.displayOptions?.primaryColor || "#171717"}
+                          value={
+                            project.settings?.displayOptions?.primaryColor ||
+                            "#171717"
+                          }
                           onChange={(e) => {
                             updateProject({
                               settings: {
@@ -762,15 +769,20 @@ export default function DocDetailPage() {
                               },
                             });
                           }}
-                          className="w-12 h-10 rounded-lg border-2 border-gray-300 cursor-pointer"
+                          className="w-12 h-9.5 rounded-md cursor-pointer"
                           style={{
-                            backgroundColor: project.settings?.displayOptions?.primaryColor || "#171717",
+                            backgroundColor:
+                              project.settings?.displayOptions?.primaryColor ||
+                              "#171717",
                           }}
                         />
                       </div>
                       <input
                         type="text"
-                        value={project.settings?.displayOptions?.primaryColor || "#171717"}
+                        value={
+                          project.settings?.displayOptions?.primaryColor ||
+                          "#171717"
+                        }
                         onChange={(e) => {
                           updateProject({
                             settings: {
@@ -812,7 +824,7 @@ export default function DocDetailPage() {
                               },
                             });
                           }}
-                          className="w-7 h-7 rounded-md border-2 border-gray-300 hover:scale-110 transition-all shadow-sm"
+                          className="w-7 h-7 rounded-md hover:scale-110 transition-all shadow-sm"
                           style={{ backgroundColor: preset.color }}
                           title={preset.name}
                         />
@@ -822,17 +834,24 @@ export default function DocDetailPage() {
 
                   {/* Secondary Color */}
                   <div>
-                    <label className={`block text-sm font-medium ${themeClasses.text.bold} mb-2`}>
+                    <label
+                      className={`block text-sm font-medium ${themeClasses.text.bold} mb-2`}
+                    >
                       Secondary Color
                     </label>
-                    <p className={`text-xs ${themeClasses.text.secondary} mb-3`}>
+                    <p
+                      className={`text-xs ${themeClasses.text.secondary} mb-3`}
+                    >
                       Used for hover states and accents
                     </p>
                     <div className="flex items-center gap-3">
-                      <div className="relative">
+                      <div className="flex items-center">
                         <input
                           type="color"
-                          value={project.settings?.displayOptions?.secondaryColor || "#6b7280"}
+                          value={
+                            project.settings?.displayOptions?.secondaryColor ||
+                            "#6b7280"
+                          }
                           onChange={(e) => {
                             updateProject({
                               settings: {
@@ -844,15 +863,20 @@ export default function DocDetailPage() {
                               },
                             });
                           }}
-                          className="w-12 h-10 rounded-lg border-2 border-gray-300 cursor-pointer"
+                          className="w-12 h-9.5 rounded-md cursor-pointer"
                           style={{
-                            backgroundColor: project.settings?.displayOptions?.secondaryColor || "#6b7280",
+                            backgroundColor:
+                              project.settings?.displayOptions
+                                ?.secondaryColor || "#6b7280",
                           }}
                         />
                       </div>
                       <input
                         type="text"
-                        value={project.settings?.displayOptions?.secondaryColor || "#6b7280"}
+                        value={
+                          project.settings?.displayOptions?.secondaryColor ||
+                          "#6b7280"
+                        }
                         onChange={(e) => {
                           updateProject({
                             settings: {
@@ -876,17 +900,24 @@ export default function DocDetailPage() {
 
                   {/* Accent Color */}
                   <div>
-                    <label className={`block text-sm font-medium ${themeClasses.text.bold} mb-2`}>
+                    <label
+                      className={`block text-sm font-medium ${themeClasses.text.bold} mb-2`}
+                    >
                       Accent Color
                     </label>
-                    <p className={`text-xs ${themeClasses.text.secondary} mb-3`}>
+                    <p
+                      className={`text-xs ${themeClasses.text.secondary} mb-3`}
+                    >
                       For highlighting and special elements
                     </p>
                     <div className="flex items-center gap-3">
-                      <div className="relative">
+                      <div className="flex items-center">
                         <input
                           type="color"
-                          value={project.settings?.displayOptions?.accentColor || "#3b82f6"}
+                          value={
+                            project.settings?.displayOptions?.accentColor ||
+                            "#3b82f6"
+                          }
                           onChange={(e) => {
                             updateProject({
                               settings: {
@@ -898,15 +929,20 @@ export default function DocDetailPage() {
                               },
                             });
                           }}
-                          className="w-12 h-10 rounded-lg border-2 border-gray-300 cursor-pointer"
+                          className="w-12 h-9.5 rounded-md cursor-pointer"
                           style={{
-                            backgroundColor: project.settings?.displayOptions?.accentColor || "#3b82f6",
+                            backgroundColor:
+                              project.settings?.displayOptions?.accentColor ||
+                              "#3b82f6",
                           }}
                         />
                       </div>
                       <input
                         type="text"
-                        value={project.settings?.displayOptions?.accentColor || "#3b82f6"}
+                        value={
+                          project.settings?.displayOptions?.accentColor ||
+                          "#3b82f6"
+                        }
                         onChange={(e) => {
                           updateProject({
                             settings: {
@@ -941,11 +977,13 @@ export default function DocDetailPage() {
                 <h3 className={`font-semibold ${themeClasses.text.bold} mb-4`}>
                   Layout Settings
                 </h3>
-                
+
                 <div className="space-y-4">
                   {/* Sidebar Position */}
                   <div>
-                    <label className={`block text-sm font-medium ${themeClasses.text.bold} mb-2`}>
+                    <label
+                      className={`block text-sm font-medium ${themeClasses.text.bold} mb-2`}
+                    >
                       Sidebar Position
                     </label>
                     <div className="grid grid-cols-2 gap-2">
@@ -967,7 +1005,8 @@ export default function DocDetailPage() {
                             });
                           }}
                           className={`px-3 py-2 text-sm rounded-lg border transition-colors ${
-                            (project.settings?.layoutOptions?.sidebarPosition || "left") === position.id
+                            (project.settings?.layoutOptions?.sidebarPosition ||
+                              "left") === position.id
                               ? isDark
                                 ? "border-blue-600 bg-blue-900/20 text-blue-400"
                                 : "border-blue-500 bg-blue-50 text-blue-600"
@@ -984,7 +1023,9 @@ export default function DocDetailPage() {
 
                   {/* Content Width */}
                   <div>
-                    <label className={`block text-sm font-medium ${themeClasses.text.bold} mb-2`}>
+                    <label
+                      className={`block text-sm font-medium ${themeClasses.text.bold} mb-2`}
+                    >
                       Content Width
                     </label>
                     <div className="grid grid-cols-2 gap-2">
@@ -1006,7 +1047,8 @@ export default function DocDetailPage() {
                             });
                           }}
                           className={`px-3 py-2 text-sm rounded-lg border transition-colors ${
-                            (project.settings?.layoutOptions?.contentWidth || "narrow") === width.id
+                            (project.settings?.layoutOptions?.contentWidth ||
+                              "narrow") === width.id
                               ? isDark
                                 ? "border-blue-600 bg-blue-900/20 text-blue-400"
                                 : "border-blue-500 bg-blue-50 text-blue-600"
@@ -1023,7 +1065,9 @@ export default function DocDetailPage() {
 
                   {/* Navigation Style */}
                   <div>
-                    <label className={`block text-sm font-medium ${themeClasses.text.bold} mb-2`}>
+                    <label
+                      className={`block text-sm font-medium ${themeClasses.text.bold} mb-2`}
+                    >
                       Navigation Style
                     </label>
                     <div className="grid grid-cols-2 gap-2">
@@ -1045,7 +1089,8 @@ export default function DocDetailPage() {
                             });
                           }}
                           className={`px-3 py-2 text-sm rounded-lg border transition-colors ${
-                            (project.settings?.layoutOptions?.navigationStyle || "tree") === style.id
+                            (project.settings?.layoutOptions?.navigationStyle ||
+                              "tree") === style.id
                               ? isDark
                                 ? "border-blue-600 bg-blue-900/20 text-blue-400"
                                 : "border-blue-500 bg-blue-50 text-blue-600"
@@ -1082,18 +1127,28 @@ export default function DocDetailPage() {
                         default: true,
                       },
                     ].map((option) => (
-                      <div key={option.id} className="flex items-center justify-between">
+                      <div
+                        key={option.id}
+                        className="flex items-center justify-between"
+                      >
                         <div className="flex-1">
-                          <div className={`text-sm font-medium ${themeClasses.text.bold}`}>
+                          <div
+                            className={`text-sm font-medium ${themeClasses.text.bold}`}
+                          >
                             {option.label}
                           </div>
-                          <div className={`text-xs ${themeClasses.text.secondary}`}>
+                          <div
+                            className={`text-xs ${themeClasses.text.secondary}`}
+                          >
                             {option.description}
                           </div>
                         </div>
                         <button
                           onClick={() => {
-                            const newValue = !(project.settings?.layoutOptions?.[option.id] ?? option.default);
+                            const newValue = !(
+                              project.settings?.layoutOptions?.[option.id] ??
+                              option.default
+                            );
                             updateProject({
                               settings: {
                                 ...project.settings,
@@ -1105,7 +1160,8 @@ export default function DocDetailPage() {
                             });
                           }}
                           className={`w-10 h-6 rounded-full transition-colors relative ${
-                            (project.settings?.layoutOptions?.[option.id] ?? option.default)
+                            project.settings?.layoutOptions?.[option.id] ??
+                            option.default
                               ? isDark
                                 ? "bg-blue-600"
                                 : "bg-blue-500"
@@ -1116,7 +1172,8 @@ export default function DocDetailPage() {
                         >
                           <div
                             className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
-                              (project.settings?.layoutOptions?.[option.id] ?? option.default)
+                              project.settings?.layoutOptions?.[option.id] ??
+                              option.default
                                 ? "right-1"
                                 : "left-1"
                             }`}
@@ -1150,7 +1207,7 @@ export default function DocDetailPage() {
                       default: true,
                     },
                     {
-                      id: "showResponseExamples", 
+                      id: "showResponseExamples",
                       label: "Response Examples",
                       description: "Sample API response data",
                       default: true,
@@ -1163,7 +1220,7 @@ export default function DocDetailPage() {
                     },
                     {
                       id: "showMethodBadges",
-                      label: "HTTP Method Badges", 
+                      label: "HTTP Method Badges",
                       description: "GET, POST, PUT visual badges",
                       default: true,
                     },
@@ -1192,18 +1249,29 @@ export default function DocDetailPage() {
                       default: true,
                     },
                   ].map((option) => (
-                    <div key={option.id} className="flex items-center justify-between">
+                    <div
+                      key={option.id}
+                      className="flex items-center justify-between"
+                    >
                       <div className="flex-1">
-                        <div className={`text-sm font-medium ${themeClasses.text.bold}`}>
+                        <div
+                          className={`text-sm font-medium ${themeClasses.text.bold}`}
+                        >
                           {option.label}
                         </div>
-                        <div className={`text-xs ${themeClasses.text.secondary}`}>
+                        <div
+                          className={`text-xs ${themeClasses.text.secondary}`}
+                        >
                           {option.description}
                         </div>
                       </div>
                       <button
                         onClick={() => {
-                          const newValue = !(project.settings?.documentationOptions?.[option.id] ?? option.default);
+                          const newValue = !(
+                            project.settings?.documentationOptions?.[
+                              option.id
+                            ] ?? option.default
+                          );
                           updateProject({
                             settings: {
                               ...project.settings,
@@ -1215,7 +1283,8 @@ export default function DocDetailPage() {
                           });
                         }}
                         className={`w-10 h-6 rounded-full transition-colors relative ${
-                          (project.settings?.documentationOptions?.[option.id] ?? option.default)
+                          project.settings?.documentationOptions?.[option.id] ??
+                          option.default
                             ? isDark
                               ? "bg-blue-600"
                               : "bg-blue-500"
@@ -1226,7 +1295,9 @@ export default function DocDetailPage() {
                       >
                         <div
                           className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
-                            (project.settings?.documentationOptions?.[option.id] ?? option.default)
+                            project.settings?.documentationOptions?.[
+                              option.id
+                            ] ?? option.default
                               ? "right-1"
                               : "left-1"
                           }`}

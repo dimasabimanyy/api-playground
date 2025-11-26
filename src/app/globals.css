@@ -248,3 +248,12 @@ button:disabled,
 button[disabled] {
   cursor: not-allowed;
 }
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+  border: none;
+}
+
+input[type="color"]::-webkit-color-swatch {
+  border: none;
+}
