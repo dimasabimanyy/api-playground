@@ -457,20 +457,13 @@ export default function TwoPanelSidebar({
       <DocGeneratorModal
         open={docsModalOpen}
         preSelectedCollection={selectedCollection}
-        // onOpenChange={(open) => {
-        //   setDocsModalOpen(open);
+        onOpenChange={(open) => {
+          setDocsModalOpen(open);
 
-        //   if (!open) {
-        //     setSelectedCollectionForDocs(null);
-        //   }
-        // }}
-        // collections={getCollectionsWithDocs()}
-        // preSelectedCollectionId={selectedCollectionForDocs}
-        // onGenerate={(docData) => {
-        //   console.log("Generated docs with data:", docData);
-        //   setDocsModalOpen(false);
-        //   setSelectedCollectionForDocs(null);
-        // }}
+          if (!open) {
+            setSelectedCollection(null);
+          }
+        }}
       />
     </>
   );

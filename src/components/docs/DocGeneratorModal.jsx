@@ -59,7 +59,6 @@ export default function DocGeneratorModal({
   open = false,
   onOpenChange = () => {},
   preSelectedCollection = null,
-  onGenerate = () => {},
 }) {
   const { isDark } = useTheme();
   const { user } = useAuth();

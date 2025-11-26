@@ -1146,7 +1146,7 @@ export default function Playground() {
       <div
         className={`flex-1 flex flex-col ${
           sidebarCollapsed ? "lg:ml-0" : "lg:ml-0"
-      } ml-0 lg:ml-0 w-full lg:w-auto`}
+        } ml-0 lg:ml-0 w-full lg:w-auto`}
       >
         {/* Request Tabs - Flat Design */}
         <div
@@ -1307,7 +1307,9 @@ export default function Playground() {
         </div>
 
         {/* Method + URL + Send Row - Full Width */}
-        <div className={`${themeClasses.border.primary} ${themeClasses.bg.bold}`}>
+        <div
+          className={`${themeClasses.border.primary} ${themeClasses.bg.bold}`}
+        >
           <div className="px-3 py-3">
             <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-2">
               {/* METHOD SELECT + URL INPUT + ENVIRONMENT ROW */}
@@ -1516,17 +1518,12 @@ export default function Playground() {
         open={docsModalOpen}
         onOpenChange={(open) => {
           setDocsModalOpen(open);
+          
           if (!open) {
             setSelectedCollectionForDocs(null);
           }
         }}
-        // collections={getCollectionsWithDocs()}
         preSelectedCollectionId={selectedCollectionForDocs}
-        onGenerate={(docData) => {
-          console.log("Generated docs with data:", docData);
-          setDocsModalOpen(false);
-          setSelectedCollectionForDocs(null);
-        }}
       />
 
       {/* Settings Modal */}
