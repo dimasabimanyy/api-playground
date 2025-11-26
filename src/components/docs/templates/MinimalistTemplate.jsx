@@ -200,7 +200,7 @@ const Sidebar = ({ activeSection, onSectionClick, username, project, isOpen, onC
         />
       )}
       
-      <div className={`fixed top-0 left-6 h-full w-80 bg-white border-r border-gray-200 z-50 transform transition-transform duration-300 overflow-y-auto rounded-r-lg shadow-lg ${
+      <div className={`absolute top-0 left-0 h-[calc(100vh-4rem)] w-80 bg-white border-r border-gray-200 z-50 transform transition-transform duration-300 overflow-y-auto ${
         isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
       }`}>
         {/* Header */}
@@ -228,17 +228,6 @@ const Sidebar = ({ activeSection, onSectionClick, username, project, isOpen, onC
           </p>
         </div>
 
-        {/* Search */}
-        <div className="p-6 border-b border-gray-200">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search documentation..."
-              className="w-full pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
-        </div>
 
         {/* Navigation */}
         <div className="p-6">
@@ -660,7 +649,7 @@ print(response.json())`;
   };
 
   return (
-    <div className="fixed top-16 right-6 h-[calc(100vh-4rem)] w-96 bg-white border-l border-gray-200 overflow-y-auto rounded-l-lg shadow-lg">
+    <div className="absolute top-0 right-0 h-[calc(100vh-4rem)] w-96 bg-white border-l border-gray-200 overflow-y-auto">
       {/* Sticky Table of Contents */}
       <div className="sticky top-0 bg-white border-b border-gray-200 p-6 pb-4 z-10">
         <TableOfContents 
@@ -770,23 +759,24 @@ export default function MinimalistTemplate({
         </div>
       </header>
 
-      {/* Layout */}
-      <div className="pt-16 flex">
-        {/* Sidebar */}
-        <Sidebar
-          activeSection={activeSection}
-          onSectionClick={onSectionClick}
-          username={username}
-          project={project}
-          isOpen={sidebarOpen}
-          onClose={() => setSidebarOpen(false)}
-        />
+      {/* Layout Container */}
+      <div className="pt-16">
+        <div className="max-w-[1800px] mx-auto relative">
+          {/* Sidebar */}
+          <Sidebar
+            activeSection={activeSection}
+            onSectionClick={onSectionClick}
+            username={username}
+            project={project}
+            isOpen={sidebarOpen}
+            onClose={() => setSidebarOpen(false)}
+          />
 
-        {/* Main Content */}
-        <div className="flex-1 lg:ml-96 lg:mr-[420px]">
-          <div className="px-8 py-12">
-            {/* Main Documentation Content */}
-            <div className="prose prose-lg max-w-none">
+          {/* Main Content */}
+          <div className="lg:ml-[340px] lg:mr-[420px]">
+            <div className="px-8 py-12 max-w-4xl">
+              {/* Main Documentation Content */}
+              <div className="prose prose-lg max-w-none">
               {/* Overview Section */}
               <section id="overview" className="mb-16">
                 <h1 className="text-3xl font-bold text-gray-900 mb-4">API Documentation</h1>
@@ -1024,20 +1014,21 @@ export default function MinimalistTemplate({
           </div>
         </div>
 
-        {/* Code Examples Sidebar - Fixed on the right */}
-        <CodeExamplesSidebar
-          request={{
-            id: 'get-user',
-            name: 'Get User by ID',
-            method: 'GET',
-            url: '/users/{id}',
-            headers: { 'Authorization': 'Bearer {token}' },
-            body: null
-          }}
-          baseUrl={baseUrl}
-          activeSection={activeSection}
-          onSectionClick={onSectionClick}
-        />
+          {/* Code Examples Sidebar - Positioned within container */}
+          <CodeExamplesSidebar
+            request={{
+              id: 'get-user',
+              name: 'Get User by ID',
+              method: 'GET',
+              url: '/users/{id}',
+              headers: { 'Authorization': 'Bearer {token}' },
+              body: null
+            }}
+            baseUrl={baseUrl}
+            activeSection={activeSection}
+            onSectionClick={onSectionClick}
+          />
+        </div>
       </div>
     </div>
   );
