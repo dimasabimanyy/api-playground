@@ -35,7 +35,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCollections } from "@/contexts/CollectionsContext";
 import { getThemeClasses } from "@/lib/theme";
-import { DocsProjects, DocsMetadata } from "@/lib/docs-storage-db";
+import ApiClient from "@/lib/api-client";
 import {
   generateUsername,
   generatePublicDocUrl,
@@ -153,7 +153,7 @@ export default function DocDetailPage() {
         updated_at: new Date().toISOString(),
       };
       setProject(updatedProject);
-      await DocsProjects.update(project.id, updatedProject);
+      await ApiClient.docsProjects.update(project.id, updatedProject);
     } catch (error) {
       console.error('Failed to update project:', error);
       // Revert optimistic update on error
@@ -169,9 +169,9 @@ export default function DocDetailPage() {
 
   const loadProject = async () => {
     try {
-      const projectData = await DocsProjects.get(params.id);
-      if (projectData) {
-        setProject(projectData);
+      const response = await ApiClient.docsProjects.getById(params.id);
+      if (response.project) {
+        setProject(response.project);
       } else {
         router.push("/docs");
       }
@@ -242,18 +242,27 @@ export default function DocDetailPage() {
         `Are you sure you want to delete "${project.name}"? This action cannot be undone.`
       )
     ) {
-      DocsProjects.delete(project.id);
+      ApiClient.docsProjects.delete(project.id);
       router.push("/docs");
     }
   };
 
-  const duplicateProject = () => {
-    const duplicated = DocsProjects.duplicate(
-      project.id,
-      `${project.name} Copy`
-    );
-    if (duplicated) {
-      router.push(`/docs/${duplicated.id}`);
+  const duplicateProject = async () => {
+    try {
+      const duplicateData = {
+        name: `${project.name} Copy`,
+        description: project.description,
+        collection_id: project.collection_id,
+        settings: project.settings,
+        status: project.status,
+      };
+      
+      const response = await ApiClient.docsProjects.create(duplicateData);
+      if (response.project) {
+        router.push(`/docs/${response.project.id}`);
+      }
+    } catch (error) {
+      console.error("Failed to duplicate project:", error);
     }
   };
 
@@ -1278,7 +1287,7 @@ export default function DocDetailPage() {
                         updated: new Date().toISOString(),
                       };
                       setProject(updatedProject);
-                      DocsProjects.update(project.id, updatedProject);
+                      ApiClient.docsProjects.update(project.id, updatedProject);
                     }}
                     className={`w-full px-3 py-2 text-sm rounded-lg ${themeClasses.input.base}`}
                     placeholder="Enter project name"
@@ -1300,7 +1309,7 @@ export default function DocDetailPage() {
                         updated: new Date().toISOString(),
                       };
                       setProject(updatedProject);
-                      DocsProjects.update(project.id, updatedProject);
+                      ApiClient.docsProjects.update(project.id, updatedProject);
                     }}
                     className={`w-full px-3 py-2 text-sm rounded-lg ${themeClasses.input.base} h-20 resize-none`}
                     placeholder="Enter project description"
@@ -1334,7 +1343,7 @@ export default function DocDetailPage() {
                           updated: new Date().toISOString(),
                         };
                         setProject(updatedProject);
-                        DocsProjects.update(project.id, updatedProject);
+                        ApiClient.docsProjects.update(project.id, updatedProject);
                       }}
                       className={`flex-1 px-3 py-2 text-sm rounded-lg ${themeClasses.input.base}`}
                       placeholder="project-name"
@@ -1381,7 +1390,7 @@ export default function DocDetailPage() {
                         updated: new Date().toISOString(),
                       };
                       setProject(updatedProject);
-                      DocsProjects.update(project.id, updatedProject);
+                      ApiClient.docsProjects.update(project.id, updatedProject);
                     }}
                     className={`w-full px-3 py-2 text-sm rounded-lg ${themeClasses.input.base}`}
                     placeholder="https://api.example.com"
@@ -1407,7 +1416,7 @@ export default function DocDetailPage() {
                         updated: new Date().toISOString(),
                       };
                       setProject(updatedProject);
-                      DocsProjects.update(project.id, updatedProject);
+                      ApiClient.docsProjects.update(project.id, updatedProject);
                     }}
                     className={`w-full px-3 py-2 text-sm rounded-lg ${themeClasses.input.base}`}
                     placeholder="v1"
@@ -1452,7 +1461,7 @@ export default function DocDetailPage() {
                         updated: new Date().toISOString(),
                       };
                       setProject(updatedProject);
-                      DocsProjects.update(project.id, updatedProject);
+                      ApiClient.docsProjects.update(project.id, updatedProject);
                     }}
                     className={`w-10 h-6 rounded-full transition-colors relative ${
                       project.settings?.showExamples !== false
@@ -1497,7 +1506,7 @@ export default function DocDetailPage() {
                         updated: new Date().toISOString(),
                       };
                       setProject(updatedProject);
-                      DocsProjects.update(project.id, updatedProject);
+                      ApiClient.docsProjects.update(project.id, updatedProject);
                     }}
                     className={`w-10 h-6 rounded-full transition-colors relative ${
                       project.settings?.groupByCollection !== false
@@ -1539,7 +1548,7 @@ export default function DocDetailPage() {
                         updated: new Date().toISOString(),
                       };
                       setProject(updatedProject);
-                      DocsProjects.update(project.id, updatedProject);
+                      ApiClient.docsProjects.update(project.id, updatedProject);
                     }}
                     className={`w-10 h-6 rounded-full transition-colors relative ${
                       project.settings?.isPublic !== false
@@ -1589,7 +1598,7 @@ export default function DocDetailPage() {
                           `Are you sure you want to delete "${project.name}"? This action cannot be undone.`
                         )
                       ) {
-                        DocsProjects.delete(project.id);
+                        ApiClient.docsProjects.delete(project.id);
                         router.push("/docs");
                       }
                     }}

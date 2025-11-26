@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   Dialog,
   DialogContent,
@@ -62,6 +63,7 @@ export default function DocGeneratorModal({
 }) {
   const { isDark } = useTheme();
   const { user } = useAuth();
+  const router = useRouter();
   const themeClasses = getThemeClasses(isDark);
   // const { collections } = useCollections();
 
@@ -164,19 +166,16 @@ export default function DocGeneratorModal({
         throw new Error(data.error || "Failed to generate documentation");
       }
 
-      console.log("Documentation generated successfully:", data.project);
-      return;
-
-      // Close the modal
-      onOpenChange(false);
+      console.log("Documentation generated successfully:", data.result);
 
       // Navigate to the generated documentation
-      if (data.project) {
-        window.open(`/docs/${data.project.id}`, "_blank");
+      if (data.result) {
+        router.push(`/docs/${data.result.id}`);
       }
     } catch (error) {
       console.error("Error generating documentation:", error);
-      // alert("Failed to generate documentation. Please try again.");
+
+      // Handle error UI with alert 
     } finally {
       setIsGenerating(false);
     }
