@@ -132,88 +132,200 @@ const ParameterRow = ({ name, type, required, description, example }) => (
 );
 
 // Sidebar Navigation
-const Sidebar = ({ collections, activeSection, onSectionClick, username, project, isOpen, onClose }) => (
-  <>
-    {/* Mobile Overlay */}
-    {isOpen && (
-      <div
-        className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
-        onClick={onClose}
-      />
-    )}
-    
-    <div className={`fixed top-0 left-0 h-full w-80 bg-white border-r border-gray-200 z-50 transform transition-transform duration-300 overflow-y-auto ${
-      isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-    }`}>
-      {/* Header */}
-      <div className="p-6 border-b border-gray-200">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
-              <FileText className="w-4 h-4 text-white" />
-            </div>
-            <div>
-              <h1 className="text-lg font-semibold text-gray-900">{project?.name}</h1>
-              <p className="text-sm text-gray-500">by @{username}</p>
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            className="lg:hidden p-1 text-gray-400 hover:text-gray-600"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-        
-        {project?.description && (
-          <p className="text-sm text-gray-600">{project.description}</p>
-        )}
-      </div>
+const Sidebar = ({ activeSection, onSectionClick, username, project, isOpen, onClose }) => {
+  // Hardcoded navigation structure
+  const navigationItems = [
+    {
+      id: 'introduction',
+      name: 'Introduction',
+      type: 'section',
+      children: [
+        { id: 'overview', name: 'Overview', method: null },
+        { id: 'getting-started', name: 'Getting Started', method: null },
+        { id: 'quickstart', name: 'Quick Start Guide', method: null }
+      ]
+    },
+    {
+      id: 'authentication',
+      name: 'Authentication',
+      type: 'section',
+      children: [
+        { id: 'basic-auth', name: 'Basic Authentication', method: null },
+        { id: 'api-keys', name: 'API Keys', method: null },
+        { id: 'oauth2', name: 'OAuth 2.0', method: null }
+      ]
+    },
+    {
+      id: 'endpoints',
+      name: 'API Endpoints',
+      type: 'section',
+      children: [
+        { id: 'users', name: 'Get Users', method: 'GET' },
+        { id: 'create-user', name: 'Create User', method: 'POST' },
+        { id: 'update-user', name: 'Update User', method: 'PUT' },
+        { id: 'delete-user', name: 'Delete User', method: 'DELETE' }
+      ]
+    },
+    {
+      id: 'resources',
+      name: 'Resources',
+      type: 'section',
+      children: [
+        { id: 'products', name: 'Get Products', method: 'GET' },
+        { id: 'create-product', name: 'Create Product', method: 'POST' },
+        { id: 'orders', name: 'Get Orders', method: 'GET' },
+        { id: 'webhooks', name: 'Webhooks', method: null }
+      ]
+    },
+    {
+      id: 'guides',
+      name: 'Guides',
+      type: 'section',
+      children: [
+        { id: 'rate-limiting', name: 'Rate Limiting', method: null },
+        { id: 'error-handling', name: 'Error Handling', method: null },
+        { id: 'pagination', name: 'Pagination', method: null },
+        { id: 'testing', name: 'Testing', method: null }
+      ]
+    }
+  ];
 
-      {/* Navigation */}
-      <div className="p-6">
-        <h2 className="text-sm font-semibold text-gray-900 mb-4">Collections</h2>
-        <nav className="space-y-1">
-          {collections.map((collection) => (
-            <div key={collection.id} className="space-y-1">
-              <button
-                onClick={() => onSectionClick(`collection-${collection.id}`)}
-                className="w-full text-left px-3 py-2 rounded-md text-sm font-medium text-gray-900 hover:bg-gray-50 transition-colors flex items-center justify-between"
-              >
-                {collection.name}
-                <ChevronRight className="w-4 h-4 text-gray-400" />
-              </button>
-              <div className="ml-6 space-y-0.5">
-                {collection.requests?.map((request) => (
-                  <button
-                    key={request.id}
-                    onClick={() => onSectionClick(`endpoint-${request.id}`)}
-                    className={`w-full text-left px-3 py-2 rounded text-sm transition-colors flex items-center gap-2 ${
-                      activeSection === `endpoint-${request.id}`
-                        ? "bg-blue-50 text-blue-700"
-                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                    }`}
-                  >
-                    <MethodBadge method={request.method} size="xs" />
-                    <span className="truncate">{request.name}</span>
-                  </button>
-                ))}
+  return (
+    <>
+      {/* Mobile Overlay */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          onClick={onClose}
+        />
+      )}
+      
+      <div className={`fixed top-0 left-6 h-full w-80 bg-white border-r border-gray-200 z-50 transform transition-transform duration-300 overflow-y-auto rounded-r-lg shadow-lg ${
+        isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+      }`}>
+        {/* Header */}
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
+                <FileText className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <h1 className="text-lg font-semibold text-gray-900">API Documentation</h1>
+                <p className="text-sm text-gray-500">by @{username || 'developer'}</p>
               </div>
             </div>
-          ))}
-        </nav>
-      </div>
+            <button
+              onClick={onClose}
+              className="lg:hidden p-1 text-gray-400 hover:text-gray-600"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          
+          <p className="text-sm text-gray-600">
+            Complete API reference and integration guide for developers.
+          </p>
+        </div>
 
-      {/* Base URL */}
-      <div className="p-6 border-t border-gray-200 mt-auto">
-        <h3 className="text-sm font-semibold text-gray-900 mb-2">Base URL</h3>
-        <code className="text-sm bg-gray-100 px-3 py-2 rounded block break-all text-gray-700">
-          {project?.settings?.baseUrl || "https://api.example.com"}
-        </code>
+        {/* Search */}
+        <div className="p-6 border-b border-gray-200">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search documentation..."
+              className="w-full pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <div className="p-6">
+          <nav className="space-y-6">
+            {navigationItems.map((section) => (
+              <div key={section.id} className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-1 h-4 bg-gray-300 rounded-full"></div>
+                  <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
+                    {section.name}
+                  </h3>
+                </div>
+                <div className="ml-3 space-y-0.5">
+                  {section.children.map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => onSectionClick(item.id)}
+                      className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors flex items-center gap-2 ${
+                        activeSection === item.id
+                          ? "bg-blue-50 text-blue-700 font-medium"
+                          : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                      }`}
+                    >
+                      {item.method && (
+                        <MethodBadge method={item.method} size="xs" />
+                      )}
+                      <span className="truncate">{item.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </nav>
+        </div>
+
+        {/* Quick Links */}
+        <div className="p-6 border-t border-gray-200 mt-auto">
+          <h3 className="text-sm font-semibold text-gray-900 mb-3">Quick Links</h3>
+          <div className="space-y-2">
+            <a 
+              href="#" 
+              className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              <Globe className="w-4 h-4" />
+              API Status
+            </a>
+            <a 
+              href="#" 
+              className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              <FileText className="w-4 h-4" />
+              Changelog
+            </a>
+            <a 
+              href="#" 
+              className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              <Code2 className="w-4 h-4" />
+              SDKs & Libraries
+            </a>
+          </div>
+        </div>
+
+        {/* Base URL */}
+        <div className="p-6 border-t border-gray-100">
+          <h3 className="text-sm font-semibold text-gray-900 mb-2">Base URL</h3>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-gray-500">Production</span>
+              <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+            </div>
+            <code className="text-sm bg-gray-100 px-3 py-2 rounded block break-all text-gray-700">
+              https://api.example.com/v1
+            </code>
+            <div className="flex items-center justify-between mt-2">
+              <span className="text-xs text-gray-500">Sandbox</span>
+              <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+            </div>
+            <code className="text-sm bg-gray-100 px-3 py-2 rounded block break-all text-gray-700">
+              https://api-test.example.com/v1
+            </code>
+          </div>
+        </div>
       </div>
-    </div>
-  </>
-);
+    </>
+  );
+};
 
 // Main Content Component
 const EndpointContent = ({ request, project, baseUrl }) => {
@@ -384,8 +496,113 @@ const EndpointContent = ({ request, project, baseUrl }) => {
   );
 };
 
+// Table of Contents Component - Content-focused
+const TableOfContents = ({ activeSection, onSectionClick }) => {
+  // Hardcoded TOC structure for better content demonstration
+  const tocItems = [
+    {
+      id: 'overview',
+      title: 'Overview',
+      level: 1
+    },
+    {
+      id: 'getting-started',
+      title: 'Getting Started',
+      level: 1
+    },
+    {
+      id: 'authentication',
+      title: 'Authentication',
+      level: 1
+    },
+    {
+      id: 'basic-auth',
+      title: 'Basic Authentication',
+      level: 2
+    },
+    {
+      id: 'api-keys',
+      title: 'API Keys',
+      level: 2
+    },
+    {
+      id: 'oauth2',
+      title: 'OAuth 2.0',
+      level: 2
+    },
+    {
+      id: 'rate-limiting',
+      title: 'Rate Limiting',
+      level: 1
+    },
+    {
+      id: 'error-handling',
+      title: 'Error Handling',
+      level: 1
+    },
+    {
+      id: 'common-errors',
+      title: 'Common Errors',
+      level: 2
+    },
+    {
+      id: 'error-codes',
+      title: 'Error Codes',
+      level: 2
+    },
+    {
+      id: 'pagination',
+      title: 'Pagination',
+      level: 1
+    },
+    {
+      id: 'webhooks',
+      title: 'Webhooks',
+      level: 1
+    },
+    {
+      id: 'webhook-security',
+      title: 'Webhook Security',
+      level: 2
+    },
+    {
+      id: 'testing',
+      title: 'Testing',
+      level: 1
+    }
+  ];
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-2 mb-4">
+        <div className="w-1 h-4 bg-blue-500 rounded-full"></div>
+        <h3 className="text-sm font-semibold text-gray-900">In This Page</h3>
+      </div>
+      <nav className="space-y-0.5 border-l border-gray-200 pl-3">
+        {tocItems.map((item) => (
+          <button
+            key={item.id}
+            onClick={() => onSectionClick(item.id)}
+            className={`block w-full text-left text-sm transition-colors py-1.5 px-2 rounded-md ${
+              item.level === 1 ? 'ml-0' : 'ml-3'
+            } ${
+              activeSection === item.id
+                ? 'text-blue-600 font-medium bg-blue-50'
+                : item.level === 1 
+                ? 'text-gray-900 hover:text-blue-600 hover:bg-gray-50 font-medium'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+            }`}
+          >
+            {item.title}
+          </button>
+        ))}
+      </nav>
+    </div>
+  );
+};
+
 // Code Examples Sidebar
-const CodeExamplesSidebar = ({ request, baseUrl }) => {
+const CodeExamplesSidebar = ({ request, baseUrl, activeSection, onSectionClick }) => {
   const fullUrl = `${baseUrl}${request.url}`;
 
   const generateCodeExamples = () => {
@@ -443,11 +660,23 @@ print(response.json())`;
   };
 
   return (
-    <div className="fixed top-0 right-0 h-full w-96 bg-white border-l border-gray-200 overflow-y-auto">
+    <div className="fixed top-16 right-6 h-[calc(100vh-4rem)] w-96 bg-white border-l border-gray-200 overflow-y-auto rounded-l-lg shadow-lg">
+      {/* Sticky Table of Contents */}
+      <div className="sticky top-0 bg-white border-b border-gray-200 p-6 pb-4 z-10">
+        <TableOfContents 
+          activeSection={activeSection}
+          onSectionClick={onSectionClick}
+        />
+      </div>
+      
+      {/* Request & Response Examples */}
       <div className="p-6 space-y-6">
         {/* Request Examples */}
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Request</h3>
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-1 h-4 bg-green-500 rounded-full"></div>
+            <h3 className="text-lg font-semibold text-gray-900">Request</h3>
+          </div>
           <CodeBlock 
             tabs={generateCodeExamples()}
           />
@@ -455,7 +684,10 @@ print(response.json())`;
 
         {/* Response Example */}
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Response</h3>
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-1 h-4 bg-purple-500 rounded-full"></div>
+            <h3 className="text-lg font-semibold text-gray-900">Response</h3>
+          </div>
           <CodeBlock 
             code={generateResponse()} 
             language="json" 
@@ -542,7 +774,6 @@ export default function MinimalistTemplate({
       <div className="pt-16 flex">
         {/* Sidebar */}
         <Sidebar
-          collections={filteredCollections}
           activeSection={activeSection}
           onSectionClick={onSectionClick}
           username={username}
@@ -552,61 +783,261 @@ export default function MinimalistTemplate({
         />
 
         {/* Main Content */}
-        <div className="flex-1 lg:ml-80 lg:mr-96">
+        <div className="flex-1 lg:ml-96 lg:mr-[420px]">
           <div className="px-8 py-12">
-            {filteredCollections.map((collection) => (
-              <div key={collection.id} className="mb-20" id={`collection-${collection.id}`}>
-                {/* Collection Header */}
-                <div className="mb-12">
-                  <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                    {collection.name}
-                  </h2>
-                  <p className="text-xl text-gray-600 leading-relaxed">{collection.description}</p>
+            {/* Main Documentation Content */}
+            <div className="prose prose-lg max-w-none">
+              {/* Overview Section */}
+              <section id="overview" className="mb-16">
+                <h1 className="text-3xl font-bold text-gray-900 mb-4">API Documentation</h1>
+                <p className="text-lg text-gray-600 leading-relaxed mb-4">
+                  Welcome to our comprehensive API documentation. This guide will help you integrate with our platform quickly and efficiently.
+                </p>
+                <p className="text-base text-gray-700 leading-relaxed mb-4">
+                  Our API is built with REST principles and returns JSON responses. We provide comprehensive SDKs for popular programming languages 
+                  and detailed examples for every endpoint. Whether you're building a mobile app, web application, or server-to-server integration, 
+                  this documentation has everything you need to get started.
+                </p>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+                  <h3 className="font-semibold text-blue-900 mb-3">Quick Facts</h3>
+                  <ul className="text-blue-800 space-y-2">
+                    <li>• Base URL: <code className="bg-blue-100 px-2 py-1 rounded text-sm">https://api.example.com/v1</code></li>
+                    <li>• All endpoints use HTTPS encryption</li>
+                    <li>• Responses are in JSON format</li>
+                    <li>• Rate limit: 1000 requests per hour</li>
+                  </ul>
+                </div>
+              </section>
+
+              {/* Getting Started Section */}
+              <section id="getting-started" className="mb-16">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Getting Started</h2>
+                <p className="text-base text-gray-700 leading-relaxed mb-4">
+                  To begin using our API, you'll need to create an account and obtain your API credentials. Follow these simple steps to get up and running:
+                </p>
+                <ol className="list-decimal list-inside space-y-3 text-gray-700 mb-6">
+                  <li>Sign up for a developer account on our platform</li>
+                  <li>Navigate to the API section in your dashboard</li>
+                  <li>Generate your API key and secret</li>
+                  <li>Make your first API call using the authentication method below</li>
+                </ol>
+                <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+                  <h4 className="font-semibold text-green-900 mb-3">First API Call</h4>
+                  <p className="text-green-800 mb-3">Try this example to verify your setup:</p>
+                  <pre className="bg-green-100 p-3 rounded text-sm text-green-900 overflow-x-auto">
+                    <code>{`curl -H "Authorization: Bearer YOUR_API_KEY" \\
+  https://api.example.com/v1/status`}</code>
+                  </pre>
+                </div>
+              </section>
+
+              {/* Authentication Section */}
+              <section id="authentication" className="mb-16">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Authentication</h2>
+                <p className="text-base text-gray-700 leading-relaxed mb-4">
+                  Our API uses multiple authentication methods to ensure security while providing flexibility for different use cases. 
+                  Choose the method that best fits your application's needs.
+                </p>
+
+                <div id="basic-auth" className="mb-8">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-3">Basic Authentication</h3>
+                  <p className="text-base text-gray-700 leading-relaxed mb-4">
+                    For simple server-to-server applications, you can use HTTP Basic Authentication with your API key as the username 
+                    and your API secret as the password.
+                  </p>
+                  <div className="bg-gray-100 p-4 rounded-lg">
+                    <code className="text-sm">Authorization: Basic {btoa("api_key:api_secret")}</code>
+                  </div>
                 </div>
 
-                {/* Endpoints */}
-                <div className="space-y-16">
-                  {collection.requests?.map((request) => (
-                    <EndpointContent
-                      key={request.id}
-                      request={request}
-                      project={project}
-                      baseUrl={baseUrl}
-                    />
-                  ))}
+                <div id="api-keys" className="mb-8">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-3">API Keys</h3>
+                  <p className="text-base text-gray-700 leading-relaxed mb-4">
+                    API keys provide a simple way to authenticate requests. Include your API key in the Authorization header 
+                    as a Bearer token for all requests.
+                  </p>
+                  <div className="bg-gray-100 p-4 rounded-lg mb-4">
+                    <code className="text-sm">Authorization: Bearer YOUR_API_KEY</code>
+                  </div>
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <p className="text-yellow-800 text-sm">
+                      <strong>Security Note:</strong> Never expose your API keys in client-side code or public repositories.
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+
+                <div id="oauth2" className="mb-8">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-3">OAuth 2.0</h3>
+                  <p className="text-base text-gray-700 leading-relaxed mb-4">
+                    For applications that need to access user data, we support OAuth 2.0 with the authorization code flow. 
+                    This provides secure, temporary access tokens that can be refreshed as needed.
+                  </p>
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="font-semibold text-gray-900 mb-2">Step 1: Authorization Request</h4>
+                      <div className="bg-gray-100 p-4 rounded-lg text-sm">
+                        <code>GET /oauth/authorize?response_type=code&client_id=CLIENT_ID&redirect_uri=REDIRECT_URI&scope=SCOPE</code>
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900 mb-2">Step 2: Token Exchange</h4>
+                      <div className="bg-gray-100 p-4 rounded-lg text-sm">
+                        <code>POST /oauth/token</code>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              {/* Rate Limiting Section */}
+              <section id="rate-limiting" className="mb-16">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Rate Limiting</h2>
+                <p className="text-base text-gray-700 leading-relaxed mb-4">
+                  To ensure fair usage and maintain service quality, our API implements rate limiting. All endpoints are subject to these limits.
+                </p>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full border border-gray-200 rounded-lg">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-900">Plan</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-900">Requests per Hour</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-900">Concurrent Requests</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      <tr>
+                        <td className="px-4 py-3">Free</td>
+                        <td className="px-4 py-3">1,000</td>
+                        <td className="px-4 py-3">5</td>
+                      </tr>
+                      <tr>
+                        <td className="px-4 py-3">Pro</td>
+                        <td className="px-4 py-3">10,000</td>
+                        <td className="px-4 py-3">20</td>
+                      </tr>
+                      <tr>
+                        <td className="px-4 py-3">Enterprise</td>
+                        <td className="px-4 py-3">100,000</td>
+                        <td className="px-4 py-3">100</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+
+              {/* Error Handling Section */}
+              <section id="error-handling" className="mb-16">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Error Handling</h2>
+                <p className="text-base text-gray-700 leading-relaxed mb-4">
+                  Our API uses conventional HTTP response codes to indicate success or failure. Codes in the 2xx range indicate success, 
+                  4xx range indicate client errors, and 5xx range indicate server errors.
+                </p>
+
+                <div id="common-errors" className="mb-8">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-3">Common Errors</h3>
+                  <div className="space-y-4">
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      <h4 className="font-semibold text-red-600 mb-2">400 - Bad Request</h4>
+                      <p className="text-gray-700 text-sm">The request was invalid or cannot be served. Often due to missing required parameters.</p>
+                    </div>
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      <h4 className="font-semibold text-red-600 mb-2">401 - Unauthorized</h4>
+                      <p className="text-gray-700 text-sm">Authentication failed or user doesn't have permissions for requested operation.</p>
+                    </div>
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      <h4 className="font-semibold text-red-600 mb-2">429 - Too Many Requests</h4>
+                      <p className="text-gray-700 text-sm">Rate limit exceeded. See Rate Limiting section for more details.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="error-codes" className="mb-8">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-3">Error Response Format</h3>
+                  <p className="text-base text-gray-700 leading-relaxed mb-4">All errors return a consistent JSON structure:</p>
+                  <div className="bg-gray-950 border border-gray-800 rounded-lg overflow-hidden">
+                    <pre className="p-4 text-sm text-gray-100 overflow-x-auto"><code>{`{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid email format",
+    "details": {
+      "field": "email",
+      "value": "invalid-email"
+    },
+    "request_id": "req_123456789"
+  }
+}`}</code></pre>
+                  </div>
+                </div>
+              </section>
+
+              {/* Pagination Section */}
+              <section id="pagination" className="mb-16">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Pagination</h2>
+                <p className="text-base text-gray-700 leading-relaxed mb-4">
+                  List endpoints support pagination using cursor-based pagination for optimal performance with large datasets.
+                </p>
+                <div className="bg-gray-100 p-6 rounded-lg">
+                  <h4 className="font-semibold text-gray-900 mb-3">Pagination Parameters</h4>
+                  <ul className="space-y-2 text-gray-700">
+                    <li><code className="bg-white px-2 py-1 rounded text-sm">limit</code> - Number of items to return (max 100)</li>
+                    <li><code className="bg-white px-2 py-1 rounded text-sm">cursor</code> - Cursor for pagination</li>
+                    <li><code className="bg-white px-2 py-1 rounded text-sm">order</code> - Sort order (asc or desc)</li>
+                  </ul>
+                </div>
+              </section>
+
+              {/* Webhooks Section */}
+              <section id="webhooks" className="mb-16">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Webhooks</h2>
+                <p className="text-base text-gray-700 leading-relaxed mb-4">
+                  Webhooks allow you to receive real-time notifications when events occur in your account. Configure webhook endpoints 
+                  to receive HTTP POST requests whenever specific events happen.
+                </p>
+
+                <div id="webhook-security" className="mb-8">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-3">Webhook Security</h3>
+                  <p className="text-base text-gray-700 leading-relaxed mb-4">
+                    All webhook requests include a signature header that you can use to verify the request came from our servers.
+                  </p>
+                  <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                    <h4 className="font-semibold text-purple-900 mb-2">Signature Verification</h4>
+                    <p className="text-purple-800 text-sm">
+                      Compare the <code>X-Webhook-Signature</code> header with your computed HMAC-SHA256 signature.
+                    </p>
+                  </div>
+                </div>
+              </section>
+
+              {/* Testing Section */}
+              <section id="testing" className="mb-16">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Testing</h2>
+                <p className="text-base text-gray-700 leading-relaxed mb-4">
+                  We provide a comprehensive testing environment where you can experiment with our API without affecting production data.
+                </p>
+                <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+                  <h4 className="font-semibold text-green-900 mb-3">Test Environment</h4>
+                  <p className="text-green-800 mb-2">Use the test base URL for all your development and testing:</p>
+                  <code className="bg-green-100 px-3 py-2 rounded text-green-900">https://api-test.example.com/v1</code>
+                </div>
+              </section>
+            </div>
           </div>
         </div>
 
         {/* Code Examples Sidebar - Fixed on the right */}
-        {(() => {
-          // Find the currently active request based on activeSection
-          let activeRequest = null;
-          if (activeSection?.startsWith('endpoint-')) {
-            const requestId = activeSection.replace('endpoint-', '');
-            for (const collection of filteredCollections) {
-              const request = collection.requests?.find(req => req.id === requestId);
-              if (request) {
-                activeRequest = request;
-                break;
-              }
-            }
-          }
-          
-          // Fallback to first request if no active section
-          if (!activeRequest && filteredCollections.length > 0 && filteredCollections[0].requests?.length > 0) {
-            activeRequest = filteredCollections[0].requests[0];
-          }
-          
-          return activeRequest ? (
-            <CodeExamplesSidebar
-              request={activeRequest}
-              baseUrl={baseUrl}
-            />
-          ) : null;
-        })()}
+        <CodeExamplesSidebar
+          request={{
+            id: 'get-user',
+            name: 'Get User by ID',
+            method: 'GET',
+            url: '/users/{id}',
+            headers: { 'Authorization': 'Bearer {token}' },
+            body: null
+          }}
+          baseUrl={baseUrl}
+          activeSection={activeSection}
+          onSectionClick={onSectionClick}
+        />
       </div>
     </div>
   );
