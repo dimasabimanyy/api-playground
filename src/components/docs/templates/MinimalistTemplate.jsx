@@ -1298,6 +1298,420 @@ export default function MinimalistTemplate({
                     </code>
                   </div>
                 </section>
+
+                {/* API Endpoints Section */}
+                <section id="users" className="mb-16">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-medium">GET</span>
+                    <h2 className="text-2xl font-bold text-gray-900">Get Users</h2>
+                  </div>
+                  <p className="text-base text-gray-700 leading-relaxed mb-6">
+                    Retrieve a paginated list of all users in your organization. This endpoint supports filtering, 
+                    searching, and sorting to help you find specific users quickly.
+                  </p>
+                  
+                  <div className="bg-gray-100 p-4 rounded-lg mb-6">
+                    <code className="text-sm font-mono">GET /users</code>
+                  </div>
+
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Query Parameters</h3>
+                    <div className="space-y-3">
+                      <div className="border border-gray-200 rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <code className="bg-blue-50 text-blue-700 px-2 py-1 rounded text-sm font-mono">limit</code>
+                          <span className="text-sm text-gray-500">integer</span>
+                          <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-xs">optional</span>
+                        </div>
+                        <p className="text-gray-700 text-sm">Number of users to return per page. Default: 20, Maximum: 100</p>
+                      </div>
+                      <div className="border border-gray-200 rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <code className="bg-blue-50 text-blue-700 px-2 py-1 rounded text-sm font-mono">page</code>
+                          <span className="text-sm text-gray-500">integer</span>
+                          <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-xs">optional</span>
+                        </div>
+                        <p className="text-gray-700 text-sm">Page number for pagination. Default: 1</p>
+                      </div>
+                      <div className="border border-gray-200 rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <code className="bg-blue-50 text-blue-700 px-2 py-1 rounded text-sm font-mono">search</code>
+                          <span className="text-sm text-gray-500">string</span>
+                          <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-xs">optional</span>
+                        </div>
+                        <p className="text-gray-700 text-sm">Search users by name or email</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Response</h3>
+                    <div className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
+                      <pre className="text-sm"><code>{`{
+  "users": [
+    {
+      "id": "usr_1234567890",
+      "name": "John Doe",
+      "email": "john@example.com",
+      "role": "admin",
+      "created_at": "2024-01-15T10:30:00Z",
+      "last_login": "2024-01-20T14:22:00Z"
+    }
+  ],
+  "pagination": {
+    "total": 150,
+    "page": 1,
+    "limit": 20,
+    "total_pages": 8
+  }
+}`}</code></pre>
+                    </div>
+                  </div>
+                </section>
+
+                <section id="create-user" className="mb-16">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-medium">POST</span>
+                    <h2 className="text-2xl font-bold text-gray-900">Create User</h2>
+                  </div>
+                  <p className="text-base text-gray-700 leading-relaxed mb-6">
+                    Create a new user account in your organization. The user will receive an invitation email 
+                    to set up their password and complete the registration process.
+                  </p>
+                  
+                  <div className="bg-gray-100 p-4 rounded-lg mb-6">
+                    <code className="text-sm font-mono">POST /users</code>
+                  </div>
+
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Request Body</h3>
+                    <div className="space-y-3">
+                      <div className="border border-gray-200 rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <code className="bg-blue-50 text-blue-700 px-2 py-1 rounded text-sm font-mono">name</code>
+                          <span className="text-sm text-gray-500">string</span>
+                          <span className="bg-red-100 text-red-600 px-2 py-0.5 rounded text-xs">required</span>
+                        </div>
+                        <p className="text-gray-700 text-sm">Full name of the user</p>
+                      </div>
+                      <div className="border border-gray-200 rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <code className="bg-blue-50 text-blue-700 px-2 py-1 rounded text-sm font-mono">email</code>
+                          <span className="text-sm text-gray-500">string</span>
+                          <span className="bg-red-100 text-red-600 px-2 py-0.5 rounded text-xs">required</span>
+                        </div>
+                        <p className="text-gray-700 text-sm">Valid email address for the user</p>
+                      </div>
+                      <div className="border border-gray-200 rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <code className="bg-blue-50 text-blue-700 px-2 py-1 rounded text-sm font-mono">role</code>
+                          <span className="text-sm text-gray-500">string</span>
+                          <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-xs">optional</span>
+                        </div>
+                        <p className="text-gray-700 text-sm">User role: 'admin', 'user', or 'viewer'. Default: 'user'</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Example Request</h3>
+                    <div className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
+                      <pre className="text-sm"><code>{`{
+  "name": "Jane Smith",
+  "email": "jane@example.com",
+  "role": "admin"
+}`}</code></pre>
+                    </div>
+                  </div>
+
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Response</h3>
+                    <div className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
+                      <pre className="text-sm"><code>{`{
+  "id": "usr_9876543210",
+  "name": "Jane Smith",
+  "email": "jane@example.com",
+  "role": "admin",
+  "created_at": "2024-01-20T16:45:00Z",
+  "invitation_sent": true,
+  "status": "pending"
+}`}</code></pre>
+                    </div>
+                  </div>
+                </section>
+
+                <section id="update-user" className="mb-16">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs font-medium">PUT</span>
+                    <h2 className="text-2xl font-bold text-gray-900">Update User</h2>
+                  </div>
+                  <p className="text-base text-gray-700 leading-relaxed mb-6">
+                    Update an existing user's information including their name, email, role, and other profile settings. 
+                    Only provide the fields you want to update.
+                  </p>
+                  
+                  <div className="bg-gray-100 p-4 rounded-lg mb-6">
+                    <code className="text-sm font-mono">PUT /users/{`{id}`}</code>
+                  </div>
+
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Path Parameters</h3>
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <code className="bg-blue-50 text-blue-700 px-2 py-1 rounded text-sm font-mono">id</code>
+                        <span className="text-sm text-gray-500">string</span>
+                        <span className="bg-red-100 text-red-600 px-2 py-0.5 rounded text-xs">required</span>
+                      </div>
+                      <p className="text-gray-700 text-sm">Unique identifier for the user</p>
+                    </div>
+                  </div>
+
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Response</h3>
+                    <div className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
+                      <pre className="text-sm"><code>{`{
+  "id": "usr_1234567890",
+  "name": "John Doe Updated",
+  "email": "john.doe@example.com",
+  "role": "admin",
+  "updated_at": "2024-01-20T18:30:00Z"
+}`}</code></pre>
+                    </div>
+                  </div>
+                </section>
+
+                <section id="delete-user" className="mb-16">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-medium">DELETE</span>
+                    <h2 className="text-2xl font-bold text-gray-900">Delete User</h2>
+                  </div>
+                  <p className="text-base text-gray-700 leading-relaxed mb-6">
+                    Permanently delete a user account and all associated data. This action cannot be undone. 
+                    The user will immediately lose access to the platform.
+                  </p>
+                  
+                  <div className="bg-gray-100 p-4 rounded-lg mb-6">
+                    <code className="text-sm font-mono">DELETE /users/{`{id}`}</code>
+                  </div>
+
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Path Parameters</h3>
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <code className="bg-blue-50 text-blue-700 px-2 py-1 rounded text-sm font-mono">id</code>
+                        <span className="text-sm text-gray-500">string</span>
+                        <span className="bg-red-100 text-red-600 px-2 py-0.5 rounded text-xs">required</span>
+                      </div>
+                      <p className="text-gray-700 text-sm">Unique identifier for the user to delete</p>
+                    </div>
+                  </div>
+
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                    <h4 className="font-semibold text-red-900 mb-2">⚠️ Warning</h4>
+                    <p className="text-red-800 text-sm">This action is irreversible. All user data, including their projects and settings, will be permanently deleted.</p>
+                  </div>
+
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Response</h3>
+                    <div className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
+                      <pre className="text-sm"><code>{`{
+  "message": "User successfully deleted",
+  "deleted_at": "2024-01-20T19:15:00Z"
+}`}</code></pre>
+                    </div>
+                  </div>
+                </section>
+
+                <section id="products" className="mb-16">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-medium">GET</span>
+                    <h2 className="text-2xl font-bold text-gray-900">Get Products</h2>
+                  </div>
+                  <p className="text-base text-gray-700 leading-relaxed mb-6">
+                    Retrieve a comprehensive list of all products in your catalog. This endpoint supports advanced 
+                    filtering, categorization, and search functionality to help customers find products quickly.
+                  </p>
+                  
+                  <div className="bg-gray-100 p-4 rounded-lg mb-6">
+                    <code className="text-sm font-mono">GET /products</code>
+                  </div>
+
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Query Parameters</h3>
+                    <div className="space-y-3">
+                      <div className="border border-gray-200 rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <code className="bg-blue-50 text-blue-700 px-2 py-1 rounded text-sm font-mono">category</code>
+                          <span className="text-sm text-gray-500">string</span>
+                          <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-xs">optional</span>
+                        </div>
+                        <p className="text-gray-700 text-sm">Filter products by category (electronics, clothing, books, etc.)</p>
+                      </div>
+                      <div className="border border-gray-200 rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <code className="bg-blue-50 text-blue-700 px-2 py-1 rounded text-sm font-mono">min_price</code>
+                          <span className="text-sm text-gray-500">number</span>
+                          <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-xs">optional</span>
+                        </div>
+                        <p className="text-gray-700 text-sm">Minimum price filter</p>
+                      </div>
+                      <div className="border border-gray-200 rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <code className="bg-blue-50 text-blue-700 px-2 py-1 rounded text-sm font-mono">max_price</code>
+                          <span className="text-sm text-gray-500">number</span>
+                          <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-xs">optional</span>
+                        </div>
+                        <p className="text-gray-700 text-sm">Maximum price filter</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Response</h3>
+                    <div className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
+                      <pre className="text-sm"><code>{`{
+  "products": [
+    {
+      "id": "prod_abc123",
+      "name": "Premium Wireless Headphones",
+      "description": "High-quality noise-canceling headphones",
+      "price": 299.99,
+      "category": "electronics",
+      "in_stock": true,
+      "images": ["https://example.com/image1.jpg"],
+      "created_at": "2024-01-10T12:00:00Z"
+    }
+  ],
+  "total": 45,
+  "page": 1,
+  "limit": 20
+}`}</code></pre>
+                    </div>
+                  </div>
+                </section>
+
+                <section id="create-product" className="mb-16">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-medium">POST</span>
+                    <h2 className="text-2xl font-bold text-gray-900">Create Product</h2>
+                  </div>
+                  <p className="text-base text-gray-700 leading-relaxed mb-6">
+                    Add a new product to your catalog with all the necessary details including pricing, inventory, 
+                    and categorization information.
+                  </p>
+                  
+                  <div className="bg-gray-100 p-4 rounded-lg mb-6">
+                    <code className="text-sm font-mono">POST /products</code>
+                  </div>
+
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Request Body</h3>
+                    <div className="space-y-3">
+                      <div className="border border-gray-200 rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <code className="bg-blue-50 text-blue-700 px-2 py-1 rounded text-sm font-mono">name</code>
+                          <span className="text-sm text-gray-500">string</span>
+                          <span className="bg-red-100 text-red-600 px-2 py-0.5 rounded text-xs">required</span>
+                        </div>
+                        <p className="text-gray-700 text-sm">Product name</p>
+                      </div>
+                      <div className="border border-gray-200 rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <code className="bg-blue-50 text-blue-700 px-2 py-1 rounded text-sm font-mono">price</code>
+                          <span className="text-sm text-gray-500">number</span>
+                          <span className="bg-red-100 text-red-600 px-2 py-0.5 rounded text-xs">required</span>
+                        </div>
+                        <p className="text-gray-700 text-sm">Product price in USD</p>
+                      </div>
+                      <div className="border border-gray-200 rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <code className="bg-blue-50 text-blue-700 px-2 py-1 rounded text-sm font-mono">category</code>
+                          <span className="text-sm text-gray-500">string</span>
+                          <span className="bg-red-100 text-red-600 px-2 py-0.5 rounded text-xs">required</span>
+                        </div>
+                        <p className="text-gray-700 text-sm">Product category</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Response</h3>
+                    <div className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
+                      <pre className="text-sm"><code>{`{
+  "id": "prod_xyz789",
+  "name": "Smart Watch Pro",
+  "description": "Advanced fitness tracking smartwatch",
+  "price": 399.99,
+  "category": "electronics",
+  "created_at": "2024-01-20T20:30:00Z"
+}`}</code></pre>
+                    </div>
+                  </div>
+                </section>
+
+                <section id="orders" className="mb-16">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-medium">GET</span>
+                    <h2 className="text-2xl font-bold text-gray-900">Get Orders</h2>
+                  </div>
+                  <p className="text-base text-gray-700 leading-relaxed mb-6">
+                    Retrieve a list of all orders with comprehensive filtering and sorting options. 
+                    Track order status, customer information, and transaction details.
+                  </p>
+                  
+                  <div className="bg-gray-100 p-4 rounded-lg mb-6">
+                    <code className="text-sm font-mono">GET /orders</code>
+                  </div>
+
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Query Parameters</h3>
+                    <div className="space-y-3">
+                      <div className="border border-gray-200 rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <code className="bg-blue-50 text-blue-700 px-2 py-1 rounded text-sm font-mono">status</code>
+                          <span className="text-sm text-gray-500">string</span>
+                          <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-xs">optional</span>
+                        </div>
+                        <p className="text-gray-700 text-sm">Filter by order status (pending, processing, shipped, delivered, cancelled)</p>
+                      </div>
+                      <div className="border border-gray-200 rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <code className="bg-blue-50 text-blue-700 px-2 py-1 rounded text-sm font-mono">customer_id</code>
+                          <span className="text-sm text-gray-500">string</span>
+                          <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-xs">optional</span>
+                        </div>
+                        <p className="text-gray-700 text-sm">Filter orders by customer ID</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Response</h3>
+                    <div className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
+                      <pre className="text-sm"><code>{`{
+  "orders": [
+    {
+      "id": "ord_123456",
+      "customer_id": "cust_abc123",
+      "status": "processing",
+      "total": 299.99,
+      "items": [
+        {
+          "product_id": "prod_abc123",
+          "quantity": 1,
+          "price": 299.99
+        }
+      ],
+      "created_at": "2024-01-20T15:30:00Z"
+    }
+  ],
+  "total": 25,
+  "page": 1,
+  "limit": 20
+}`}</code></pre>
+                    </div>
+                  </div>
+                </section>
               </div>
             </div>
 
