@@ -599,81 +599,123 @@ const EndpointContent = ({ request }) => {
   );
 };
 
-// Table of Contents Component - Content-focused
+// Table of Contents Component - Dynamic based on active section
 const TableOfContents = ({ activeSection, onSectionClick }) => {
-  // Hardcoded TOC structure for better content demonstration
-  const tocItems = [
-    {
-      id: "overview",
-      title: "Overview",
-      level: 1,
-    },
-    {
-      id: "getting-started",
-      title: "Getting Started",
-      level: 1,
-    },
-    {
-      id: "authentication",
-      title: "Authentication",
-      level: 1,
-    },
-    {
-      id: "basic-auth",
-      title: "Basic Authentication",
-      level: 2,
-    },
-    {
-      id: "api-keys",
-      title: "API Keys",
-      level: 2,
-    },
-    {
-      id: "oauth2",
-      title: "OAuth 2.0",
-      level: 2,
-    },
-    {
-      id: "rate-limiting",
-      title: "Rate Limiting",
-      level: 1,
-    },
-    {
-      id: "error-handling",
-      title: "Error Handling",
-      level: 1,
-    },
-    {
-      id: "common-errors",
-      title: "Common Errors",
-      level: 2,
-    },
-    {
-      id: "error-codes",
-      title: "Error Codes",
-      level: 2,
-    },
-    {
-      id: "pagination",
-      title: "Pagination",
-      level: 1,
-    },
-    {
-      id: "webhooks",
-      title: "Webhooks",
-      level: 1,
-    },
-    {
-      id: "webhook-security",
-      title: "Webhook Security",
-      level: 2,
-    },
-    {
-      id: "testing",
-      title: "Testing",
-      level: 1,
-    },
-  ];
+  // Define which sections have sub-content and what their TOC should show
+  const sectionTocMap = {
+    // Introduction section - has overview, getting-started, quickstart
+    'overview': [
+      { id: 'overview', title: 'Overview', level: 1 },
+      { id: 'getting-started', title: 'Getting Started', level: 1 },
+      { id: 'quickstart', title: 'Quick Start Guide', level: 1 }
+    ],
+    'getting-started': [
+      { id: 'overview', title: 'Overview', level: 1 },
+      { id: 'getting-started', title: 'Getting Started', level: 1 },
+      { id: 'quickstart', title: 'Quick Start Guide', level: 1 }
+    ],
+    'quickstart': [
+      { id: 'overview', title: 'Overview', level: 1 },
+      { id: 'getting-started', title: 'Getting Started', level: 1 },
+      { id: 'quickstart', title: 'Quick Start Guide', level: 1 }
+    ],
+    // Authentication section - has multiple auth methods
+    'authentication': [
+      { id: 'authentication', title: 'Authentication', level: 1 },
+      { id: 'basic-auth', title: 'Basic Authentication', level: 2 },
+      { id: 'api-keys', title: 'API Keys', level: 2 },
+      { id: 'oauth2', title: 'OAuth 2.0', level: 2 }
+    ],
+    'basic-auth': [
+      { id: 'authentication', title: 'Authentication', level: 1 },
+      { id: 'basic-auth', title: 'Basic Authentication', level: 2 },
+      { id: 'api-keys', title: 'API Keys', level: 2 },
+      { id: 'oauth2', title: 'OAuth 2.0', level: 2 }
+    ],
+    'api-keys': [
+      { id: 'authentication', title: 'Authentication', level: 1 },
+      { id: 'basic-auth', title: 'Basic Authentication', level: 2 },
+      { id: 'api-keys', title: 'API Keys', level: 2 },
+      { id: 'oauth2', title: 'OAuth 2.0', level: 2 }
+    ],
+    'oauth2': [
+      { id: 'authentication', title: 'Authentication', level: 1 },
+      { id: 'basic-auth', title: 'Basic Authentication', level: 2 },
+      { id: 'api-keys', title: 'API Keys', level: 2 },
+      { id: 'oauth2', title: 'OAuth 2.0', level: 2 }
+    ],
+    // Error handling section
+    'error-handling': [
+      { id: 'error-handling', title: 'Error Handling', level: 1 },
+      { id: 'common-errors', title: 'Common Errors', level: 2 },
+      { id: 'error-codes', title: 'Error Codes', level: 2 }
+    ],
+    'common-errors': [
+      { id: 'error-handling', title: 'Error Handling', level: 1 },
+      { id: 'common-errors', title: 'Common Errors', level: 2 },
+      { id: 'error-codes', title: 'Error Codes', level: 2 }
+    ],
+    'error-codes': [
+      { id: 'error-handling', title: 'Error Handling', level: 1 },
+      { id: 'common-errors', title: 'Common Errors', level: 2 },
+      { id: 'error-codes', title: 'Error Codes', level: 2 }
+    ],
+    // Webhooks section
+    'webhooks': [
+      { id: 'webhooks', title: 'Webhooks', level: 1 },
+      { id: 'webhook-security', title: 'Webhook Security', level: 2 }
+    ],
+    'webhook-security': [
+      { id: 'webhooks', title: 'Webhooks', level: 1 },
+      { id: 'webhook-security', title: 'Webhook Security', level: 2 }
+    ],
+    // Individual endpoint sections - these have their own structure
+    'users': [
+      { id: 'users', title: 'Get Users', level: 1 },
+      { id: 'users-query-params', title: 'Query Parameters', level: 2 },
+      { id: 'users-response', title: 'Response', level: 2 }
+    ],
+    'create-user': [
+      { id: 'create-user', title: 'Create User', level: 1 },
+      { id: 'create-user-request', title: 'Request Body', level: 2 },
+      { id: 'create-user-example', title: 'Example Request', level: 2 },
+      { id: 'create-user-response', title: 'Response', level: 2 }
+    ],
+    'update-user': [
+      { id: 'update-user', title: 'Update User', level: 1 },
+      { id: 'update-user-params', title: 'Path Parameters', level: 2 },
+      { id: 'update-user-response', title: 'Response', level: 2 }
+    ],
+    'delete-user': [
+      { id: 'delete-user', title: 'Delete User', level: 1 },
+      { id: 'delete-user-params', title: 'Path Parameters', level: 2 },
+      { id: 'delete-user-warning', title: 'Warning', level: 2 },
+      { id: 'delete-user-response', title: 'Response', level: 2 }
+    ],
+    'products': [
+      { id: 'products', title: 'Get Products', level: 1 },
+      { id: 'products-query-params', title: 'Query Parameters', level: 2 },
+      { id: 'products-response', title: 'Response', level: 2 }
+    ],
+    'create-product': [
+      { id: 'create-product', title: 'Create Product', level: 1 },
+      { id: 'create-product-request', title: 'Request Body', level: 2 },
+      { id: 'create-product-response', title: 'Response', level: 2 }
+    ],
+    'orders': [
+      { id: 'orders', title: 'Get Orders', level: 1 },
+      { id: 'orders-query-params', title: 'Query Parameters', level: 2 },
+      { id: 'orders-response', title: 'Response', level: 2 }
+    ]
+  };
+
+  // Get the TOC items for the current active section
+  const currentTocItems = sectionTocMap[activeSection] || [];
+
+  // Don't show TOC if there are no items for this section
+  if (currentTocItems.length === 0) {
+    return null;
+  }
 
   return (
     <div className="space-y-3">
@@ -682,7 +724,7 @@ const TableOfContents = ({ activeSection, onSectionClick }) => {
         <h3 className="text-sm font-semibold text-gray-900">In This Page</h3>
       </div>
       <nav className="space-y-0.5">
-        {tocItems.map((item) => (
+        {currentTocItems.map((item) => (
           <button
             key={item.id}
             onClick={() => onSectionClick(item.id)}
