@@ -24,25 +24,62 @@ export default function PublicUserDocPage() {
     }
   }, [username, slug]);
 
+  // Handle initial hash and hash changes for shareable URLs
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.slice(1); // Remove the '#'
+      if (hash) {
+        setActiveSection(hash);
+        const element = document.getElementById(hash);
+        if (element) {
+          setTimeout(() => {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 100);
+        }
+      }
+    };
+
+    // Set initial active section from hash
+    handleHashChange();
+    
+    // Listen for hash changes (browser back/forward)
+    window.addEventListener('hashchange', handleHashChange);
+    
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
+  }, []);
+
   // Handle scroll for active section detection
   useEffect(() => {
     const handleScroll = () => {
-      const sections = document.querySelectorAll('[id^="endpoint-"], [id^="collection-"]');
+      // Look for all sections with IDs
+      const sections = document.querySelectorAll('[id]');
       const scrollY = window.scrollY + 100;
-
+      
+      let currentSection = '';
       sections.forEach((section) => {
         const top = section.offsetTop;
         const bottom = top + section.offsetHeight;
         
         if (scrollY >= top && scrollY < bottom) {
-          setActiveSection(section.id);
+          currentSection = section.id;
         }
       });
+      
+      if (currentSection && currentSection !== activeSection) {
+        setActiveSection(currentSection);
+        // Update URL hash without triggering scroll
+        const newHash = `#${currentSection}`;
+        if (window.location.hash !== newHash) {
+          window.history.replaceState(null, '', newHash);
+        }
+      }
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [activeSection]);
 
   const loadProjectByUsernameAndSlug = async () => {
     try {
@@ -222,6 +259,11 @@ export default function PublicUserDocPage() {
   };
 
   const handleSectionClick = (sectionId) => {
+    setActiveSection(sectionId);
+    
+    // Update URL hash for shareable links
+    window.location.hash = sectionId;
+    
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
