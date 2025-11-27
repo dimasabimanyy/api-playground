@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase-server';
 export async function GET(request, { params }) {
   try {
     const supabase = await createClient();
-    const { username, slug } = params;
+    const { username, slug } = await params;
 
     console.log('Looking for project:', { username, slug });
 
