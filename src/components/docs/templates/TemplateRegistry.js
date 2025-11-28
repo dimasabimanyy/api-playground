@@ -1,4 +1,5 @@
 import MinimalistTemplate, { MinimalistConfig } from './MinimalistTemplate';
+import CleanSimpleTemplate, { CleanSimpleConfig } from './CleanSimpleTemplate';
 
 /**
  * Template Registry
@@ -8,6 +9,11 @@ export const TEMPLATES = {
   'minimalist': {
     component: MinimalistTemplate,
     config: MinimalistConfig,
+    isDefault: false
+  },
+  'clean-simple': {
+    component: CleanSimpleTemplate,
+    config: CleanSimpleConfig,
     isDefault: true
   }
   // Add more templates here as they are implemented
