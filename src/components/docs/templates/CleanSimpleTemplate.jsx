@@ -645,7 +645,7 @@ export default function CleanSimpleTemplate({
           </div>
 
           {/* Center: Search Bar */}
-          <div className="flex-1 max-w-md mx-6">
+          <div className="flex-1 max-w-md mx-3 sm:mx-6">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
@@ -670,8 +670,8 @@ export default function CleanSimpleTemplate({
 
       {/* Layout Container */}
       <div className="pt-16">
-        <div className="max-w-[1800px] mx-auto">
-          <div className="flex">
+        <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row">
             {/* Left Sidebar */}
             <div className="hidden lg:block w-80 flex-shrink-0">
               <Sidebar
@@ -685,7 +685,7 @@ export default function CleanSimpleTemplate({
             </div>
 
             {/* Main Content */}
-            <div className="flex-1 min-w-0 px-8 py-12 max-w-4xl">
+            <div className="flex-1 min-w-0 px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12 max-w-4xl">
               <div className="lg:hidden mb-6">
                 {/* Mobile Sidebar */}
                 <Sidebar
@@ -702,7 +702,7 @@ export default function CleanSimpleTemplate({
               <div className="prose prose-lg max-w-none">
                 {/* Overview Section */}
                 <section id="overview" className="mb-16">
-                  <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
                     API Documentation
                   </h1>
                   <p className="text-lg text-gray-600 leading-relaxed mb-4">
@@ -738,7 +738,7 @@ export default function CleanSimpleTemplate({
 
                 {/* Getting Started Section */}
                 <section id="getting-started" className="mb-16">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
                     Getting Started
                   </h2>
                   <p className="text-base text-gray-700 leading-relaxed mb-4">
@@ -771,7 +771,7 @@ export default function CleanSimpleTemplate({
 
                 {/* Authentication Section */}
                 <section id="authentication" className="mb-16">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
                     Authentication
                   </h2>
                   <p className="text-base text-gray-700 leading-relaxed mb-4">
@@ -782,7 +782,7 @@ export default function CleanSimpleTemplate({
                   </p>
 
                   <div id="basic-auth" className="mb-8">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3">
                       Basic Authentication
                     </h3>
                     <p className="text-base text-gray-700 leading-relaxed mb-4">
@@ -798,7 +798,7 @@ export default function CleanSimpleTemplate({
                   </div>
 
                   <div id="api-keys" className="mb-8">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3">
                       API Keys
                     </h3>
                     <p className="text-base text-gray-700 leading-relaxed mb-4">
@@ -820,7 +820,7 @@ export default function CleanSimpleTemplate({
                   </div>
 
                   <div id="oauth2" className="mb-8">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3">
                       OAuth 2.0
                     </h3>
                     <p className="text-base text-gray-700 leading-relaxed mb-4">
@@ -855,7 +855,7 @@ export default function CleanSimpleTemplate({
 
                 {/* Rate Limiting Section */}
                 <section id="rate-limiting" className="mb-16">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
                     Rate Limiting
                   </h2>
                   <p className="text-base text-gray-700 leading-relaxed mb-4">
@@ -863,7 +863,7 @@ export default function CleanSimpleTemplate({
                     implements rate limiting. All endpoints are subject to these
                     limits.
                   </p>
-                  <div className="overflow-x-auto">
+                  <div className="overflow-x-auto -mx-4 sm:mx-0">
                     <table className="min-w-full border border-gray-200 rounded-xl">
                       <thead className="bg-gray-50">
                         <tr>
@@ -901,7 +901,7 @@ export default function CleanSimpleTemplate({
 
                 {/* Error Handling Section */}
                 <section id="error-handling" className="mb-16">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
                     Error Handling
                   </h2>
                   <p className="text-base text-gray-700 leading-relaxed mb-4">
@@ -912,7 +912,7 @@ export default function CleanSimpleTemplate({
                   </p>
 
                   <div id="common-errors" className="mb-8">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3">
                       Common Errors
                     </h3>
                     <div className="space-y-4">
@@ -947,7 +947,7 @@ export default function CleanSimpleTemplate({
                   </div>
 
                   <div id="error-codes" className="mb-8">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3">
                       Error Response Format
                     </h3>
                     <p className="text-base text-gray-700 leading-relaxed mb-4">
@@ -973,9 +973,9 @@ export default function CleanSimpleTemplate({
 
                 {/* All API endpoint sections with rounded-xl styling */}
                 <section id="users" className="mb-16">
-                  <div className="flex items-center gap-3 mb-4">
-                    <span className="bg-green-100 text-green-700 px-2 py-1 rounded-xl text-xs font-medium">GET</span>
-                    <h2 className="text-2xl font-bold text-gray-900">Get Users</h2>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-4">
+                    <span className="bg-green-100 text-green-700 px-2 py-1 rounded-xl text-xs font-medium w-fit">GET</span>
+                    <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Get Users</h2>
                   </div>
                   <p className="text-base text-gray-700 leading-relaxed mb-6">
                     Retrieve a paginated list of all users in your organization. This endpoint supports filtering, 
@@ -1028,7 +1028,7 @@ export default function CleanSimpleTemplate({
             </div>
 
             {/* Right Sidebar */}
-            <div className="hidden lg:block w-96 flex-shrink-0">
+            <div className="hidden xl:block w-96 flex-shrink-0">
               <CodeExamplesSidebar
                 request={{
                   id: "get-user",
