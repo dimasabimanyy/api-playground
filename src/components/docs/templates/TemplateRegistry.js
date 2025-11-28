@@ -1,5 +1,6 @@
 import MinimalistTemplate, { MinimalistConfig } from './MinimalistTemplate';
 import CleanSimpleTemplate, { CleanSimpleConfig } from './CleanSimpleTemplate';
+import ModernSaasTemplate, { ModernSaasConfig } from './ModernSaasTemplate';
 
 /**
  * Template Registry
@@ -14,6 +15,11 @@ export const TEMPLATES = {
   'clean-simple': {
     component: CleanSimpleTemplate,
     config: CleanSimpleConfig,
+    isDefault: false
+  },
+  'modern-saas': {
+    component: ModernSaasTemplate,
+    config: ModernSaasConfig,
     isDefault: true
   }
   // Add more templates here as they are implemented
