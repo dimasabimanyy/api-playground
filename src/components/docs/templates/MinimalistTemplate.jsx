@@ -235,7 +235,7 @@ const Sidebar = ({
         }}
       >
         {/* Header */}
-        <div className="p-6 border-b border-gray-200">
+        {/* <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
@@ -261,7 +261,7 @@ const Sidebar = ({
           <p className="text-sm text-gray-600">
             Complete API reference and integration guide for developers.
           </p>
-        </div>
+        </div> */}
 
         {/* Navigation */}
         <div className="p-6">
