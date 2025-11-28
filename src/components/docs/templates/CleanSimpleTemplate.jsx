@@ -240,7 +240,6 @@ const Sidebar = ({
             {navigationItems.map((section) => (
               <div key={section.id} className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <div className="w-1 h-4 bg-gray-300 rounded-full"></div>
                   <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
                     {section.name}
                   </h3>
@@ -444,7 +443,6 @@ const TableOfContents = ({ activeSection, onSectionClick }) => {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2 mb-4">
-        <div className="w-1 h-4 bg-blue-500 rounded-full"></div>
         <h3 className="text-sm font-semibold text-gray-900">In This Page</h3>
       </div>
       <nav className="space-y-0.5">
@@ -588,7 +586,6 @@ print(response.json())`;
         {/* Request Examples */}
         <div>
           <div className="flex items-center gap-2 mb-4">
-            <div className="w-1 h-4 bg-green-500 rounded-full"></div>
             <h3 className="text-lg font-semibold text-gray-900">Request</h3>
           </div>
           <CodeBlock tabs={generateCodeExamples()} />
@@ -597,7 +594,6 @@ print(response.json())`;
         {/* Response Example */}
         <div>
           <div className="flex items-center gap-2 mb-4">
-            <div className="w-1 h-4 bg-purple-500 rounded-full"></div>
             <h3 className="text-lg font-semibold text-gray-900">Response</h3>
           </div>
           <CodeBlock code={generateResponse()} language="json" title="200 OK" />
