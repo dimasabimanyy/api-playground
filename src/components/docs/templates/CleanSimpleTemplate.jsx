@@ -66,12 +66,12 @@ const CodeBlock = ({ code, language = "json", tabs = null, title = null }) => {
     : code;
 
   return (
-    <div className="bg-gray-950 border border-gray-800 rounded-xl overflow-hidden">
+    <div className="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-2.5 bg-gray-900 border-b border-gray-800">
+      <div className="flex items-center justify-between px-4 py-2.5 bg-gray-100 border-b border-gray-200">
         <div className="flex items-center gap-3">
           {title && (
-            <span className="text-gray-300 text-sm font-medium">{title}</span>
+            <span className="text-gray-700 text-sm font-medium">{title}</span>
           )}
           {tabs && (
             <div className="flex items-center gap-1">
@@ -81,8 +81,8 @@ const CodeBlock = ({ code, language = "json", tabs = null, title = null }) => {
                   onClick={() => setActiveTab(tab.key)}
                   className={`px-2.5 py-1 text-xs font-mono rounded-lg transition-colors ${
                     activeTab === tab.key
-                      ? "bg-gray-800 text-white"
-                      : "text-gray-400 hover:text-gray-300 hover:bg-gray-800/50"
+                      ? "bg-white text-gray-900 shadow-sm"
+                      : "text-gray-600 hover:text-gray-900 hover:bg-white/50"
                   }`}
                 >
                   {tab.label}
@@ -93,11 +93,11 @@ const CodeBlock = ({ code, language = "json", tabs = null, title = null }) => {
         </div>
         <button
           onClick={copyCode}
-          className="p-1.5 text-gray-400 hover:text-gray-200 transition-colors rounded-lg hover:bg-gray-800"
+          className="p-1.5 text-gray-500 hover:text-gray-700 transition-colors rounded-lg hover:bg-white"
           title="Copy code"
         >
           {copied ? (
-            <CheckCircle className="w-4 h-4 text-emerald-400" />
+            <CheckCircle className="w-4 h-4 text-emerald-600" />
           ) : (
             <Copy className="w-4 h-4" />
           )}
@@ -105,7 +105,7 @@ const CodeBlock = ({ code, language = "json", tabs = null, title = null }) => {
       </div>
 
       {/* Code content */}
-      <pre className="p-4 text-sm text-gray-100 overflow-x-auto bg-gray-950 min-h-[60px]">
+      <pre className="p-4 text-sm text-gray-900 overflow-x-auto bg-gray-50 min-h-[60px]">
         <code className={`language-${tabs ? activeTab : language}`}>
           {codeToShow}
         </code>
@@ -953,8 +953,8 @@ export default function CleanSimpleTemplate({
                     <p className="text-base text-gray-700 leading-relaxed mb-4">
                       All errors return a consistent JSON structure:
                     </p>
-                    <div className="bg-gray-950 border border-gray-800 rounded-xl overflow-hidden">
-                      <pre className="p-4 text-sm text-gray-100 overflow-x-auto">
+                    <div className="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden">
+                      <pre className="p-4 text-sm text-gray-900 overflow-x-auto">
                         <code>{`{
   "error": {
     "code": "VALIDATION_ERROR",
@@ -1002,7 +1002,7 @@ export default function CleanSimpleTemplate({
 
                   <div className="mb-6">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Response</h3>
-                    <div className="bg-gray-900 text-gray-100 p-4 rounded-xl overflow-x-auto">
+                    <div className="bg-gray-50 text-gray-900 p-4 rounded-xl overflow-x-auto border border-gray-200">
                       <pre className="text-sm"><code>{`{
   "users": [
     {
