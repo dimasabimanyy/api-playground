@@ -63,8 +63,8 @@ export function CollectionsProvider({ children }) {
     setError(null);
 
     try {
-      // const data = await fetchCollections();
-      const data = await getCollectionsPagination();
+      const data = await fetchCollections();
+      // const data = await getCollectionsPagination();
 
       // console.log('CollectionsContext: Collections loaded:', data);
       setCollections(data);
