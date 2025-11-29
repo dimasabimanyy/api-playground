@@ -1150,22 +1150,27 @@ export default function Playground() {
       >
         {/* Request Tabs - Flat Design */}
         <div
-          className={`${themeClasses.bg.light} border-b ${themeClasses.border.primary}`}
+          className={`${themeClasses.bg.bold}`}
         >
           <div className="flex items-center px-2 py-0">
             <div className="flex items-center overflow-x-auto scrollbar-hide">
-              {requestTabs.map((tab) => {
+              {requestTabs.map((tab, idx) => {
                 const methodColors = getMethodColors(
                   tab.request?.method || "GET",
                   isDark
                 );
+
+                const firstTabRequest = idx === 0 ? "first-tab-request" : "";
+                const lastTabRquest =
+                  idx === requestTabs.length - 1 ? "last-tab-request" : "";
+
                 return (
                   <div
                     key={tab.id}
-                    className={`flex items-center gap-1 px-1 py-[.7rem] cursor-pointer min-w-0 group transition-all duration-200 border-b-[1.5px] ${
+                    className={`${firstTabRequest} ${lastTabRquest} flex items-center gap-1 px-1 py-[.7rem] cursor-pointer min-w-0 group transition-all duration-200 border-t-[1.5px] tab-request ${
                       tab.id === activeTabId
-                        ? `${themeClasses.text.primary} border-gray-800 dark:border-gray-400`
-                        : `${themeClasses.text.secondary} hover:${themeClasses.text.primary} border-transparent hover:border-gray-300`
+                        ? `active-tab-request ${themeClasses.text.primary} ${themeClasses.bg.light} border-gray-800 dark:border-gray-400`
+                        : `${themeClasses.text.secondary} hover:${themeClasses.text.primary}`
                     }`}
                     onClick={() => setActiveTabId(tab.id)}
                   >
@@ -1187,6 +1192,7 @@ export default function Playground() {
                         </span>
                       )}
                     </span>
+
                     {requestTabs.length > 1 && (
                       <button
                         onClick={(e) => {

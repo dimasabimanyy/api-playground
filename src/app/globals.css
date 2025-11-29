@@ -265,3 +265,23 @@ input[type="color"]::-webkit-color-swatch-wrapper {
 input[type="color"]::-webkit-color-swatch {
   border: none;
 }
+
+.tab-request {
+  border-left: 1px solid var(--primary-grey-border-color);
+  /* Transparent border */
+  border-top: 1.5px solid #00000000;
+  border-bottom: 1px solid var(--primary-grey-border-color);
+}
+
+.active-tab-request {
+  border-top: 1.5px solid #000;
+  border-bottom: 1px solid #fff !important;
+}
+
+.first-tab-request {
+  border-left: none;
+}
+
+.last-tab-request {
+  border-right: 1px solid var(--primary-grey-border-color);
+}
