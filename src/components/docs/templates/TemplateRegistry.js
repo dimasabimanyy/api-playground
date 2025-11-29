@@ -1,27 +1,35 @@
-import MinimalistTemplate, { MinimalistConfig } from './MinimalistTemplate';
-import CleanSimpleTemplate, { CleanSimpleConfig } from './CleanSimpleTemplate';
-import ModernSaasTemplate, { ModernSaasConfig } from './ModernSaasTemplate';
+import MinimalistTemplate, { MinimalistConfig } from "./MinimalistTemplate";
+import CleanSimpleTemplate, { CleanSimpleConfig } from "./CleanSimpleTemplate";
+import ModernSaasTemplate, { ModernSaasConfig } from "./ModernSaasTemplate";
+import GlassmorphismTemplate, {
+  GlassmorphismConfig,
+} from "./GlassmorphismTemplate";
 
 /**
  * Template Registry
  * Manages all available documentation templates
  */
 export const TEMPLATES = {
-  'minimalist': {
+  minimalist: {
     component: MinimalistTemplate,
     config: MinimalistConfig,
-    isDefault: false
+    isDefault: false,
   },
-  'clean-simple': {
+  "clean-simple": {
     component: CleanSimpleTemplate,
     config: CleanSimpleConfig,
-    isDefault: false
+    isDefault: true,
   },
-  'modern-saas': {
+  "modern-saas": {
     component: ModernSaasTemplate,
     config: ModernSaasConfig,
-    isDefault: true
-  }
+    isDefault: false,
+  },
+  glassmorphism: {
+    component: GlassmorphismTemplate,
+    config: GlassmorphismConfig,
+    isDefault: false,
+  },
   // Add more templates here as they are implemented
   // 'stripe-style': {
   //   component: StripeTemplate,
@@ -38,7 +46,9 @@ export const TEMPLATES = {
 export function getTemplate(templateKey) {
   const template = TEMPLATES[templateKey];
   if (!template) {
-    console.warn(`Template '${templateKey}' not found, falling back to default template`);
+    console.warn(
+      `Template '${templateKey}' not found, falling back to default template`
+    );
     return getDefaultTemplate();
   }
   return template;
@@ -49,8 +59,10 @@ export function getTemplate(templateKey) {
  * @returns {Object} Default template object
  */
 export function getDefaultTemplate() {
-  const defaultTemplate = Object.values(TEMPLATES).find(template => template.isDefault);
-  return defaultTemplate || TEMPLATES['minimalist']; // fallback to minimalist
+  const defaultTemplate = Object.values(TEMPLATES).find(
+    (template) => template.isDefault
+  );
+  return defaultTemplate || TEMPLATES["minimalist"]; // fallback to minimalist
 }
 
 /**
@@ -61,7 +73,7 @@ export function getAllTemplates() {
   return Object.entries(TEMPLATES).map(([key, template]) => ({
     key,
     ...template.config,
-    isDefault: template.isDefault
+    isDefault: template.isDefault,
   }));
 }
 
@@ -74,10 +86,10 @@ export function getAllTemplates() {
 export function validateTemplateSettings(templateKey, settings = {}) {
   const template = getTemplate(templateKey);
   const defaultSettings = template.config.settings || {};
-  
+
   // Merge settings with defaults
   return {
     ...defaultSettings,
-    ...settings
+    ...settings,
   };
 }
