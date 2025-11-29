@@ -187,7 +187,8 @@ const DashboardHeader = ({
         </div>
 
         {/* Layout Toggle Button */}
-        {setLayoutMode && (
+        {/* {setLayoutMode && ( */}
+        {false && (
           <button
             onClick={() =>
               setLayoutMode(layoutMode === "single" ? "split" : "single")

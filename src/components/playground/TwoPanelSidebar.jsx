@@ -1,10 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  ChevronDown,
-  MoreHorizontal,
-} from "lucide-react";
+import { ChevronDown, MoreHorizontal } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -105,7 +102,7 @@ export default function TwoPanelSidebar({
       collectionRequestId: null,
       isModified: false,
     };
-    
+
     // Add to tabs if not already present
     if (!openTabs.some((tab) => tab.id === newTab.id)) {
       setOpenTabs((prev) => [...prev, newTab]);
@@ -201,19 +198,35 @@ export default function TwoPanelSidebar({
                         Collections
                       </span>
 
-                      <button
-                        onClick={() => setShowImportModal(true)}
-                        className="h-6 px-2 bg-white transition-all duration-200 hover:bg-gray-100 border cursor-pointer flex items-center justify-center"
-                        style={{
-                          borderRadius: "6px",
-                          borderColor: "rgb(235, 235, 235)",
-                        }}
-                        title="Import/Export Collections"
-                      >
-                        <span className="text-gray-600 text-xs font-medium">
-                          Import
-                        </span>
-                      </button>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => setShowImportModal(true)}
+                          className="h-6 px-2 transition-all duration-200 bg-gray-100 border cursor-pointer flex items-center justify-center"
+                          style={{
+                            borderRadius: "6px",
+                            borderColor: "rgb(235, 235, 235)",
+                          }}
+                          title="Import/Export Collections"
+                        >
+                          <span className="text-gray-600 text-xs font-medium">
+                            Import
+                          </span>
+                        </button>
+
+                        <button
+                          onClick={() => setShowImportModal(true)}
+                          className="h-6 px-2 transition-all duration-200 bg-gray-100 border cursor-pointer flex items-center justify-center"
+                          style={{
+                            borderRadius: "6px",
+                            borderColor: "rgb(235, 235, 235)",
+                          }}
+                          title="Import/Export Collections"
+                        >
+                          <span className="text-gray-600 text-xs font-medium">
+                            New
+                          </span>
+                        </button>
+                      </div>
                     </div>
 
                     {collectionsLoading ? (
