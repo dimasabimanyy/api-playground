@@ -11,7 +11,7 @@ export const getThemeClasses = (isDark) => ({
     glass: isDark
       ? "bg-[#1a1a1a]/50 backdrop-blur-xl"
       : "bg-white/60 backdrop-blur-xl",
-    bold: isDark ? "bg-[#111]" : "bg-[#fafafa]",
+    bold: isDark ? "bg-[#111]" : "bg-[#f8f8f8]",
     light: isDark ? "bg-[#111]" : "bg-[#FFFFFF]",
   },
 

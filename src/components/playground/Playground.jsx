@@ -1213,7 +1213,7 @@ export default function Playground() {
 
         {/* Request Name Header - Full Width */}
         <div
-          className={`${themeClasses.border.primary} ${themeClasses.bg.bold}`}
+          className={`${themeClasses.border.primary} ${themeClasses.bg.primary}`}
         >
           <div className="px-4 pt-4 pb-1">
             <div className="flex flex-col sm:flex-row sm:items-center gap-3">
@@ -1285,13 +1285,13 @@ export default function Playground() {
                 {!currentTab?.collectionRequestId && (
                   <>
                     <span
-                      className={`text-xs px-2 py-1 rounded-full border ${themeClasses.status.warning}`}
+                      className={`text-xs px-2 py-1 rounded border ${themeClasses.status.warning}`}
                     >
                       Unsaved
                     </span>
                     <button
                       onClick={handleSaveRequest}
-                      className={`px-3 py-1.5 text-xs rounded text-white transition-all duration-200 hover:scale-105`}
+                      className={`px-2 py-1 text-xs rounded text-white transition-all duration-200`}
                       style={{
                         backgroundColor: "#171717",
                         border: "none",
@@ -1308,7 +1308,7 @@ export default function Playground() {
 
         {/* Method + URL + Send Row - Full Width */}
         <div
-          className={`${themeClasses.border.primary} ${themeClasses.bg.bold}`}
+          className={`${themeClasses.border.primary} ${themeClasses.bg.primary}`}
         >
           <div className="px-3 py-3">
             <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-2">
@@ -1410,7 +1410,7 @@ export default function Playground() {
           data-layout-container
           className={`flex-1 flex ${
             layoutMode === "single" ? "flex-col" : "flex-col lg:flex-row"
-          } ${themeClasses.bg.bold} transition-colors duration-300 ${
+          } ${themeClasses.bg.primary} transition-colors duration-300 ${
             isDragging
               ? layoutMode === "single"
                 ? "cursor-row-resize"
@@ -1432,7 +1432,7 @@ export default function Playground() {
                 title="Resize panels"
               >
                 <div
-                  className={`absolute left-1/2 transform -translate-x-1/2 w-px h-full bg-gray-200/60 dark:bg-gray-600 hover:bg-blue-500 ${
+                  className={`absolute left-1/2 transform -translate-x-1/2 w-px h-full resize-panels dark:bg-gray-600 hover:bg-blue-500 ${
                     isDragging
                       ? "bg-blue-500"
                       : "transition-colors duration-200"
@@ -1463,7 +1463,7 @@ export default function Playground() {
                 title="Resize panels"
               >
                 <div
-                  className={`absolute top-1/2 transform -translate-y-1/2 w-full h-px bg-gray-200/60 dark:bg-gray-600 hover:bg-blue-500 ${
+                  className={`absolute top-1/2 transform -translate-y-1/2 w-full h-px resize-panels dark:bg-gray-600 hover:bg-blue-500 ${
                     isDragging
                       ? "bg-blue-500"
                       : "transition-colors duration-200"

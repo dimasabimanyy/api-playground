@@ -76,6 +76,8 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --primary-grey-border-color: #dfdfd0;
+  /* --primary-grey-border-color: #000; */
 }
 
 .dark {
@@ -235,8 +237,14 @@ h6 {
 }
 
 .primary-gray-border {
-  border-color: rgb(235, 235, 235);
+  /* border-color: rgb(235, 235, 235); */
+  /* border-color: #dfdfd0; */
+  border-color: var(--primary-grey-border-color);
   box-shadow: rgba(0, 0, 0, 0) 0;
+}
+
+.resize-panels {
+  background: var(--primary-grey-border-color);
 }
 
 button {

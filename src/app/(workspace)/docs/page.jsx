@@ -222,16 +222,13 @@ export default function DocsPage() {
                 placeholder="Find documentation..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 h-9 text-sm focus:ring-0 focus:outline-none cursor-pointer"
+                className={`pl-10 h-9 text-sm focus:ring-0 focus:outline-none cursor-pointer ${themeClasses.border.primary}`}
                 style={{
                   borderRadius: "6px",
-                  borderColor: isDark
-                    ? "rgb(55, 65, 81)"
-                    : "rgb(235, 235, 235)",
+                  // borderColor: isDark
+                  //   ? "rgb(55, 65, 81)"
+                  //   : "rgb(235, 235, 235)",
                   backgroundColor: isDark ? "rgb(17, 24, 39)" : "white",
-                  border: `1px solid ${
-                    isDark ? "rgb(55, 65, 81)" : "rgb(235, 235, 235)"
-                  }`,
                   boxShadow: "none",
                 }}
               />

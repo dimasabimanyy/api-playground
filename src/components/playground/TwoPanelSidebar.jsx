@@ -2,23 +2,13 @@
 
 import { useEffect, useState } from "react";
 import {
-  Plus,
-  FolderOpen,
-  Globe,
-  PanelLeftClose,
-  PanelLeftOpen,
   ChevronDown,
-  ChevronRight,
-  Edit,
-  Trash2,
   MoreHorizontal,
-  GripVertical,
 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import CreateNew from "../button/CreateNew";
@@ -28,8 +18,6 @@ import { sidebarMenuItems } from "@/config/sidebar";
 import DocGeneratorModal from "../docs/DocGeneratorModal";
 
 export default function TwoPanelSidebar({
-  sidebarCollapsed,
-  setSidebarCollapsed,
   themeClasses,
   isDark,
   activeMenuTab,
@@ -42,14 +30,12 @@ export default function TwoPanelSidebar({
   toggleCollection,
   editingCollection,
   setEditingCollection,
-  updateCollection,
   deleteCollection,
   history,
   loadRequest,
   clearHistory,
   // New request creation props
   setNewRequestType,
-  setRequest,
   setActiveTab,
   openTabs,
   setOpenTabs,
@@ -104,22 +90,27 @@ export default function TwoPanelSidebar({
 
   const createNewTab = () => {
     setNewRequestType("HTTP Request");
-    const newRequest = {
-      id: Date.now().toString(),
-      name: "",
-      type: "HTTP Request",
-      url: "",
-      method: "GET",
-      headers: [],
-      queryParams: [],
-      body: { type: "none", content: "" },
-      isAutoNamed: true,
+    const newTabId = Date.now().toString();
+    const newTab = {
+      id: newTabId,
+      name: "Untitled Request",
+      request: {
+        method: "GET",
+        url: "",
+        headers: {},
+        body: "",
+      },
+      response: null,
+      loading: false,
+      collectionRequestId: null,
+      isModified: false,
     };
-    setRequest(newRequest);
-    setActiveTab(newRequest.id);
-    if (!openTabs.some((tab) => tab.id === newRequest.id)) {
-      setOpenTabs((prev) => [...prev, newRequest]);
+    
+    // Add to tabs if not already present
+    if (!openTabs.some((tab) => tab.id === newTab.id)) {
+      setOpenTabs((prev) => [...prev, newTab]);
     }
+    setActiveTab(newTab.id);
   };
 
   return (
